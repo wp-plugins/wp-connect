@@ -16,7 +16,7 @@ if (isset($_POST['message'])) {
 			wp_update_twitter($status);
 		} 
 		if (isset($_POST['qq'])) {
-			wp_update_t_qq($account['qq'], $status);;
+			wp_update_t_qq($account['qq'], $status, $pic);
 		} 
 		if (isset($_POST['sina'])) {
 			wp_update_t_sina($account['sina'], $status, $pic);
@@ -68,7 +68,7 @@ function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value
     </div>
     <textarea cols="60" rows="5" name="message" id="message" onblur="textCounter(this.form.message,140);" onKeyDown="textCounter(this.form.message,140);" onKeyUp="textCounter(this.form.message,140);">'.$message.'</textarea>
     <p>图片地址：</p>
-    <input name="pic" id="pic" size="50" type="text" />（仅支持新浪、网易微博）
+    <input name="pic" id="pic" size="50" type="text" />（仅支持腾讯、新浪、网易微博）
     <p>发布到：</p>
     <input name="twitter" id="twitter" type="checkbox" value="checkbox" checked />
     <label for="twitter">Twitter</label>
