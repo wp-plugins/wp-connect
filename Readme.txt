@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: twitter,qq,sina,netease,sohu,digu,douban,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
 Requires at least: 2.9
 Tested up to: 3.1.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 
 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
 
@@ -16,7 +16,7 @@ Stable tag: 1.2.0
 
 支持多作者博客，每位作者发布的文章都可以同步到他们各自绑定的微博上。
 
-目前支持同时把文章出现的第一张图片同步到新浪微博、网易微博。
+目前支持同时把文章出现的第一张图片同步到 腾讯微博、新浪微博、网易微博。
 
 同步到Twitter时可以选择使用代理，并可自定义API。
 
@@ -72,6 +72,10 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 3.国内主机用户使用Twitter请勾选使用代理。
 
 == Changelog ==
+
+= 1.2.1 =
+*2011/03/01
+新增支持同时把文章出现的第一张图片同步到 腾讯微博。
 
 = 1.2.0 =
 *2011/02/28

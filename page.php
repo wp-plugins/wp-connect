@@ -13,7 +13,7 @@ if (isset($_POST['message'])) {
 			$pic = $_POST['pic'];
 		}
 		if (isset($_POST['twitter'])) {
-			wp_update_twitter($account['twitter'], $status);
+			wp_update_twitter($status);
 		} 
 		if (isset($_POST['qq'])) {
 			wp_update_t_qq($account['qq'], $status);;

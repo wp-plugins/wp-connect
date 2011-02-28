@@ -34,6 +34,7 @@ class qqClient
     // 发表图片微博 
     function upload($text, $pic) 
     { 
+        $param = array();
         $param['format'] = 'json';
         $param['pic'] = $pic;
         $param['content'] = $text;

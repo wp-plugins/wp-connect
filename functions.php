@@ -18,10 +18,10 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	$status2 = wp_status($title, $postlink, 140, 1);
 	$status3 = wp_status($title, $postlink, 200);
 	$status4 = wp_status($title, $postlink, 200, 1);
-	if($account['qq']) { wp_update_t_qq($account['qq'], $status2); } //140*
+	if($account['qq']) { wp_update_t_qq($account['qq'], $status2, $pic); } //140*
 	if($account['sina']) { wp_update_t_sina($account['sina'], $status2, $pic); } //140*
 	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
-	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
+	if($account['twitter'] || $account['twitter_oauth']) { wp_update_twitter($twitter); } //140
 	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4); } //+
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $status3); } //380
@@ -33,12 +33,16 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $status4); } //200*
 }
 // 腾讯微博
-function wp_update_t_qq($qq, $status) {
+function wp_update_t_qq($qq, $status, $pic) {
 	if (!class_exists('qqOAuth')) {
 		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
 	} 
 	$to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET, $qq['oauth_token'], $qq['oauth_token_secret']);
-	$result = $to -> update($status);
+	if ($pic) {
+		$result = $to -> upload($status , $pic);
+	} else {
+		$result = $to -> update($status);
+	}
 } 
 // 新浪微博
 function wp_update_t_sina($sina, $status, $pic) {
@@ -65,7 +69,7 @@ function wp_update_t_163($netease, $status, $pic) {
 	}
 } 
 // Twitter
-function wp_update_twitter($twitter, $status) {
+function wp_update_twitter($status) {
 	global $wptm_options;
 	if ($wptm_options['enable_proxy']) {
 		$twitter = get_option('wptm_twitter');
