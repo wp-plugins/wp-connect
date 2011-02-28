@@ -16,17 +16,17 @@ function wp_connect_init(){
 	if(!is_user_logged_in()) {		
         if(isset($_GET['oauth_token'])){
 			require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
-			if($_SESSION['go'] == "SINA")    {wp_connect_verify_sina();}
-			if($_SESSION['go'] == "QQ")      {wp_connect_verify_qq();}
-			if($_SESSION['go'] == "NETEASE") {wp_connect_verify_netease();}
-			if($_SESSION['go'] == "DOUBAN")  {wp_connect_verify_douban();}
+			if($_SESSION['wp_go_login'] == "SINA")    {wp_connect_sina();}
+			if($_SESSION['wp_go_login'] == "QQ")      {wp_connect_qq();}
+			if($_SESSION['wp_go_login'] == "NETEASE") {wp_connect_netease();}
+			if($_SESSION['wp_go_login'] == "DOUBAN")  {wp_connect_douban();}
         } 
     } 
 }
 
 function wp_connect($id=""){
     global $plugin_url, $wptm_connect;
-	$_SESSION['callback'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	$_SESSION['wp_callback'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 
 if (is_user_logged_in()) {
 	global $user_ID;
@@ -76,7 +76,7 @@ if (is_user_logged_in()) {
 }
 
 //sina
-function wp_connect_verify_sina(){
+function wp_connect_sina(){
 	if (!class_exists('sinaOAuth')) {
 		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
 	}
@@ -110,7 +110,7 @@ function wp_connect_verify_sina(){
 	wp_connect_login($sina->id.'|'.$sina_username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
 }
 //qq
-function wp_connect_verify_qq(){
+function wp_connect_qq(){
 	if(!class_exists('qqOAuth')){
 		include dirname(__FILE__).'/OAuth/qq_OAuth.php';
 	}
@@ -138,7 +138,7 @@ function wp_connect_verify_qq(){
 	wp_connect_login($qq->head.'|'.$qq->name.'|'.$qq->nick.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
 }
 //netease
-function wp_connect_verify_netease(){
+function wp_connect_netease(){
 	if (!class_exists('neteaseOAuth')) {
 		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
 	}
@@ -163,7 +163,7 @@ function wp_connect_verify_netease(){
 	wp_connect_login($netease->profile_image_url.'|'.$netease->screen_name.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
 }
 //douban
-function wp_connect_verify_douban(){
+function wp_connect_douban(){
 	if (!class_exists('doubanOAuth')) {
 		include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
 	}
@@ -198,7 +198,7 @@ function wp_connect_login($userinfo, $user_email, $tid) {
 	if(count($userinfo) < 6) {
 		wp_die("An error occurred while trying to contact Sina Connect.");
 	}
-	$callback = $_SESSION['callback'];
+	$callback = $_SESSION['wp_callback'];
 	if (preg_match("/\b$userinfo[1]\b/i", $wptm_connect['disable_username'])) {
 		wp_die("很遗憾，”$userinfo[1]” 被系统保留，请更换微博帐号登录！返回 <a href='$callback'>$callback</a>");
 	} 
@@ -253,12 +253,36 @@ function wp_connect_login($userinfo, $user_email, $tid) {
 add_filter('user_contactmethods', 'wp_connect_author_page');
 function wp_connect_author_page($input) {
 	// add
-	$input['lock'] = '锁定帐号 <span class="description">(请填任意值)<br />锁定后，其他同名的微博账号将无法注册，谨慎使用！</span>';
+	$input['imqq'] = 'QQ';
 	// del
 	unset($input['yim']);
 	unset($input['aim']);
 	unset($input['jabber']);
 	return $input;
+}
+
+add_action( 'show_user_profile', 'wp_connect_profile_fields' );
+add_action( 'edit_user_profile', 'wp_connect_profile_fields' );
+add_action( 'personal_options_update', 'wp_connect_save_profile_fields' );
+add_action( 'edit_user_profile_update', 'wp_connect_save_profile_fields' );
+
+function wp_connect_profile_fields( $user ) {
+	global $user_id;
+?>
+<h3>微博登录</h3>
+<table class="form-table">
+<tr>
+	<th><label for="lock">锁定帐号 <span class="description">(任意数字)</span></label></th>
+	<td><input type="text" name="lock" id="lock" size="1" maxlength="1" value="<?php echo get_user_meta($user_id, 'lock',true);?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> <span class="description">锁定后，其他同名的微博账号将不能登录，谨慎使用！</span></td>
+</tr>
+</table>
+<?php
+}
+
+function wp_connect_save_profile_fields( $user_id ) {
+
+if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
+    update_usermeta( $user_id, 'lock', trim($_POST['lock']) );
 }
 
 add_filter("get_avatar", "wp_connect_avatar",10,4);

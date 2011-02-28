@@ -6,13 +6,14 @@
 #tlist .sina{background:url(images/sina.png) no-repeat}
 #tlist .netease{background:url(images/netease.png) no-repeat}
 #tlist .sohu{background:url(images/sohu.png) no-repeat}
+#tlist .renren{background:url(images/renren.png) no-repeat}
+#tlist .kaixin001{background:url(images/kaixin001.png) no-repeat}
 #tlist .digu{background:url(images/digu.png) no-repeat}
 #tlist .douban{background:url(images/douban.png) no-repeat}
 #tlist .fanfou{background:url(images/fanfou.png) no-repeat}
 #tlist .renjian{background:url(images/renjian.png) no-repeat}
 #tlist .zuosa{background:url(images/zuosa.png) no-repeat}
-#tlist .ms9911{background:url(images/ms9911.png) no-repeat}
 #tlist .follow5{background:url(images/follow5.png) no-repeat}
 #tlist a{display:inline-block; margin-right:7px; overflow:hidden; position:relative; vertical-align:middle; height:48px; width:48px; background-position:0px 0px; border:1px solid #A2D8DA}
 .bind b, #bind_twitter b, #bind_qq b, #bind_sina b, #bind_netease b, #bind_douban b{bottom:0px; right:0px; display:block; overflow:hidden; position:absolute; width:13px; height:13px; background:url(images/pass.png) no-repeat 0 0}
-.wrap a{text-decoration:none}
+a.close {text-decoration:none}

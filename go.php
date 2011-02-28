@@ -8,31 +8,31 @@ if (is_user_logged_in()) {
 		include_once("OAuth/qq_OAuth.php");
 		$a = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET);
 		$b = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
-		$access_token = "wptm_qq";
+		$tok = "wptm_qq";
 		$tid = "QQ";
 	} elseif ($_GET['OAuth'] == "sina" || $_GET['OAuth'] == "SINA" || $_GET['callback'] == "SINA") {
 		include_once("OAuth/sina_OAuth.php");
 		$a = new sinaOAuth(SINA_APP_KEY, SINA_APP_SECRET);
 		$b = new sinaOAuth(SINA_APP_KEY, SINA_APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
-		$access_token = "wptm_sina";
+		$tok = "wptm_sina";
 		$tid = "SINA";
 	} elseif ($_GET['OAuth'] == "netease" || $_GET['OAuth'] == "NETEASE" || $_GET['callback'] == "NETEASE") {
 		include_once("OAuth/netease_OAuth.php");
 		$a = new neteaseOAuth(APP_KEY, APP_SECRET);
 		$b = new neteaseOAuth(APP_KEY, APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
-		$access_token = "wptm_netease";
+		$tok = "wptm_netease";
 		$tid = "NETEASE";
 	} elseif ($_GET['OAuth'] == "twitter" || $_GET['OAuth'] == "TWITTER" || $_GET['callback'] == "TWITTER") {
 		include_once("OAuth/twitter_OAuth.php");
 		$a = new twitterOAuth(T_APP_KEY, T_APP_SECRET);
 		$b = new twitterOAuth(T_APP_KEY, T_APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
-		$access_token = "wptm_twitter_oauth";
+		$tok = "wptm_twitter_oauth";
 		$tid = "TWITTER";
 	} elseif ($_GET['OAuth'] == "douban" || $_GET['OAuth'] == "DOUBAN" || $_GET['callback'] == "DOUBAN") {
 		include_once("OAuth/douban_OAuth.php");
 		$a = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET);
 		$b = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
-		$access_token = "wptm_douban";
+		$tok = "wptm_douban";
 		$tid = "DOUBAN";
 	} else {
 		return false;
@@ -52,12 +52,16 @@ if (is_user_logged_in()) {
 
 		$_SESSION['last_key'] = $last_key;
 
-		$update = array ('oauth_token' => $_SESSION['last_key']['oauth_token'],
+		$update = array (
+			'oauth_token' => $_SESSION['last_key']['oauth_token'],
 			'oauth_token_secret' => $_SESSION['last_key']['oauth_token_secret']
 			);
-		update_option($access_token, $update);
-
-		header('Location:' . get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=wp-connect');
+		if ($_SESSION['wp_admin_go_url'] == admin_url('profile.php')) {
+			update_usermeta($_SESSION['user_ID'], $tok, $update);
+		} else {
+			update_option($tok, $update);
+		} 
+		header('Location:' . $_SESSION['wp_admin_go_url']);
 	} 
 } 
 

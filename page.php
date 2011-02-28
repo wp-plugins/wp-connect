@@ -1,6 +1,8 @@
 <?php
 function wp_to_microblog() {
-global $plugin_url, $wptm_options;
+global $plugin_url;
+$wptm_options = get_option('wptm_options');
+$account = wp_option_account();
 $password = $_POST['password'];
 if (isset($_POST['message'])) {
 	if ((is_user_logged_in()) || ($wptm_options['page_password'] && $password == $wptm_options['page_password'])) {
@@ -11,37 +13,43 @@ if (isset($_POST['message'])) {
 			$pic = $_POST['pic'];
 		}
 		if (isset($_POST['twitter'])) {
-			wp_connect_twitter($status);
+			wp_update_twitter($account['twitter'], $status);
 		} 
 		if (isset($_POST['qq'])) {
-			wp_connect_t_qq($status);
+			wp_update_t_qq($account['qq'], $status);;
 		} 
 		if (isset($_POST['sina'])) {
-			wp_connect_t_sina($status, $pic);
+			wp_update_t_sina($account['sina'], $status, $pic);
 		} 
 		if (isset($_POST['netease'])) {
-			wp_connect_t_163($status, $pic);
+			wp_update_t_163($account['netease'], $status, $pic);
 		} 
 		if (isset($_POST['sohu'])) {
-			wp_connect_t_sohu($status);
+			wp_update_t_sohu($account['sohu'], $status);
+		} 
+		if (isset($_POST['renren'])) {
+			wp_update_renren($account['renren'], $status);
+		} 
+		if (isset($_POST['kaixin001'])) {
+			wp_update_kaixin001($account['kaixin001'], $status);
 		} 
 		if (isset($_POST['digu'])) {
-			wp_connect_digu($status);
+			wp_update_digu($account['digu'], $status);
 		}  
 		if (isset($_POST['douban'])) {
-			wp_connect_douban($status);
+			wp_update_douban($account['douban'], $status);
 		} 
 		if (isset($_POST['fanfou'])) {
-			wp_connect_fanfou($status);
+			wp_update_fanfou($account['fanfou'], $status);
 		} 
 		if (isset($_POST['renjian'])) {
-			wp_connect_renjian($status);
+			wp_update_renjian($account['renjian'], $status);
 		} 
 		if (isset($_POST['zuosa'])) {
-			wp_connect_zuosa($status);
+			wp_update_zuosa($account['zuosa'], $status);
 		} 
 		if (isset($_POST['follow5'])) {
-			wp_connect_follow5($status);
+			wp_update_follow5($account['follow5'], $status);
 		}
 	} else {
 		$error = '<span style="color:#690">密码错误！</span>';
@@ -72,6 +80,10 @@ function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value
     <label for="netease">网易微博</label>
     <input name="sohu" id="sohu" type="checkbox" value="checkbox" checked />
     <label for="sohu">搜狐微博</label>
+    <input name="renren" id="renren" type="checkbox" value="checkbox" checked />
+    <label for="renren">人人网</label>
+    <input name="kaixin001" id="kaixin001" type="checkbox" value="checkbox" checked />
+    <label for="kaixin001">开心网</label>
     <input name="digu" id="digu" type="checkbox" value="checkbox" checked />
     <label for="digu">嘀咕</label>
     <input name="douban" id="douban" type="checkbox" value="checkbox" checked />
