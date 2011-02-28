@@ -794,13 +794,13 @@ class OAuthUtil {
         foreach ($params as $parameter => $value) { 
             
         //if( $parameter == 'pic' && $value{0} == '@' )
-        if( in_array($parameter,array("pic","image")) && $value{0} == '@' )
+			if( in_array($parameter,array("pic","image")) )
         {
-        	$url = ltrim( $value , '@' );
-        	$content = file_get_contents( $url );
-        	$filename = reset( explode( '?' , basename( $url ) ));
-        	$mime = self::get_image_mime($url); 
-        	
+			$url = ltrim($value , '@');
+			$content = file_get_contents($url);
+			$filename = reset(explode('?' , basename($url)));
+			$mime = self :: get_image_mime($url);
+
         	$multipartbody .= $MPboundary . "\r\n";
 			$multipartbody .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $filename . '"'. "\r\n";
 			$multipartbody .= 'Content-Type: '. $mime . "\r\n\r\n";
@@ -812,17 +812,12 @@ class OAuthUtil {
 			$multipartbody .= 'content-disposition: form-data; name="'.$parameter."\"\r\n\r\n";
 			$multipartbody .= $value."\r\n";
 			
-        }    
-            
-            
-           
-             
+        }
         } 
         
-        $multipartbody .=  $endMPboundary;
+        $multipartbody .=  "$endMPboundary\r\n";
         // For each parameter, the name is separated from the corresponding value by an '=' character (ASCII code 61) 
         // Each name-value pair is separated by an '&' character (ASCII code 38) 
-        // echo $multipartbody;
         return $multipartbody; 
     } 
 
