@@ -46,6 +46,10 @@ if (is_user_logged_in()) {
 
 		$_SESSION['keys'] = $keys;
 
+		if(!$_SESSION['wp_admin_go_url']){
+		    $aurl = get_bloginfo('wpurl');
+		}
+
 		header('Location:' . $aurl);
 	} elseif ($_GET['callback']) {
 		$last_key = $b -> getAccessToken($_REQUEST['oauth_verifier']);
@@ -60,7 +64,7 @@ if (is_user_logged_in()) {
 			update_usermeta($_SESSION['user_ID'], $tok, $update);
 		} else {
 			update_option($tok, $update);
-		} 
+		}
 		header('Location:' . $_SESSION['wp_admin_go_url']);
 	} 
 } 
