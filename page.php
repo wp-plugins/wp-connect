@@ -5,7 +5,7 @@ $wptm_options = get_option('wptm_options');
 $account = wp_option_account();
 $password = $_POST['password'];
 if (isset($_POST['message'])) {
-	if ((is_user_logged_in()) || ($wptm_options['page_password'] && $password == $wptm_options['page_password'])) {
+	if ($wptm_options['page_password'] && $password == $wptm_options['page_password']) {
 		include_once( dirname(__FILE__) . '/config.php' );
 		require_once( dirname(__FILE__) . '/OAuth/OAuth.php' );
 		$status = mb_substr($_POST['message'], 0, 140, 'utf-8');
@@ -95,15 +95,11 @@ function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value
     <input name="zuosa" id="zuosa" type="checkbox" value="checkbox" checked />
     <label for="zuosa">做啥</label>
     <input name="follow5" id="follow5" type="checkbox" value="checkbox" checked />
-    <label for="follow5">Follow5</label>';
-if(!is_user_logged_in()) {
-$html .='
+    <label for="follow5">Follow5</label>
     <p>
     <label for="password">密码：</label>
     <input name="password" id="password" type="password" value="'.$password.'" /> '.$error.'
-	</p>';
-}
-$html .= '
+	</p>
     <p><input type="submit" id="submit" value="发表" /></p>
   </fieldset>
 </form>';
