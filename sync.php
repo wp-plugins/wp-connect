@@ -214,7 +214,7 @@ function wp_user_profile_fields( $user ) {
 
 <p class="submit">
 	<input type="hidden" name="action" value="update" />
-	<input type="hidden" name="user_id" id="user_id" value="<?php echo esc_attr($user_ID); ?>" />
+	<input type="hidden" name="user_id" id="user_id" value="<?php echo esc_attr($user_id); ?>" />
 	<input type="submit" class="button-primary" value="<?php IS_PROFILE_PAGE ? esc_attr_e('Update Profile') : esc_attr_e('Update User') ?>" name="submit" />
 </p>
 </form>
