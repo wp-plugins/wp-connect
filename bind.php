@@ -5,7 +5,7 @@ $wptm_options = get_option('wptm_options');
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $plugin_url;?>/style.css" />
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo $plugin_url;?>/floatdialog.js"></script>
+<script type="text/javascript" src="<?php echo $plugin_url;?>/js/floatdialog.js"></script>
 <div id="tlist">
 <p><strong>帐号绑定</strong></p>
 <?php if($wptm_options['enable_proxy']) { ?>

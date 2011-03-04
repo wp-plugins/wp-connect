@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.2.3
+Version: 1.2.4
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -99,19 +99,19 @@ function wp_connect_do_page() {
 <div class="wrap">
 <h2>WordPress连接微博</h2>
 <form method="post" action="<?php echo get_bloginfo('wpurl');?>/wp-admin/options-general.php?page=wp-connect">
-    <?php wp_nonce_field('wptm_connect');?>
+    <?php wp_nonce_field('connect-options');?>
     <p><strong>连接设置</strong></p>
 	<table class="form-table">
 		<tr>
 			<td width="25%" valign="top">是否开启“连接微博”功能</td>
-			<td><input name="enable_connect" type="checkbox" value="checkbox" <?php if($wptm_connect['enable_connect']) echo "checked='checked'"; ?>></td>
+			<td><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>></td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">添加按钮</td>
-			<td><input name="sina" type="checkbox" value="checkbox" <?php if($wptm_connect['sina']) echo "checked='checked'"; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_sina.png" />
-			<input name="qq" type="checkbox" value="checkbox" <?php if($wptm_connect['qq']) echo "checked='checked'"; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_qq.png" /> 
-			<input name="netease" type="checkbox" value="checkbox" <?php if($wptm_connect['netease']) echo "checked='checked'"; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_netease.jpg" /> 
-			<input name="douban" type="checkbox" value="checkbox" <?php if($wptm_connect['douban']) echo "checked='checked'"; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_douban.png" /></td>
+			<td><input name="sina" type="checkbox" value="1" <?php if($wptm_connect['sina']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_sina.png" />
+			<input name="qq" type="checkbox" value="1" <?php if($wptm_connect['qq']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_qq.png" /> 
+			<input name="netease" type="checkbox" value="1" <?php if($wptm_connect['netease']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_netease.jpg" /> 
+			<input name="douban" type="checkbox" value="1" <?php if($wptm_connect['douban']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_douban.png" /></td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">绑定微博帐号</td>
@@ -119,7 +119,7 @@ function wp_connect_do_page() {
 		</tr>
 		<tr>
 			<td width="25%" valign="top">网易微博评论者头像</td>
-			<td><input name="netease_avatar" type="checkbox" value="checkbox" <?php if($wptm_connect['netease_avatar']) echo "checked='checked'"; ?>>已显示</td>
+			<td><input name="netease_avatar" type="checkbox" value="1" <?php if($wptm_connect['netease_avatar']) echo "checked "; ?>>已显示</td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">禁止注册的用户名</td>
@@ -131,16 +131,16 @@ function wp_connect_do_page() {
 </p>
 </form>
 <form method="post" action="<?php echo get_bloginfo('wpurl');?>/wp-admin/options-general.php?page=wp-connect">
-    <?php wp_nonce_field('update-options');?>
+    <?php wp_nonce_field('sync-options');?>
     <p><strong>同步设置</strong></p>
 	<table class="form-table">
 		<tr>
 			<td width="25%" valign="top">是否开启“微博同步”功能</td>
-			<td><input name="enable_wptm" type="checkbox" value="checkbox" <?php if($wptm_options['enable_wptm']) echo "checked='checked'"; ?>></td>
+			<td><input name="enable_wptm" type="checkbox" value="1" <?php if($wptm_options['enable_wptm']) echo "checked "; ?>></td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">Twitter是否使用代理？</td>
-			<td><input name="enable_proxy" type="checkbox" value="checkbox" <?php if($wptm_options['enable_proxy']) echo "checked='checked'"; ?>> (国内主机用户必须勾选才能使用)</td>
+			<td><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>> (国内主机用户必须勾选才能使用)</td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">自定义代理API</td>
@@ -148,7 +148,7 @@ function wp_connect_do_page() {
 		</tr>
 		<tr>
 			<th>同步内容设置</th>
-			<td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-4]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！) <br />提示：1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接
+			<td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-4]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！) <input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>> 是否将文章标签当成话题<br />提示：1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接
 			</td>
 		</tr>
 		<tr>
@@ -161,16 +161,16 @@ function wp_connect_do_page() {
 			<td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用半角逗号(,)隔开 (设置后该ID分类下的文章将不会同到微博)</td>
 		</tr>
 		<tr>
-			<td width="25%" valign="top">自定义页面密码设置</td>
-			<td><input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" /></td>
+			<td width="25%" valign="top">自定义页面</td>
+			<td>密码：<input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" /> <input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>> 禁用AJAX无刷新</td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">多作者博客</td>
-			<td><input name="multiple_authors" type="checkbox" value="checkbox" <?php if($wptm_options['multiple_authors']) echo "checked='checked'"; ?>> (是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。)</td>
+			<td><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>> (是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。)</td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">自定义短网址</td>
-			<td><input name="enable_shorten" type="checkbox"  value="checkbox" <?php if($wptm_options['enable_shorten']) echo "checked='checked'"; ?>> 博客默认 ( http://yourblog.com/?p=1 ) <input name="t_cn" type="checkbox"  value="checkbox" <?php if($wptm_options['t_cn']) echo "checked='checked'"; ?>> http://t.cn/xxxxxx ( <input name="t_cn_twitter" type="checkbox"  value="checkbox" <?php if($wptm_options['t_cn_twitter']) echo "checked='checked'"; ?>> 只应用于Twitter )</td>
+			<td><input name="enable_shorten" type="checkbox"  value="1" <?php if($wptm_options['enable_shorten']) echo "checked "; ?>> 博客默认 ( http://yourblog.com/?p=1 ) <input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>> http://t.cn/xxxxxx ( <input name="t_cn_twitter" type="checkbox"  value="1" <?php if($wptm_options['t_cn_twitter']) echo "checked "; ?>> 只应用于Twitter )</td>
 		</tr>
     </table>
 <p class="submit">
