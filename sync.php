@@ -83,16 +83,16 @@ function wp_connect_update() {
 		update_option("wptm_digu", $update);
 		echo $updated;
 	} 
-	if (isset($_POST['update_douban'])) {
-		update_option("wptm_douban", $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_renjian'])) {
-		update_option("wptm_renjian", $update);
+	if (isset($_POST['update_baidu'])) {
+		update_option("wptm_baidu", $update);
 		echo $updated;
 	} 
 	if (isset($_POST['update_fanfou'])) {
 		update_option("wptm_fanfou", $update);
+		echo $updated;
+	} 
+	if (isset($_POST['update_renjian'])) {
+		update_option("wptm_renjian", $update);
 		echo $updated;
 	} 
 	if (isset($_POST['update_zuosa'])) {
@@ -134,14 +134,14 @@ function wp_connect_update() {
 	if (isset($_POST['delete_digu'])) {
 		update_option("wptm_digu", '');
 	} 
-	if (isset($_POST['delete_douban'])) {
-		update_option("wptm_douban", '');
-	} 
-	if (isset($_POST['delete_renjian'])) {
-		update_option("wptm_renjian", '');
+	if (isset($_POST['delete_baidu'])) {
+		update_option("wptm_baidu", '');
 	} 
 	if (isset($_POST['delete_fanfou'])) {
 		update_option("wptm_fanfou", '');
+	} 
+	if (isset($_POST['delete_renjian'])) {
+		update_option("wptm_renjian", '');
 	} 
 	if (isset($_POST['delete_zuosa'])) {
 		update_option("wptm_zuosa", '');
@@ -163,6 +163,7 @@ function wp_option_account() {
 	'kaixin001' => get_option('wptm_kaixin001'),
 	'digu' => get_option('wptm_digu'),
 	'douban' => get_option('wptm_douban'),
+	'baidu' => get_option('wptm_baidu'),
 	'renjian' => get_option('wptm_renjian'),
 	'fanfou' => get_option('wptm_fanfou'),
 	'zuosa' => get_option('wptm_zuosa'),
@@ -240,6 +241,7 @@ function wp_usermeta_account( $user_ID ) {
 	'kaixin001' => get_user_meta($user_ID, 'wptm_kaixin001', true),
 	'digu' => get_user_meta($user_ID, 'wptm_digu', true),
 	'douban' => get_user_meta($user_ID, 'wptm_douban', true),
+	'baidu' => get_user_meta($user_ID, 'wptm_baidu', true),
 	'renjian' => get_user_meta($user_ID, 'wptm_renjian', true),
 	'fanfou' => get_user_meta($user_ID, 'wptm_fanfou', true),
 	'zuosa' => get_user_meta($user_ID, 'wptm_zuosa', true),
@@ -272,8 +274,8 @@ function wp_user_profile_update( $user_ID ) {
 		update_usermeta( $user_ID, 'wptm_digu', $update);
 		echo $updated;
 	} 
-	if (isset($_POST['update_douban'])) {
-		update_usermeta( $user_ID, 'wptm_douban', $update);
+	if (isset($_POST['update_baidu'])) {
+		update_usermeta( $user_ID, 'wptm_baidu', $update);
 		echo $updated;
 	} 
 	if (isset($_POST['update_renjian'])) {
@@ -323,8 +325,8 @@ function wp_user_profile_update( $user_ID ) {
 	if (isset($_POST['delete_digu'])) {
 		update_usermeta( $user_ID, 'wptm_digu', '');
 	} 
-	if (isset($_POST['delete_douban'])) {
-		update_usermeta( $user_ID, 'wptm_douban', '');
+	if (isset($_POST['delete_baidu'])) {
+		update_usermeta( $user_ID, 'wptm_baidu', '');
 	} 
 	if (isset($_POST['delete_renjian'])) {
 		update_usermeta( $user_ID, 'wptm_renjian', '');
@@ -374,7 +376,10 @@ function wp_connect_publish($post_ID) {
 	    $update_prefix = $wptm_options['update_prefix'];
 	    $update_days = $wptm_options['update_days'] * 60 * 60 * 24;
 	}
-	if (!array_filter($account)) {
+	if($account) {
+		$account = array_filter($account);
+	}
+	if (!$account) {
 		return;
 	}
 

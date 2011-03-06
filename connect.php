@@ -37,16 +37,16 @@ if (is_user_logged_in()) {
 	$tdata = get_user_meta($user_ID, 'tdata', true);
 
 	if ($stid && $tdata['tid'] == "stid") {
-		echo '<p><input name="comment_to_sina" type="checkbox" id="comment_to_sina" value="1"  /><label for="comment_to_sina">同步评论到新浪微博</label></p>';
+		echo '<p><input name="comment_to_sina" type="checkbox" id="comment_to_sina" value="1" /><label for="comment_to_sina">同步评论到新浪微博</label></p>';
 	} 
 	if ($qtid && $tdata['tid'] == "qtid") {
-		echo '<p><label for="comment_to_qq">同步评论到腾讯微博</label><input name="comment_to_qq" type="checkbox" id="comment_to_qq" value="1" style="width:30px;"  /></p>';
+		echo '<p><label for="comment_to_qq">同步评论到腾讯微博</label><input name="comment_to_qq" type="checkbox" id="comment_to_qq" value="1" style="width:30px;" /></p>';
 	} 
 	if ($ntid && $tdata['tid'] == "ntid") {
-		echo '<p><label for="comment_to_netease">同步评论到网易微博</label><input name="comment_to_netease" type="checkbox" id="comment_to_netease" value="1" style="width:30px;"  /></p>';
+		echo '<p><label for="comment_to_netease">同步评论到网易微博</label><input name="comment_to_netease" type="checkbox" id="comment_to_netease" value="1" style="width:30px;" /></p>';
 	} 
 	if ($dtid && $tdata['tid'] == "dtid") {
-		echo '<p><label for="comment_to_douban">同步评论到豆瓣</label><input name="comment_to_douban" type="checkbox" id="comment_to_douban" value="1" style="width:30px;"  /></p>';
+		echo '<p><label for="comment_to_douban">同步评论到豆瓣</label><input name="comment_to_douban" type="checkbox" id="comment_to_douban" value="1" style="width:30px;" /></p>';
 	} 
 	return;
 }
@@ -99,15 +99,15 @@ function wp_connect_sina(){
 	$sina = json_decode($sina);
 	
 	if((string)$sina->domain){
-		$sina_username = $sina->domain;
+		$username = $sina->domain;
 	} else {
-		$sina_username = $sina->id;
+		$username = $sina->id;
 	}
 
-	$user_email = $sina_username.'@t.sina.com.cn';
+	$tmail = $username.'@t.sina.com.cn';
 	$tid = "stid";
 		
-	wp_connect_login($sina->id.'|'.$sina_username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
+	wp_connect_login($sina->id.'|'.$username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
 //qq
 function wp_connect_qq(){
@@ -132,10 +132,10 @@ function wp_connect_qq(){
 	
 	$qq = $qq ->data;
 
-	$user_email = $qq->name.'@t.qq.com';
+	$tmail = $qq->name.'@t.qq.com';
 	$tid = "qtid";
 		
-	wp_connect_login($qq->head.'|'.$qq->name.'|'.$qq->nick.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
+	wp_connect_login($qq->head.'|'.$qq->name.'|'.$qq->nick.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
 //netease
 function wp_connect_netease(){
@@ -157,10 +157,10 @@ function wp_connect_netease(){
 
 	$netease = json_decode($netease);
 
-	$user_email = $netease->screen_name.'@t.163.com';
+	$tmail = $netease->screen_name.'@t.163.com';
 	$tid = "ntid";
 		
-	wp_connect_login($netease->profile_image_url.'|'.$netease->screen_name.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
+	wp_connect_login($netease->profile_image_url.'|'.$netease->screen_name.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
 //douban
 function wp_connect_douban(){
@@ -186,68 +186,89 @@ function wp_connect_douban(){
 	$douban_id = str_replace("http://api.douban.com/people/","",$douban->id);
 	$douban_url = "http://www.douban.com/people/".$douban_xmlns->uid;
 
-	$user_email = $douban_xmlns->uid.'@douban.com';
+	$tmail = $douban_xmlns->uid.'@douban.com';
 	$tid = "dtid";
 		
-	wp_connect_login($douban_id.'|'.$douban_xmlns->uid.'|'.$douban->title.'|'.$douban->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $user_email, $tid); 
+	wp_connect_login($douban_id.'|'.$douban_xmlns->uid.'|'.$douban->title.'|'.$douban_url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
 
-function wp_connect_login($userinfo, $user_email, $tid) {
+function wp_connect_login($userinfo, $tmail, $tid) {
 	global $wptm_connect;
-	$userinfo = explode('|',$userinfo);
-	if(count($userinfo) < 6) {
+	$userinfo = explode('|', $userinfo);
+	if (count($userinfo) < 6) {
 		wp_die("An error occurred while trying to contact Sina Connect.");
-	}
+	} 
 	$callback = $_SESSION['wp_callback'];
 	if (preg_match("/\b$userinfo[1]\b/i", $wptm_connect['disable_username'])) {
 		wp_die("很遗憾，”$userinfo[1]” 被系统保留，请更换微博帐号登录！返回 <a href='$callback'>$callback</a>");
 	} 
 
-	$wpuid = get_user_by_user_login('ID', $userinfo[1]);
-	$wpmail = get_user_by_user_login('user_email', $userinfo[1]);
-	$lock = get_user_meta($wpuid, 'lock',true);
-	$tdata = get_user_meta($wpuid, 'tdata',true);
 	$wpurl = get_bloginfo('wpurl');
-	if ($lock) {
-		if (($user_email != $wpmail) && ($userinfo[4] != $tdata['oauth_token'])) {
-			wp_die("很遗憾，”$userinfo[1]” 已被 $wpmail 绑定，您可以使用该用户 <a href='$wpurl/wp-login.php'>登录</a> ，或者更换微博帐号，或者 <a href='$wpurl/wp-login.php?action=lostpassword'>找回密码</a>！<br />返回: <a href='$callback'>$callback</a>");
-		}
+	$user = get_user_by_user_login($userinfo[1]);
+	$wpuid = $user['ID'];
+	$user_email = $user['user_email'];
+	$user_url = $user['user_url'];
+	$tdata = get_user_meta($wpuid, 'tdata', true);
+	$bind = get_user_meta($wpuid, 'bind', true);
+	if($bind) {
+		$bind = array_filter($bind);
 	}
-
-	if(!$wpuid) {
-	    $wpuid = '';
+	$sina = $bind['sina'];
+	$qq = $bind['qq'];
+	$netease = $bind['netease'];
+	$douban = $bind['douban'];
+	$t = strtolower($_SESSION['wp_go_login']);
+	$password = wp_generate_password();
+	if ($wpuid) {
+		if ($bind) {
+			if ($$t) {
+				$password = $user['user_pass'];
+			} else {
+				wp_die("很遗憾，”$userinfo[1]” 已被 $user_email 绑定，您可以使用该用户 <a href='$wpurl/wp-login.php'>登录</a> 并到‘我的资料’页绑定同名帐号，或者更换微博帐号，或者 <a href='$wpurl/wp-login.php?action=lostpassword'>找回密码</a>！<br />返回: <a href='$callback'>$callback</a>");
+			} 
+		} 
+	} else {
+		$wpuid = '';
+	}
+	
+	if(!$user_url) {
+	    $user_url = $userinfo[3];
 	}
 
 	$userdata = array(
 		'ID' => $wpuid,
-		'user_pass' => wp_generate_password(),
+		'user_pass' => $password,
 		'user_login' => $userinfo[1],
 		'display_name' => $userinfo[2],
-		'user_url' => $userinfo[3],
-		'user_email' => $user_email
-	);
+		'user_url' => $user_url,
+		'user_email' => $tmail);
 
-	if(!function_exists('wp_insert_user')){
-		include_once( ABSPATH . WPINC . '/registration.php' );
-	} 
+	if (!function_exists('wp_insert_user')) {
+		include_once(ABSPATH . WPINC . '/registration.php');
+	}
 
-	if ($userinfo[0] && !$lock) {
-		$wpuid = wp_insert_user($userdata);
-	} 
+	if ($userinfo[0]) {
+		if($tmail != $user_email) {
+			$wpuid = wp_insert_user($userdata);
+		}
+		if(!$bind) {
+		    update_usermeta($wpuid, 'bind', array($t => '1'));
+		}
+	}
 
 	if ($wpuid) {
 		update_usermeta($wpuid, $tid, $userinfo[0]);
-		$t_array = array ("tid" => $tid,
+		$t_array = array (
+			"tid" => $tid,
 			"oauth_token" => $userinfo[4],
-			"oauth_token_secret" => $userinfo[5]
-			);
+			"oauth_token_secret" => $userinfo[5]);
 		update_usermeta($wpuid, 'tdata', $t_array);
 	} 
 
-	if($wpuid) {
+	if ($wpuid) {
 		wp_set_auth_cookie($wpuid, true, false);
 		wp_set_current_user($wpuid);
-	}
+	} 
 }
 
 add_filter('user_contactmethods', 'wp_connect_author_page');
@@ -268,12 +289,13 @@ add_action( 'edit_user_profile_update', 'wp_connect_save_profile_fields' );
 
 function wp_connect_profile_fields( $user ) {
 	global $user_id;
+    $bind = get_user_meta($user_id, 'bind', true);
 ?>
 <h3>微博登录</h3>
 <table class="form-table">
 <tr>
-	<th><label for="lock">锁定帐号 <span class="description">(任意数字)</span></label></th>
-	<td><input type="text" name="lock" id="lock" size="1" maxlength="1" value="<?php echo get_user_meta($user_id, 'lock',true);?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> <span class="description">锁定后，其他同名的微博账号将不能登录，谨慎使用！</span></td>
+	<th>同名帐号</th>
+	<td><input name="sina" type="checkbox" value="1" <?php if($bind['sina']) echo "checked"; ?> />新浪微博 <input name="qq" type="checkbox" value="1" <?php if($bind['qq']) echo "checked"; ?> />腾讯微博 <input name="netease" type="checkbox" value="1" <?php if($bind['netease']) echo "checked"; ?> />网易微博 <input name="douban" type="checkbox" value="1" <?php if($bind['douban']) echo "checked"; ?> />豆瓣帐号 <input name="without" type="checkbox" value="1" <?php if($bind['without']) echo "checked"; ?> />都不同名<br /><span class="description">提示: 微博帐号跟用户名相同时请勾选</span></td>
 </tr>
 </table>
 <?php
@@ -282,7 +304,13 @@ function wp_connect_profile_fields( $user ) {
 function wp_connect_save_profile_fields( $user_id ) {
 
 if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
-    update_usermeta( $user_id, 'lock', trim($_POST['lock']) );
+	$bind = array(
+	'qq' => $_POST['qq'],
+	'sina' => $_POST['sina'],
+	'netease' => $_POST['netease'],
+	'douban' => $_POST['douban'],
+	'without' => $_POST['without']);
+    update_usermeta( $user_id, 'bind', $bind );
 }
 
 add_filter("get_avatar", "wp_connect_avatar",10,4);
@@ -397,10 +425,11 @@ function get_user_by_meta_value($meta_key, $meta_value) { // 获得user_id
 	return $wpdb -> get_var($wpdb -> prepare($sql, $meta_key, $meta_value));
 }
 
-function get_user_by_user_login($table_name, $user_login) { // 获得user_value
+function get_user_by_user_login($user_login) { // 获得user_value
 	global $wpdb;
-	$sql = "SELECT $table_name FROM $wpdb->users WHERE user_login = '%s'";
-	return $wpdb -> get_var($wpdb -> prepare($sql, $user_login));
+	$row = $wpdb->get_row("SELECT * FROM $wpdb->users WHERE user_login = '$user_login'");
+	$userinfo = array('ID' => $row->ID, 'user_pass' => $row->user_pass, 'user_email' => $row->user_email, 'user_url' => $row->user_url);
+	return $userinfo;
 }
 
 if(!function_exists('connect_login_form_login')){

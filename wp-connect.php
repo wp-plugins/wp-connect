@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.2.4
+Version: 1.2.5
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -144,7 +144,7 @@ function wp_connect_do_page() {
 		</tr>
 		<tr>
 			<td width="25%" valign="top">自定义代理API</td>
-			<td><input name="custom_proxy" type="text" size="60" value="<?php echo $wptm_options['custom_proxy']; ?>" /><br />不填则默认为http://smyxapi.appspot.com/api/statuses/update.xml [ <a href="http://www.smyx.net/wp-connect.html">使用说明</a> ]</td>
+			<td><input name="custom_proxy" type="text" size="60" value="<?php echo $wptm_options['custom_proxy']; ?>" /><br />不填则默认为http://smyxapi.appspot.com/api/statuses/update.xml [ <a href="http://www.smyx.net/wp-connect.html#twitterapi" target="_blank">使用说明</a> ]</td>
 		</tr>
 		<tr>
 			<th>同步内容设置</th>
@@ -179,4 +179,5 @@ function wp_connect_do_page() {
 </form>
 <?php
 include( dirname(__FILE__) . '/bind.php' );
+echo '<p><span style="font-size:14px; color: #440; padding:0 5px;">喜欢这个插件吗？你可以考虑捐赠支持我继续开发，您可以使用 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a> 或者查看 <a href="http://www.smyx.net/wp-connect.html#donate" target="_blank">其他</a> 捐赠方式。</span></p>';
 }

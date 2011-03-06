@@ -21,6 +21,7 @@ $wptm_options = get_option('wptm_options');
 <a href="javascript:;" id="kaixin001" class="kaixin001<?php echo ($account['kaixin001']['password']) ? ' bind': '';?>" title="开心网"><b></b></a>
 <a href="javascript:;" id="digu" class="digu<?php echo ($account['digu']['password']) ? ' bind': '';?>" title="嘀咕"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['douban']['oauth_token']) ? 'bind_douban' : 'douban';?>" class="douban" title="豆瓣"><b></b></a>
+<a href="javascript:;" id="baidu" class="baidu<?php echo ($account['baidu']['password']) ? ' bind': '';?>" title="百度说吧"><b></b></a>
 <a href="javascript:;" id="fanfou" class="fanfou<?php echo ($account['fanfou']['password']) ? ' bind': '';?>" title="饭否"><b></b></a>
 <a href="javascript:;" id="renjian" class="renjian<?php echo ($account['renjian']['password']) ? ' bind': '';?>" title="人间网"><b></b></a>
 <a href="javascript:;" id="zuosa" class="zuosa<?php echo ($account['zuosa']['password']) ? ' bind': '';?>" title="做啥"><b></b></a>
@@ -36,11 +37,10 @@ if ($wptm_options['multiple_authors']) {
 } 
 
 ?>
-<div class="dialog" id="dialog"> <a href="javascript:void(0);" class="close">X</a>
+<div class="dialog" id="dialog"> <a href="javascript:void(0);" class="close"></a>
 <form method="post" action="">
 <?php wp_nonce_field('options');?>
-
-<p align="center"><img src="<?php echo $plugin_url;?>/images/twitter.png" class="title_pic" /></p>
+<p><img src="<?php echo $plugin_url;?>/images/twitter.png" class="title_pic" /></p>
 <table class="form-table">
 <tr valign="top">
 <th scope="row">帐&nbsp;&nbsp;&nbsp;&nbsp;号 :</th>
@@ -52,31 +52,31 @@ if ($wptm_options['multiple_authors']) {
 </tr>
 </table>
 <p class="submit">
-<input type="submit" name="update" id="update" class="button-primary" value="<?php _e('Save Changes') ?>" />
+<input type="submit" name="update" id="update" class="button-primary" value="<?php _e('Save Changes') ?>" /> &nbsp;
 <input type="submit" name="delete" id="delete" class="button-primary" value="解除绑定" style="display: none;" />
 </p>
 </form>
 </div>
 
-<div class="dialog_add" id="dialog_add"> <a href="javascript:void(0);" class="close">X</a>
+<div class="dialog_add" id="dialog_add"> <a href="javascript:void(0);" class="close"></a>
 <form method="post" action="">
 <?php wp_nonce_field('add');?>
-  <h2>提示！</h2>
-  <p> 您还没有绑定同步授权，是否<b>绑定</b>？ </p>
+<p><img src="<?php echo $plugin_url;?>/images/twitter.png" class="title_pic" /></p>
+  <p>您还没有绑定同步授权，是否<b>绑定</b>？</p>
   <p>
-    <input type="submit" class="button-primary add" name="add" value="是" /> 
+    <input type="submit" class="button-primary add" name="add" value="是" /> &nbsp;
 	<input type="button" class="button-primary close" value="否" /> 
   </p>
 </form>
 </div>
 
-<div class="dialog_delete" id="dialog_delete"> <a href="javascript:void(0);" class="close">X</a>
+<div class="dialog_delete" id="dialog_delete"> <a href="javascript:void(0);" class="close"></a>
 <form method="post" action="">
 <?php wp_nonce_field('delete');?>
-  <h2>提示！</h2>
-  <p> 您已经绑定了同步授权，是否<b>解除</b>？ </p>
+<p><img src="<?php echo $plugin_url;?>/images/twitter.png" class="title_pic" /></p>
+  <p>您已经绑定了同步授权，是否<b>解除</b>？</p>
   <p>
-    <input type="submit" class="button-primary delete" name="delete" value="是" onclick="if(confirm('Are you sure？')) return true;else return false; " /> 
+    <input type="submit" class="button-primary delete" name="delete" value="是" onclick="if(confirm('Are you sure？')) return true;else return false; " /> &nbsp;
 	<input type="button" class="button-primary close" value="否" /> 
   </p>
 </form>
@@ -85,7 +85,7 @@ if ($wptm_options['multiple_authors']) {
 </div>
 <script type="text/javascript">
 $(".close").show();
-$("#twitter_porxy, #sohu, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa, #ms9911, #follow5").click(function () {
+$("#twitter_porxy, #sohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $('input[name="username"]').attr("id", "username_" + id);
@@ -95,6 +95,7 @@ $("#twitter_porxy, #sohu, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa,
   $("#username_renren").attr("value", "<?php echo $account['renren']['username'];?>");
   $("#username_kaixin001").attr("value", "<?php echo $account['kaixin001']['username'];?>");
   $("#username_digu").attr("value", "<?php echo $account['digu']['username'];?>");
+  $("#username_baidu").attr("value", "<?php echo $account['baidu']['username'];?>");
   $("#username_fanfou").attr("value", "<?php echo $account['fanfou']['username'];?>");
   $("#username_renjian").attr("value", "<?php echo $account['renjian']['username'];?>");
   $("#username_zuosa").attr("value", "<?php echo $account['zuosa']['username'];?>");
@@ -109,11 +110,13 @@ $(".bind").click(function () {
 });
 $("#twitter, #qq, #sina, #netease, #douban").click(function () {
   var id = $(this).attr("id");
+  $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $(".dialog_add").attr("id", "dialog_" + id);
   $(".add").attr("name", "add_" + id);
 });
 $("#bind_twitter, #bind_qq, #bind_sina, #bind_netease, #bind_douban").click(function () {
   var id = $(this).attr("id").replace('bind_', '');
+  $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $(".dialog_delete").attr("id", "dialog_" + id);
   $(".delete").attr("name", "delete_" + id + "_oauth");
 });
@@ -129,6 +132,7 @@ $("#sohu").floatdialog("dialog_sohu");
 $("#renren").floatdialog("dialog_renren");
 $("#kaixin001").floatdialog("dialog_kaixin001");
 $("#digu").floatdialog("dialog_digu");
+$("#baidu").floatdialog("dialog_baidu");
 $("#fanfou").floatdialog("dialog_fanfou");
 $("#renjian").floatdialog("dialog_renjian");
 $("#zuosa").floatdialog("dialog_zuosa");

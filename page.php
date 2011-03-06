@@ -44,6 +44,9 @@ function wp_update_page() {
 	if (isset($_POST['douban']) && $account['douban']) {
 		wp_update_douban($account['douban'], $status);
 	} 
+	if (isset($_POST['baidu']) && $account['baidu']) {
+		wp_update_baidu($account['baidu'], $status);
+	} 
 	if (isset($_POST['fanfou']) && $account['fanfou']) {
 		wp_update_fanfou($account['fanfou'], $status);
 	} 
@@ -119,6 +122,8 @@ var wpurl = "'.get_bloginfo('wpurl').'";
     <label for="digu">嘀咕</label>
     <input name="douban" id="douban" type="checkbox" value="checkbox" checked />
     <label for="douban">豆瓣</label>
+    <input name="baidu" id="baidu" type="checkbox" value="checkbox" checked />
+    <label for="baidu">百度说吧</label>
     <input name="fanfou" id="fanfou" type="checkbox" value="checkbox" checked />
     <label for="fanfou">饭否</label>
     <input name="renjian" id="renjian" type="checkbox" value="checkbox" checked />

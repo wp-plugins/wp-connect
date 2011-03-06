@@ -27,6 +27,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $status3); } //380
 	if($account['digu']) { wp_update_digu($account['digu'], $status); } //140
 	if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
+	if($account['baidu']) { wp_update_baidu($account['baidu'], $status); } //140
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
 	if($account['renjian']) { wp_update_renjian($account['renjian'], $status4); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
@@ -154,13 +155,13 @@ function wp_update_follow5($follow5, $status) {
 // 人人网
 function wp_update_renren($renren, $status) {
 	$cookie = tempnam('./tmp', 'renren');
-	$ch = wp_getCurl($cookie, "POST", "http://passport.renren.com/PLogin.do");
+	$ch = wp_getCurl($cookie, "http://passport.renren.com/PLogin.do");
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($renren["username"]) . '&password=' . urlencode($renren["password"]) . '&autoLogin=true&origURL=http%3A%2F%2Fwww.renren.com%2FHome.do&domain=renren.com');
 	$str = wp_update_result($ch);
 	$pattern = "/get_check:'([^']+)'/";
 	preg_match($pattern, $str, $matches);
 	$get_check = $matches[1];
-	$ch = wp_getCurl($cookie, "POST", "http://status.renren.com/doing/update.do");
+	$ch = wp_getCurl($cookie, "http://status.renren.com/doing/update.do");
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'c=' . urlencode($status) . '&raw=' . urlencode($status) . '&isAtHome=1&publisher_form_ticket=' . $get_check . '&requestToken=' . $get_check);
 	curl_setopt($ch, CURLOPT_REFERER, 'http://status.renren.com/ajaxproxy.htm');
 	$ret = wp_update_result($ch);
@@ -168,32 +169,49 @@ function wp_update_renren($renren, $status) {
 // 开心网
 function wp_update_kaixin001($kaixin001, $status) {
 	$cookie = tempnam('./tmp', 'kaixin001');
-	$ch = wp_getCurl($cookie, "POST", "http://wap.kaixin001.com/home/?id=");
+	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/home/?id=");
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($kaixin001["username"]) . '&password=' . urlencode($kaixin001["password"]) . '&remember=1&from=&refuid=0&refcode=&bind=&gotourl=&login=+%E7%99%BB+%E5%BD%95+');
 	$str = wp_update_result($ch);
 	$pattern = "/state.php\?verify=([^\"]+)\"/";
 	preg_match($pattern, $str, $matches);
 	$verify = $matches[1];
-	$ch = wp_getCurl($cookie, "POST", "http://wap.kaixin001.com/home/state_submit.php?verify=" . $verify);
+	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/home/state_submit.php?verify=" . $verify);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'state=' . urlencode($status));
 	curl_setopt($ch, CURLOPT_REFERER, '   http://wap.kaixin001.com/home/');
 	$ret = wp_update_result($ch);
 }
+// 百度说吧
+function wp_update_baidu($baidu, $status) {
+	$cookie = tempnam('./tmp', 'baidu');
+	$ch = wp_getCurl($cookie, "http://t.baidu.com/userlogin");
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'UserLoginForm%5Busername%5D=' . urlencode($baidu["username"]) . '&UserLoginForm%5Bpassword%5D=' . urlencode($baidu["password"]) . '&UserLoginForm%5BrememberMe%5D=0');
+	curl_setopt($ch, CURLOPT_REFERER, 'http://t.baidu.com/');
+	$str = wp_update_result($ch);
 
-function wp_getCurl($cookie, $method, $url) {
+	preg_match('/logmt=(.*);.*/U', $str, $matches);
+	$verify = $matches[1];
+	$ch = wp_getCurl($cookie, 'https://passport.baidu.com/logm?tpl=sn&t=' . $verify . '&u=http%3A%2F%2Ft.baidu.com%2F');
+	$ret = wp_update_result($ch);
+
+	$ch = wp_getCurl($cookie, "http://t.baidu.com/message/post?");
+	$params = 'm_content=' . $status . '&pic_id=0&pic_filename=&pic_id_water=0&pic_filename_water=';
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+	curl_setopt($ch, CURLOPT_REFERER, 'http://t.baidu.com/');
+	$out = wp_update_result($ch);
+}
+
+function wp_getCurl($cookie, $url) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
 	curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie);
+	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
 	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	if ($method == "POST") {
-		curl_setopt($ch, CURLOPT_POST, true);
-	} else {
-		curl_setopt($ch, CURLOPT_POST, false);
-	} 
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12');
+	curl_setopt($ch, CURLOPT_POST, 1);
 	return $ch;
-} 
+}
 
 function wp_update_result($ch) {
 	$str = curl_exec($ch);
@@ -201,4 +219,5 @@ function wp_update_result($ch) {
 	unset($ch);
 	return $str;
 }
+
 ?>
