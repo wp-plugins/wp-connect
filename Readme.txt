@@ -1,7 +1,7 @@
 ﻿=== Plugin Name ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: twitter,qq,sina,netease,sohu,digu,douban,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
+Tags: twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
 Requires at least: 2.9
 Tested up to: 3.1.0
 Stable tag: 1.2.5
