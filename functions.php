@@ -27,7 +27,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $status3); } //380
 	if($account['digu']) { wp_update_digu($account['digu'], $status); } //140
 	if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
-	if($account['baidu']) { wp_update_baidu($account['baidu'], $status); } //140
+	if($account['baidu']) { wp_update_baidu($account['baidu'], $status2); } //140*
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
 	if($account['renjian']) { wp_update_renjian($account['renjian'], $status4); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
