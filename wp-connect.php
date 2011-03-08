@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.2.5
+Version: 1.2.6
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -36,14 +36,17 @@ function wp_strlen($text) { // 字符长度(一个汉字代表一个字符，两
 }
 
 function wp_status($content, $url, $length, $num = '') {
-	$temp_length = (mb_strlen($content)) + (mb_strlen($url));
+	$temp_length = (mb_strlen($content, 'utf-8')) + (mb_strlen($url, 'utf-8'));
 	if ($num) {
 		$temp_length = (wp_strlen($content)) + (wp_strlen($url));
 	} 
 	if ($temp_length > $length - 3) { // ...
-		$chars = $length - 6 - mb_strlen($url);
+		$chars = $length - 6 - mb_strlen($url, 'utf-8'); // ' - '
 		if ($num) {
-			$chars = $length - 6 - wp_strlen($url);
+			$chars = $length - 3 - wp_strlen($url);
+			$str = mb_substr($content, 0, $chars, 'utf-8');
+			preg_match_all("/([\x{0000}-\x{00FF}]){1}/u", $str, $half_width); // 半角字符
+			$chars = $chars + count($half_width[0])/2;
 		} 
 		$content = mb_substr($content, 0, $chars, 'utf-8');
 		$content = $content . "...";
