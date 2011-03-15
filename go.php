@@ -2,7 +2,7 @@
 include "../../../wp-config.php";
 if (is_user_logged_in()) {
 	include_once(dirname(__FILE__) . '/config.php');
-	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
+	require(dirname(__FILE__) . '/OAuth/OAuth.php');
 	session_start();
 	if ($_GET['OAuth'] == "qq" || $_GET['OAuth'] == "QQ" || $_GET['callback'] == "QQ") {
 		include_once("OAuth/qq_OAuth.php");

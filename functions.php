@@ -3,15 +3,16 @@ include_once(dirname(__FILE__) . '/config.php');
 // 同步列表
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
-	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
+	require(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if ($wptm_options['t_cn']) { // 是否使用t.cn短网址
-		$t_cn = get_t_cn($postlink);
-		if ($wptm_options['t_cn_twitter']) { // 只用于Twitter
-			$t_url = $t_cn;
-		} else {
-			$postlink = $t_url = $t_cn;
+		$t_url = get_t_cn($postlink);
+		if (!$wptm_options['t_cn_twitter']) { // 只用于Twitter
+			$postlink = $t_url;
 		} 
+	} else {
+	    $t_url = $postlink;
 	}
+
 	$twitter = wp_status($title, $t_url, 140);
 	$status = wp_status($title, $postlink, 140);
 	$status1 = wp_status($title, $postlink, 128);
