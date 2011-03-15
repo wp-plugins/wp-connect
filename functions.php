@@ -1,9 +1,9 @@
 <?php
-include_once('config.php');
+include_once(dirname(__FILE__) . '/config.php');
 // 同步列表
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
-	require_once('OAuth/OAuth.php');
+	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if ($wptm_options['t_cn']) { // 是否使用t.cn短网址
 		$t_cn = get_t_cn($postlink);
 		if ($wptm_options['t_cn_twitter']) { // 只用于Twitter
@@ -35,7 +35,9 @@ function wp_update_list($title, $postlink, $pic, $account) {
 }
 // 腾讯微博
 function wp_update_t_qq($qq, $status, $pic) {
-	include_once('OAuth/qq_OAuth.php');
+	if (!class_exists('qqOAuth')) {
+		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
+	} 
 	$to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET, $qq['oauth_token'], $qq['oauth_token_secret']);
 	if ($pic) {
 		$result = $to -> upload($status , $pic);
@@ -45,7 +47,9 @@ function wp_update_t_qq($qq, $status, $pic) {
 } 
 // 新浪微博
 function wp_update_t_sina($sina, $status, $pic) {
-	include_once('OAuth/sina_OAuth.php');
+	if (!class_exists('sinaOAuth')) {
+		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+	} 
 	$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $sina['oauth_token'], $sina['oauth_token_secret']);
 	if ($pic) {
 		$result = $to -> upload($status , $pic);
@@ -55,7 +59,9 @@ function wp_update_t_sina($sina, $status, $pic) {
 } 
 // 网易微博
 function wp_update_t_163($netease, $status, $pic) {
-	include_once('OAuth/netease_OAuth.php');
+	if (!class_exists('neteaseOAuth')) {
+		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
+	} 
 	$to = new neteaseClient(APP_KEY, APP_SECRET, $netease['oauth_token'], $netease['oauth_token_secret']);
 	if ($pic) {
 		$result = $to -> upload($status , $pic);
@@ -82,7 +88,9 @@ function wp_update_twitter($status) {
 		$buffer = curl_exec($curl_handle);
 		curl_close($curl_handle);
 	} else {
-		include_once('OAuth/twitter_OAuth.php');
+		if (!class_exists('twitterOAuth')) {
+			include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
+		} 
 		$twitter = get_option('wptm_twitter_oauth');
 		$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $twitter['oauth_token'], $twitter['oauth_token_secret']);
 		$result = $to -> update($status);
@@ -90,7 +98,9 @@ function wp_update_twitter($status) {
 } 
 // 豆瓣
 function wp_update_douban($douban, $status) {
-	include_once('OAuth/douban_OAuth.php');
+	if (!class_exists('doubanOAuth')) {
+		include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
+	} 
 	$to = new doubanClient(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $douban['oauth_token'], $douban['oauth_token_secret']);
 	$result = $to -> update($status);
 } 

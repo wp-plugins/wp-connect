@@ -1,5 +1,5 @@
 <?php
-include_once('config.php');
+include_once(dirname(__FILE__) . '/config.php');
 
 add_action('init', 'wp_connect_init');
 
@@ -15,7 +15,7 @@ function wp_connect_init(){
 	}
 	if(!is_user_logged_in()) {		
         if(isset($_GET['oauth_token'])){
-			require_once('OAuth/OAuth.php');
+			require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 			if($_SESSION['wp_go_login'] == "SINA")    {wp_connect_sina();}
 			if($_SESSION['wp_go_login'] == "QQ")      {wp_connect_qq();}
 			if($_SESSION['wp_go_login'] == "NETEASE") {wp_connect_netease();}
@@ -56,7 +56,7 @@ if (is_user_logged_in()) {
 	.t_login_button img{ border:none;}
     </style>
 <?php
-	if(is_singular() && !get_option('comment_registration')) {
+	if(is_singular()) {
 	echo '<p>您可以登录以下帐号发表评论：</p>';
 	}
 	echo '<p class="t_login_button">';
@@ -70,14 +70,16 @@ if (is_user_logged_in()) {
 	echo '<a href="'.$plugin_url.'/login.php?go=DOUBAN" rel="nofollow"><img src="'.$plugin_url.'/images/btn_douban.png" alt="使用豆瓣帐号登录" /></a> ';
 	}
 	if($wptm_connect['netease']) {
-	echo '<a href="'.$plugin_url.'/login.php?go=NETEASE" rel="nofollow"><img src="'.$plugin_url.'/images/btn_netease.png" alt="使用网易微博登录" /></a> ';
+	echo '<a href="'.$plugin_url.'/login.php?go=NETEASE" rel="nofollow"><img src="'.$plugin_url.'/images/btn_netease.jpg" alt="使用网易微博登录" /></a> ';
 	}
 	echo '</p>';
 }
 
 //sina
 function wp_connect_sina(){
-	include_once('OAuth/sina_OAuth.php');
+	if (!class_exists('sinaOAuth')) {
+		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+	}
 	
 	$to = new sinaOAuth(SINA_APP_KEY, SINA_APP_SECRET, $_GET['oauth_token'],$_SESSION['oauth_token_secret']);
 	
@@ -109,7 +111,9 @@ function wp_connect_sina(){
 }
 //qq
 function wp_connect_qq(){
-	include_once('OAuth/qq_OAuth.php');
+	if(!class_exists('qqOAuth')){
+		include dirname(__FILE__).'/OAuth/qq_OAuth.php';
+	}
 	
 	$to = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET, $_GET['oauth_token'],$_SESSION['oauth_token_secret']);
 	
@@ -135,8 +139,10 @@ function wp_connect_qq(){
 }
 //netease
 function wp_connect_netease(){
-	include_once('OAuth/netease_OAuth.php');
-
+	if (!class_exists('neteaseOAuth')) {
+		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
+	}
+	
 	$to = new neteaseOAuth(APP_KEY, APP_SECRET, $_GET['oauth_token'],$_SESSION['oauth_token_secret']);
 	
 	$tok = $to ->getAccessToken($_REQUEST['oauth_verifier']);
@@ -158,8 +164,9 @@ function wp_connect_netease(){
 }
 //douban
 function wp_connect_douban(){
-	include_once('OAuth/douban_OAuth.php');
-
+	if (!class_exists('doubanOAuth')) {
+		include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
+	}
 	$to = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $_GET['oauth_token'],$_SESSION["oauth_token_secret"]);
 	
 	$tok = $to->getAccessToken();
@@ -366,10 +373,12 @@ function wp_connect_comment($id){
 	$content = strip_tags($comments->comment_content);
 	$link = get_permalink($comment_post_id)."#comment-".$id;
 
-    require_once('OAuth/OAuth.php');
+    require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
 		if($_POST['comment_to_sina']){
-			include_once('OAuth/sina_OAuth.php');
+			if (!class_exists('sinaOAuth')) {
+		        include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+	        }
 			$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['sina_username']) { $content = '@'.$wptm_connect['sina_username'].' '.$content; }
 			$status = wp_status($content, $link, 140, 1);
@@ -378,7 +387,9 @@ function wp_connect_comment($id){
 	}
 	if($qtid){
 		if($_POST['comment_to_qq']){
-			include_once('OAuth/qq_OAuth.php');
+			if(!class_exists('qqOAuth')){
+				include dirname(__FILE__).'/OAuth/qq_OAuth.php';
+			}
 	        $to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['qq_username']) { $content = '@'.$wptm_connect['qq_username'].' '.$content; }
 			$status = wp_status($content, $link, 140, 1);
@@ -387,7 +398,9 @@ function wp_connect_comment($id){
 	}
 	if($ntid){
 		if($_POST['comment_to_netease']){
-			include_once('OAuth/netease_OAuth.php');
+			if (!class_exists('neteaseOAuth')) {
+		        include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
+	        }
 			$to = new neteaseClient(APP_KEY, APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['netease_username']) { $content = '@'.$wptm_connect['netease_username'].' '.$content; }
 			$status = wp_status($content, $link, 163);
@@ -396,7 +409,9 @@ function wp_connect_comment($id){
 	}
 	if($dtid){
 		if($_POST['comment_to_douban']){
-			include_once('OAuth/douban_OAuth.php');
+			if (!class_exists('doubanOAuth')) {
+		        include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
+	        }
 			$to = new doubanClient(DOUBAN_APP_KEY, DOUBAN_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
 			$status = wp_status($content, $link, 128);
 			$result = $to -> update($status);

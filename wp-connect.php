@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.3.0
+Version: 1.2.6
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -16,10 +16,10 @@ add_action('admin_menu', 'wp_connect_add_page');
 add_action('init', 'wp_connect_header');
 add_action('admin_head', 'wp_connect_reauthorize');
 
-include_once( 'sync.php' );
-include_once( 'functions.php' );
-include_once( 'connect.php' );
-include_once( 'page.php' );
+include_once( dirname(__FILE__) . '/sync.php' );
+include_once( dirname(__FILE__) . '/functions.php' );
+include_once( dirname(__FILE__) . '/connect.php' );
+include_once( dirname(__FILE__) . '/page.php' );
 
 function wp_strlen($text) { // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 	$a = mb_strlen($text, 'UTF-8');
@@ -112,8 +112,8 @@ function wp_connect_do_page() {
 		<tr>
 			<td width="25%" valign="top">添加按钮</td>
 			<td><input name="sina" type="checkbox" value="1" <?php if($wptm_connect['sina']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_sina.png" />
-			<input name="qq" type="checkbox" value="1" <?php if($wptm_connect['qq']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_qq.png" /> <br />
-			<input name="netease" type="checkbox" value="1" <?php if($wptm_connect['netease']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_netease.png" /> 
+			<input name="qq" type="checkbox" value="1" <?php if($wptm_connect['qq']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_qq.png" /> 
+			<input name="netease" type="checkbox" value="1" <?php if($wptm_connect['netease']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_netease.jpg" /> 
 			<input name="douban" type="checkbox" value="1" <?php if($wptm_connect['douban']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_douban.png" /></td>
 		</tr>
 		<tr>
@@ -181,6 +181,6 @@ function wp_connect_do_page() {
 </p>
 </form>
 <?php
-include_once( 'bind.php' );
+include( dirname(__FILE__) . '/bind.php' );
 echo '<p><span style="font-size:14px; color: #440; padding:0 5px;">喜欢这个插件吗？你可以考虑捐赠支持我继续开发，您可以使用 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a> 或者查看 <a href="http://www.smyx.net/wp-connect.html#donate" target="_blank">其他</a> 捐赠方式。</span></p>';
 }

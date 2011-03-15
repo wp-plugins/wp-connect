@@ -222,7 +222,7 @@ function wp_user_profile_fields( $user ) {
 </p>
 </form>
 </div>
-<?php include_once( 'bind.php' );?>
+<?php include( dirname(__FILE__) . '/bind.php' );?>
 <div class="remove_botton">
 <form>
 <?php
@@ -341,27 +341,6 @@ function wp_user_profile_update( $user_ID ) {
 		update_usermeta( $user_ID, 'wptm_follow5', '');
 	}
 }
-
-function wp_connect_sidebox() {
-	global $post;
-	if ($post -> post_status != 'publish') {
-		$checked = 'checked';
-		$sync = '(保存为草稿、待审不会同步)';
-	} else {
-		$sync = '(不勾选，则以更新间隔判断)';
-		$new = '<p><label><input type="checkbox" name="publish_post_new" value="1" />当作新文章发布</label></p>';
-	} 
-	echo '<p><label><input type="checkbox" name="publish_sync" value="1" ' . $checked . '/>发布时同步 ' . $sync . '</label></p>';
-	echo $new;
-} 
-
-function wp_connect_add_sidebox() {
-	if (function_exists('add_meta_box')) {
-		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'post', 'side', 'high');
-	} 
-} 
-add_action('admin_menu', 'wp_connect_add_sidebox');
-
 // 发布
 function wp_connect_publish($post_ID) {
 	global $wptm_options;
@@ -400,7 +379,7 @@ function wp_connect_publish($post_ID) {
 	if($account) {
 		$account = array_filter($account);
 	}
-	if (!$account || (is_admin() && !$_POST['publish_sync'])) {
+	if (!$account) {
 		return;
 	}
 
@@ -435,14 +414,9 @@ function wp_connect_publish($post_ID) {
 	if (($thePost -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) { // 判断是否为新发布
 		$title = $new_prefix . $title;
 	} else if ((($_POST['originalaction'] == "editpost") && (($_POST['prev_status'] == 'publish') || ($_POST['original_post_status'] == 'publish'))) && $thePost -> post_status == 'publish') { //判断是否已发布
-		if (!$_POST['publish_sync']) {
-			if (($time - strtotime($thePost -> post_date) < $update_days) || $update_days == 0) {
-				return; //判断当前时间与文章发布时间差
-			} 
-		}
-		if ($_POST['publish_post_new']) {
-			$update_prefix = $new_prefix;
-		}
+		if (($time - strtotime($thePost -> post_date) < $update_days) || $update_days == 0) {
+			return; //判断当前时间与文章发布时间差
+		} 
 		$title = $update_prefix . $title;
 	} else if ( $_POST['_inline_edit'] ){ // 判断是否是快速编辑
 	    $quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' .$_POST['jj'] . ' ' .$_POST['hh'] . ':' .$_POST['mn'] . ':00';

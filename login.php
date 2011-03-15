@@ -1,24 +1,28 @@
 <?php
 include "../../../wp-config.php";
-include_once('config.php');
-require_once('OAuth/OAuth.php');
+include_once(dirname(__FILE__) . '/config.php');
+require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 session_start();
 if ($_GET['go'] == "SINA") {
-	include_once('OAuth/sina_OAuth.php'); 
-	$to = new sinaOAuth(SINA_APP_KEY, SINA_APP_SECRET);
-
+	if (!class_exists('sinaOAuth')) {
+		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+	} 
+	$to = new SinaOAuth(SINA_APP_KEY, SINA_APP_SECRET);
 } elseif ($_GET['go'] == "QQ") {
-	include_once('OAuth/qq_OAuth.php'); 
+	if (!class_exists('qqOAuth')) {
+		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
+	} 
 	$to = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET);
-
 } elseif ($_GET['go'] == "NETEASE") {
-	include_once('OAuth/netease_OAuth.php'); 
+	if (!class_exists('neteaseOAuth')) {
+		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
+	} 
 	$to = new neteaseOAuth(APP_KEY, APP_SECRET);
-
 } elseif ($_GET['go'] == "DOUBAN") {
-	include_once('OAuth/douban_OAuth.php'); 
+	if (!class_exists('doubanOAuth')) {
+		include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
+	} 
 	$to = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET);
-
 } else {
 	if ($_SESSION['wp_callback']) {
 		$callback = $_SESSION['wp_callback'];
