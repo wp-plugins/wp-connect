@@ -4,13 +4,13 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
 Requires at least: 2.9
 Tested up to: 3.1.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 
 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
 
 == Description ==
 
-可以使用腾讯微博、新浪微博、网易微博、豆瓣帐号登录WordPress博客，支持同步评论到相对应的微博。
+可以使用腾讯微博、新浪微博、网易微博、人人帐号、豆瓣帐号登录WordPress博客，支持同步评论到相对应的微博。
 
 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、百度说吧、饭否、人间网、做啥、Follow5等。
 
@@ -78,6 +78,10 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 
 `<?php wp_connect(); ?>`
 
+6、出现类似于 Call to undefined function curl_init() in ……
+
+这是因为您的服务器(主机)当前配置不支持curl，请联系空间商重新配置。
+
 
 == Installation ==
 
@@ -86,6 +90,11 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 3.国内主机用户使用Twitter请勾选使用代理。
 
 == Changelog ==
+
+= 1.3.1 =
+*2011/03/15
+支持用人人帐号登录，支持分享到人人网。
+修正部分bug。
 
 = 1.3.0 =
 *2011/03/12

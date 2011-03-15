@@ -84,75 +84,7 @@ if ($wptm_options['multiple_authors']) {
 
 </div>
 <script type="text/javascript">
-$(".close").show();
-$("#twitter_porxy, #sohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5").click(function () {
-  var id = $(this).attr("id").replace('_porxy', '');
-  $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
-  $('input[name="username"]').attr("id", "username_" + id);
-  $('input[name="password"]').attr("id", "password_" + id);
-  $("#username_twitter").attr("value", "<?php echo $account['twitter']['username'];?>");
-  $("#username_sohu").attr("value", "<?php echo $account['sohu']['username'];?>");
-  $("#username_renren").attr("value", "<?php echo $account['renren']['username'];?>");
-  $("#username_kaixin001").attr("value", "<?php echo $account['kaixin001']['username'];?>");
-  $("#username_digu").attr("value", "<?php echo $account['digu']['username'];?>");
-  $("#username_baidu").attr("value", "<?php echo $account['baidu']['username'];?>");
-  $("#username_fanfou").attr("value", "<?php echo $account['fanfou']['username'];?>");
-  $("#username_renjian").attr("value", "<?php echo $account['renjian']['username'];?>");
-  $("#username_zuosa").attr("value", "<?php echo $account['zuosa']['username'];?>");
-  $("#username_follow5").attr("value", "<?php echo $account['follow5']['username'];?>");
-  $('#update').attr("name", 'update_' + id);
-  $('#delete').attr("name", 'delete_' + id);
-  $(".dialog").attr("id", "dialog_" + id);
-  $("#delete").hide();
-});
-$(".bind").click(function () {
-  $("#delete").show();
-});
-$("#twitter, #qq, #sina, #netease, #douban").click(function () {
-  var id = $(this).attr("id");
-  $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
-  $(".dialog_add").attr("id", "dialog_" + id);
-  $(".add").attr("name", "add_" + id);
-});
-$("#bind_twitter, #bind_qq, #bind_sina, #bind_netease, #bind_douban").click(function () {
-  var id = $(this).attr("id").replace('bind_', '');
-  $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
-  $(".dialog_delete").attr("id", "dialog_" + id);
-  $(".delete").attr("name", "delete_" + id + "_oauth");
-});
-$("#demo").floatdialog("dialog");
-$("#demo_add").floatdialog("dialog_add");
-$("#demo_delete").floatdialog("dialog_delete");
-$("#twitter, #bind_twitter, #twitter_porxy").floatdialog("dialog_twitter");
-$("#qq, #bind_qq").floatdialog("dialog_qq");
-$("#sina, #bind_sina").floatdialog("dialog_sina");
-$("#netease, #bind_netease").floatdialog("dialog_netease");
-$("#douban, #bind_douban").floatdialog("dialog_douban");
-$("#sohu").floatdialog("dialog_sohu");
-$("#renren").floatdialog("dialog_renren");
-$("#kaixin001").floatdialog("dialog_kaixin001");
-$("#digu").floatdialog("dialog_digu");
-$("#baidu").floatdialog("dialog_baidu");
-$("#fanfou").floatdialog("dialog_fanfou");
-$("#renjian").floatdialog("dialog_renjian");
-$("#zuosa").floatdialog("dialog_zuosa");
-$("#follow5").floatdialog("dialog_follow5");
-$('#update').click(function () {
-  if ($(".username").val() == '') {
-    alert("请输入帐号!  ");
-    return false;
-  }
-  if ($(".password").val() == '') {
-    alert("请输入密码!  ");
-    return false;
-  }
-});
-$('.wrap').click(function () {
-   $('.updated').slideUp("normal");
-});
-$(function () {
-   $('.remove_botton').remove();
-});
+$(".close").show();$("#twitter_porxy, #sohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5").click(function(){var id=$(this).attr("id").replace('_porxy','');$(".title_pic").attr("src","<?php echo $plugin_url;?>/images/"+id+".png");$('input[name="username"]').attr("id","username_"+id);$('input[name="password"]').attr("id","password_"+id);$("#username_twitter").attr("value","<?php echo $account['twitter']['username'];?>");$("#username_sohu").attr("value","<?php echo $account['sohu']['username'];?>");$("#username_renren").attr("value","<?php echo $account['renren']['username'];?>");$("#username_kaixin001").attr("value","<?php echo $account['kaixin001']['username'];?>");$("#username_digu").attr("value","<?php echo $account['digu']['username'];?>");$("#username_baidu").attr("value","<?php echo $account['baidu']['username'];?>");$("#username_fanfou").attr("value","<?php echo $account['fanfou']['username'];?>");$("#username_renjian").attr("value","<?php echo $account['renjian']['username'];?>");$("#username_zuosa").attr("value","<?php echo $account['zuosa']['username'];?>");$("#username_follow5").attr("value","<?php echo $account['follow5']['username'];?>");$('#update').attr("name",'update_'+id);$('#delete').attr("name",'delete_'+id);$(".dialog").attr("id","dialog_"+id);$("#delete").hide()});$(".bind").click(function(){$("#delete").show()});$("#twitter, #qq, #sina, #netease, #douban").click(function(){var id=$(this).attr("id");$(".title_pic").attr("src","<?php echo $plugin_url;?>/images/"+id+".png");$(".dialog_add").attr("id","dialog_"+id);$(".add").attr("name","add_"+id)});$("#bind_twitter, #bind_qq, #bind_sina, #bind_netease, #bind_douban").click(function(){var id=$(this).attr("id").replace('bind_','');$(".title_pic").attr("src","<?php echo $plugin_url;?>/images/"+id+".png");$(".dialog_delete").attr("id","dialog_"+id);$(".delete").attr("name","delete_"+id+"_oauth")});$("#demo").floatdialog("dialog");$("#demo_add").floatdialog("dialog_add");$("#demo_delete").floatdialog("dialog_delete");$("#twitter, #bind_twitter, #twitter_porxy").floatdialog("dialog_twitter");$("#qq, #bind_qq").floatdialog("dialog_qq");$("#sina, #bind_sina").floatdialog("dialog_sina");$("#netease, #bind_netease").floatdialog("dialog_netease");$("#douban, #bind_douban").floatdialog("dialog_douban");$("#sohu").floatdialog("dialog_sohu");$("#renren").floatdialog("dialog_renren");$("#kaixin001").floatdialog("dialog_kaixin001");$("#digu").floatdialog("dialog_digu");$("#baidu").floatdialog("dialog_baidu");$("#fanfou").floatdialog("dialog_fanfou");$("#renjian").floatdialog("dialog_renjian");$("#zuosa").floatdialog("dialog_zuosa");$("#follow5").floatdialog("dialog_follow5");$('#update').click(function(){if($(".username").val()==''){alert("请输入帐号!  ");return false}if($(".password").val()==''){alert("请输入密码!  ");return false}});$('.wrap').click(function(){$('.updated').slideUp("normal")});$(function(){$('.remove_botton').remove()});
 </script>
 <?php
 }

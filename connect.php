@@ -1,5 +1,5 @@
 <?php
-include_once('config.php');
+include_once(dirname(__FILE__) . '/config.php');
 
 add_action('init', 'wp_connect_init');
 
@@ -7,6 +7,10 @@ if ($wptm_connect['enable_connect']) { // 是否开启连接微博功能
 	add_action('comment_form', 'wp_connect');
     add_action("login_form", "wp_connect");
     add_action("register_form", "wp_connect",12);
+    if($wptm_connect['renren']) {
+		add_filter('language_attributes', 'wp_connect_renren_header');
+		add_action('the_content','wp_connect_renren_share');
+    }
 }
 
 function wp_connect_init(){
@@ -15,7 +19,7 @@ function wp_connect_init(){
 	}
 	if(!is_user_logged_in()) {		
         if(isset($_GET['oauth_token'])){
-			require_once('OAuth/OAuth.php');
+			require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 			if($_SESSION['wp_go_login'] == "SINA")    {wp_connect_sina();}
 			if($_SESSION['wp_go_login'] == "QQ")      {wp_connect_qq();}
 			if($_SESSION['wp_go_login'] == "NETEASE") {wp_connect_netease();}
@@ -37,16 +41,16 @@ if (is_user_logged_in()) {
 	$tdata = get_user_meta($user_ID, 'tdata', true);
 
 	if ($stid && $tdata['tid'] == "stid") {
-		echo '<p><input name="comment_to_sina" type="checkbox" id="comment_to_sina" value="1" /><label for="comment_to_sina">同步评论到新浪微博</label></p>';
+		echo '<p><label for="comment_to_sina">同步评论到新浪微博</label><input name="comment_to_sina" type="checkbox" id="comment_to_sina" value="1" style="width:20px;" /></p>';
 	} 
 	if ($qtid && $tdata['tid'] == "qtid") {
-		echo '<p><label for="comment_to_qq">同步评论到腾讯微博</label><input name="comment_to_qq" type="checkbox" id="comment_to_qq" value="1" style="width:30px;" /></p>';
+		echo '<p><label for="comment_to_qq">同步评论到腾讯微博</label><input name="comment_to_qq" type="checkbox" id="comment_to_qq" value="1" style="width:20px;" /></p>';
 	} 
 	if ($ntid && $tdata['tid'] == "ntid") {
-		echo '<p><label for="comment_to_netease">同步评论到网易微博</label><input name="comment_to_netease" type="checkbox" id="comment_to_netease" value="1" style="width:30px;" /></p>';
+		echo '<p><label for="comment_to_netease">同步评论到网易微博</label><input name="comment_to_netease" type="checkbox" id="comment_to_netease" value="1" style="width:20px;" /></p>';
 	} 
 	if ($dtid && $tdata['tid'] == "dtid") {
-		echo '<p><label for="comment_to_douban">同步评论到豆瓣</label><input name="comment_to_douban" type="checkbox" id="comment_to_douban" value="1" style="width:30px;" /></p>';
+		echo '<p><label for="comment_to_douban">同步评论到豆瓣</label><input name="comment_to_douban" type="checkbox" id="comment_to_douban" value="1" style="width:20px;" /></p>';
 	} 
 	return;
 }
@@ -61,23 +65,29 @@ if (is_user_logged_in()) {
 	}
 	echo '<p class="t_login_button">';
 	if($wptm_connect['sina']) {
-	echo '<a href="'.$plugin_url.'/login.php?go=SINA" rel="nofollow"><img src="'.$plugin_url.'/images/btn_sina.png" alt="使用新浪微博登录" /></a> ';
+	echo '<a href="'.$plugin_url.'/login.php?go=SINA" rel="nofollow"><img src="'.$plugin_url.'/images/btn_sina.png" alt="用新浪微博登录" /></a> ';
 	}
 	if($wptm_connect['qq']) {
-	echo '<a href="'.$plugin_url.'/login.php?go=QQ" rel="nofollow"><img src="'.$plugin_url.'/images/btn_qq.png" alt="使用腾讯微博登录" /></a> ';
+	echo '<a href="'.$plugin_url.'/login.php?go=QQ" rel="nofollow"><img src="'.$plugin_url.'/images/btn_qq.png" alt="用腾讯微博登录" /></a> ';
 	}
 	if($wptm_connect['douban']) {
-	echo '<a href="'.$plugin_url.'/login.php?go=DOUBAN" rel="nofollow"><img src="'.$plugin_url.'/images/btn_douban.png" alt="使用豆瓣帐号登录" /></a> ';
+	echo '<a href="'.$plugin_url.'/login.php?go=DOUBAN" rel="nofollow"><img src="'.$plugin_url.'/images/btn_douban.png" alt="用豆瓣帐号登录" /></a> ';
 	}
 	if($wptm_connect['netease']) {
-	echo '<a href="'.$plugin_url.'/login.php?go=NETEASE" rel="nofollow"><img src="'.$plugin_url.'/images/btn_netease.png" alt="使用网易微博登录" /></a> ';
+	echo '<a href="'.$plugin_url.'/login.php?go=NETEASE" rel="nofollow"><img src="'.$plugin_url.'/images/btn_netease.png" alt="用网易微博登录" /></a> ';
+	}
+	if($wptm_connect['renren']) {
+	echo '<a href="javascript:;" onclick="XN.Connect.requireSession(function(){rr_login();});return false;"><img src="'.$plugin_url.'/images/btn_renren.png" alt="用人人帐号登录" /></a>';
+	wp_connect_renren();
 	}
 	echo '</p>';
 }
 
-//sina
+// 新浪微博
 function wp_connect_sina(){
-	include_once('OAuth/sina_OAuth.php');
+	if (!class_exists('sinaOAuth')) {
+		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+	}
 	
 	$to = new sinaOAuth(SINA_APP_KEY, SINA_APP_SECRET, $_GET['oauth_token'],$_SESSION['oauth_token_secret']);
 	
@@ -107,9 +117,11 @@ function wp_connect_sina(){
 		
 	wp_connect_login($sina->id.'|'.$username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
-//qq
+// 腾讯微博
 function wp_connect_qq(){
-	include_once('OAuth/qq_OAuth.php');
+	if(!class_exists('qqOAuth')){
+		include dirname(__FILE__).'/OAuth/qq_OAuth.php';
+	}
 	
 	$to = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET, $_GET['oauth_token'],$_SESSION['oauth_token_secret']);
 	
@@ -133,10 +145,12 @@ function wp_connect_qq(){
 		
 	wp_connect_login($qq->head.'|'.$qq->name.'|'.$qq->nick.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
-//netease
+// 网易微博
 function wp_connect_netease(){
-	include_once('OAuth/netease_OAuth.php');
-
+	if (!class_exists('neteaseOAuth')) {
+		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
+	}
+	
 	$to = new neteaseOAuth(APP_KEY, APP_SECRET, $_GET['oauth_token'],$_SESSION['oauth_token_secret']);
 	
 	$tok = $to ->getAccessToken($_REQUEST['oauth_verifier']);
@@ -156,10 +170,11 @@ function wp_connect_netease(){
 		
 	wp_connect_login($netease->profile_image_url.'|'.$netease->screen_name.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
-//douban
+// 豆瓣网
 function wp_connect_douban(){
-	include_once('OAuth/douban_OAuth.php');
-
+	if (!class_exists('doubanOAuth')) {
+		include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
+	}
 	$to = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $_GET['oauth_token'],$_SESSION["oauth_token_secret"]);
 	
 	$tok = $to->getAccessToken();
@@ -184,7 +199,37 @@ function wp_connect_douban(){
 		
 	wp_connect_login($douban_id.'|'.$douban_xmlns->uid.'|'.$douban->title.'|'.$douban_url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
+// 人人网
+function wp_connect_renren() {
+   global $plugin_url, $wptm_connect;
+   $renren_api_key = $wptm_connect['renren_api_key'];
+   $renren_secret = $wptm_connect['renren_secret'];
+echo '<script type="text/javascript">
+var xmlHttp;function rr_login(){XN_RequireFeatures(["Api"],function(){XN.Main.apiClient.users_getLoggedInUser(function(result,ex){if(!ex){XN.Main.apiClient.users_getInfo([result.uid],[],function(result,ex){if(!ex){if(window.XMLHttpRequest){xmlHttp=new XMLHttpRequest()}else if(window.ActiveXObject){xmlHttp=new ActiveXObject("Microsoft.XMLHTTP")}xmlHttp.open("POST","'.$plugin_url.'/renren.php",true);xmlHttp.onreadystatechange=rr_change;xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");xmlHttp.send("uid="+result[0].uid+"&name="+result[0].name+"&tinyurl="+result[0].tinyurl+"&renren_api_key='.$renren_api_key.'&renren_secret='.$renren_secret.'")}})}})})}function rr_change(){if(xmlHttp.readyState==4){location.replace("'.$_SESSION['wp_callback'].'")}}
+</script>
+<script type="text/javascript" src="http://static.connect.renren.com/js/v1.0/FeatureLoader.jsp"></script>
+<script type="text/javascript"> 
+XN_RequireFeatures(["EXNML"], function () {
+  XN.Main.init("'.$renren_api_key.'", "'.$plugin_url.'/xd_receiver.html");
+});
+</script>';
+}
 
+function wp_connect_renren_header($language) {
+    return $language.' xmlns:xn="http://www.renren.com/2009/xnml"';
+}
+
+function wp_connect_renren_share($content) {
+	if(is_user_logged_in() && is_singular()) {
+	    $share = '<a href="#" name="xn_share">分享到人人网</a><script type="text/javascript" src="http://static.connect.renren.com/js/share.js"></script>';
+		$user_id = wp_get_user_id();
+		$tdata = get_user_meta($user_id, 'tdata', true);
+		if($tdata['tid'] == 'rtid')
+			return $content.'<br />'.$share;
+	}
+	return $content;
+}
+// 登录
 function wp_connect_login($userinfo, $tmail, $tid) {
 	global $wptm_connect;
 	$userinfo = explode('|', $userinfo);
@@ -197,11 +242,12 @@ function wp_connect_login($userinfo, $tmail, $tid) {
 	} 
 
 	$wpurl = get_bloginfo('wpurl');
+    $avatar = $userinfo[0];
 	$user = get_user_by_user_login($userinfo[1]);
 	$wpuid = $user['ID'];
 	$user_email = $user['user_email'];
 	$user_url = $user['user_url'];
-	$tdata = get_user_meta($wpuid, 'tdata', true);
+	//$tdata = get_user_meta($wpuid, 'tdata', true);
 	$bind = get_user_meta($wpuid, 'bind', true);
 	if($bind) {
 		$bind = array_filter($bind);
@@ -210,7 +256,12 @@ function wp_connect_login($userinfo, $tmail, $tid) {
 	$qq = $bind['qq'];
 	$netease = $bind['netease'];
 	$douban = $bind['douban'];
+	$renren = $bind['renren'];
 	$t = strtolower($_SESSION['wp_go_login']);
+	if($tid == 'rtid') {
+	    $t = 'renren';
+		$avatar = $userinfo[6];
+	}
 	$password = wp_generate_password();
 	if ($wpuid) {
 		if ($bind) {
@@ -250,15 +301,17 @@ function wp_connect_login($userinfo, $tmail, $tid) {
 	}
 
 	if ($wpuid) {
-		update_usermeta($wpuid, $tid, $userinfo[0]);
+		update_usermeta($wpuid, $tid, $avatar);
 		$t_array = array (
 			"tid" => $tid,
 			"oauth_token" => $userinfo[4],
 			"oauth_token_secret" => $userinfo[5]);
-		update_usermeta($wpuid, 'tdata', $t_array);
-	} 
+		if($tid == 'rtid') {
+			update_usermeta($wpuid, 'tdata', array ("tid" => 'rtid'));
+		} else {
+			update_usermeta($wpuid, 'tdata', $t_array);
+		}
 
-	if ($wpuid) {
 		wp_set_auth_cookie($wpuid, true, false);
 		wp_set_current_user($wpuid);
 	} 
@@ -266,10 +319,8 @@ function wp_connect_login($userinfo, $tmail, $tid) {
 
 add_filter('user_contactmethods', 'wp_connect_author_page');
 function wp_connect_author_page($input) {
-	// add
-	$input['imqq'] = 'QQ';
-	// del
-	unset($input['yim']);
+	$input['imqq'] = 'QQ';	// add
+	unset($input['yim']);	// del
 	unset($input['aim']);
 	unset($input['jabber']);
 	return $input;
@@ -288,7 +339,7 @@ function wp_connect_profile_fields( $user ) {
 <table class="form-table">
 <tr>
 	<th>同名帐号</th>
-	<td><input name="sina" type="checkbox" value="1" <?php if($bind['sina']) echo "checked"; ?> />新浪微博 <input name="qq" type="checkbox" value="1" <?php if($bind['qq']) echo "checked"; ?> />腾讯微博 <input name="netease" type="checkbox" value="1" <?php if($bind['netease']) echo "checked"; ?> />网易微博 <input name="douban" type="checkbox" value="1" <?php if($bind['douban']) echo "checked"; ?> />豆瓣帐号 <input name="without" type="checkbox" value="1" <?php if($bind['without']) echo "checked"; ?> />都不同名<br /><span class="description">提示: 微博帐号跟用户名相同时请勾选</span></td>
+	<td><input name="sina" type="checkbox" value="1" <?php if($bind['sina']) echo "checked"; ?> />新浪微博 <input name="qq" type="checkbox" value="1" <?php if($bind['qq']) echo "checked"; ?> />腾讯微博 <input name="netease" type="checkbox" value="1" <?php if($bind['netease']) echo "checked"; ?> />网易微博 <input name="renren" type="checkbox" value="1" <?php if($bind['renren']) echo "checked"; ?> />人人帐号 <input name="douban" type="checkbox" value="1" <?php if($bind['douban']) echo "checked"; ?> />豆瓣帐号 <input name="without" type="checkbox" value="1" <?php if($bind['without']) echo "checked"; ?> />都不同名<br /><span class="description">提示: 微博帐号跟用户名相同时请勾选</span></td>
 </tr>
 </table>
 <?php
@@ -302,10 +353,11 @@ if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 	'sina' => $_POST['sina'],
 	'netease' => $_POST['netease'],
 	'douban' => $_POST['douban'],
+	'renren' => $_POST['renren'],
 	'without' => $_POST['without']);
     update_usermeta( $user_id, 'bind', $bind );
 }
-
+// 头像
 add_filter("get_avatar", "wp_connect_avatar",10,4);
 function wp_connect_avatar($avatar, $email = '', $size = '32') {
 	global $comment,$wptm_connect;
@@ -343,11 +395,18 @@ function wp_connect_avatar($avatar, $email = '', $size = '32') {
 			$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
 			return $avatar;
 		} 
+	}
+	if (preg_match("/@renren.com/i", $comment_email)) {
+		if ($rtid = get_usermeta($email, 'rtid')) {
+			$out = $rtid;
+			$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
+			return $avatar;
+		} 
 	} else {
 		return $avatar;
 	} 
 } 
-
+// 同步评论
 add_action('comment_post', 'wp_connect_comment',1000);
 function wp_connect_comment($id){
 	global $wptm_connect;
@@ -366,10 +425,12 @@ function wp_connect_comment($id){
 	$content = strip_tags($comments->comment_content);
 	$link = get_permalink($comment_post_id)."#comment-".$id;
 
-    require_once('OAuth/OAuth.php');
+    require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
 		if($_POST['comment_to_sina']){
-			include_once('OAuth/sina_OAuth.php');
+			if (!class_exists('sinaOAuth')) {
+		        include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+	        }
 			$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['sina_username']) { $content = '@'.$wptm_connect['sina_username'].' '.$content; }
 			$status = wp_status($content, $link, 140, 1);
@@ -378,7 +439,9 @@ function wp_connect_comment($id){
 	}
 	if($qtid){
 		if($_POST['comment_to_qq']){
-			include_once('OAuth/qq_OAuth.php');
+			if(!class_exists('qqOAuth')){
+				include dirname(__FILE__).'/OAuth/qq_OAuth.php';
+			}
 	        $to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['qq_username']) { $content = '@'.$wptm_connect['qq_username'].' '.$content; }
 			$status = wp_status($content, $link, 140, 1);
@@ -387,7 +450,9 @@ function wp_connect_comment($id){
 	}
 	if($ntid){
 		if($_POST['comment_to_netease']){
-			include_once('OAuth/netease_OAuth.php');
+			if (!class_exists('neteaseOAuth')) {
+		        include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
+	        }
 			$to = new neteaseClient(APP_KEY, APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['netease_username']) { $content = '@'.$wptm_connect['netease_username'].' '.$content; }
 			$status = wp_status($content, $link, 163);
@@ -396,7 +461,9 @@ function wp_connect_comment($id){
 	}
 	if($dtid){
 		if($_POST['comment_to_douban']){
-			include_once('OAuth/douban_OAuth.php');
+			if (!class_exists('doubanOAuth')) {
+		        include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
+	        }
 			$to = new doubanClient(DOUBAN_APP_KEY, DOUBAN_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
 			$status = wp_status($content, $link, 128);
 			$result = $to -> update($status);
@@ -415,6 +482,12 @@ function get_user_by_user_login($user_login) { // 获得user_value
 	$row = $wpdb->get_row("SELECT * FROM $wpdb->users WHERE user_login = '$user_login'");
 	$userinfo = array('ID' => $row->ID, 'user_pass' => $row->user_pass, 'user_email' => $row->user_email, 'user_url' => $row->user_url);
 	return $userinfo;
+}
+
+function wp_get_user_id() { //获得登录者ID
+    global $current_user;        
+    get_currentuserinfo();
+	return $current_user->ID;
 }
 
 if(!function_exists('connect_login_form_login')){

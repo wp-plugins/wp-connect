@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.3.0
+Version: 1.3.1
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -13,13 +13,11 @@ $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
 
 add_action('admin_menu', 'wp_connect_add_page');
-add_action('init', 'wp_connect_header');
-add_action('admin_head', 'wp_connect_reauthorize');
 
-include_once( 'sync.php' );
-include_once( 'functions.php' );
-include_once( 'connect.php' );
-include_once( 'page.php' );
+include_once( dirname(__FILE__) . '/sync.php' );
+include_once( dirname(__FILE__) . '/functions.php' );
+include_once( dirname(__FILE__) . '/connect.php' );
+include_once( dirname(__FILE__) . '/page.php' );
 
 function wp_strlen($text) { // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 	$a = mb_strlen($text, 'UTF-8');
@@ -65,7 +63,7 @@ function wp_in_array($a, $b) {
 	return false;
 }
 
-if (!class_exists('get_t_cn')) {
+if (!function_exists('get_t_cn')) {
 // 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {
 		$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source=744243473&url_long=' . $long_url;
@@ -90,6 +88,17 @@ function wp_connect_reauthorize() {
 		echo "<div class='update-nag'><center><p>您还没有对“WordPress连接微博”进行设置，<a href='options-general.php?page=wp-connect'>现在去设置</a></p></center></div>";
 	} 
 }
+
+add_action('admin_head', 'wp_connect_reauthorize');
+
+function wp_connect_curl_warning(){
+	if (!function_exists( 'curl_init' )) {
+	echo "<div class='updated'><p><strong>很遗憾！您的服务器(主机)当前配置不支持curl，不能正常使用该插件！请联系空间商重新配置。</strong></p></div>";
+	}
+}
+
+add_action('admin_notices', 'wp_connect_curl_warning');
+
 // 设置
 function wp_connect_do_page() {
 	global $plugin_url;
@@ -111,10 +120,15 @@ function wp_connect_do_page() {
 		</tr>
 		<tr>
 			<td width="25%" valign="top">添加按钮</td>
-			<td><input name="sina" type="checkbox" value="1" <?php if($wptm_connect['sina']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_sina.png" />
-			<input name="qq" type="checkbox" value="1" <?php if($wptm_connect['qq']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_qq.png" /> <br />
-			<input name="netease" type="checkbox" value="1" <?php if($wptm_connect['netease']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_netease.png" /> 
-			<input name="douban" type="checkbox" value="1" <?php if($wptm_connect['douban']) echo "checked "; ?> /><img src="<?php echo $plugin_url; ?>/images/btn_douban.png" /></td>
+			<td><label><input name="sina" type="checkbox" value="1" <?php if($wptm_connect['sina']) echo "checked "; ?> />新浪微博</label>
+			<label><input name="qq" type="checkbox" value="1" <?php if($wptm_connect['qq']) echo "checked "; ?> />腾讯微博</label>
+			<label><input name="netease" type="checkbox" value="1" <?php if($wptm_connect['netease']) echo "checked "; ?> />网易微博</label>
+			<label><input name="renren" type="checkbox" value="1" <?php if($wptm_connect['renren']) echo "checked "; ?> />人人连接</label>
+			<label><input name="douban" type="checkbox" value="1" <?php if($wptm_connect['douban']) echo "checked "; ?> />豆瓣</label></td>
+		</tr>
+		<tr>
+			<td width="25%" valign="top">人人连接APP</td>
+			<td>API Key: <input name="renren_api_key" type="text" value='<?php echo $wptm_connect['renren_api_key'];?>' /> Secret: <input name="renren_secret" type="text" value='<?php echo $wptm_connect['renren_secret'];?>' /> [ <a href="http://www.smyx.net/wp-connect.html#renrenapp" target="_blank">如何获取?</a> ] </td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top">绑定微博帐号</td>
@@ -181,6 +195,6 @@ function wp_connect_do_page() {
 </p>
 </form>
 <?php
-include_once( 'bind.php' );
+include( dirname(__FILE__) . '/bind.php' );
 echo '<p><span style="font-size:14px; color: #440; padding:0 5px;">喜欢这个插件吗？你可以考虑捐赠支持我继续开发，您可以使用 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a> 或者查看 <a href="http://www.smyx.net/wp-connect.html#donate" target="_blank">其他</a> 捐赠方式。</span></p>';
 }

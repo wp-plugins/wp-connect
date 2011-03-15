@@ -17,6 +17,7 @@ function wp_connect_header () {
 		header('Location:' . $plugin_url. '/go.php?OAuth=DOUBAN');
 	}
 }
+add_action('init', 'wp_connect_header');
 // 写入数据库
 function wp_connect_update() {
     $update_days = (trim($_POST['update_days'])) ? trim($_POST['update_days']) : '0';
@@ -43,10 +44,13 @@ function wp_connect_update() {
 		'sina' => trim($_POST['sina']),
 		'qq' => trim($_POST['qq']),
 		'netease' => trim($_POST['netease']),
+		'renren' => trim($_POST['renren']),
 		'douban' => trim($_POST['douban']),
 		'sina_username' => trim($_POST['sina_username']),
 		'qq_username' => trim($_POST['qq_username']),
 		'netease_username' => trim($_POST['netease_username']),
+		'renren_api_key' => trim($_POST['renren_api_key']),
+		'renren_secret' => trim($_POST['renren_secret']),
 		'netease_avatar' => trim($_POST['netease_avatar']),
 		'disable_username' => $disable_username
 		);
@@ -222,7 +226,7 @@ function wp_user_profile_fields( $user ) {
 </p>
 </form>
 </div>
-<?php include_once( 'bind.php' );?>
+<?php include( dirname(__FILE__) . '/bind.php' );?>
 <div class="remove_botton">
 <form>
 <?php

@@ -13,7 +13,7 @@ if ($_GET['do'] == "microblog") {
 function wp_update_page() {
 	$account = wp_option_account();
 	$status = mb_substr(stripslashes($_POST['message']), 0, 140, 'utf-8');
-	require_once('OAuth/OAuth.php');
+	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if (isset($_POST['pic'])) {
 		$pic = $_POST['pic'];
 	} 
@@ -92,6 +92,7 @@ function wp_to_microblog() {
 echo '
 <script type="text/javascript">
 function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value=field.value.substring(0,maxlimit)}else{document.getElementById("wordage").childNodes[1].innerHTML=maxlimit-field.value.length}}
+function selectall(form){for(var i=0;i<form.elements.length;i++){var box = form.elements[i];if (box.name != "chkall")box.checked = form.clickall.checked;}}
 var wpurl = "'.get_bloginfo('wpurl').'";
 </script>
 <link type="text/css" href="'.$plugin_url.'/page.css" rel="stylesheet" />
@@ -104,7 +105,8 @@ var wpurl = "'.get_bloginfo('wpurl').'";
     图片地址：<p>
     <p id="v2"><input name="pic" id="pic" size="50" type="text" />（仅支持腾讯、新浪、网易微博）</p>
     发布到：
-    <p><input name="twitter" id="twitter" type="checkbox" value="checkbox" checked />
+    <p><label><input type="checkbox" id="clickall" onclick="selectall(this.form);" checked /> 全选</label>
+    <input name="twitter" id="twitter" type="checkbox" value="checkbox" checked />
     <label for="twitter">Twitter</label>
     <input name="qq" id="qq" type="checkbox" value="checkbox" checked />
     <label for="qq">腾讯微博</label>
