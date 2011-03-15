@@ -425,7 +425,7 @@ function wp_connect_comment($id){
 	$content = strip_tags($comments->comment_content);
 	$link = get_permalink($comment_post_id)."#comment-".$id;
 
-    require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
+    require(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
 		if($_POST['comment_to_sina']){
 			if (!class_exists('sinaOAuth')) {
