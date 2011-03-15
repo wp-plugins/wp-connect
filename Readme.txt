@@ -82,6 +82,15 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 
 这是因为您的服务器(主机)当前配置不支持curl，请联系空间商重新配置。
 
+7、如何获取人人网api key？
+
+首先打开人人网开放平台: http://app.renren.com/developers/app/，登录后点右上角的 创建新应用 按钮，输入应用名称，创建成功后就可以看到API Key和Secret Key了，
+之后点击左边的Connect设置 ，Connect URL填写为 http://www.smyx.net/wp-login.php，根域名填写为 smyx.net，把相关域名改成你的就行了。
+
+8、为什么我使用该插件授权时总是失败？
+
+这个问题有点纠结，因为大部分人可以完成授权，有可能是主机不支持，也可能是插件冲突，所以新增一个页面，来帮助这些人得到授权码，但不保证能正常使用！
+网址：http://www.smyx.net/apps/oauth.php
 
 == Installation ==
 
