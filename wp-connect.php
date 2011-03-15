@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.3.1
+Version: 1.3.2
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
