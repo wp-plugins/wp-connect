@@ -90,7 +90,7 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 8、为什么我使用该插件授权时总是失败？
 
 这个问题有点纠结，因为大部分人可以完成授权，有可能是主机不支持，也可能是插件冲突，所以新增一个页面，来帮助这些人得到授权码，但不保证能正常使用！
-网址：http://www.smyx.net/apps/oauth.php
+网址: http://www.smyx.net/apps/oauth.php
 
 == Installation ==
 
