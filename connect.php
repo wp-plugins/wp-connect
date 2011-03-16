@@ -19,7 +19,7 @@ function wp_connect_init(){
 	}
 	if(!is_user_logged_in()) {		
         if(isset($_GET['oauth_token'])){
-			require(dirname(__FILE__) . '/OAuth/OAuth.php');
+			require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 			if($_SESSION['wp_go_login'] == "SINA")    {wp_connect_sina();}
 			if($_SESSION['wp_go_login'] == "QQ")      {wp_connect_qq();}
 			if($_SESSION['wp_go_login'] == "NETEASE") {wp_connect_netease();}
@@ -425,7 +425,7 @@ function wp_connect_comment($id){
 	$content = strip_tags($comments->comment_content);
 	$link = get_permalink($comment_post_id)."#comment-".$id;
 
-    require(dirname(__FILE__) . '/OAuth/OAuth.php');
+    require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
 		if($_POST['comment_to_sina']){
 			if (!class_exists('sinaOAuth')) {

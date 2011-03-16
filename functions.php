@@ -3,7 +3,7 @@ include_once(dirname(__FILE__) . '/config.php');
 // 同步列表
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
-	require(dirname(__FILE__) . '/OAuth/OAuth.php');
+	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if ($wptm_options['t_cn']) { // 是否使用t.cn短网址
 		$t_url = get_t_cn($postlink);
 		if (!$wptm_options['t_cn_twitter']) { // 只用于Twitter
