@@ -1,7 +1,7 @@
 <?php
 include "../../../wp-config.php";
 include_once(dirname(__FILE__) . '/config.php');
-require(dirname(__FILE__) . '/OAuth/OAuth.php');
+require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 session_start();
 if ($_GET['go'] == "SINA") {
 	if (!class_exists('sinaOAuth')) {

@@ -13,7 +13,7 @@ if ($_GET['do'] == "microblog") {
 function wp_update_page() {
 	$account = wp_option_account();
 	$status = mb_substr(stripslashes($_POST['message']), 0, 140, 'utf-8');
-	require(dirname(__FILE__) . '/OAuth/OAuth.php');
+	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if (isset($_POST['pic'])) {
 		$pic = $_POST['pic'];
 	} 
