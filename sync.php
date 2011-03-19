@@ -376,7 +376,7 @@ function wp_connect_publish($post_ID) {
 		$time = time() + (get_option('gmt_offset') * 3600);
 	} 
 	$title = strip_tags(get_the_title($post_ID));
-	$postlink = get_permalink($post_ID);
+	$postlink = wp_urlencode(get_permalink($post_ID));
 	$shortlink = get_bloginfo('url') . "/?p=" . $post_ID;
 	$thePost = get_post($post_ID);
 	$content = $thePost -> post_content;
