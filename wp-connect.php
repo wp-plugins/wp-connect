@@ -63,6 +63,13 @@ function wp_in_array($a, $b) {
 	return false;
 }
 
+function wp_urlencode($url) {
+	$a = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%23', '%5B', '%5D');
+	$b = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]");
+	$url = str_replace($a, $b, urlencode($url));
+	return strtolower($url);
+}
+
 if (!function_exists('get_t_cn')) {
 // 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {

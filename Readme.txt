@@ -2,9 +2,9 @@
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
 Tags: twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
-Requires at least: 2.9
+Requires at least: 3.0
 Tested up to: 3.1.0
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 
 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
 
@@ -99,6 +99,10 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 3.国内主机用户使用Twitter请勾选使用代理。
 
 == Changelog ==
+
+= 1.3.4 =
+*2011/03/19
+支持文章中文链接。
 
 = 1.3.3 =
 *2011/03/18

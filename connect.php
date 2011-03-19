@@ -423,7 +423,7 @@ function wp_connect_comment($id){
 	$tdata = get_user_meta($comments->user_id, 'tdata',true);
 	
 	$content = strip_tags($comments->comment_content);
-	$link = get_permalink($comment_post_id)."#comment-".$id;
+	$link = wp_urlencode(get_permalink($comment_post_id))."#comment-".$id;
 
     require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
