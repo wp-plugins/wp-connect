@@ -1,7 +1,7 @@
 ﻿=== WP Connect ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
+Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,登录,登陆,连接,同步
 Requires at least: 3.0
 Tested up to: 3.1.0
 Stable tag: 1.3.4
@@ -94,9 +94,11 @@ Twitter、腾讯微博、新浪微博、网易微博、豆瓣采用OAuth授权�
 
 == Installation ==
 
-1.下载插件上传到WordPress插件目录，后台激活 ，
-2.到设置页面开启插件并设置，以及账号绑定等，
-3.国内主机用户使用Twitter请勾选使用代理。
+1. Upload everything into the "/wp-content/plugins/" directory of your WordPress site.
+2. Activate in the "Plugins" admin panel.
+3. Visit the "Settings | WP Connect" administration page to configure. 
+
+下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
 
