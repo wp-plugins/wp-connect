@@ -1,4 +1,4 @@
-﻿=== Plugin Name ===
+﻿=== WordPress Connect ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
 Tags: twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,connect
