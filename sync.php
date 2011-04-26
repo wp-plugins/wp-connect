@@ -10,21 +10,57 @@ function wp_connect_header () {
 	if (isset($_POST['add_sina'])) {
 		header('Location:' . $plugin_url. '/go.php?OAuth=SINA');
 	}
+	if (isset($_POST['add_sohu'])) {
+		header('Location:' . $plugin_url. '/go.php?OAuth=SOHU');
+	}
 	if (isset($_POST['add_netease'])) {
 		header('Location:' . $plugin_url. '/go.php?OAuth=NETEASE');
 	}
 	if (isset($_POST['add_douban'])) {
 		header('Location:' . $plugin_url. '/go.php?OAuth=DOUBAN');
 	}
+	// 删除数据库+停用插件
+	if (isset($_POST['wptm_delete'])) {
+		delete_option("wptm_options");
+		delete_option("wptm_connect");
+		delete_option("wptm_advanced");
+		delete_option("wptm_openqq");
+		delete_option("wptm_opensina");
+		delete_option("wptm_opensohu");
+		delete_option("wptm_twitter");/*old*/
+		delete_option("wptm_twitter_oauth");
+		delete_option("wptm_qq");
+		delete_option("wptm_sina");
+		delete_option("wptm_sohu");
+		delete_option("wptm_netease");
+		delete_option("wptm_douban");
+		delete_option("wptm_renren");
+		delete_option("wptm_kaixin001");
+		delete_option("wptm_digu");
+		delete_option("wptm_baidu");
+		delete_option("wptm_fanfou");
+		delete_option("wptm_renjian");
+		delete_option("wptm_zuosa");
+		delete_option("wptm_follow5");
+		$deactivate_url = 'plugins.php?action=deactivate&plugin=wp-connect/wp-connect.php';
+		if(function_exists('wp_nonce_url')) {
+			$deactivate_url = str_replace('&amp;', '&', wp_nonce_url($deactivate_url, 'deactivate-plugin_wp-connect/wp-connect.php'));
+		    header('Location:' . $deactivate_url);
+		}
+	}
 }
 add_action('init', 'wp_connect_header');
-// 写入数据库
+/*
+ * 插件页面
+ * 写入数据库
+ */
 function wp_connect_update() {
     $update_days = (trim($_POST['update_days'])) ? trim($_POST['update_days']) : '0';
 	$update_options = array(
 		'enable_wptm' => trim($_POST['enable_wptm']),
 		'enable_proxy' => trim($_POST['enable_proxy']),
-		'custom_proxy' => trim($_POST['custom_proxy']),
+		'api' => trim($_POST['api']),
+		'bind' => trim($_POST['bind']),
 		'sync_option' => trim($_POST['sync_option']),
 		'enable_tags' => trim($_POST['enable_tags']),
 		'new_prefix' => trim($_POST['new_prefix']),
@@ -43,11 +79,13 @@ function wp_connect_update() {
 		'enable_connect' => trim($_POST['enable_connect']),
 		'sina' => trim($_POST['sina']),
 		'qq' => trim($_POST['qq']),
+		'sohu' => trim($_POST['sohu']),
 		'netease' => trim($_POST['netease']),
 		'renren' => trim($_POST['renren']),
 		'douban' => trim($_POST['douban']),
 		'sina_username' => trim($_POST['sina_username']),
 		'qq_username' => trim($_POST['qq_username']),
+		'sohu_username' => trim($_POST['sohu_username']),
 		'netease_username' => trim($_POST['netease_username']),
 		'renren_api_key' => trim($_POST['renren_api_key']),
 		'renren_secret' => trim($_POST['renren_secret']),
@@ -58,6 +96,14 @@ function wp_connect_update() {
 		'username' => trim($_POST['username']),
 		'password' => trim($_POST['password'])
 		);
+	$appkey = array(
+		'app_key' => trim($_POST['username']),
+		'secret'  => trim($_POST['password'])
+		);
+	$token = array(
+		'oauth_token' => trim($_POST['username']),
+		'oauth_token_secret' => trim($_POST['password'])
+		);
 	$updated = '<div class="updated"><p><strong>' . __('Settings saved.') . '</strong></p></div>';
 	if (isset($_POST['update_options'])) {
 		update_option("wptm_options", $update_options);
@@ -66,13 +112,41 @@ function wp_connect_update() {
 	if (isset($_POST['wptm_connect'])) {
 		update_option("wptm_connect", $wptm_connect);
 		echo $updated;
-	} 
+	}
+	if (isset($_POST['update_openqq'])) {
+		update_option("wptm_openqq", $appkey);
+		echo $updated;
+	}
+	if (isset($_POST['update_opensina'])) {
+		update_option("wptm_opensina", $appkey);
+		echo $updated;
+	}
+	if (isset($_POST['update_opensohu'])) {
+		update_option("wptm_opensohu", $appkey);
+		echo $updated;
+	}
 	if (isset($_POST['update_twitter'])) {
-		update_option("wptm_twitter", $update);
+		update_option("wptm_twitter_oauth", $token);
+		echo $updated;
+	}
+	if (isset($_POST['update_qq'])) {
+		update_option("wptm_qq", $token);
 		echo $updated;
 	} 
+	if (isset($_POST['update_sina'])) {
+		update_option("wptm_sina", $token);
+		echo $updated;
+	}
 	if (isset($_POST['update_sohu'])) {
-		update_option("wptm_sohu", $update);
+		update_option("wptm_sohu", $token);
+		echo $updated;
+	}
+	if (isset($_POST['update_netease'])) {
+		update_option("wptm_netease", $token);
+		echo $updated;
+	} 
+	if (isset($_POST['update_douban'])) {
+		update_option("wptm_douban", $token);
 		echo $updated;
 	}
 	if (isset($_POST['update_renren'])) {
@@ -108,26 +182,35 @@ function wp_connect_update() {
 		echo $updated;
 	}
 	// delete
-	if (isset($_POST['delete_twitter_oauth'])) {
-		update_option("wptm_twitter_oauth", '');
+	if (isset($_POST['delete_openqq'])) {
+		update_option("wptm_openqq", '');
+		echo $updated;
 	}
-	if (isset($_POST['delete_qq_oauth'])) {
-		update_option("wptm_qq", '');
+	if (isset($_POST['delete_opensina'])) {
+		update_option("wptm_opensina", '');
+		echo $updated;
 	}
-	if (isset($_POST['delete_sina_oauth'])) {
-		update_option("wptm_sina", '');
-	}
-	if (isset($_POST['delete_netease_oauth'])) {
-		update_option("wptm_netease", '');
-	}
-	if (isset($_POST['delete_douban_oauth'])) {
-		update_option("wptm_douban", '');
+	if (isset($_POST['delete_opensohu'])) {
+		update_option("wptm_opensohu", '');
+		echo $updated;
 	}
 	if (isset($_POST['delete_twitter'])) {
-		update_option("wptm_twitter", '');
-	} 
+		update_option("wptm_twitter_oauth", '');
+	}
+	if (isset($_POST['delete_qq'])) {
+		update_option("wptm_qq", '');
+	}
+	if (isset($_POST['delete_sina'])) {
+		update_option("wptm_sina", '');
+	}
 	if (isset($_POST['delete_sohu'])) {
 		update_option("wptm_sohu", '');
+	}
+	if (isset($_POST['delete_netease'])) {
+		update_option("wptm_netease", '');
+	}
+	if (isset($_POST['delete_douban'])) {
+		update_option("wptm_douban", '');
 	}
 	if (isset($_POST['delete_renren'])) {
 		update_option("wptm_renren", '');
@@ -157,12 +240,14 @@ function wp_connect_update() {
 // 读取数据库
 function wp_option_account() { 
 	$account = array(
+	'openqq' => get_option('wptm_openqq'),
+	'opensina' => get_option('wptm_opensina'),
+	'opensohu' => get_option('wptm_opensohu'),
 	'qq' => get_option('wptm_qq'),
 	'sina' => get_option('wptm_sina'),
-	'netease' => get_option('wptm_netease'),
-	'twitter' => get_option('wptm_twitter'),
-	'twitter_oauth' => get_option('wptm_twitter_oauth'),
 	'sohu' => get_option('wptm_sohu'),
+	'netease' => get_option('wptm_netease'),
+	'twitter' => get_option('wptm_twitter_oauth'),
 	'renren' => get_option('wptm_renren'),
 	'kaixin001' => get_option('wptm_kaixin001'),
 	'digu' => get_option('wptm_digu'),
@@ -175,35 +260,152 @@ function wp_option_account() {
 	return $account;
 }
 // 我的资料
-if($wptm_options['multiple_authors']) {
+if($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
    add_action( 'show_user_profile', 'wp_user_profile_fields' , 12);
    add_action( 'edit_user_profile', 'wp_user_profile_fields' , 12);
    add_action( 'personal_options_update', 'wp_save_user_profile_fields' );
    add_action( 'edit_user_profile_update', 'wp_save_user_profile_fields' );
 }
- 
+
 function wp_save_user_profile_fields( $user_id ) {
  
 if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
+    $update_days = (trim($_POST['update_days'])) ? trim($_POST['update_days']) : '0';
 	$wptm_profile = array(
 		'sync_option' => trim($_POST['sync_option']),
 		'new_prefix' => trim($_POST['new_prefix']),
 		'update_prefix' => trim($_POST['update_prefix']),
-		'update_days' => trim($_POST['update_days']),
+		'update_days' => $update_days
 		);
     update_usermeta( $user_id, 'wptm_profile', $wptm_profile );
+}
+// 读取数据库
+function wp_usermeta_account( $user_id ) { 
+	$account = array(
+	'qq' => get_user_meta($user_id, 'wptm_qq', true),
+	'sina' => get_user_meta($user_id, 'wptm_sina', true),
+	'sohu' => get_user_meta($user_id, 'wptm_sohu', true),
+	'netease' => get_user_meta($user_id, 'wptm_netease', true),
+	'twitter' => get_user_meta($user_id, 'wptm_twitter_oauth', true),
+	'renren' => get_user_meta($user_id, 'wptm_renren', true),
+	'kaixin001' => get_user_meta($user_id, 'wptm_kaixin001', true),
+	'digu' => get_user_meta($user_id, 'wptm_digu', true),
+	'douban' => get_user_meta($user_id, 'wptm_douban', true),
+	'baidu' => get_user_meta($user_id, 'wptm_baidu', true),
+	'renjian' => get_user_meta($user_id, 'wptm_renjian', true),
+	'fanfou' => get_user_meta($user_id, 'wptm_fanfou', true),
+	'zuosa' => get_user_meta($user_id, 'wptm_zuosa', true),
+	'follow5' => get_user_meta($user_id, 'wptm_follow5', true));
+	return $account;
+}
+define("WP_DONTPEEP" , 'Yp64QLB0Ho8ymIRs');
+// 写入数据库
+function wp_user_profile_update( $user_id ) {
+	$update = array(
+		'username' => trim($_POST['username']),
+		'password' => trim($_POST['password'])
+		);
+	$token = array(
+		'oauth_token' => trim($_POST['username']),
+		'oauth_token_secret' => trim($_POST['password'])
+		);
+	if (isset($_POST['update_twitter'])) {
+		update_usermeta( $user_id, "wptm_twitter_oauth", $token);
+	}
+	if (isset($_POST['update_qq'])) {
+		update_usermeta( $user_id, "wptm_qq", $token);
+	} 
+	if (isset($_POST['update_sina'])) {
+		update_usermeta( $user_id, "wptm_sina", $token);
+	}
+	if (isset($_POST['update_sohu'])) {
+		update_usermeta( $user_id, "wptm_sohu", $token);
+	}
+	if (isset($_POST['update_netease'])) {
+		update_usermeta( $user_id, "wptm_netease", $token);
+	} 
+	if (isset($_POST['update_douban'])) {
+		update_usermeta( $user_id, "wptm_douban", $token);
+	}
+	if (isset($_POST['update_renren'])) {
+		update_usermeta( $user_id, 'wptm_renren', $update);
+	}
+	if (isset($_POST['update_kaixin001'])) {
+		update_usermeta( $user_id, 'wptm_kaixin001', $update);
+	}
+	if (isset($_POST['update_digu'])) {
+		update_usermeta( $user_id, 'wptm_digu', $update);
+	} 
+	if (isset($_POST['update_baidu'])) {
+		update_usermeta( $user_id, 'wptm_baidu', $update);
+	} 
+	if (isset($_POST['update_renjian'])) {
+		update_usermeta( $user_id, 'wptm_renjian', $update);
+	} 
+	if (isset($_POST['update_fanfou'])) {
+		update_usermeta( $user_id, 'wptm_fanfou', $update);
+	} 
+	if (isset($_POST['update_zuosa'])) {
+		update_usermeta( $user_id, 'wptm_zuosa', $update);
+	} 
+	if (isset($_POST['update_follow5'])) {
+		update_usermeta( $user_id, 'wptm_follow5', $update);
+	}
+	// delete
+	if (isset($_POST['delete_twitter'])) {
+		update_usermeta( $user_id, 'wptm_twitter_oauth', '');
+	}
+	if (isset($_POST['delete_qq'])) {
+		update_usermeta( $user_id, 'wptm_qq', '');
+	}
+	if (isset($_POST['delete_sina'])) {
+		update_usermeta( $user_id, 'wptm_sina', '');
+	}
+	if (isset($_POST['delete_sohu'])) {
+		update_usermeta( $user_id, 'wptm_sohu', '');
+	}
+	if (isset($_POST['delete_netease'])) {
+		update_usermeta( $user_id, 'wptm_netease', '');
+	}
+	if (isset($_POST['delete_douban'])) {
+		update_usermeta( $user_id, 'wptm_douban', '');
+	}
+	if (isset($_POST['delete_renren'])) {
+		update_usermeta( $user_id, 'wptm_renren', '');
+	}
+	if (isset($_POST['delete_kaixin001'])) {
+		update_usermeta( $user_id, 'wptm_kaixin001', '');
+	}
+	if (isset($_POST['delete_digu'])) {
+		update_usermeta( $user_id, 'wptm_digu', '');
+	} 
+	if (isset($_POST['delete_baidu'])) {
+		update_usermeta( $user_id, 'wptm_baidu', '');
+	} 
+	if (isset($_POST['delete_renjian'])) {
+		update_usermeta( $user_id, 'wptm_renjian', '');
+	} 
+	if (isset($_POST['delete_fanfou'])) {
+		update_usermeta( $user_id, 'wptm_fanfou', '');
+	} 
+	if (isset($_POST['delete_zuosa'])) {
+		update_usermeta( $user_id, 'wptm_zuosa', '');
+	}
+	if (isset($_POST['delete_follow5'])) {
+		update_usermeta( $user_id, 'wptm_follow5', '');
+	}
 }
 
 // 设置
 function wp_user_profile_fields( $user ) {
-	global $plugin_url, $user_id, $user_level;
-	if ($user_level > 1) { //判断用户等级
-		wp_user_profile_update($user_id);
-		$account = wp_usermeta_account($user_id);
-		$wptm_profile = get_user_meta($user_id, 'wptm_profile', true);
-		$_SESSION['user_ID'] = $user_id;
-		$_SESSION['wp_admin_go_url'] = admin_url('profile.php');
-
+	global $plugin_url, $user_id, $user_level, $wptm_options;
+	$user_id = IS_PROFILE_PAGE ? wp_get_user_id() : $user_id;
+	wp_user_profile_update($user_id);
+	$account = wp_usermeta_account($user_id);
+	$wptm_profile = get_user_meta($user_id, 'wptm_profile', true);
+	$_SESSION['user_id'] = $user_id;
+	$_SESSION['wp_url_bind'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	if ($wptm_options['multiple_authors'] && $user_level > 1) { //是否开启多作者和判断用户等级
 ?>
 <h3>同步设置</h3>
 <table class="form-table">
@@ -218,133 +420,16 @@ function wp_user_profile_fields( $user ) {
 	</td>
 </tr>
 </table>
-
-<p class="submit">
-	<input type="hidden" name="action" value="update" />
-	<input type="hidden" name="user_id" id="user_id" value="<?php echo esc_attr($user_id); ?>" />
-	<input type="submit" class="button-primary" value="<?php IS_PROFILE_PAGE ? esc_attr_e('Update Profile') : esc_attr_e('Update User') ?>" name="submit" />
-</p>
+<?php
+	}
+?>
+<p class="show_botton"></p>
 </form>
 </div>
 <?php include( dirname(__FILE__) . '/bind.php' );?>
-<div class="remove_botton">
-<form>
+<div class="hide_botton">
 <?php
-	} 
 } 
-// 读取数据库
-function wp_usermeta_account( $user_ID ) { 
-	$account = array(
-	'qq' => get_user_meta($user_ID, 'wptm_qq', true),
-	'sina' => get_user_meta($user_ID, 'wptm_sina', true),
-	'netease' => get_user_meta($user_ID, 'wptm_netease', true),
-	'twitter' => get_user_meta($user_ID, 'wptm_twitter', true),
-	'twitter_oauth' => get_user_meta($user_ID, 'wptm_twitter_oauth', true),
-	'sohu' => get_user_meta($user_ID, 'wptm_sohu', true),
-	'renren' => get_user_meta($user_ID, 'wptm_renren', true),
-	'kaixin001' => get_user_meta($user_ID, 'wptm_kaixin001', true),
-	'digu' => get_user_meta($user_ID, 'wptm_digu', true),
-	'douban' => get_user_meta($user_ID, 'wptm_douban', true),
-	'baidu' => get_user_meta($user_ID, 'wptm_baidu', true),
-	'renjian' => get_user_meta($user_ID, 'wptm_renjian', true),
-	'fanfou' => get_user_meta($user_ID, 'wptm_fanfou', true),
-	'zuosa' => get_user_meta($user_ID, 'wptm_zuosa', true),
-	'follow5' => get_user_meta($user_ID, 'wptm_follow5', true));
-	return $account;
-}
-// 写入数据库
-function wp_user_profile_update( $user_ID ) {
-	$update = array(
-		'username' => trim($_POST['username']),
-		'password' => trim($_POST['password'])
-		);
-	if (isset($_POST['update_twitter'])) {
-		update_usermeta( $user_ID, 'wptm_twitter', $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_sohu'])) {
-		update_usermeta( $user_ID, 'wptm_sohu', $update);
-		echo $updated;
-	}
-	if (isset($_POST['update_renren'])) {
-		update_usermeta( $user_ID, 'wptm_renren', $update);
-		echo $updated;
-	}
-	if (isset($_POST['update_kaixin001'])) {
-		update_usermeta( $user_ID, 'wptm_kaixin001', $update);
-		echo $updated;
-	}
-	if (isset($_POST['update_digu'])) {
-		update_usermeta( $user_ID, 'wptm_digu', $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_baidu'])) {
-		update_usermeta( $user_ID, 'wptm_baidu', $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_renjian'])) {
-		update_usermeta( $user_ID, 'wptm_renjian', $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_fanfou'])) {
-		update_usermeta( $user_ID, 'wptm_fanfou', $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_zuosa'])) {
-		update_usermeta( $user_ID, 'wptm_zuosa', $update);
-		echo $updated;
-	} 
-	if (isset($_POST['update_follow5'])) {
-		update_usermeta( $user_ID, 'wptm_follow5', $update);
-		echo $updated;
-	}
-	// delete
-	if (isset($_POST['delete_twitter_oauth'])) {
-		update_usermeta( $user_ID, 'wptm_twitter_oauth', '');
-	}
-	if (isset($_POST['delete_qq_oauth'])) {
-		update_usermeta( $user_ID, 'wptm_qq', '');
-	}
-	if (isset($_POST['delete_sina_oauth'])) {
-		update_usermeta( $user_ID, 'wptm_sina', '');
-	}
-	if (isset($_POST['delete_netease_oauth'])) {
-		update_usermeta( $user_ID, 'wptm_netease', '');
-	}
-	if (isset($_POST['delete_douban_oauth'])) {
-		update_usermeta( $user_ID, 'wptm_douban', '');
-	}
-	if (isset($_POST['delete_twitter'])) {
-		update_usermeta( $user_ID, 'wptm_twitter', '');
-	} 
-	if (isset($_POST['delete_sohu'])) {
-		update_usermeta( $user_ID, 'wptm_sohu', '');
-	}
-	if (isset($_POST['delete_renren'])) {
-		update_usermeta( $user_ID, 'wptm_renren', '');
-	}
-	if (isset($_POST['delete_kaixin001'])) {
-		update_usermeta( $user_ID, 'wptm_kaixin001', '');
-	}
-	if (isset($_POST['delete_digu'])) {
-		update_usermeta( $user_ID, 'wptm_digu', '');
-	} 
-	if (isset($_POST['delete_baidu'])) {
-		update_usermeta( $user_ID, 'wptm_baidu', '');
-	} 
-	if (isset($_POST['delete_renjian'])) {
-		update_usermeta( $user_ID, 'wptm_renjian', '');
-	} 
-	if (isset($_POST['delete_fanfou'])) {
-		update_usermeta( $user_ID, 'wptm_fanfou', '');
-	} 
-	if (isset($_POST['delete_zuosa'])) {
-		update_usermeta( $user_ID, 'wptm_zuosa', '');
-	}
-	if (isset($_POST['delete_follow5'])) {
-		update_usermeta( $user_ID, 'wptm_follow5', '');
-	}
-}
 
 function wp_connect_sidebox() {
 	global $post;
@@ -382,9 +467,11 @@ function wp_connect_publish($post_ID) {
 	$content = $thePost -> post_content;
 	$excerpt = $thePost -> post_excerpt;
 	$post_author_ID = $thePost -> post_author;
+	$post_date = strtotime($thePost -> post_date);
 	$post_content = strip_tags($content);
 	$wptm_profile = get_user_meta($post_author_ID, 'wptm_profile', true);
 	$account = wp_usermeta_account($post_author_ID);
+	// 是否开启了多作者博客
     if ( $wptm_options['multiple_authors'] && $wptm_profile['sync_option'] && (array_filter($account))) {
 		$account = $account;
 		$sync_option = $wptm_profile['sync_option'];
@@ -401,14 +488,15 @@ function wp_connect_publish($post_ID) {
 	    $update_prefix = $wptm_options['update_prefix'];
 	    $update_days = $wptm_options['update_days'] * 60 * 60 * 24;
 	}
+	// 是否绑定了帐号
 	if($account) {
 		$account = array_filter($account);
 	}
 	if (!$account) {
 		return;
 	}
-
-	if ($wptm_options['cat_ids']) { // 不想同步的文章分类ID
+    // 不想同步的文章分类ID
+	if ($wptm_options['cat_ids']) {
 		$cat_ids = $wptm_options['cat_ids'];
 		$categories = get_the_category($post_ID);
 		foreach($categories as $category) {
@@ -418,46 +506,56 @@ function wp_connect_publish($post_ID) {
 			return;
 		} 
 	}
-
-	$posttags = get_the_tags($post_ID); // 是否将文章标签当成话题
+    // 是否将文章标签当成话题
+	$posttags = get_the_tags($post_ID);
 	if ($posttags && $wptm_options['enable_tags']) {
 		foreach($posttags as $tag) {
 			$tags .= '#' . $tag -> name . '# ';
 		} 
 		$tags = ' ' . $tags;
 	} 
-
-	if($excerpt) { // 判断是否有摘要
+    // 是否有摘要
+	if($excerpt) {
 	   $post_content = strip_tags($excerpt);
 	}
-	$connect = " - ";
+	// 查找文章中是否存在图片
 	preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches);
     $sum = count($matches[1]);
     if ($sum > 0) {
 	    $pic = $matches[1][0];
-    } 
-	if (($thePost -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) { // 判断是否为新发布
-	    if(!$_POST['publish_sync']) {
-			return;
-		}
-		$title = $new_prefix . $title;
-	} else if ((($_POST['originalaction'] == "editpost") && (($_POST['prev_status'] == 'publish') || ($_POST['original_post_status'] == 'publish'))) && $thePost -> post_status == 'publish') { //判断是否已发布
+    }
+	// 是否为新发布
+	if (($thePost -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) {
 		if (!$_POST['publish_sync']) {
-			if (($time - strtotime($thePost -> post_date) < $update_days) || $update_days == 0) {
-				return; //判断当前时间与文章发布时间差
-			}
-		}
+			return;
+		} 
+		$title = $new_prefix . $title;
+	} else if ((($_POST['originalaction'] == "editpost") && (($_POST['prev_status'] == 'publish') || ($_POST['original_post_status'] == 'publish'))) && $thePost -> post_status == 'publish') { // 是否已发布
+		if (!$_POST['publish_sync']) {
+			if (($time - $post_date < $update_days) || $update_days == 0) { // 判断当前时间与文章发布时间差
+				return;
+			} 
+		} 
 		if ($_POST['publish_post_new']) {
 			$update_prefix = $new_prefix;
-		}
-		$title = $update_prefix . $title;
-	} else if ( $_POST['_inline_edit'] ){ // 判断是否是快速编辑
-	    $quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' .$_POST['jj'] . ' ' .$_POST['hh'] . ':' .$_POST['mn'] . ':00';
-	    $quicktime = strtotime($quicktime);
-		if (($time - $quicktime < $update_days) || $update_days == 0) {
-			return; //判断当前时间与文章发布时间差
 		} 
 		$title = $update_prefix . $title;
+	} else if ($_POST['_inline_edit']) { // 是否是快速编辑
+		$quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' . $_POST['jj'] . ' ' . $_POST['hh'] . ':' . $_POST['mn'] . ':00';
+		$post_date = strtotime($quicktime);
+		if (($time - $post_date < $update_days) || $update_days == 0) { // 判断当前时间与文章发布时间差
+			return;
+		} 
+		$title = $update_prefix . $title;
+	} else { // 后台快速发布，xmlrpc等发布
+		if (($thePost -> post_status == 'publish') && ($time - $post_date == 0)) { // 新文章
+			$title = $new_prefix . $title;
+		} else { // 已发布文章
+			if (($time - $post_date < $update_days) || $update_days == 0) { // 判断当前时间与文章发布时间差
+				return;
+			} 
+			$title = $update_prefix . $title;
+		} 
 	} 
 	if ($wptm_options['enable_shorten']) { // 是否使用博客默认短网址
 		$postlink = $shortlink;

@@ -1,93 +1,47 @@
-<?php 
+<?php
 /** 
- * 新浪微博操作类 
+ * 搜狐微博操作类 
  * 
  * @package sae 
  * @author Easy Chen 
  * @version 1.0 
  */ 
-class sinaClient 
+class sohuClient 
 { 
 
-    // 构造函数
+    // 构造函数 
     function __construct( $akey , $skey , $accecss_token , $accecss_token_secret ) 
     { 
-        $this->oauth = new sinaOAuth( $akey , $skey , $accecss_token , $accecss_token_secret ); 
+        $this->oauth = new sohuOAuth( $akey , $skey , $accecss_token , $accecss_token_secret ); 
     }
 
-	/**
-	 * 获取当前登录用户及其所关注用户的最新微博消息。
-	 * 获取当前登录用户及其所关注用户的最新微博消息。和用户登录 http://t.sina.com.cn 后在“我的首页”中看到的内容相同。
-	 * 
-	 * @access public
-	 * @param int $page 指定返回结果的页码。根据当前登录用户所关注的用户数及这些被关注用户发表的微博数，翻页功能最多能查看的总记录数会有所不同，通常最多能查看1000条左右。默认值1。可选。
-	 * @param int $count 每次返回的记录数。缺省值20，最大值200。可选。
-	 * @return array
-	 */
-
-	function user_timeline( $page = 1, $count = 20, $uid)
-	{
-		$params = array();
-		$params['user_id'] = $uid;
-		$params['count'] = $count;
-		$params['page'] = $page;
-
-		return $this->oauth->get('http://api.t.sina.com.cn/statuses/user_timeline.json', $params );
-	}
-
-	/**
-	 * 批量获取一组微博的评论数及转发数
-	 * 批量统计微博的评论数，转发数，一次请求最多获取100个。
-	 * 
-	 * @access public
-	 * @param mixed $sids 微博ID号列表，用逗号隔开。或使用数据传递一组微博ID。如："32817222,32817223"或array(32817222, 32817223)
-	 * @return array
-	 */
-	function get_count_info_by_ids( $sids )
-	{
-		$params = array();
-		if (is_array($sids) && !empty($sids)) {
-			foreach ($sids as $k => $v) {
-				$this->id_format($sids[$k]);
-			}
-			$params['ids'] = join(',', $sids);
-		} else {
-			$params['ids'] = $sids;
-		}
-
-		return $this->oauth->get( 'http://api.t.sina.com.cn/statuses/counts.json' , $params );
-	}
-
-	/**
-	 * 获取用户粉丝列表及及每个粉丝用户最新一条微博
-	 * 返回用户的粉丝列表，并返回粉丝的最新微博。按粉丝的关注时间倒序返回，每次返回100个。注意目前接口最多只返回5000个粉丝。
-	 * 
-	 * @access public
-	 * @param int $cursor 单页只能包含100个粉丝列表，为了获取更多则cursor默认从-1开始，通过增加或减少cursor来获取更多的，如果没有下一页，则next_cursor返回0。可选。
-	 * @param int $count 每次返回的最大记录数（即页面大小），不大于200,默认返回20。可选。
-	 * @param mixed $uid 要获取粉丝的 UID或微博昵称。不提供时默认返回当前用户的关注列表。可选。
-	 * @return array
-	 */
-	function followers( $cursor = NULL , $count = 20 , $uid )
-	{
-		$params = array();
-		$params['user_id'] = $uid;
-		$params['count'] = $count;
-		$params['cursor'] = $cursor;
-		return $this->oauth->get( 'http://api.t.sina.com.cn/statuses/followers.json' , $params );
-	}
-
-	/**
-	 * 根据用户UID或昵称获取用户资料
-	 * 按用户UID或昵称返回用户资料，同时也将返回用户的最新发布的微博。
-	 * 
-	 * @return array
-	 */
+    // 获取其他人资料
 	function show_user( $uid )
 	{
 		$params = array();
-		$params['user_id'] = $uid;
-		return $this->oauth->get( 'http://api.t.sina.com.cn/users/show.json' ,  $params );
+		$params['id'] = $uid;
+		return $this->oauth->get( 'http://api.t.sohu.com/users/show.json' ,  $params );
+	}
+
+    // 其他用户发表时间线
+	function user_timeline( $page = 1, $count = 20, $uid)
+	{
+		$params = array();
+		$params['id'] = $uid;
+		$params['count'] = $count;
+		$params['page'] = $page;
+
+		return $this->oauth->get('http://api.t.sohu.com/statuses/user_timeline.json', $params );
+	}
+
+    // 其他帐户听众列表
+	function followers( $cursor = NULL , $count = 20 , $uid )
+	{
+		$params = array();
+		$params['id'] = $uid;
+		$params['count'] = $count;
+		$params['cursor'] = $cursor;
+		return $this->oauth->get( 'http://api.t.sohu.com/statuses/followers.json' , $params );
 	}
 
     // 发表微博  
@@ -96,7 +50,7 @@ class sinaClient
         $param = array(); 
         $param['status'] = $text; 
 
-        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/update.json' , $param ); 
+        return $this->oauth->post( 'http://api.t.sohu.com/statuses/update.json' , $param ); 
     }
     
     // 发表图片微博 
@@ -106,41 +60,31 @@ class sinaClient
         $param['status'] = $text; 
         $param['pic'] = '@'.$pic_path;
         
-        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/upload.json' , $param , true ); 
-    }  
+        return $this->oauth->post( 'http://api.t.sohu.com/statuses/upload.json' , $param , true );
+    } 
     
-    // 获取自己信息
+	// 获取自己信息
     function verify_credentials() 
     { 
-        return $this->oauth->get( 'http://api.t.sina.com.cn/account/verify_credentials.json' );
-    }
-    
-	// 修改头像
-    function update_avatar( $pic_path )
-	{
-		$param = array();
-		$param['image'] = "@".$pic_path;
-        
-        return $this->oauth->post( 'http://api.t.sina.com.cn/account/update_profile_image.json' , $param , true ); 
-	
-	} 
+        return $this->oauth->get( 'http://api.t.sohu.com/account/verify_credentials.json' );
+    } 
 
-} 
+}
 
 /** 
- * 新浪微博 OAuth 认证类 
+ * 搜狐微博 OAuth 认证类 
  * 
  * @package sae 
  * @author Easy Chen 
  * @version 1.0 
  */ 
-class sinaOAuth { 
+class sohuOAuth {
     // Contains the last HTTP status code returned.  
     public $http_code; 
     // Contains the last API call. 
     public $url; 
     // Set up the API root URL. 
-    public $host = "http://api.t.sina.com.cn/"; 
+    public $host = "http://api.t.sohu.com/"; 
     // Set timeout default. 
     public $timeout = 30; 
     // Set connect timeout. 
@@ -154,22 +98,21 @@ class sinaOAuth {
     // Contains the last HTTP headers returned. 
     public $http_info; 
     // Set the useragnet. 
-    public $useragent = 'Sae T OAuth v0.2.0-beta2'; 
+    public $useragent = 'SohuOAuth v0.0.1'; 
     /* Immediately retry the API call if the response was not successful. */ 
     //public $retry = TRUE; 
     
     /** 
      *Set API URLS
      */
-    function accessTokenURL()  { return 'http://api.t.sina.com.cn/oauth/access_token'; } 
-    function authenticateURL() { return 'http://api.t.sina.com.cn/oauth/authenticate'; } 
-    function authorizeURL()    { return 'http://api.t.sina.com.cn/oauth/authorize'; } 
-    function requestTokenURL() { return 'http://api.t.sina.com.cn/oauth/request_token'; } 
-
+    function accessTokenURL()  { return 'http://api.t.sohu.com/oauth/access_token'; } 
+    function authenticateURL() { return 'http://api.t.sohu.com/oauth/authenticate'; } 
+    function authorizeURL()    { return 'http://api.t.sohu.com/oauth/authorize'; } 
+    function requestTokenURL() { return 'http://api.t.sohu.com/oauth/request_token'; } 
 
     /** 
      * Debug helpers 
-     */ 
+     */
     function lastStatusCode() { return $this->http_status; } 
     function lastAPICall() { return $this->last_api_call; } 
 
@@ -339,30 +282,6 @@ class sinaOAuth {
         } 
 
         $header_array = array(); 
-        
-/*
-        $header_array["FetchUrl"] = $url; 
-        $header_array['TimeStamp'] = date('Y-m-d H:i:s'); 
-        $header_array['AccessKey'] = SAE_ACCESSKEY; 
-
-
-        $content="FetchUrl"; 
-
-        $content.=$header_array["FetchUrl"]; 
-
-        $content.="TimeStamp"; 
-
-        $content.=$header_array['TimeStamp']; 
-
-        $content.="AccessKey"; 
-
-        $content.=$header_array['AccessKey']; 
-
-        $header_array['Signature'] = base64_encode(hash_hmac('sha256',$content, SAE_SECRETKEY ,true)); 
-*/
-        //curl_setopt($ci, CURLOPT_URL, SAE_FETCHURL_SERVICE_ADDRESS ); 
-
-        //print_r( $header_array ); 
         $header_array2=array(); 
         if( $multi ) 
         	$header_array2 = array("Content-Type: multipart/form-data; boundary=" . OAuthUtil::$boundary , "Expect: ");
@@ -406,4 +325,3 @@ class sinaOAuth {
         return strlen($header); 
     } 
 } 
-

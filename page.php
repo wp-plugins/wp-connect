@@ -1,36 +1,63 @@
 <?php
-if ($_GET['do'] == "microblog") {
-	include_once "../../../wp-config.php";
-	$wptm_options = get_option('wptm_options');
-	$password = $_POST['password'];
-	if (isset($_POST['message'])) {
-		if ($wptm_options['page_password'] && $password == $wptm_options['page_password']) {
-			wp_update_page();
-		} else { echo 'pwderror'; } 
-	} 
-}
-
 function wp_update_page() {
 	$account = wp_option_account();
+	$wptm_options = get_option('wptm_options');
+	$wptm_advanced = get_option('wptm_advanced');
+	if (function_exists('wp_connect_advanced')) {
+		include_once(WP_PLUGIN_DIR . '/wp-connect-advanced/page.php');
+	} 
 	$status = mb_substr(stripslashes($_POST['message']), 0, 140, 'utf-8');
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if (isset($_POST['pic'])) {
 		$pic = $_POST['pic'];
 	} 
 	if (isset($_POST['twitter']) && $account['twitter']) {
-		wp_update_twitter($status);
+		if ($wptm_options['api'] || $wptm_options['enable_proxy']) {
+			$t1 = $account['twitter']['oauth_token'];
+			$t2 = $account['twitter']['oauth_token_secret'];
+		} else {
+			wp_update_twitter($account['twitter'], $status);
+		} 
 	} 
 	if (isset($_POST['qq']) && $account['qq']) {
-		wp_update_t_qq($account['qq'], $status, $pic);
+		if ($wptm_options['api']) {
+			$q1 = $account['qq']['oauth_token'];
+			$q2 = $account['qq']['oauth_token_secret'];
+		} else {
+			wp_update_t_qq($account['qq'], $status, $pic);
+		} 
 	} 
 	if (isset($_POST['sina']) && $account['sina']) {
-		wp_update_t_sina($account['sina'], $status, $pic);
+		if ($wptm_options['api']) {
+			$s1 = $account['sina']['oauth_token'];
+			$s2 = $account['sina']['oauth_token_secret'];
+		} else {
+			wp_update_t_sina($account['sina'], $status, $pic);
+		}
 	} 
 	if (isset($_POST['netease']) && $account['netease']) {
-		wp_update_t_163($account['netease'], $status, $pic);
+		if ($wptm_options['api']) {
+			$n1 = $account['netease']['oauth_token'];
+			$n2 = $account['netease']['oauth_token_secret'];
+		} else {
+			wp_update_t_163($account['netease'], $status, $pic);
+		}
 	} 
 	if (isset($_POST['sohu']) && $account['sohu']) {
-		wp_update_t_sohu($account['sohu'], $status);
+		if ($wptm_options['api']) {
+			$sh1 = $account['sohu']['oauth_token'];
+			$sh2 = $account['sohu']['oauth_token_secret'];
+		} else {
+			wp_update_t_sohu($account['sohu'], $status, $pic);
+		}
+	}
+	if (isset($_POST['douban']) && $account['douban']) {
+		if ($wptm_options['api']) {
+			$d1 = $account['douban']['oauth_token'];
+			$d2 = $account['douban']['oauth_token_secret'];
+		} else {
+			wp_update_douban($account['douban'], $status);
+		}
 	} 
 	if (isset($_POST['renren']) && $account['renren']) {
 		wp_update_renren($account['renren'], $status);
@@ -40,9 +67,6 @@ function wp_update_page() {
 	} 
 	if (isset($_POST['digu']) && $account['digu']) {
 		wp_update_digu($account['digu'], $status);
-	} 
-	if (isset($_POST['douban']) && $account['douban']) {
-		wp_update_douban($account['douban'], $status);
 	} 
 	if (isset($_POST['baidu']) && $account['baidu']) {
 		wp_update_baidu($account['baidu'], $status);
@@ -59,11 +83,18 @@ function wp_update_page() {
 	if (isset($_POST['follow5']) && $account['follow5']) {
 		wp_update_follow5($account['follow5'], $status);
 	} 
-} 
+	if($wptm_options['api'] && (($t1 && $t2) || ($q1 && $q2) || ($s1 && $s2) || ($sh1 && $sh2) || ($n1 && $n2) || ($d1 && $d2))) {
+    	$text = "title={$status}&pic={$pic}&q1={$q1}&q2={$q2}&s1={$s1}&s2={$s2}&sh1={$sh1}&sh2={$sh2}&n1={$n1}&n2={$n2}&t1={$t1}&t2={$t2}&d1={$d1}&d2={$d2}";
+		wp_update_api($text);
+	} elseif($wptm_options['enable_proxy'] && !$wptm_options['api'] && $t1 && $t2) {
+    	$text = "title={$status}&t1={$t1}&t2={$t2}";
+		wp_update_api($text);
+	}
+}
 
 function wp_connect_script_page () {
 	wp_deregister_script('jquery');
-	wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js', false, '1.5.1');
+	wp_register_script('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js', false, '1.5.2');
 	wp_register_script('wp-connect-page', plugins_url('wp-connect/js/page.js'), array('jquery'), '0.1');
     wp_print_scripts('wp-connect-page');
 }
@@ -76,26 +107,26 @@ function wp_connect_action() {
 function wp_to_microblog() {
 	global $plugin_url;
 	$wptm_options = get_option('wptm_options');
+	$wptm_advanced = get_option('wptm_advanced');
 	if(!$wptm_options['disable_ajax']) {
 		wp_connect_action();
 	}
 	$password = $_POST['password'];
 	if (isset($_POST['message'])) {
-		if ($wptm_options['page_password'] && $password == $wptm_options['page_password']) {
+		if (($wptm_options['page_password'] && $password == $wptm_options['page_password']) || (is_user_logged_in() && function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
 			wp_update_page();
 		} else {
 			$pwderror = ' style="display:inline;"';
 			$message = $_POST['message'];
 		} 
 	}
-
 echo '
 <script type="text/javascript">
 function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value=field.value.substring(0,maxlimit)}else{document.getElementById("wordage").childNodes[1].innerHTML=maxlimit-field.value.length}}
 function selectall(form){for(var i=0;i<form.elements.length;i++){var box = form.elements[i];if (box.name != "chkall")box.checked = form.clickall.checked;}}
 var wpurl = "'.get_bloginfo('wpurl').'";
 </script>
-<link type="text/css" href="'.$plugin_url.'/page.css" rel="stylesheet" />
+<link type="text/css" href="'.$plugin_url.'/css/page.css" rel="stylesheet" />
 <form action="" method="post" id="tform">
   <fieldset>
     <div id="say">说说你的新鲜事
@@ -133,12 +164,15 @@ var wpurl = "'.get_bloginfo('wpurl').'";
     <input name="zuosa" id="zuosa" type="checkbox" value="checkbox" checked />
     <label for="zuosa">做啥</label>
     <input name="follow5" id="follow5" type="checkbox" value="checkbox" checked />
-    <label for="follow5">Follow5</label></p>
-    <p id="v3">密码：
+    <label for="follow5">Follow5</label></p>';
+if (!is_user_logged_in() || !$wptm_advanced['registered_users']) {
+echo '<p id="v3">密码：
     <input name="password" id="password" type="password" value="" /> <span'.$pwderror.'>密码错误！</span>
-	</p>
-    <p><input type="submit" id="publish" value="发表" /></p>
+	</p>';
+}
+echo '<p><input type="submit" id="publish" value="发表" /></p>
     <p class="loading"><img src="'.$plugin_url.'/images/loading.gif" alt="Loading" /></p>
+	<p class="error">你没有绑定帐号，请到我的资料页面或者到插件页面绑定！</p>
 	<p class="success">发表成功！</p>
   </fieldset>
 </form>';

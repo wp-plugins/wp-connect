@@ -2,7 +2,7 @@
 #tform fieldset p{margin-top:5px}
 #tform p { margin-bottom: 12px; }
 #tform #say, #tform #message{width:580px; overflow:hidden}
-/*#tform #say {height:40px; background:url(images/page.png) no-repeat}*/
+/*#tform #say {height:40px; background:url(../images/page.png) no-repeat}*/
 #tform #wordage{text-align:right}
 #tform #wordage span{font:24px Georgia; color:#690}
 #tform #wordage{float:right; width:200px}
@@ -10,4 +10,4 @@
 #tform #publish:hover{background-position:0px -28px}
 #tform #publish:active{background-position:0px -56px}
 #tform #v1,#tform #v2,#tform #v3 {position: relative; width: 580px;}
-#tform #v3 span, #tform .loading, #tform .success {display:none; color:#690;}
+#tform #v3 span, #tform .loading, #tform .success, #tform .error {display:none; color:#690;}

@@ -13,6 +13,11 @@ if ($_GET['go'] == "SINA") {
 		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
 	} 
 	$to = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET);
+} elseif ($_GET['go'] == "SOHU") {
+	if (!class_exists('sohuOAuth')) {
+		include dirname(__FILE__) . '/OAuth/sohu_OAuth.php';
+	} 
+	$to = new sohuOAuth(SOHU_APP_KEY, SOHU_APP_SECRET);
 } elseif ($_GET['go'] == "NETEASE") {
 	if (!class_exists('neteaseOAuth')) {
 		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
@@ -24,8 +29,8 @@ if ($_GET['go'] == "SINA") {
 	} 
 	$to = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET);
 } else {
-	if ($_SESSION['wp_callback']) {
-		$callback = $_SESSION['wp_callback'];
+	if ($_SESSION['wp_url_back']) {
+		$callback = $_SESSION['wp_url_back'];
 	} else {
 		$callback = get_bloginfo('wpurl');
 	} 
@@ -41,7 +46,7 @@ if ($_GET['go']) {
 
 	$request_link = $to -> getAuthorizeURL($tok['oauth_token'], false, $callback);
 
-	$_SESSION['wp_go_login'] = $_GET['go'];
+	$_SESSION['wp_url_login'] = $_GET['go'];
 
 	header('Location:' . $request_link);
 } 

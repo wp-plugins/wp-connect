@@ -69,9 +69,6 @@ class twitterOAuth {
   /* Immediately retry the API call if the response was not successful. */
   //public $retry = TRUE;
 
-
-
-
   /**
    * Set API URLS
    */

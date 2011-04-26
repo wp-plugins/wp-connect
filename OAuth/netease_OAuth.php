@@ -70,103 +70,42 @@ class neteaseClient
  * @version 1.0 
  */ 
 class neteaseOAuth { 
-    /** 
-     * Contains the last HTTP status code returned.  
-     * 
-     * @ignore 
-     */ 
+    // Contains the last HTTP status code returned.  
     public $http_code; 
-    /** 
-     * Contains the last API call. 
-     * 
-     * @ignore 
-     */ 
+    // Contains the last API call. 
     public $url; 
-    /** 
-     * Set up the API root URL. 
-     * 
-     * @ignore 
-     */ 
+    // Set up the API root URL. 
     public $host = "http://api.t.163.com/"; 
-    /** 
-     * Set timeout default. 
-     * 
-     * @ignore 
-     */ 
+    // Set timeout default. 
     public $timeout = 30; 
-    /**  
-     * Set connect timeout. 
-     * 
-     * @ignore 
-     */ 
+    // Set connect timeout. 
     public $connecttimeout = 30;  
-    /** 
-     * Verify SSL Cert. 
-     * 
-     * @ignore 
-     */ 
+    // Verify SSL Cert. 
     public $ssl_verifypeer = FALSE; 
-    /** 
-     * Respons format. 
-     * 
-     * @ignore 
-     */ 
+    // Respons format. 
     public $format = 'json'; 
-    /** 
-     * Decode returned json data. 
-     * 
-     * @ignore 
-     */ 
+    // Decode returned json data. 
     public $decode_json = TRUE; 
-    /** 
-     * Contains the last HTTP headers returned. 
-     * 
-     * @ignore 
-     */ 
+    // Contains the last HTTP headers returned. 
     public $http_info; 
-    /** 
-     * Set the useragnet. 
-     * 
-     * @ignore 
-     */ 
-    public $useragent = 'Sae T OAuth v0.2.0-beta2'; 
+    // Set the useragnet. 
+    public $useragent = 'neteaseOAuth v0.0.1';
     /* Immediately retry the API call if the response was not successful. */ 
     //public $retry = TRUE; 
     
-
-
-
     /** 
-     * Set API URLS 
-     */ 
-    /** 
-     * @ignore 
-     */ 
+     *Set API URLS
+     */
     function accessTokenURL()  { return 'http://api.t.163.com/oauth/access_token'; } 
-    /** 
-     * @ignore 
-     */ 
     function authenticateURL() { return 'http://api.t.163.com/oauth/authenticate'; } 
-    /** 
-     * @ignore 
-     */ 
     function authorizeURL()    { return 'http://api.t.163.com/oauth/authorize'; } 
-    /** 
-     * @ignore 
-     */ 
     function requestTokenURL() { return 'http://api.t.163.com/oauth/request_token'; } 
 
 
     /** 
      * Debug helpers 
      */ 
-    /** 
-     * @ignore 
-     */ 
     function lastStatusCode() { return $this->http_status; } 
-    /** 
-     * @ignore 
-     */ 
     function lastAPICall() { return $this->last_api_call; } 
 
     /** 

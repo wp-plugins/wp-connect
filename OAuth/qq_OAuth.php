@@ -15,11 +15,33 @@ class qqClient
         $this->oauth = new qqOAuth( $akey , $skey , $accecss_token , $accecss_token_secret ); 
     }
 
-    // 最新关注人微博 
-    function home_timeline() 
-    { 
-        return $this->oauth->get('http://open.t.qq.com/api/statuses/home_timeline?format=json'); 
-    }
+    // 获取其他人资料
+	function show_user( $name )
+	{
+		$params = array();
+		$params['name'] = $name;
+		return $this->oauth->get( 'http://open.t.qq.com/api/user/other_info?format=json' ,  $params );
+	}
+
+    // 其他用户发表时间线
+	function user_timeline( $page = 0, $count = 20, $name )
+	{
+		$params = array();
+		$params['name'] = $name;
+		$params['reqnum'] = $count;
+		$params['pageflag'] = $page;
+
+		return $this->oauth->get('http://open.t.qq.com/api/statuses/user_timeline?format=json', $params );
+	}
+
+    // 其他帐户听众列表
+	function followers( $count = 20 , $name )
+	{
+		$params = array();
+		$params['name'] = $name;
+		$params['reqnum'] = $count;
+		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist?format=json' , $params );
+	}
 
     // 发表微博  
     function update( $text ) 
@@ -56,103 +78,42 @@ class qqClient
  * @author Easy Chen 
  * @version 1.0 
  */ 
-class qqOAuth {    /** 
-     * Contains the last HTTP status code returned.  
-     * 
-     * @ignore 
-     */ 
+class qqOAuth {
+    // Contains the last HTTP status code returned.  
     public $http_code; 
-    /** 
-     * Contains the last API call. 
-     * 
-     * @ignore 
-     */ 
+    // Contains the last API call. 
     public $url; 
-    /** 
-     * Set up the API root URL. 
-     * 
-     * @ignore 
-     */ 
+    // Set up the API root URL. 
     public $host = "https://open.t.qq.com/cgi-bin/"; 
-    /** 
-     * Set timeout default. 
-     * 
-     * @ignore 
-     */ 
+    // Set timeout default. 
     public $timeout = 30; 
-    /**  
-     * Set connect timeout. 
-     * 
-     * @ignore 
-     */ 
+    // Set connect timeout. 
     public $connecttimeout = 30;  
-    /** 
-     * Verify SSL Cert. 
-     * 
-     * @ignore 
-     */ 
+    // Verify SSL Cert. 
     public $ssl_verifypeer = FALSE; 
-    /** 
-     * Respons format. 
-     * 
-     * @ignore 
-     */ 
+    // Respons format. 
     public $format = 'json'; 
-    /** 
-     * Decode returned json data. 
-     * 
-     * @ignore 
-     */ 
+    // Decode returned json data. 
     public $decode_json = TRUE; 
-    /** 
-     * Contains the last HTTP headers returned. 
-     * 
-     * @ignore 
-     */ 
+    // Contains the last HTTP headers returned. 
     public $http_info; 
-    /** 
-     * Set the useragnet. 
-     * 
-     * @ignore 
-     */ 
-    public $useragent = 'Sae T OAuth v0.2.0-beta2'; 
+    // Set the useragnet. 
+    public $useragent = 'qqOAuth v0.0.1'; 
     /* Immediately retry the API call if the response was not successful. */ 
     //public $retry = TRUE; 
     
-
-
-
     /** 
-     * Set API URLS 
-     */ 
-    /** 
-     * @ignore 
+     *Set API URLS
      */ 
     function accessTokenURL()  { return 'https://open.t.qq.com/cgi-bin/access_token'; } 
-    /** 
-     * @ignore 
-     */ 
     function authenticateURL() { return 'https://open.t.qq.com/cgi-bin/authenticate'; } 
-    /** 
-     * @ignore 
-     */ 
-    function authorizeURL()    { return 'https://open.t.qq.com/cgi-bin/authorize'; } 
-    /** 
-     * @ignore 
-     */ 
+    function authorizeURL()    { return 'https://open.t.qq.com/cgi-bin/authorize'; }  
     function requestTokenURL() { return 'https://open.t.qq.com/cgi-bin/request_token'; } 
-
 
     /** 
      * Debug helpers 
      */ 
-    /** 
-     * @ignore 
-     */ 
     function lastStatusCode() { return $this->http_status; } 
-    /** 
-     * @ignore 
-     */ 
     function lastAPICall() { return $this->last_api_call; } 
 
     /** 
@@ -167,7 +128,6 @@ class qqOAuth {    /**
             $this->token = NULL; 
         } 
     } 
-
 
     /** 
      * Get a request_token from Weibo 
@@ -268,9 +228,6 @@ class qqOAuth {    /**
      * @return string 
      */ 
     function oAuthRequest($url, $method, $parameters , $multi = false) { 
-
-       
-
         // echo $url ; 
         $request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters); 
         $request->sign_request($this->sha1_method, $this->consumer, $this->token); 
@@ -320,30 +277,6 @@ class qqOAuth {    /**
         } 
 
         $header_array = array(); 
-        
-/*
-        $header_array["FetchUrl"] = $url; 
-        $header_array['TimeStamp'] = date('Y-m-d H:i:s'); 
-        $header_array['AccessKey'] = SAE_ACCESSKEY; 
-
-
-        $content="FetchUrl"; 
-
-        $content.=$header_array["FetchUrl"]; 
-
-        $content.="TimeStamp"; 
-
-        $content.=$header_array['TimeStamp']; 
-
-        $content.="AccessKey"; 
-
-        $content.=$header_array['AccessKey']; 
-
-        $header_array['Signature'] = base64_encode(hash_hmac('sha256',$content, SAE_SECRETKEY ,true)); 
-*/
-        //curl_setopt($ci, CURLOPT_URL, SAE_FETCHURL_SERVICE_ADDRESS ); 
-
-        //print_r( $header_array ); 
         $header_array2=array(); 
         if( $multi ) 
         	$header_array2 = array("Content-Type: multipart/form-data; boundary=" . OAuthUtil::$boundary , "Expect: ");

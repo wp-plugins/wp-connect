@@ -12,28 +12,109 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	} else {
 	    $t_url = $postlink;
 	}
-
+	$output = array('qq', 'sina');
 	$twitter = wp_status($title, $t_url, 140);
 	$status = wp_status($title, $postlink, 140);
 	$status1 = wp_status($title, $postlink, 128);
 	$status2 = wp_status($title, $postlink, 140, 1);
 	$status3 = wp_status($title, $postlink, 200);
 	$status4 = wp_status($title, $postlink, 200, 1);
-	if($account['qq']) { wp_update_t_qq($account['qq'], $status2, $pic); } //140*
-	if($account['sina']) { wp_update_t_sina($account['sina'], $status2, $pic); } //140*
+	$api_title = wp_status($title, '', 200, 1);
+	if($wptm_options['api']) {
+    	$status = "title={$api_title}&postlink={$postlink}&pic={$pic}&q1={$account['qq']['oauth_token']}&q2={$account['qq']['oauth_token_secret']}&s1={$account['sina']['oauth_token']}&s2={$account['sina']['oauth_token_secret']}&sh1={$account['sohu']['oauth_token']}&sh2={$account['sohu']['oauth_token_secret']}&n1={$account['netease']['oauth_token']}&n2={$account['netease']['oauth_token_secret']}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}&d1={$account['douban']['oauth_token']}&d2={$account['douban']['oauth_token_secret']}";
+		wp_update_api($status);
+	} elseif($wptm_options['enable_proxy'] && !$wptm_options['api']) {
+    	$status = "twitter={$twitter}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}";
+		wp_update_api($status);
+	} else {
+	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $status2, $pic); } //140*
+	if($account['sina']) { $output['sina'] = wp_update_t_sina($account['sina'], $status2, $pic); } //140*
 	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
-	if($account['twitter'] || $account['twitter_oauth']) { wp_update_twitter($twitter); } //140
-	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4); } //+
+	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4, $pic); } //+
+	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
+	if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
+	}
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $status3); } //380
 	if($account['digu']) { wp_update_digu($account['digu'], $status); } //140
-	if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
 	if($account['baidu']) { wp_update_baidu($account['baidu'], $status2); } //140*
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
 	if($account['renjian']) { wp_update_renjian($account['renjian'], $status4); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $status4); } //200*
+	return $output;
 }
+// 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
+function wp_strlen($text) {
+	$a = mb_strlen($text, 'UTF-8');
+	$b = strlen($text);
+	$c = $b / 3 ;
+	$d = ($a + $b) / 4;
+	if ($a == $b) { // 纯英文、符号、数字
+		return $b / 2; 
+	} elseif ($a == $c) { // 纯中文
+		return $a;
+	} elseif ($a != $c) { // 混合
+		return $d;
+	} 
+}
+// 截取字数
+function wp_status($content, $url, $length, $num = '') {
+	$temp_length = (mb_strlen($content, 'utf-8')) + (mb_strlen($url, 'utf-8'));
+	if ($num) {
+		$temp_length = (wp_strlen($content)) + (wp_strlen($url));
+	} 
+	if ($temp_length > $length - 3) { // ...
+		$chars = $length - 6 - mb_strlen($url, 'utf-8'); // ' - '
+		if ($num) {
+			$chars = $length - 3 - wp_strlen($url);
+			$str = mb_substr($content, 0, $chars, 'utf-8');
+			preg_match_all("/([\x{0000}-\x{00FF}]){1}/u", $str, $half_width); // 半角字符
+			$chars = $chars + count($half_width[0])/2;
+		} 
+		$content = mb_substr($content, 0, $chars, 'utf-8');
+		$content = $content . "...";
+	} 
+	$status = $content . ' ' . $url;
+	return trim($status);
+}
+
+function wp_in_array($a, $b) {
+	$arrayA = explode(',', $a);
+	$arrayB = explode(',', $b);
+	foreach($arrayB as $val) {
+		if (in_array($val, $arrayA))
+			return true;
+	} 
+	return false;
+}
+
+function wp_urlencode($url) {
+	$a = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%23', '%5B', '%5D');
+	$b = array("!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]");
+	$url = str_replace($a, $b, urlencode($url));
+	return strtolower($url);
+}
+
+if (!function_exists('get_t_cn')) {
+// 以下代码来自 t.cn 短域名WordPress 插件
+	function get_t_cn($long_url) {
+		$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source=744243473&url_long=' . $long_url;
+		$request = new WP_Http;
+		$result = $request -> request($api_url);
+		$result = $result['body'];
+		$result = json_decode($result);
+		return $result[0] -> url_short;
+	} 
+}
+
+// api
+function wp_update_api($status) {
+	$api_url = 'http://www.smyx.net/apps/api.php';
+	$request = new WP_Http;
+	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $status));
+}
+
 // 腾讯微博
 function wp_update_t_qq($qq, $status, $pic) {
 	if (!class_exists('qqOAuth')) {
@@ -45,6 +126,7 @@ function wp_update_t_qq($qq, $status, $pic) {
 	} else {
 		$result = $to -> update($status);
 	}
+	return $result['data']['id'];
 } 
 // 新浪微博
 function wp_update_t_sina($sina, $status, $pic) {
@@ -56,8 +138,21 @@ function wp_update_t_sina($sina, $status, $pic) {
 		$result = $to -> upload($status , $pic);
 	} else {
 		$result = $to -> update($status);
-	} 
+	}
+	return $result['id'];
 } 
+// 搜狐微博
+function wp_update_t_sohu($sohu, $status, $pic) {
+	if (!class_exists('sohuOAuth')) {
+		include dirname(__FILE__) . '/OAuth/sohu_OAuth.php';
+	} 
+	$to = new sohuClient(SOHU_APP_KEY, SOHU_APP_SECRET, $sohu['oauth_token'], $sohu['oauth_token_secret']);
+	if ($pic) {
+		$result = $to -> upload($status , $pic);
+	} else {
+		$result = $to -> update($status);
+	}
+}
 // 网易微博
 function wp_update_t_163($netease, $status, $pic) {
 	if (!class_exists('neteaseOAuth')) {
@@ -71,31 +166,12 @@ function wp_update_t_163($netease, $status, $pic) {
 	}
 } 
 // Twitter
-function wp_update_twitter($status) {
-	global $wptm_options;
-	if ($wptm_options['enable_proxy']) {
-		$twitter = get_option('wptm_twitter');
-		$api_url = 'http://smyxapi.appspot.com/api/statuses/update.xml';
-		if ($wptm_options['custom_proxy']) {
-			$api_url = $wptm_options['custom_proxy'];
-		} 
-		$curl_handle = curl_init();
-		curl_setopt($curl_handle, CURLOPT_URL, "$api_url");
-		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
-		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl_handle, CURLOPT_POST, 1);
-		curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "status=$status");
-		curl_setopt($curl_handle, CURLOPT_USERPWD, "{$twitter['username']}:{$twitter['password']}");
-		$buffer = curl_exec($curl_handle);
-		curl_close($curl_handle);
-	} else {
-		if (!class_exists('twitterOAuth')) {
-			include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
-		} 
-		$twitter = get_option('wptm_twitter_oauth');
-		$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $twitter['oauth_token'], $twitter['oauth_token_secret']);
-		$result = $to -> update($status);
-	} 
+function wp_update_twitter($twitter, $status) {
+	if (!class_exists('twitterOAuth')) {
+		include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
+	}
+	$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $twitter['oauth_token'], $twitter['oauth_token_secret']);
+	$result = $to -> update($status);
 } 
 // 豆瓣
 function wp_update_douban($douban, $status) {
@@ -120,15 +196,7 @@ function wp_update_fanfou($fanfou, $status) {
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$fanfou['username']}:{$fanfou['password']}"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
-} 
-// 搜狐微博
-function wp_update_t_sohu($sohu, $status) {
-	$api_url = 'http://api.t.sohu.com/statuses/update.xml';
-	$body = array('status' => $status);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$sohu['username']}:{$sohu['password']}"));
-	$request = new WP_Http;
-	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
-} 
+}
 // 人间网
 function wp_update_renjian($renjian, $status) {
 	$api_url = 'http://api.renjian.com/statuses/update.xml';
