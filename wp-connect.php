@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.4.0
+Version: 1.4.1
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -87,7 +87,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <th>同步内容设置</th>
-            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-4]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！) <input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>是否将文章标签当成话题<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 </td>
+            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-4]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类 <input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签)</td>
           </tr>
           <tr>
             <th>自定义消息</th>
@@ -173,6 +173,7 @@ function wp_connect_do_page() {
          <li>3、支持使用 Gtalk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
          <li>4、支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。</li>
 		 <li>最低捐赠：5元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://www.smyx.net/help/#8" target="_blank">查看详细描述</a></li>
+		 <li><strong>假如您不需要上述功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
       </ul>
 <?php } else { ?>
 	    <table class="form-table">
