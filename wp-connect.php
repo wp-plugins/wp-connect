@@ -174,6 +174,7 @@ function wp_connect_do_page() {
          <li>4、支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。</li>
 		 <li>最低捐赠：5元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://www.smyx.net/help/#8" target="_blank">查看详细描述</a></li>
 		 <li><strong>假如您不需要上述功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
+		 <li>本人承接各类网站制作，价格优惠，童叟无欺！介绍者可以获得10%回扣。<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
       </ul>
 <?php } else { ?>
 	    <table class="form-table">
