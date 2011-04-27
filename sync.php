@@ -62,6 +62,7 @@ function wp_connect_update() {
 		'api' => trim($_POST['api']),
 		'bind' => trim($_POST['bind']),
 		'sync_option' => trim($_POST['sync_option']),
+		'enable_cats' => trim($_POST['enable_cats']),
 		'enable_tags' => trim($_POST['enable_tags']),
 		'new_prefix' => trim($_POST['new_prefix']),
 		'update_prefix' => trim($_POST['update_prefix']),
@@ -506,7 +507,15 @@ function wp_connect_publish($post_ID) {
 			return;
 		} 
 	}
-    // 是否将文章标签当成话题
+	// 是否将文章分类当成话题
+	$postcats = get_the_category($post_ID);
+	if ($postcats && $wptm_options['enable_cats']) {
+		foreach($postcats as $cat) {
+			$cats .= '#' . $cat -> cat_name . '# ';
+		} 
+		$cats = ' ' . $cats;
+	} 
+	// 是否将文章标签当成话题
 	$posttags = get_the_tags($post_ID);
 	if ($posttags && $wptm_options['enable_tags']) {
 		foreach($posttags as $tag) {
@@ -514,6 +523,7 @@ function wp_connect_publish($post_ID) {
 		} 
 		$tags = ' ' . $tags;
 	} 
+	$tags = $cats . $tags; 
     // 是否有摘要
 	if($excerpt) {
 	   $post_content = strip_tags($excerpt);
@@ -547,6 +557,8 @@ function wp_connect_publish($post_ID) {
 			return;
 		} 
 		$title = $update_prefix . $title;
+	} elseif(defined('DOING_CRON')) { // 定时发布
+		$title = $new_prefix . $title;
 	} else { // 后台快速发布，xmlrpc等发布
 		if (($thePost -> post_status == 'publish') && ($time - $post_date == 0)) { // 新文章
 			$title = $new_prefix . $title;

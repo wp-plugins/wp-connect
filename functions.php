@@ -20,19 +20,22 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	$status3 = wp_status($title, $postlink, 200);
 	$status4 = wp_status($title, $postlink, 200, 1);
 	$api_title = wp_status($title, '', 200, 1);
-	if($wptm_options['api']) {
-    	$status = "title={$api_title}&postlink={$postlink}&pic={$pic}&q1={$account['qq']['oauth_token']}&q2={$account['qq']['oauth_token_secret']}&s1={$account['sina']['oauth_token']}&s2={$account['sina']['oauth_token_secret']}&sh1={$account['sohu']['oauth_token']}&sh2={$account['sohu']['oauth_token_secret']}&n1={$account['netease']['oauth_token']}&n2={$account['netease']['oauth_token_secret']}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}&d1={$account['douban']['oauth_token']}&d2={$account['douban']['oauth_token_secret']}";
-		wp_update_api($status);
-	} elseif($wptm_options['enable_proxy'] && !$wptm_options['api']) {
-    	$status = "twitter={$twitter}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}";
-		wp_update_api($status);
+    if(!$wptm_options['api'] && $wptm_options['enable_proxy'] && $account['twitter']) {
+    	$text = "twitter={$twitter}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}";
+		wp_update_api($text);
 	} else {
-	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $status2, $pic); } //140*
-	if($account['sina']) { $output['sina'] = wp_update_t_sina($account['sina'], $status2, $pic); } //140*
-	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
-	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4, $pic); } //+
-	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
-	if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
+	    if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
+	}
+	if($wptm_options['api'] && ($account['qq'] || $account['sina'] || $account['netease'] || $account['sohu'] || $account['twitter'] || $account['douban'])) {
+    	$text = "title={$api_title}&postlink={$postlink}&pic={$pic}&q1={$account['qq']['oauth_token']}&q2={$account['qq']['oauth_token_secret']}&s1={$account['sina']['oauth_token']}&s2={$account['sina']['oauth_token_secret']}&sh1={$account['sohu']['oauth_token']}&sh2={$account['sohu']['oauth_token_secret']}&n1={$account['netease']['oauth_token']}&n2={$account['netease']['oauth_token_secret']}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}&d1={$account['douban']['oauth_token']}&d2={$account['douban']['oauth_token_secret']}";
+		wp_update_api($text);
+	} else {
+		if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $status2, $pic); } //140*
+		if($account['sina']) { $output['sina'] = wp_update_t_sina($account['sina'], $status2, $pic); } //140*
+		if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
+		if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4, $pic); } //+
+		if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
+		if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
 	}
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $status3); } //380
