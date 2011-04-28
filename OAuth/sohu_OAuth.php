@@ -57,7 +57,7 @@ class sohuClient
     function upload( $text , $pic_path ) 
     { 
         $param = array(); 
-        $param['status'] = $text; 
+        $param['status'] = urlencode($text);
         $param['pic'] = '@'.$pic_path;
         
         return $this->oauth->post( 'http://api.t.sohu.com/statuses/upload.json' , $param , true );
