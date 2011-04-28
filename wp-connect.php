@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.4.1
+Version: 1.4.2
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -173,7 +173,7 @@ function wp_connect_do_page() {
          <li>3、支持使用 Gtalk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
          <li>4、支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。</li>
 		 <li>最低捐赠：5元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://www.smyx.net/help/#8" target="_blank">查看详细描述</a></li>
-		 <li><strong>假如您不需要上述功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
+		 <li><strong>或许您不需要上述功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
 		 <li>本人承接各类网站制作，价格优惠，童叟无欺！介绍者可以获得10%回扣。<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
       </ul>
 <?php } else { ?>
