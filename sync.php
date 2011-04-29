@@ -471,7 +471,7 @@ function wp_connect_sidebox() {
 		$sync = '(保存为草稿、待审不会同步)';
 	} else {
 		$sync = '(不勾选，则以更新间隔判断)';
-		$new = '<p><label><input type="checkbox" name="publish_post_new" value="1" />当作新文章发布</label></p>';
+		$new = '<p><label><input type="checkbox" name="publish_post_new" value="1" />当作新文章同步</label></p>';
 	} 
 	echo '<p><label><input type="checkbox" name="publish_sync" value="1" ' . $checked . '/>发布时同步 ' . $sync . '</label></p>';
 	echo $new;
