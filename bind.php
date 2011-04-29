@@ -32,6 +32,8 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="renjian" class="renjian<?php echo ($account['renjian']['password']) ? ' bind': '';?>" title="人间网"><b></b></a>
 <a href="javascript:;" id="zuosa" class="zuosa<?php echo ($account['zuosa']['password']) ? ' bind': '';?>" title="做啥"><b></b></a>
 <a href="javascript:;" id="follow5" class="follow5<?php echo ($account['follow5']['password']) ? ' bind': '';?>" title="Follow5"><b></b></a>
+<a href="javascript:;" id="leihou" class="leihou<?php echo ($account['leihou']['password']) ? ' bind': '';?>" title="雷猴"><b></b></a>
+<a href="javascript:;" id="wbto" class="wbto<?php echo ($account['wbto']['password']) ? ' bind': '';?>" title="微博通wbto.cn"><b></b></a>
 </div>
 <?php
 if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
@@ -110,7 +112,7 @@ $(function () {
   $(window).trigger( "hashchange" );
 });
 $(".close").show();
-$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5").click(function () {
+$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5, #leihou, #wbto").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   var pic = id.replace('open', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + pic + ".png");
@@ -124,6 +126,8 @@ $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, 
   $("#username_renjian").attr("value", "<?php echo $account['renjian']['username'];?>");
   $("#username_zuosa").attr("value", "<?php echo $account['zuosa']['username'];?>");
   $("#username_follow5").attr("value", "<?php echo $account['follow5']['username'];?>");
+  $("#username_leihou").attr("value", "<?php echo $account['leihou']['username'];?>");
+  $("#username_wbto").attr("value", "<?php echo $account['wbto']['username'];?>");
   $("#username_opensina").attr("value", "<?php echo $account['opensina']['app_key'];?>");
   $("#username_openqq").attr("value", "<?php echo $account['openqq']['app_key'];?>");
   $("#username_opensohu").attr("value", "<?php echo $account['opensohu']['app_key'];?>");
@@ -177,6 +181,8 @@ $("#fanfou").floatdialog("dialog_fanfou");
 $("#renjian").floatdialog("dialog_renjian");
 $("#zuosa").floatdialog("dialog_zuosa");
 $("#follow5").floatdialog("dialog_follow5");
+$("#leihou").floatdialog("dialog_leihou");
+$("#wbto").floatdialog("dialog_wbto");
 $('#update').click(function () {
   if (($(".username").val() == '') || ($(".password").val() == '')) {
     alert("值不能为空!  ");

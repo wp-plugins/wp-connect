@@ -42,6 +42,8 @@ function wp_connect_header () {
 		delete_option("wptm_renjian");
 		delete_option("wptm_zuosa");
 		delete_option("wptm_follow5");
+		delete_option("wptm_leihou");
+		delete_option("wptm_wbto");
 		$deactivate_url = 'plugins.php?action=deactivate&plugin=wp-connect/wp-connect.php';
 		if(function_exists('wp_nonce_url')) {
 			$deactivate_url = str_replace('&amp;', '&', wp_nonce_url($deactivate_url, 'deactivate-plugin_wp-connect/wp-connect.php'));
@@ -182,6 +184,14 @@ function wp_connect_update() {
 		update_option("wptm_follow5", $update);
 		echo $updated;
 	}
+	if (isset($_POST['update_leihou'])) {
+		update_option("wptm_leihou", $update);
+		echo $updated;
+	}
+	if (isset($_POST['update_wbto'])) {
+		update_option("wptm_wbto", $update);
+		echo $updated;
+	}
 	// delete
 	if (isset($_POST['delete_openqq'])) {
 		update_option("wptm_openqq", '');
@@ -237,6 +247,12 @@ function wp_connect_update() {
 	if (isset($_POST['delete_follow5'])) {
 		update_option("wptm_follow5", '');
 	}
+	if (isset($_POST['delete_leihou'])) {
+		update_option("wptm_leihou", '');
+	}
+	if (isset($_POST['delete_wbto'])) {
+		update_option("wptm_wbto", '');
+	}
 }
 // 读取数据库
 function wp_option_account() { 
@@ -257,6 +273,8 @@ function wp_option_account() {
 	'renjian' => get_option('wptm_renjian'),
 	'fanfou' => get_option('wptm_fanfou'),
 	'zuosa' => get_option('wptm_zuosa'),
+	'leihou' => get_option('wptm_leihou'),
+	'wbto' => get_option('wptm_wbto'),
 	'follow5' => get_option('wptm_follow5'));
 	return $account;
 }
@@ -296,7 +314,9 @@ function wp_usermeta_account( $user_id ) {
 	'renjian' => get_user_meta($user_id, 'wptm_renjian', true),
 	'fanfou' => get_user_meta($user_id, 'wptm_fanfou', true),
 	'zuosa' => get_user_meta($user_id, 'wptm_zuosa', true),
-	'follow5' => get_user_meta($user_id, 'wptm_follow5', true));
+	'follow5' => get_user_meta($user_id, 'wptm_follow5', true),
+	'leihou' => get_user_meta($user_id, 'wptm_leihou', true),
+	'wbto' => get_user_meta($user_id, 'wptm_wbto', true));
 	return $account;
 }
 define("WP_DONTPEEP" , 'Yp64QLB0Ho8ymIRs');
@@ -352,6 +372,12 @@ function wp_user_profile_update( $user_id ) {
 	if (isset($_POST['update_follow5'])) {
 		update_usermeta( $user_id, 'wptm_follow5', $update);
 	}
+	if (isset($_POST['update_leihou'])) {
+		update_usermeta( $user_id, 'wptm_leihou', $update);
+	}
+	if (isset($_POST['update_wbto'])) {
+		update_usermeta( $user_id, 'wptm_wbto', $update);
+	}
 	// delete
 	if (isset($_POST['delete_twitter'])) {
 		update_usermeta( $user_id, 'wptm_twitter_oauth', '');
@@ -394,6 +420,12 @@ function wp_user_profile_update( $user_id ) {
 	}
 	if (isset($_POST['delete_follow5'])) {
 		update_usermeta( $user_id, 'wptm_follow5', '');
+	}
+	if (isset($_POST['delete_leihou'])) {
+		update_usermeta( $user_id, 'wptm_leihou', '');
+	}
+	if (isset($_POST['delete_wbto'])) {
+		update_usermeta( $user_id, 'wptm_wbto', '');
 	}
 }
 

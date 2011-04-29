@@ -75,13 +75,19 @@ function wp_update_page() {
 		wp_update_fanfou($account['fanfou'], $status);
 	} 
 	if (isset($_POST['renjian']) && $account['renjian']) {
-		wp_update_renjian($account['renjian'], $status);
+		wp_update_renjian($account['renjian'], $status, $pic);
 	} 
 	if (isset($_POST['zuosa']) && $account['zuosa']) {
 		wp_update_zuosa($account['zuosa'], $status);
 	} 
 	if (isset($_POST['follow5']) && $account['follow5']) {
-		wp_update_follow5($account['follow5'], $status);
+		wp_update_follow5($account['follow5'], $status, $pic);
+	} 
+	if (isset($_POST['leihou']) && $account['leihou']) {
+		t_update($account['leihou'], $status, $pic);
+	} 
+	if (isset($_POST['wbto']) && $account['wbto']) {
+		wp_update_wbto($account['wbto'], $status, $pic);
 	} 
 	if($wptm_options['api'] && (($t1 && $t2) || ($q1 && $q2) || ($s1 && $s2) || ($sh1 && $sh2) || ($n1 && $n2) || ($d1 && $d2))) {
     	$text = "title={$status}&pic={$pic}&q1={$q1}&q2={$q2}&s1={$s1}&s2={$s2}&sh1={$sh1}&sh2={$sh2}&n1={$n1}&n2={$n2}&t1={$t1}&t2={$t2}&d1={$d1}&d2={$d2}";
@@ -134,7 +140,7 @@ var wpurl = "'.get_bloginfo('wpurl').'";
     </div>
     <p id="v1"><textarea cols="60" rows="5" name="message" id="message" onblur="textCounter(this.form.message,140);" onKeyDown="textCounter(this.form.message,140);" onKeyUp="textCounter(this.form.message,140);">'.$message.'</textarea></p>
     图片地址：<p>
-    <p id="v2"><input name="pic" id="pic" size="50" type="text" />（仅支持腾讯、新浪、网易微博）</p>
+    <p id="v2"><input name="pic" id="pic" size="50" type="text" /></p>
     发布到：
     <p><label><input type="checkbox" id="clickall" onclick="selectall(this.form);" checked /> 全选</label>
     <input name="twitter" id="twitter" type="checkbox" value="checkbox" checked />
@@ -148,9 +154,9 @@ var wpurl = "'.get_bloginfo('wpurl').'";
     <input name="sohu" id="sohu" type="checkbox" value="checkbox" checked />
     <label for="sohu">搜狐微博</label>
     <input name="renren" id="renren" type="checkbox" value="checkbox" checked />
-    <label for="renren">人人网</label><br />
+    <label for="renren">人人网</label>
     <input name="kaixin001" id="kaixin001" type="checkbox" value="checkbox" checked />
-    <label for="kaixin001">开心网</label>
+    <label for="kaixin001">开心网</label><br />
     <input name="digu" id="digu" type="checkbox" value="checkbox" checked />
     <label for="digu">嘀咕</label>
     <input name="douban" id="douban" type="checkbox" value="checkbox" checked />
@@ -163,8 +169,12 @@ var wpurl = "'.get_bloginfo('wpurl').'";
     <label for="renjian">人间网</label>
     <input name="zuosa" id="zuosa" type="checkbox" value="checkbox" checked />
     <label for="zuosa">做啥</label>
+    <input name="leihou" id="leihou" type="checkbox" value="checkbox" checked />
+    <label for="leihou">雷猴</label>
     <input name="follow5" id="follow5" type="checkbox" value="checkbox" checked />
-    <label for="follow5">Follow5</label></p>';
+    <label for="follow5">Follow5</label>
+    <input name="wbto" id="wbto" type="checkbox" value="checkbox" checked />
+    <label for="wbto">微博通</label></p>';
 if (!is_user_logged_in() || !$wptm_advanced['registered_users']) {
 echo '<p id="v3">密码：
     <input name="password" id="password" type="password" value="" /> <span'.$pwderror.'>密码错误！</span>

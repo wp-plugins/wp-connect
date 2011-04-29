@@ -42,9 +42,11 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['digu']) { wp_update_digu($account['digu'], $status); } //140
 	if($account['baidu']) { wp_update_baidu($account['baidu'], $status2); } //140*
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
-	if($account['renjian']) { wp_update_renjian($account['renjian'], $status4); } //+
+	if($account['renjian']) { wp_update_renjian($account['renjian'], $status4, $pic); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
-	if($account['follow5']) { wp_update_follow5($account['follow5'], $status4); } //200*
+	if($account['wbto']) { wp_update_wbto($account['wbto'], $status2, $pic); } //140+
+	if($account['follow5']) { wp_update_follow5($account['follow5'], $status4, $pic); } //200*
+	if($account['leihou']) { t_update($account['leihou'], $status, $pic); } //140
 	return $output;
 }
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
@@ -201,9 +203,14 @@ function wp_update_fanfou($fanfou, $status) {
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // 人间网
-function wp_update_renjian($renjian, $status) {
-	$api_url = 'http://api.renjian.com/statuses/update.xml';
-	$body = array('text' => $status);
+function wp_update_renjian($renjian, $status, $pic) {
+	$api_url = 'http://api.renjian.com/v2/statuses/create.xml';
+	$body = array();
+	$body['text'] = $status;
+	if ($pic) {
+		$body['status_type'] = "PICTURE";
+		$body['url'] = $pic;
+	}
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$renjian['username']}:{$renjian['password']}"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
@@ -217,13 +224,55 @@ function wp_update_zuosa($zuosa, $status) {
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
 // Follow5
-function wp_update_follow5($follow5, $status) {
+function wp_update_follow5($follow5, $status, $pic) {
 	$api_url = 'http://api.follow5.com/api/statuses/update.xml?api_key=C1D656C887DB993D6FB6CA4A30754ED8';
-	$body = array('status' => $status, 'source' => 'qq_wp_follow5');
+	$body = array();
+	$body['source'] = 'qq_wp_follow5';
+	$body['status'] = $status;
+	if ($pic) {
+		$body['link'] = $pic;
+	} 
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$follow5['username']}:{$follow5['password']}"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
-} 
+}
+// wbto
+function wp_update_wbto($wbto, $status, $pic) {
+	$body = array();
+	$body['source'] = 'wordpress';
+	$body['content'] = urlencode($status);
+	if ($pic) {
+		$body['imgurl'] = $pic;
+		$api_url = 'http://wbto.cn/api/upload.json';
+	} else {
+	    $api_url = 'http://wbto.cn/api/update.json';
+	}
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$wbto['username']}:{$wbto['password']}"));
+	$request = new WP_Http;
+	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
+}
+
+function t_update($user, $status, $pic) {
+	$file = file_get_contents($pic);
+	$filename = reset(explode('?' , basename($pic)));
+	$mime = wp_get_image_mime($pic);
+
+	$boundary = uniqid('------------------');
+	$MPboundary = '--' . $boundary;
+	$endMPboundary = $MPboundary . '--';
+
+	$multipartbody .= $MPboundary . "\r\n";
+	$multipartbody .= 'content-disposition: form-data; name="status"' . "\r\n\r\n";
+	$multipartbody .= $status . "\r\n";
+
+	$multipartbody .= $MPboundary . "\r\n";
+	$multipartbody .= 'Content-Disposition: form-data; name="pic"; filename="' . $filename . '"' . "\r\n";
+	$multipartbody .= "Content-Type: {$mime}\r\n\r\n";
+	$multipartbody .= $file . "\r\n";
+	$multipartbody .= "\r\n" . $endMPboundary;
+	// 雷猴
+	wp_curl_multi("leihou.com", $user, $multipartbody, $boundary);
+}
 // 人人网
 function wp_update_renren($renren, $status) {
 	$cookie = tempnam('./tmp', 'renren');
@@ -291,5 +340,35 @@ function wp_update_result($ch) {
 	unset($ch);
 	return $str;
 }
+
+function wp_curl_multi($url, $user, $multipartbody, $boundary) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "http://{$url}/statuses/update.json");
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $multipartbody);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: multipart/form-data; boundary=$boundary"));
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_USERPWD, $user["username"] . ':' . $user["password"]);
+	$content = curl_exec($ch);
+	return $content;
+}
+
+function wp_get_image_mime($file) {
+	$ext = strtolower(pathinfo($file , PATHINFO_EXTENSION));
+	switch ($ext) {
+		case 'jpg':
+		case 'jpeg':
+			$mime = 'image/jpg';
+			break;
+		case 'png';
+			$mime = 'image/png';
+			break;
+		case 'gif';
+		default:
+			$mime = 'image/gif';
+			break;
+	} 
+	return $mime;
+} 
 
 ?>

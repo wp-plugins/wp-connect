@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.4.2
+Version: 1.4.3
 */
 
 $plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
@@ -83,7 +83,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top"><span<?php if (!function_exists('openssl_open') || !function_exists('curl_init')) echo ' style="color:red;"';?>>使用插件异常？</span></td>
-            <td><input name="api" type="checkbox" value="1" <?php if($wptm_options['api']) echo "checked "; ?>>我不能同步 <input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>我不能绑定帐号[ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a>，然后在下面绑定帐号<?php if (!function_exists('openssl_open') || !function_exists('curl_init')) echo ' <a href="http://www.smyx.net/help/#4" target="_blank">详细描述</a>';?> ]</td>
+            <td><input name="api" type="checkbox" value="1" <?php if($wptm_options['api']) echo "checked "; ?>>我不能同步，开启第二套同步方案 <input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>我不能绑定帐号[ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a>，然后在下面绑定帐号<?php if (!function_exists('openssl_open') || !function_exists('curl_init')) echo ' <a href="http://www.smyx.net/help/#4" target="_blank">详细描述</a>';?> ]</td>
           </tr>
           <tr>
             <th>同步内容设置</th>
