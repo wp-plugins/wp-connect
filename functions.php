@@ -30,8 +30,8 @@ function wp_update_list($title, $postlink, $pic, $account) {
     	$text = "title={$api_title}&postlink={$postlink}&pic={$pic}&q1={$account['qq']['oauth_token']}&q2={$account['qq']['oauth_token_secret']}&s1={$account['sina']['oauth_token']}&s2={$account['sina']['oauth_token_secret']}&sh1={$account['sohu']['oauth_token']}&sh2={$account['sohu']['oauth_token_secret']}&n1={$account['netease']['oauth_token']}&n2={$account['netease']['oauth_token_secret']}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}&d1={$account['douban']['oauth_token']}&d2={$account['douban']['oauth_token_secret']}";
 		wp_update_api($text);
 	} else {
-		if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $status2, $pic); } //140*
 		if($account['sina']) { $output['sina'] = wp_update_t_sina($account['sina'], $status2, $pic); } //140*
+		if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $status2, $pic); } //140*
 		if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
 		if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4, $pic); } //+
 		if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
@@ -46,7 +46,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['wbto']) { wp_update_wbto($account['wbto'], $status2, $pic); } //140+
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $status4, $pic); } //200*
-	if($account['leihou']) { t_update($account['leihou'], $status, $pic); } //140
+	if($account['leihou']) { wp_t_update($account['leihou'], $status, $pic); } //140
 	return $output;
 }
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
@@ -252,23 +252,24 @@ function wp_update_wbto($wbto, $status, $pic) {
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 
-function t_update($user, $status, $pic) {
-	$file = file_get_contents($pic);
-	$filename = reset(explode('?' , basename($pic)));
-	$mime = wp_get_image_mime($pic);
-
+function wp_t_update($user, $status, $pic) {
+	if ($pic) {
+		$file = file_get_contents($pic);
+		$filename = reset(explode('?' , basename($pic)));
+		$mime = wp_get_image_mime($pic);
+	} 
 	$boundary = uniqid('------------------');
 	$MPboundary = '--' . $boundary;
 	$endMPboundary = $MPboundary . '--';
-
+	if ($pic) {
+		$multipartbody .= $MPboundary . "\r\n";
+		$multipartbody .= 'Content-Disposition: form-data; name="pic"; filename="' . $filename . '"' . "\r\n";
+		$multipartbody .= "Content-Type: {$mime}\r\n\r\n";
+		$multipartbody .= $file . "\r\n";
+	} 
 	$multipartbody .= $MPboundary . "\r\n";
 	$multipartbody .= 'content-disposition: form-data; name="status"' . "\r\n\r\n";
 	$multipartbody .= $status . "\r\n";
-
-	$multipartbody .= $MPboundary . "\r\n";
-	$multipartbody .= 'Content-Disposition: form-data; name="pic"; filename="' . $filename . '"' . "\r\n";
-	$multipartbody .= "Content-Type: {$mime}\r\n\r\n";
-	$multipartbody .= $file . "\r\n";
 	$multipartbody .= "\r\n" . $endMPboundary;
 	// 雷猴
 	wp_curl_multi("leihou.com", $user, $multipartbody, $boundary);
