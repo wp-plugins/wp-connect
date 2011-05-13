@@ -76,7 +76,7 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 <span class="border">
 <span class="close" onclick="hidebox('dialog_login')"><img src="<?php echo $plugin_url;?>/images/close.png" title="关闭" /></span>
 <div id="login_box">
-<p>您可以使用以下帐号登录</p>
+<p>您可以使用以下帐号登录:</p>
 <p class="login_btn">
 <?php
 	if($wptm_connect['sina']) {
@@ -103,7 +103,7 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 <p class="author">程序提供: <a href="http://www.smyx.net/wp-connect.html" target="_blank">WordPress连接微博</a></p></div>
 </span></td></tr></table>
 </div>
-<div class="login_label">您可以使用以下帐号登录<?php if(is_singular() && !get_option('comment_registration')) echo '发表评论';?>:</div>
+<div class="login_label">您可以使用以下帐号登录：</div>
 <div class="login_button"><div class="login_icons" onclick="showbox('dialog_login')">
 <?php
 	if($wptm_connect['sina']) {
@@ -303,57 +303,58 @@ function wp_connect_renren_share($content) {
 }
 // 登录
 function wp_connect_login($userinfo, $tmail, $tid) {
-	global $wptm_connect;
+	global $wpdb, $wpurl, $wptm_connect;
 	$userinfo = explode('|', $userinfo);
 	if (count($userinfo) < 6) {
 		wp_die("An error occurred while trying to contact Sina Connect.");
 	} 
 	$callback = $_SESSION['wp_url_back'];
 	if (preg_match("/\b$userinfo[1]\b/i", $wptm_connect['disable_username'])) {
-		wp_die("很遗憾，”$userinfo[1]” 被系统保留，请更换微博帐号登录！返回 <a href='$callback'>$callback</a>");
+		wp_die("很遗憾！”$userinfo[1]” 被系统保留，请更换微博帐号登录！返回 <a href='$callback'>$callback</a>");
 	} 
 
-	$wpurl = get_bloginfo('wpurl');
-    $avatar = $userinfo[0];
+	$avatar = $userinfo[0];
 	$user = get_user_by_user_login($userinfo[1]);
 	$wpuid = $user['ID'];
-	$user_email = $user['user_email'];
-	$user_url = $user['user_url'];
-	//$tdata = get_user_meta($wpuid, 'tdata', true);
-	$bind = get_user_meta($wpuid, 'bind', true);
-	if($bind) {
-		$bind = array_filter($bind);
-	}
-	$sina = $bind['sina'];
-	$qq = $bind['qq'];
-	$sohu = $bind['sohu'];
-	$netease = $bind['netease'];
-	$douban = $bind['douban'];
-	$renren = $bind['renren'];
 	$t = strtolower($_SESSION['wp_url_login']);
-	if($tid == 'rtid') {
-	    $t = 'renren';
+	if ($tid == 'rtid') {
+		$t = 'renren';
 		$avatar = $userinfo[6];
-	}
+	} 
 	$password = wp_generate_password();
 	if ($wpuid) {
+		$password = $user['user_pass'];
+		$user_email = $user['user_email'];
+		$user_url = $user['user_url'];
+		$bind = get_user_meta($wpuid, 'bind', true);
 		if ($bind) {
-			if ($$t) {
-				$password = $user['user_pass'];
-			} else {
-				wp_die("很遗憾，”$userinfo[1]” 已被 $user_email 绑定，您可以使用该用户 <a href='$wpurl/wp-login.php'>登录</a> 并到‘我的资料’页绑定同名帐号，或者更换微博帐号，或者 <a href='$wpurl/wp-login.php?action=lostpassword'>找回密码</a>！<br />返回: <a href='$callback'>$callback</a>");
+			$bind = array_filter($bind);
+		} 
+        $level = get_user_meta($wpuid, $wpdb -> prefix . 'user_level', true); //判断用户级别
+		if ($bind) {
+			$sina = $bind['sina'];
+			$qq = $bind['qq'];
+			$sohu = $bind['sohu'];
+			$netease = $bind['netease'];
+			$douban = $bind['douban'];
+			$renren = $bind['renren'];
+			if (!$$t) {
+				wp_die("很遗憾！”$userinfo[1]” 已被 $user_email 绑定，您可以使用该用户 <a href='$wpurl/wp-login.php'>登录</a> 并到‘我的资料’页绑定同名帐号，或者更换微博帐号，或者 <a href='$wpurl/wp-login.php?action=lostpassword'>找回密码</a>！<br />返回: <a href='$callback'>$callback</a>");
 			} 
+		} else {
+			if ($level > 0) { // 0 订阅者 1 投稿者 2 作者
+				wp_die("很遗憾！”$userinfo[1]” 已被注册，您可以使用该用户 <a href='$wpurl/wp-login.php'>登录</a> 并到‘我的资料’页绑定同名帐号，或者更换微博帐号，或者 <a href='$wpurl/wp-login.php?action=lostpassword'>找回密码</a>！<br />返回: <a href='$callback'>$callback</a>");
+			}
 		} 
 	} else {
 		$wpuid = '';
-	}
-	
-	if(!$user_url) {
-	    $user_url = $userinfo[3];
-	}
+	} 
 
-	$userdata = array(
-		'ID' => $wpuid,
+	if (!$user_url) {
+		$user_url = $userinfo[3];
+	} 
+
+	$userdata = array('ID' => $wpuid,
 		'user_pass' => $password,
 		'user_login' => $userinfo[1],
 		'display_name' => $userinfo[2],
@@ -362,28 +363,27 @@ function wp_connect_login($userinfo, $tmail, $tid) {
 
 	if (!function_exists('wp_insert_user')) {
 		include_once(ABSPATH . WPINC . '/registration.php');
-	}
+	} 
 
 	if ($userinfo[0]) {
-		if($tmail != $user_email) {
+		if ($tmail != $user_email) {
 			$wpuid = wp_insert_user($userdata);
-		}
-		if(!$bind) {
-		    update_usermeta($wpuid, 'bind', array($t => '1'));
-		}
-	}
+		} 
+		if (!$bind) {
+			update_usermeta($wpuid, 'bind', array($t => '1'));
+		} 
+	} 
 
 	if ($wpuid) {
 		update_usermeta($wpuid, $tid, $avatar);
-		$t_array = array (
-			"tid" => $tid,
+		$t_array = array ("tid" => $tid,
 			"oauth_token" => $userinfo[4],
 			"oauth_token_secret" => $userinfo[5]);
-		if($tid == 'rtid') {
+		if ($tid == 'rtid') {
 			update_usermeta($wpuid, 'tdata', array ("tid" => 'rtid'));
 		} else {
 			update_usermeta($wpuid, 'tdata', $t_array);
-		}
+		} 
 
 		wp_set_auth_cookie($wpuid, true, false);
 		wp_set_current_user($wpuid);
@@ -506,7 +506,7 @@ function wp_connect_comment($id){
 	$tdata = get_user_meta($comments->user_id, 'tdata',true);
 	
 	$content = strip_tags($comments->comment_content);
-	$link = wp_urlencode(get_permalink($comment_post_id))."#comment-".$id;
+	$link = get_permalink($comment_post_id)."#comment-".$id;
 
     require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
@@ -516,7 +516,7 @@ function wp_connect_comment($id){
 	        }
 			$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['sina_username']) { $content = '@'.$wptm_connect['sina_username'].' '.$content; }
-			$status = wp_status($content, $link, 140, 1);
+			$status = wp_status($content, urlencode($link), 140, 1);
 			$result = $to -> update($status);
 		}
 	}
@@ -538,7 +538,7 @@ function wp_connect_comment($id){
 			}
 	        $to = new sohuClient(SOHU_APP_KEY, SOHU_APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['sohu_username']) { $content = '@'.$wptm_connect['sohu_username'].' '.$content; }
-			$status = wp_status($content, $link, 140, 1);
+			$status = wp_status($content, urlencode($link), 140, 1);
 	        $result = $to -> update($status);
 		}
 	}

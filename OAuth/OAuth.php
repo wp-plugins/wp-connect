@@ -794,12 +794,18 @@ class OAuthUtil {
         foreach ($params as $parameter => $value) { 
             
         //if( $parameter == 'pic' && $value{0} == '@' )
-			if( in_array($parameter,array("pic","image")) )
+		if( in_array($parameter,array("pic","image")) )
         {
-			$url = ltrim($value , '@');
-			$content = file_get_contents($url);
-			$filename = reset(explode('?' , basename($url)));
-			$mime = self :: get_image_mime($url);
+			if(is_array($value)) {
+				$content = $value[2];
+        	    $filename = $value[1];
+        	    $mime = $value[0]; 
+			} else {
+			    $url = ltrim($value , '@');
+			    $content = file_get_contents($url);
+			    $filename = reset(explode('?' , basename($url)));
+			    $mime = self :: get_image_mime($url);
+			}
 
         	$multipartbody .= $MPboundary . "\r\n";
 			$multipartbody .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $filename . '"'. "\r\n";

@@ -15,6 +15,26 @@ class qqClient
         $this->oauth = new qqOAuth( $akey , $skey , $accecss_token , $accecss_token_secret ); 
     }
 
+	function get_ip()
+	{
+		if ($HTTP_SERVER_VARS["HTTP_X_FORWARDED_FOR"]) {
+			$ip = $HTTP_SERVER_VARS["HTTP_X_FORWARDED_FOR"];
+		} elseif ($HTTP_SERVER_VARS["HTTP_CLIENT_IP"]) {
+			$ip = $HTTP_SERVER_VARS["HTTP_CLIENT_IP"];
+		} elseif ($HTTP_SERVER_VARS["REMOTE_ADDR"]) {
+			$ip = $HTTP_SERVER_VARS["REMOTE_ADDR"];
+		} elseif (getenv("HTTP_X_FORWARDED_FOR")) {
+			$ip = getenv("HTTP_X_FORWARDED_FOR");
+		} elseif (getenv("HTTP_CLIENT_IP")) {
+			$ip = getenv("HTTP_CLIENT_IP");
+		} elseif (getenv("REMOTE_ADDR")) {
+			$ip = getenv("REMOTE_ADDR");
+		} else {
+			$ip = "Unknown";
+		} 
+		return $ip;
+	} 
+
     // 获取其他人资料
 	function show_user( $name )
 	{
@@ -42,25 +62,27 @@ class qqClient
 		$params['reqnum'] = $count;
 		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist?format=json' , $params );
 	}
-
-    // 发表微博  
-    function update( $text ) 
+    // 发表微博(文本、图片、视频、音乐)
+    function update( $text, $value = '' ) 
     { 
-        $param = array();
-		$param['format'] = 'json';
-        $param['content'] = $text; 
+		$param = array();
+		$param['content'] = $text;
+		$param['clientip'] = $this -> get_ip();
 
-        return $this->oauth->post( 'http://open.t.qq.com/api/t/add' , $param ); 
-    }
-    
-    // 发表图片微博 
-    function upload($text, $pic) 
-    { 
-        $param = array();
-        $param['format'] = 'json';
-        $param['pic'] = $pic;
-        $param['content'] = $text;
-        return $this->oauth->post( 'http://open.t.qq.com/api/t/add_pic', $param, true); 
+		if ($value[0] == "image" && $value[1]) {
+			$param['pic'] = $value[1];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic?format=json', $param, true);
+		} elseif ($value[0] == "video") {
+			$param['url'] = $value[1];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_video?format=json', $param);
+		} elseif ($value[0] == "music") {
+			$param['author'] = $value[1];
+			$param['title'] = $value[2];
+			$param['url'] = $value[3];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_music?format=json', $param);
+		} else {
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add?format=json' , $param);
+		}
     }
     
 	// 获取自己信息

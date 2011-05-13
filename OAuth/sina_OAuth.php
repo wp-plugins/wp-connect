@@ -90,23 +90,18 @@ class sinaClient
 		return $this->oauth->get( 'http://api.t.sina.com.cn/users/show.json' ,  $params );
 	}
 
-    // 发表微博  
-    function update( $text ) 
+    // 发表微博(文本、图片)
+    function update( $text, $value = '' )
     {  
         $param = array(); 
         $param['status'] = $text; 
 
-        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/update.json' , $param ); 
-    }
-    
-    // 发表图片微博 
-    function upload( $text , $pic_path ) 
-    { 
-        $param = array(); 
-        $param['status'] = $text; 
-        $param['pic'] = '@'.$pic_path;
-        
-        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/upload.json' , $param , true ); 
+		if ($value[0] == "image" && $value[1]) {
+			$param['pic'] = $value[1];
+			return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/upload.json' , $param , true );
+		} else {
+            return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/update.json' , $param ); 
+		}
     }  
     
     // 获取自己信息

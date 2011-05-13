@@ -20,28 +20,22 @@ class neteaseClient
     { 
         return $this->oauth->get('http://api.t.163.com/statuses/home_timeline.json'); 
     }
-
-    // 发表微博 
-    function update( $text ) 
+    
+    // 发表微博(文本、图片) 
+    function update( $text, $value = '' )
     { 
-        $param = array(); 
+		$param = array();
         $param['status'] = $text; 
 		$param['source'] = "<a href=\"http://www.smyx.net/wp-connect.html\">WordPress连接微博</a>"; 
 
-        return $this->oauth->post( 'http://api.t.163.com/statuses/update.json' , $param ); 
-    }
-    
-    // 发表图片微博 
-    function upload( $text, $pic_path ) 
-    { 
-        $param = array(); 
-        $param['pic'] = "@".$pic_path;
-	    $pic = $this->oauth->post( 'http://api.t.163.com/statuses/upload.json' , $param , true );
-        $param1 = array(); 
-        $param1['status'] = $text." ".$pic['upload_image_url']; 
-	    $param1['source'] = "<a href=\"http://www.smyx.net/wp-connect.html\">WordPress连接微博</a>";
+		if ($value[0] == "image" && $value[1]) {
+			$p = array();
+			$p['pic'] = $value[1];
+			$pic = $this->oauth->post( 'http://api.t.163.com/statuses/upload.json' , $p , true );
+			$param['status'] .= " ".$pic['upload_image_url'];
+		}
 
-        return $this->oauth->post( 'http://api.t.163.com/statuses/update.json' , $param1 );   
+        return $this->oauth->post( 'http://api.t.163.com/statuses/update.json' , $param );
     } 
 
     // 获取自己信息

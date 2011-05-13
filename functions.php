@@ -4,49 +4,41 @@ include_once(dirname(__FILE__) . '/config.php');
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
-	if ($wptm_options['t_cn']) { // 是否使用t.cn短网址
-		$t_url = get_t_cn($postlink);
-		if (!$wptm_options['t_cn_twitter']) { // 只用于Twitter
-			$postlink = $t_url;
-		} 
-	} else {
-	    $t_url = $postlink;
-	}
+	$sina = wp_status($title, urlencode($postlink), 140, 1);
 	$output = array('qq', 'sina');
-	$twitter = wp_status($title, $t_url, 140);
-	$status = wp_status($title, $postlink, 140);
-	$status1 = wp_status($title, $postlink, 128);
-	$status2 = wp_status($title, $postlink, 140, 1);
-	$status3 = wp_status($title, $postlink, 200);
-	$status4 = wp_status($title, $postlink, 200, 1);
-	$api_title = wp_status($title, '', 200, 1);
-    if(!$wptm_options['api'] && $wptm_options['enable_proxy'] && $account['twitter']) {
-    	$text = "twitter={$twitter}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}";
-		wp_update_api($text);
-	} else {
-	    if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
+	if($account['sina']) { $ms = wp_update_t_sina($account['sina'], $sina, $pic); } //140*
+	$output['qq'] = $ms['id'];
+    // 是否使用t.cn短网址
+	if ($wptm_options['t_cn']) {
+		$url = get_t_cn(urlencode($postlink));
 	}
-	if($wptm_options['api'] && ($account['qq'] || $account['sina'] || $account['netease'] || $account['sohu'] || $account['twitter'] || $account['douban'])) {
-    	$text = "title={$api_title}&postlink={$postlink}&pic={$pic}&q1={$account['qq']['oauth_token']}&q2={$account['qq']['oauth_token_secret']}&s1={$account['sina']['oauth_token']}&s2={$account['sina']['oauth_token_secret']}&sh1={$account['sohu']['oauth_token']}&sh2={$account['sohu']['oauth_token_secret']}&n1={$account['netease']['oauth_token']}&n2={$account['netease']['oauth_token_secret']}&t1={$account['twitter']['oauth_token']}&t2={$account['twitter']['oauth_token_secret']}&d1={$account['douban']['oauth_token']}&d2={$account['douban']['oauth_token_secret']}";
-		wp_update_api($text);
-	} else {
-		if($account['sina']) { $output['sina'] = wp_update_t_sina($account['sina'], $status2, $pic); } //140*
-		if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $status2, $pic); } //140*
-		if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
-		if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status4, $pic); } //+
-		if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); } //140
-		if($account['douban']) { wp_update_douban($account['douban'], $status1); } //128
-	}
-	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
-	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $status3); } //380
-	if($account['digu']) { wp_update_digu($account['digu'], $status); } //140
-	if($account['baidu']) { wp_update_baidu($account['baidu'], $status2); } //140*
+	$status = wp_status($title, $postlink, 140); //网易/人人/饭否/做啥/雷猴
+	$status2 = wp_status($title, urlencode($postlink), 140); //Twitter/嘀咕
+	$status3 = wp_status($title, urlencode($postlink), 200, 1); //搜狐/人间网
+    $wbto = wp_status($title, $postlink, 140, 1); //微博通
+    $baidu = wp_status($title, urlencode($postlink), 140, 1); //百度
+	$kaixin001 = wp_status($title, $postlink, 200); //开心
+	$douban = wp_status($title, $postlink, 128); //豆瓣
+	if($pic[0] == "video" && $pic[1]) {
+		$title = str_replace($pic[1], '', $title);
+    }
+	$follow5 = wp_status($title, $postlink, 200, 1); //follow5
+	$qq = wp_status($title, $postlink, 140, 1); //腾讯
+	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $qq, $pic); } //140*
+	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
+	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status3, $pic); } //+
+	if($account['douban']) { wp_update_douban($account['douban'], $douban); } //128
+	if($account['digu']) { wp_update_digu($account['digu'], $status2); } //140
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
-	if($account['renjian']) { wp_update_renjian($account['renjian'], $status4, $pic); } //+
+	if($account['renjian']) { wp_update_renjian($account['renjian'], $status3, $pic); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
-	if($account['wbto']) { wp_update_wbto($account['wbto'], $status2, $pic); } //140+
-	if($account['follow5']) { wp_update_follow5($account['follow5'], $status4, $pic); } //200*
-	if($account['leihou']) { wp_t_update($account['leihou'], $status, $pic); } //140
+	if($account['wbto']) { wp_update_wbto($account['wbto'], $wbto, $pic); } //140+
+	if($account['follow5']) { wp_update_follow5($account['follow5'], $follow5, $pic); } //200*
+	if($account['twitter']) { wp_update_twitter($account['twitter'], $status2); }
+	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
+	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
+	if($account['baidu']) { wp_update_baidu($account['baidu'], $baidu); } //140*
+	if($account['leihou']) { wp_update_leihou($account['leihou'], $status, $pic); } //140
 	return $output;
 }
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
@@ -84,6 +76,20 @@ function wp_status($content, $url, $length, $num = '') {
 	return trim($status);
 }
 
+// 匹配视频、图片
+function wp_multi_media_url($content) {
+	preg_match_all('/<embed[^>]+src=[\"\']{1}(([^\"\'\s]+)\.swf)[\"\']{1}[^>]+>/isU', $content, $video);
+	preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
+	$v_sum = count($video[1]);
+	$p_sum = count($image[1]);
+	if ($v_sum > 0) { //优先级 视频 > 图片
+		$url = array("video", $video[1][0]);
+	} elseif ($p_sum > 0) {
+		$url = array("image", $image[1][0]);
+	} 
+	return $url;
+}
+
 function wp_in_array($a, $b) {
 	$arrayA = explode(',', $a);
 	$arrayB = explode(',', $b);
@@ -92,13 +98,6 @@ function wp_in_array($a, $b) {
 			return true;
 	} 
 	return false;
-}
-
-function wp_urlencode($url) {
-	$a = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%23', '%5B', '%5D');
-	$b = array("!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]");
-	$url = str_replace($a, $b, urlencode($url));
-	return strtolower($url);
 }
 
 if (!function_exists('get_t_cn')) {
@@ -121,63 +120,53 @@ function wp_update_api($status) {
 }
 
 // 腾讯微博
-function wp_update_t_qq($qq, $status, $pic) {
+function wp_update_t_qq($qq, $status, $value) {
 	if (!class_exists('qqOAuth')) {
 		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
 	} 
 	$to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET, $qq['oauth_token'], $qq['oauth_token_secret']);
-	if ($pic) {
-		$result = $to -> upload($status , $pic);
-	} else {
-		$result = $to -> update($status);
-	}
+	$result = $to -> update($status, $value);
 	return $result['data']['id'];
-} 
+}
 // 新浪微博
-function wp_update_t_sina($sina, $status, $pic) {
+function wp_update_t_sina($sina, $status, $value) {
 	if (!class_exists('sinaOAuth')) {
 		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
 	} 
 	$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $sina['oauth_token'], $sina['oauth_token_secret']);
-	if ($pic) {
-		$result = $to -> upload($status , $pic);
-	} else {
-		$result = $to -> update($status);
-	}
-	return $result['id'];
+    $result = $to -> update($status, $value);
+	return $result;
 } 
 // 搜狐微博
-function wp_update_t_sohu($sohu, $status, $pic) {
+function wp_update_t_sohu($sohu, $status, $value) {
 	if (!class_exists('sohuOAuth')) {
 		include dirname(__FILE__) . '/OAuth/sohu_OAuth.php';
 	} 
 	$to = new sohuClient(SOHU_APP_KEY, SOHU_APP_SECRET, $sohu['oauth_token'], $sohu['oauth_token_secret']);
-	if ($pic) {
-		$result = $to -> upload($status , $pic);
-	} else {
-		$result = $to -> update($status);
-	}
+	$result = $to -> update($status, $value);
 }
 // 网易微博
-function wp_update_t_163($netease, $status, $pic) {
+function wp_update_t_163($netease, $status, $value) {
 	if (!class_exists('neteaseOAuth')) {
 		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
 	} 
 	$to = new neteaseClient(APP_KEY, APP_SECRET, $netease['oauth_token'], $netease['oauth_token_secret']);
-	if ($pic) {
-		$result = $to -> upload($status , $pic);
-	} else {
-		$result = $to -> update($status);
-	}
+	$result = $to -> update($status, $value);
 } 
 // Twitter
 function wp_update_twitter($twitter, $status) {
-	if (!class_exists('twitterOAuth')) {
-		include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
+	global $wptm_options;
+	if ($wptm_options['enable_proxy']) {
+		$text = "twitter={$status}&t1={$twitter['oauth_token']}&t2={$twitter['oauth_token_secret']}";
+		wp_update_api($text);
+	} else {
+		if (!class_exists('twitterOAuth')) {
+			include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
+		}
+		$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $twitter['oauth_token'], $twitter['oauth_token_secret']);
+		$result = $to -> update($status);
 	}
-	$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $twitter['oauth_token'], $twitter['oauth_token_secret']);
-	$result = $to -> update($status);
-} 
+}
 // 豆瓣
 function wp_update_douban($douban, $status) {
 	if (!class_exists('doubanOAuth')) {
@@ -188,7 +177,7 @@ function wp_update_douban($douban, $status) {
 } 
 // 嘀咕
 function wp_update_digu($digu, $status) {
-	$api_url = 'http://api.minicloud.com.cn/statuses/update.xml';
+	$api_url = 'http://api.minicloud.com.cn/statuses/update.json';
 	$body = array('content' => $status);
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$digu['username']}:{$digu['password']}"));
 	$request = new WP_Http;
@@ -196,20 +185,20 @@ function wp_update_digu($digu, $status) {
 } 
 // 饭否
 function wp_update_fanfou($fanfou, $status) {
-	$api_url = 'http://api.fanfou.com/statuses/update.xml';
+	$api_url = 'http://api.fanfou.com/statuses/update.json';
 	$body = array('status' => $status);
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$fanfou['username']}:{$fanfou['password']}"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // 人间网
-function wp_update_renjian($renjian, $status, $pic) {
-	$api_url = 'http://api.renjian.com/v2/statuses/create.xml';
+function wp_update_renjian($renjian, $status, $value) {
+	$api_url = 'http://api.renjian.com/v2/statuses/create.json';
 	$body = array();
 	$body['text'] = $status;
-	if ($pic) {
+	if ($value[0] == "image" && $value[1]) {
 		$body['status_type'] = "PICTURE";
-		$body['url'] = $pic;
+		$body['url'] = $value[1];
 	}
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$renjian['username']}:{$renjian['password']}"));
 	$request = new WP_Http;
@@ -217,32 +206,32 @@ function wp_update_renjian($renjian, $status, $pic) {
 } 
 // 做啥网
 function wp_update_zuosa($zuosa, $status) {
-	$api_url = 'http://api.zuosa.com/statuses/update.xml';
+	$api_url = 'http://api.zuosa.com/statuses/update.json';
 	$body = array('status' => $status);
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$zuosa['username']}:{$zuosa['password']}"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
 // Follow5
-function wp_update_follow5($follow5, $status, $pic) {
+function wp_update_follow5($follow5, $status, $value) {
 	$api_url = 'http://api.follow5.com/api/statuses/update.xml?api_key=C1D656C887DB993D6FB6CA4A30754ED8';
 	$body = array();
 	$body['source'] = 'qq_wp_follow5';
 	$body['status'] = $status;
-	if ($pic) {
-		$body['link'] = $pic;
+	if ($value[1]) {
+		$body['link'] = $value[1];
 	} 
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$follow5['username']}:{$follow5['password']}"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // wbto
-function wp_update_wbto($wbto, $status, $pic) {
+function wp_update_wbto($wbto, $status, $value) {
 	$body = array();
 	$body['source'] = 'wordpress';
 	$body['content'] = urlencode($status);
-	if ($pic) {
-		$body['imgurl'] = $pic;
+	if ($value[0] == "image" && $value[1]) {
+		$body['imgurl'] = $value[1];
 		$api_url = 'http://wbto.cn/api/upload.json';
 	} else {
 	    $api_url = 'http://wbto.cn/api/update.json';
@@ -251,28 +240,9 @@ function wp_update_wbto($wbto, $status, $pic) {
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
-
-function wp_t_update($user, $status, $pic) {
-	if ($pic) {
-		$file = file_get_contents($pic);
-		$filename = reset(explode('?' , basename($pic)));
-		$mime = wp_get_image_mime($pic);
-	} 
-	$boundary = uniqid('------------------');
-	$MPboundary = '--' . $boundary;
-	$endMPboundary = $MPboundary . '--';
-	if ($pic) {
-		$multipartbody .= $MPboundary . "\r\n";
-		$multipartbody .= 'Content-Disposition: form-data; name="pic"; filename="' . $filename . '"' . "\r\n";
-		$multipartbody .= "Content-Type: {$mime}\r\n\r\n";
-		$multipartbody .= $file . "\r\n";
-	} 
-	$multipartbody .= $MPboundary . "\r\n";
-	$multipartbody .= 'content-disposition: form-data; name="status"' . "\r\n\r\n";
-	$multipartbody .= $status . "\r\n";
-	$multipartbody .= "\r\n" . $endMPboundary;
-	// 雷猴
-	wp_curl_multi("leihou.com", $user, $multipartbody, $boundary);
+// 雷猴
+function wp_update_leihou($leihou, $status, $value) {
+	wp_t_update("http://leihou.com/statuses/update.json", $leihou, $status, $value);
 }
 // 人人网
 function wp_update_renren($renren, $status) {
@@ -297,8 +267,8 @@ function wp_update_kaixin001($kaixin001, $status) {
 	$pattern = "/state.php\?verify=([^\"]+)\"/";
 	preg_match($pattern, $str, $matches);
 	$verify = $matches[1];
-	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/home/state_submit.php?verify=" . $verify);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'state=' . urlencode($status));
+	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/records/submit.php?verify=" . $verify . "&url=%2Fhome%2F%3Fid%3D");
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'content=' . urlencode($status));
 	curl_setopt($ch, CURLOPT_REFERER, '   http://wap.kaixin001.com/home/');
 	$ret = wp_update_result($ch);
 }
@@ -342,16 +312,35 @@ function wp_update_result($ch) {
 	return $str;
 }
 
-function wp_curl_multi($url, $user, $multipartbody, $boundary) {
+function wp_t_update($url, $user, $status, $value) {
+	if ($value[0] == "image" && $value[1]) {
+		$content = file_get_contents($value[1]);
+		$filename = reset(explode('?' , basename($value[1])));
+		$mime = wp_get_image_mime($value[1]);
+	} 
+	$boundary = uniqid('------------------');
+	$MPboundary = '--' . $boundary;
+	$endMPboundary = $MPboundary . '--';
+	if ($value[0] == "image" && $value[1]) {
+		$multipartbody .= $MPboundary . "\r\n";
+		$multipartbody .= 'Content-Disposition: form-data; name="pic"; filename="' . $filename . '"' . "\r\n";
+		$multipartbody .= "Content-Type: {$mime}\r\n\r\n";
+		$multipartbody .= $content . "\r\n";
+	} 
+	$multipartbody .= $MPboundary . "\r\n";
+	$multipartbody .= 'content-disposition: form-data; name="status"' . "\r\n\r\n";
+	$multipartbody .= $status . "\r\n";
+	$multipartbody .= "\r\n" . $endMPboundary;
+
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "http://{$url}/statuses/update.json");
+	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $multipartbody);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: multipart/form-data; boundary=$boundary"));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_USERPWD, $user["username"] . ':' . $user["password"]);
-	$content = curl_exec($ch);
-	return $content;
+	$ret = curl_exec($ch);
+	return $ret;
 }
 
 function wp_get_image_mime($file) {
@@ -370,6 +359,61 @@ function wp_get_image_mime($file) {
 			break;
 	} 
 	return $mime;
+} 
+// 社会化分享按钮，共52个
+function wp_social_share_title() {
+	return array("qzone" => "QQ空间",
+		"sina" => "新浪微博",
+		"baidu" => "百度搜藏",
+		"renren" => "人人网",
+		"qq" => "腾讯微博",
+		"kaixin001" => "开心网",
+		"sohu" => "搜狐微博",
+		"hibaidu" => "百度空间",
+		"t163" => "网易微博",
+		"douban" => "豆瓣",
+		"taojianghu" => "淘江湖",
+		"msn" => "MSN",
+		"buzz" => "谷歌Buzz",
+		"qqshuqian" => "QQ书签",
+		"tieba" => "百度贴吧",
+		"shequ51" => "51社区",
+		"shouji" => "手机",
+		"zhuaxia" => "抓虾",
+		"baishehui" => "搜狐白社会",
+		"ifeng" => "凤凰微博",
+		"pengyou" => "腾讯朋友",
+		"facebook" => "Facebook",
+		"twitter" => "Twitter",
+		"tianya" => "天涯社区",
+		"fanfou" => "饭否",
+		"sc115" => "115收藏",
+		"feixin" => "飞信",
+		"digu" => "嘀咕",
+		"follow5" => "Follow5",
+		"tongxue" => "同学网",
+		"youdao" => "有道书签",
+		"google" => "Google",
+		"delicious" => "Delicious",
+		"digg" => "Digg",
+		"yahoo" => "Yahoo!",
+		"live" => "微软live",
+		"hexun" => "和讯微博",
+		"xianguo" => "鲜果",
+		"zuosa" => "做啥",
+		"shuoke" => "139说客",
+		"myspace" => "聚友网",
+		"waakee" => "挖客",
+		"leshou" => "乐收",
+		"mop" => "猫扑推客",
+		"cnfol" => "中金微博",
+		"douban9" => "豆瓣9点",
+		"dream163" => "梦幻人生",
+		"taonan" => "淘男网",
+		"club189" => "天翼社区",
+		"baohe" => "宝盒网",
+		"renmaiku" => "人脉库",
+		"ushi" => "优士网");
 } 
 
 ?>

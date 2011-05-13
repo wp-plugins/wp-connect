@@ -5,13 +5,15 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到各大微博和社区。
-Version: 1.4.3
+Version: 1.5.0
 */
 
-$plugin_url = get_bloginfo('wpurl').'/wp-content/plugins/wp-connect';
+$wpurl = get_bloginfo('wpurl');
+$plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
+$wptm_share = get_option('wptm_share');
 
 add_action('admin_menu', 'wp_connect_add_page');
 
@@ -19,6 +21,10 @@ include_once(dirname(__FILE__) . '/sync.php');
 include_once(dirname(__FILE__) . '/functions.php');
 include_once(dirname(__FILE__) . '/connect.php');
 include_once(dirname(__FILE__) . '/page.php');
+
+if ($wptm_connect['widget']) {
+	include_once(dirname(__FILE__) . '/widget.php');
+}
 
 if ($wptm_options['enable_wptm']) { // 是否开启微博同步功能
 	add_action('publish_post', 'wp_connect_publish', 1);
@@ -55,6 +61,7 @@ function wp_connect_do_page() {
 	if(function_exists('wp_connect_advanced')) {
 	    wp_connect_advanced();
 		$wptm_advanced = get_option('wptm_advanced');
+		$wptm_share = get_option('wptm_share');
 	}
 	$account = wp_option_account();
 	$_SESSION['wp_url_bind'] = WP_CONNECT;
@@ -65,8 +72,10 @@ function wp_connect_do_page() {
     <ul class="nav">
       <li><a href="#sync">同步设置</a></li>
       <li><a href="#connect">连接设置</a></li>
+      <li><a href="#share">分享设置</a></li>
       <li><a href="#advanced">高级设置</a></li>
       <li><a href="#check">环境检查</a></li>
+      <li><a href="http://www.smyx.net/help/" target="_blank">帮助文档</a></li>
     </ul>
     <div id="sync">
       <form method="post" action="options-general.php?page=wp-connect">
@@ -79,11 +88,11 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
-            <td><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(国内主机用户必须勾选才能使用)</td>
+            <td><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(国内主机用户必须勾选才能使用Twitter)</td>
           </tr>
           <tr>
-            <td width="25%" valign="top"><span<?php if (!function_exists('openssl_open') || !function_exists('curl_init')) echo ' style="color:red;"';?>>使用插件异常？</span></td>
-            <td><input name="api" type="checkbox" value="1" <?php if($wptm_options['api']) echo "checked "; ?>>我不能同步，开启第二套同步方案 <input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>我不能绑定帐号[ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a>，然后在下面绑定帐号<?php if (!function_exists('openssl_open') || !function_exists('curl_init')) echo ' <a href="http://www.smyx.net/help/#4" target="_blank">详细描述</a>';?> ]</td>
+            <td width="25%" valign="top">我不能绑定帐号</td>
+            <td><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>勾选后可以在下面手动填写授权码 [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <th>同步内容设置</th>
@@ -91,16 +100,16 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <th>自定义消息</th>
-            <td>新文章前缀: <input name="new_prefix" type="text" size="10" value="<?php echo $wptm_options['new_prefix']; ?>" /> 更新文章前缀: <input name="update_prefix" type="text" size="10" value="<?php echo $wptm_options['update_prefix']; ?>" /> 更新间隔: <input name="update_days" type="text" size="2" maxlength="4" value="<?php echo ($wptm_options['update_days']) ? $wptm_options['update_days'] : '0'; ?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 天 [0=更新时不同步] </td>
+            <td>新文章前缀: <input name="new_prefix" type="text" size="10" value="<?php echo $wptm_options['new_prefix']; ?>" /> 更新文章前缀: <input name="update_prefix" type="text" size="10" value="<?php echo $wptm_options['update_prefix']; ?>" /> 更新间隔: <input name="update_days" type="text" size="2" maxlength="4" value="<?php echo ($wptm_options['update_days']) ? $wptm_options['update_days'] : '0'; ?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 天 [0=修改文章时不同步] </td>
           </tr>
           <tr>
             <td width="25%" valign="top">禁止同步的文章分类ID</td>
-            <td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用半角逗号(,)隔开 (设置后该ID分类下的文章将不会同到微博)</td>
+            <td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用半角逗号(,)隔开 (设置后该ID分类下的文章将不会同到微博) [ <a href="http://www.smyx.net/help/#7_5" target="_blank">查看</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">自定义页面</td>
             <td>密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" />
-              <input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交 [ <a href="http://www.smyx.net/help/#7_2" target="_blank">如何使用？</a> ]</td>
+               [ <a href="http://www.smyx.net/help/#7_2" target="_blank">如何使用？</a> ] <input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</td>
           </tr>
           <tr>
             <td width="25%" valign="top">多作者博客</td>
@@ -109,8 +118,7 @@ function wp_connect_do_page() {
           <tr>
             <td width="25%" valign="top">自定义短网址</td>
             <td><input name="enable_shorten" type="checkbox"  value="1" <?php if($wptm_options['enable_shorten']) echo "checked "; ?>>博客默认 ( http://yourblog.com/?p=1 )
-              <input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx (
-              <input name="t_cn_twitter" type="checkbox"  value="1" <?php if($wptm_options['t_cn_twitter']) echo "checked "; ?>>只应用于Twitter )</td>
+              <input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</td>
           </tr>
         </table>
         <p class="submit">
@@ -140,15 +148,19 @@ function wp_connect_do_page() {
           <tr>
             <td width="25%" valign="top">人人连接APP</td>
             <td>API Key: <input name="renren_api_key" type="text" value='<?php echo $wptm_connect['renren_api_key'];?>' />
-              Secret Key: <input name="renren_secret" type="text" value='<?php echo $wptm_connect['renren_secret'];?>' /> [ <a href="http://www.smyx.net/help/#2" target="_blank">如何获取?</a> ] </td>
+              Secret Key: <input name="renren_secret" type="text" value='<?php echo $wptm_connect['renren_secret'];?>' /> [ <a href="http://www.smyx.net/help/#7_1" target="_blank">如何获取?</a> ] </td>
           </tr>
+		  <tr>
+			<td width="25%" valign="top">Widget</td>
+			<td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_connect['widget']) echo "checked "; ?>/>是否开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
+		  </tr>
           <tr>
             <td width="25%" valign="top">绑定微博帐号</td>
             <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，<br />仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
           </tr>
           <tr>
             <td width="25%" valign="top">网易微博评论者头像</td>
-            <td><input name="netease_avatar" type="checkbox" value="1" <?php if($wptm_connect['netease_avatar']) echo "checked "; ?>>已显示</td>
+            <td><label><input name="netease_avatar" type="checkbox" value="1" <?php if($wptm_connect['netease_avatar']) echo "checked "; ?>>已显示</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">禁止注册的用户名</td>
@@ -159,7 +171,56 @@ function wp_connect_do_page() {
           <input type="submit" name="wptm_connect" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-	  <p><span style="color:red;"><strong>FAQs（管理员必看）: </strong></span><a href="http://www.smyx.net/help/#7" target="_blank">为什么我用了插件后，我的博客不能登录了，提示密码错误？</a></p>
+    </div>
+    <div id="share">
+      <form method="post" id="formdrag" action="options-general.php?page=wp-connect#share">
+        <?php wp_nonce_field('share-options');?>
+        <h3>分享设置</h3>
+		<?php if (!function_exists('wp_connect_advanced')) echo '<p><span style="color:#D54E21;"><strong>社会化分享按钮功能只针对捐赠用户！</strong></span></p>';?>
+        <table class="form-table">
+          <tr>
+            <td width="25%" valign="top">分享按钮</td>
+            <td><label><input name="enable_share" type="radio" value="1" <?php if($wptm_share['enable_share'] == 1) echo "checked "; ?>> 添加到文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php if($wptm_share['enable_share'] == 2) echo "checked "; ?>> 我要在主题适当位置调用函数</label> [ <a href="http://www.smyx.net/help/#4" target="_blank">查看说明</a> ]</td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">样式选择</td>
+            <td><label><input name="css" type="checkbox" value="1" <?php if($wptm_share['css']) echo "checked "; ?> />使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
+            </td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">显示设置</td>
+            <td><label>分享按钮前面的文字: <input name="text" type="text" value='<?php echo $wptm_share['text'];?>' /></label><br /><label><input name="button" type="radio" value="1" <?php if($wptm_share['button'] == 1) echo "checked "; ?> />显示图标按钮</label> ( 选择尺寸 <select name="size"><option value="16"<?php if($wptm_share['size'] == 16) echo " selected";?>>小图标</option><option value="32"<?php if($wptm_share['size'] == 32) echo " selected";?> >大图标</option></select> ) <label><input name="button" type="radio" value="2" <?php if($wptm_share['button'] == 2) echo "checked "; ?> />显示图文按钮</label> <label><input name="button" type="radio" value="3" <?php if($wptm_share['button'] == 3) echo "checked "; ?> />显示文字按钮</label></td>
+          </tr>
+		  <tr>
+			<td width="25%" valign="top">Google Analytics</td>
+			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://www.smyx.net/help/#4_2" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
+		  </tr>
+        </table>
+        <p style="padding-left:10px;">添加社会化分享按钮，可以上下左右拖拽排序(记得保存！) <span style="color:#440">[如果不能拖拽请刷新页面]</span>：
+		  <ul id="dragbox">
+		  <?php
+		  if (WP_CONNECT_ADVANCED == "true") {
+		  	wp_social_share_options();
+		  } else {
+		  	$social = wp_social_share_title();
+		  	foreach($social as $key => $title) {
+			  	echo "<li id=\"drag\"><input name=\"$key\" type=\"checkbox\" value=\"$key\" />$title</li>";
+		  	}
+		  }?>
+		    <div class="clear"></div>
+		  </ul>
+		</p>
+		  <div id="dragmarker">
+		    <img src="<?php echo $plugin_url;?>/images/marker_top.gif">
+		    <img src="<?php echo $plugin_url;?>/images/marker_middle.gif" id="dragmarkerline">
+		    <img src="<?php echo $plugin_url;?>/images/marker_bottom.gif">
+		  </div>
+        <p class="submit">
+		  <input type="hidden" name="all">
+          <input type="hidden" name="select">
+          <input type="submit" name="share_options" onclick="saveData()" class="button-primary" value="<?php _e('Save Changes') ?>" />
+        </p>
+      </form>
     </div>
     <div id="advanced">
       <form method="post" action="options-general.php?page=wp-connect#advanced">
@@ -168,13 +229,15 @@ function wp_connect_do_page() {
 <?php if (!function_exists('wp_connect_advanced')) {?>
       <ul>
          <li>高级设置只针对捐赠用户，目前增加功能如下：</li>
-         <li>1、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</li>
-         <li>2、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！</li>
-         <li>3、支持使用 Gtalk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
-         <li>4、支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。</li>
+         <li>1、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://www.smyx.net/help/#5" target="_blank">查看</a> ]</li>
+         <li>2、支持使用社会化分享按钮功能[35个]。<span style="color: red;">NEW!</span> [ <a href="http://www.smyx.net/help/#9" target="_blank">查看</a> ]</li>
+         <li>3、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</li>
+         <li>4、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://www.smyx.net/help/#3" target="_blank">查看</a> ]</li>
+         <li>5、支持使用 Gtalk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://www.smyx.net/help/#4" target="_blank">查看</a> ]</li>
+         <li>6、支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://www.smyx.net/help/#4_11" target="_blank">查看</a> ]</li>
 		 <li>最低捐赠：5元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://www.smyx.net/help/#8" target="_blank">查看详细描述</a></li>
-		 <li><strong>或许您不需要上述功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
-		 <li>本人承接各类网站制作，价格优惠，童叟无欺！介绍者可以获得10%回扣。<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
+		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
+		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
       </ul>
 <?php } else { ?>
 	    <table class="form-table">
@@ -196,7 +259,7 @@ function wp_connect_do_page() {
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">微博秀</td>
-			    <td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_advanced['widget']) echo "checked "; ?>/>是否开启侧边栏微博秀 (开启后到“小工具”拖拽激活)</label> [ <a href="http://show.girlcss.com/show.php" target="_blank">获得代码</a> ]</td>
+			    <td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_advanced['widget']) echo "checked "; ?>/>是否开启侧边栏微博秀 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label> [ <a href="http://show.girlcss.com/show.php" target="_blank">获得代码</a> ]</td>
 		    </tr>
         </table>
         <p class="submit">
