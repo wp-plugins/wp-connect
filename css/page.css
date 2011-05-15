@@ -2,7 +2,7 @@
 #tform fieldset p{margin-top:5px}
 #tform p { margin-bottom: 12px; }
 #tform #say, #tform #message{width:580px; overflow:hidden}
-#tform #say {height:40px; background:url(../images/page.png) no-repeat}
+/*#tform #say {height:40px; background:url(../images/page.png) no-repeat}*/
 #tform #wordage{text-align:right}
 #tform #wordage span{font:24px Georgia; color:#690}
 #tform #wordage{float:right; width:200px}
