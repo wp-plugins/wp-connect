@@ -505,7 +505,7 @@ function wp_connect_comment($id){
 	$dtid = get_user_meta($comments->user_id, 'dtid',true);
 	$tdata = get_user_meta($comments->user_id, 'tdata',true);
 	
-	$content = strip_tags($comments->comment_content);
+	$content = wp_replace($comments->comment_content);
 	$link = get_permalink($comment_post_id)."#comment-".$id;
 
     require_once(dirname(__FILE__) . '/OAuth/OAuth.php');

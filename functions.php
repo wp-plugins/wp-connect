@@ -13,8 +13,9 @@ function wp_update_list($title, $postlink, $pic, $account) {
 		$url = get_t_cn(urlencode($postlink));
 	}
 	$status = wp_status($title, $postlink, 140); //网易/人人/饭否/做啥/雷猴
-	$status2 = wp_status($title, urlencode($postlink), 140); //Twitter/嘀咕
+	$status2 = wp_status($title, urlencode($postlink), 140); //嘀咕
 	$status3 = wp_status($title, urlencode($postlink), 200, 1); //搜狐/人间网
+	$twitter = wp_status($title, wp_urlencode($postlink), 140); //Twitter
     $wbto = wp_status($title, $postlink, 140, 1); //微博通
     $baidu = wp_status($title, urlencode($postlink), 140, 1); //百度
 	$kaixin001 = wp_status($title, $postlink, 200); //开心
@@ -34,7 +35,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['wbto']) { wp_update_wbto($account['wbto'], $wbto, $pic); } //140+
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $follow5, $pic); } //200*
-	if($account['twitter']) { wp_update_twitter($account['twitter'], $status2); }
+	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); }
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
 	if($account['baidu']) { wp_update_baidu($account['baidu'], $baidu); } //140*
@@ -74,6 +75,20 @@ function wp_status($content, $url, $length, $num = '') {
 	} 
 	$status = $content . ' ' . $url;
 	return trim($status);
+}
+
+function wp_replace($str) {
+	$a = array('&#160;', '&#038;', '&#8211;', '&#8216;', '&#8217;', '&#8220;', '&#8221;', '&amp;', '&lt;', '&gt', '&ldquo;', '&rdquo;', '&nbsp;', 'Posted by Wordmobi');
+	$b = array(' ', '&', '-', '‘', '’', '“', '”', '&', '<', '>', '“', '”', ' ', '');
+	$str = str_replace($a, $b, strip_tags($str));
+	return trim($str);
+}
+
+function wp_urlencode($url) {
+	$a = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
+	$b = array("!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
+	$url = str_replace($a, $b, urlencode($url));
+	return strtolower($url);
 }
 
 // 匹配视频、图片
