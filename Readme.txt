@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,leihou,wbto,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,雷猴,微博通,登录,登陆,连接,同步
 Requires at least: 3.0
 Tested up to: 3.1.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 
 支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。
 
@@ -65,8 +65,16 @@ Stable tag: 1.5.1
 
 == Changelog ==
 
+= 1.5.2 =
+*2011/05/18
+修正两处bug。
+
+= 1.5.1 =
+*2011/05/15
+修正部分bug。
+
 = 1.5.0 =
-*2011/05/12
+*2011/05/13
 修改:当微博帐号和wp用户名相同时，将不会再覆盖密码！假如跟微博帐号同名的wp用户没有在后台勾选同名帐号，并且当该用户级别>0，即订阅者以上级别时(不包括订阅者)，使用微博帐号登录将被禁止！不用再担心被人获取用户权限啦！
 新增:把文章出现的第一个视频同步到支持视频的微博。
 新增:支持widget(小工具)拖拽激活 边栏登录按钮(在连接设置中开启)。

@@ -490,7 +490,7 @@ function wp_connect_publish($post_ID) {
 	} elseif (get_option('gmt_offset')) {
 		$time = time() + (get_option('gmt_offset') * 3600);
 	} 
-	$title = strip_tags(get_the_title($post_ID));
+	$title = wp_replace(get_the_title($post_ID));
 	$postlink = get_permalink($post_ID);
 	$shortlink = get_bloginfo('url') . "/?p=" . $post_ID;
 	$thePost = get_post($post_ID);
@@ -498,11 +498,10 @@ function wp_connect_publish($post_ID) {
 	$excerpt = $thePost -> post_excerpt;
 	$post_author_ID = $thePost -> post_author;
 	$post_date = strtotime($thePost -> post_date);
-	//$post_content = strip_tags($content);
-    $post_content = str_replace('Posted by Wordmobi', '', strip_tags($content));
+    $post_content = wp_replace($content);
     // 是否有摘要
 	if($excerpt) {
-		$post_content = strip_tags($excerpt);
+		$post_content = wp_replace($excerpt);
 	}
 	$wptm_profile = get_user_meta($post_author_ID, 'wptm_profile', true);
 	$account = wp_usermeta_account($post_author_ID);
