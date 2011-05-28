@@ -4,7 +4,7 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用10个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。。
+Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。。
 Version: 1.6.0
 */
 
