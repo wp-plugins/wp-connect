@@ -34,9 +34,8 @@ function wp_connect_init(){
     } 
 }
 
-if (!function_exists('wp_connect_login_button')) {
-	function wp_connect_login_button() {
-		global $plugin_url, $wptm_connect;
+function wp_connect_button() {
+	global $plugin_url, $wptm_connect;
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="<?php echo $plugin_url;?>/css/login.css" /> 
 <script type="text/javascript">
@@ -109,7 +108,6 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 	}
 	echo '</div></div><div class="clear"></div>';
 }
-}
 
 function wp_connect($id=""){
     global $login_loaded, $plugin_url, $wptm_connect;
@@ -145,7 +143,7 @@ if (is_user_logged_in()) {
 	} 
 	return;
 }
-    wp_connect_login_button();
+    if (!function_exists('wp_connect_login_button')) { wp_connect_button(); } else { wp_connect_login_button(); }
 	$login_loaded = true;
 }
 
