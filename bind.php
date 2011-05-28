@@ -3,18 +3,18 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && 'bind.php' == basename($_SERVER['SCRIP
 die ('Please do not load this page directly. Thanks!');
 $wptm_options = get_option('wptm_options');
 $wptm_advanced = get_option('wptm_advanced');
-$action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
+$action = IS_PROFILE_PAGE ? $plugin_url.'/save.php?do=profile' : '';
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $plugin_url;?>/css/style.css" />
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/jquery-1.2.6.pack.js"></script>
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/floatdialog.js"></script>
 <?php if (!$wptm_options['bind'] && $_SESSION['wp_url_bind'] == WP_CONNECT) {?>
-<h3>应用密匙</h3>
-<a href="javascript:;" id="openqq" class="openqq<?php echo ($account['openqq']['app_key']) ? ' bind': '';?>" title="腾讯开放平台"><b></b></a>
-<a href="javascript:;" id="opensina" class="opensina<?php echo ($account['opensina']['app_key']) ? ' bind': '';?>" title="新浪开放平台"><b></b></a>
-<a href="javascript:;" id="opensohu" class="opensohu<?php echo ($account['opensohu']['app_key']) ? ' bind': '';?>" title="搜狐开放平台"><b></b></a>
-<span>[ <a href="http://www.smyx.net/help/#7_12" target="_blank">如何获得APP Key？</a>]</span>
-<p>(应用密匙是用来显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) 注意：更换app key后，相应的帐号请重新绑定！</p>
+<h3>开放平台</h3>
+<a href="javascript:;" id="openqq" title="腾讯微博开放平台">腾讯微博</a>
+<a href="javascript:;" id="opensina" title="新浪微博开放平台">新浪微博</a>
+<a href="javascript:;" id="opensohu" title="搜狐微博开放平台">搜狐微博</a>
+<span>[ <a href="http://www.smyx.net/help/#faqs_15" target="_blank">如何获得APP Key？</a>]</span>
+<p>(以上设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) 注意：更换app key后，相应的帐号请重新绑定！</p>
 <?php }?>
 <div id="tlist">
 <h3>帐号绑定</h3>
@@ -48,7 +48,7 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 		}
 		if (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users']) {
 			echo '<p>绑定帐号后，您可以登录本站，在本站的微博自定义发布页面发布信息到您绑定的帐号上。</p>';
-			echo '<p>您也可以捐助本人开发插件，以获得使用Gtalk指令进行更多便捷的操作。<a href="http://www.smyx.net/help/" target="_blank">查看详细</a></p>';
+			echo '<p>您也可以捐助本人开发插件，以获得使用Gtalk指令进行更多便捷的操作。<a href="http://www.smyx.net/help/#gtalk" target="_blank">查看详细</a></p>';
 		}
 		echo '<p><strong>请您再三确定您信任本站站长，否则导致微博等账户信息泄漏，插件开发者概不负责！</strong></p>';
 	}

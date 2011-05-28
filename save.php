@@ -19,6 +19,23 @@ if ($_GET['do'] == "renren") {
 	if ($_SESSION['wp_url_back']) {
 		$uid = $_POST["uid"];
 		$name = $_POST["name"];
+		$head = $_POST["tinyurl"];
+		$url = 'http://www.renren.com/profile.do?id='.$uid;
+		$renren_api_key = $_POST["renren_api_key"];
+		$renren_secret = $_POST["renren_secret"];
+
+		if (!is_user_logged_in()) {
+			$tmail = $uid . '@renren.com';
+			$tid = "rtid";
+			wp_connect_login($head . '|' . $uid . '|' . $name . '|' . $url . '|||renren', $tmail, $tid);
+		} 
+	} 
+} 
+
+if ($_GET['do'] == "renren") {
+	if ($_SESSION['wp_url_back']) {
+		$uid = $_POST["uid"];
+		$name = $_POST["name"];
 		$tinyurl = $_POST["tinyurl"];
 		$renren_api_key = $_POST["renren_api_key"];
 		$renren_secret = $_POST["renren_secret"];
@@ -29,7 +46,7 @@ if ($_GET['do'] == "renren") {
 			wp_connect_login($name . '|' . $uid . '|' . $name . '||||' . $tinyurl, $tmail, $tid);
 		} 
 	} 
-} 
+}
 
 if ($_GET['do'] == "page") {
 	$wptm_advanced = get_option('wptm_advanced');

@@ -79,19 +79,28 @@ function wp_connect_update() {
 	$disable_username = (trim($_POST['disable_username'])) ? trim($_POST['disable_username']) : 'admin';
 	$wptm_connect = array(
 		'enable_connect' => trim($_POST['enable_connect']),
+		'qqlogin' => trim($_POST['qqlogin']),
 		'sina' => trim($_POST['sina']),
 		'qq' => trim($_POST['qq']),
 		'sohu' => trim($_POST['sohu']),
 		'netease' => trim($_POST['netease']),
 		'renren' => trim($_POST['renren']),
+		'kaixin001' => trim($_POST['kaixin001']),
 		'douban' => trim($_POST['douban']),
+		'google' => trim($_POST['google']),
+		'yahoo' => trim($_POST['yahoo']),
+		'twitter' => trim($_POST['twitter']),
 		'sina_username' => trim($_POST['sina_username']),
 		'qq_username' => trim($_POST['qq_username']),
 		'sohu_username' => trim($_POST['sohu_username']),
 		'netease_username' => trim($_POST['netease_username']),
 		'widget' => trim($_POST['widget']),
+		'qq_app_id' => trim($_POST['qq_app_id']),
+		'qq_app_key' => trim($_POST['qq_app_key']),
 		'renren_api_key' => trim($_POST['renren_api_key']),
 		'renren_secret' => trim($_POST['renren_secret']),
+		'kaixin001_api_key' => trim($_POST['kaixin001_api_key']),
+		'kaixin001_secret' => trim($_POST['kaixin001_secret']),
 		'netease_avatar' => trim($_POST['netease_avatar']),
 		'disable_username' => $disable_username
 		);
@@ -431,8 +440,8 @@ function wp_user_profile_update( $user_id ) {
 
 // 设置
 function wp_user_profile_fields( $user ) {
-	global $plugin_url, $user_id, $user_level, $wptm_options;
-	$user_id = IS_PROFILE_PAGE ? wp_get_user_id() : $user_id;
+	global $plugin_url, $user_level, $wptm_options;
+	$user_id = $user->ID;
 	wp_user_profile_update($user_id);
 	$account = wp_usermeta_account($user_id);
 	$wptm_profile = get_user_meta($user_id, 'wptm_profile', true);

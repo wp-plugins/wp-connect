@@ -1,18 +1,18 @@
 ﻿=== WP Connect ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,leihou,wbto,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,雷猴,微博通,登录,登陆,连接,同步
+Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,leihou,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,雷猴,微博通,登录,登陆,连接,同步
 Requires at least: 3.0
-Tested up to: 3.1.2
-Stable tag: 1.5.2
+Tested up to: 3.1.3
+Stable tag: 1.6.0
 
-支持使用微博帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。
+支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。
 
 == Description ==
 
 帮助文档: http://www.smyx.net/help/
 
-1. 可以使用腾讯微博、新浪微博、搜狐微博、网易微博、人人帐号、豆瓣帐号登录WordPress博客，支持同步评论到相对应的微博。
+1. 可以使用腾讯微博、新浪微博、搜狐微博、网易微博、人人帐号、豆瓣帐号、Twitter登录WordPress博客，支持同步评论到相对应的微博。(捐赠版还支持用QQ、开心网、Google、Yahoo等登录WordPress博客)
 
 2. 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、百度说吧、饭否、人间网、做啥、雷猴、Follow5、享拍微博通等。
 
@@ -37,17 +37,23 @@ Stable tag: 1.5.2
 
 以下是捐赠版功能：
 
-1. 支持使用网页或者手机wap发布WordPress文章和一键发布到微博。
+1. 增加支持使用QQ、开心网、Google(谷歌)、Yahoo(雅虎)登录WordPress博客。
 
-2. 支持使用社会化分享按钮功能[52个]。
+2. 登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。
 
-3. 支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。
+3. 去掉登录二次点击。
 
-4. 整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！
+4. 支持使用网页或者手机wap发布WordPress文章和一键发布到微博。
 
-5. 支持使用 Gtalk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。
+5. 支持使用社会化分享按钮功能[52个]。
 
-6. 支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。
+6. 支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。
+
+7. 整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！
+
+8. 支持使用 Gtalk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。
+
+9. 支持在捐赠者间用 Gtalk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。
 
 = 注意事项 =
 
@@ -64,6 +70,14 @@ Stable tag: 1.5.2
 下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
+
+= 1.6.0 =
+*2011/05/28
+修正部分bug。
+新增:支持使用Twitter登录WordPress博客。
+新增:登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。(捐赠版)
+新增:支持使用QQ、开心网、Google(谷歌)、Yahoo(雅虎)登录WordPress博客。(捐赠版)
+修改:去掉登录二次点击。(捐赠版)
 
 = 1.5.2 =
 *2011/05/18

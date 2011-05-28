@@ -5,8 +5,9 @@
 .dialog_table .border{display:block;width:370px;margin-right:auto; margin-left:auto;position:relative;padding:5px;background-color:#666;background-color:rgba(0,0,0,.5);-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px}
 .dialog_table .close{cursor:pointer;position:absolute;z-index:1001;top:-4px; right:-4px;width:34px; height:34px}
 .dialog_login .clear{clear:both}
-.login_button{margin:4px 6px 16px 0px;padding:0px 5px 5px 0px;width:100%}
+/*.login_button{margin:4px 6px 16px 0px;padding:0px 5px 5px 0px;width:100%}*/
 .login_icons{display:block;height:32px;clear:both}
+.login_icons span {padding-right:3px}
 .login_icons span:hover{cursor:pointer}
 .login_icons img{border:none}
 #login_box{font-size:13px;padding:14px 20px;background-color:#fff}
@@ -27,3 +28,5 @@
 .login_btn a#renren:hover{background-position:-150px -200px}
 .login_btn a#douban{background-position:0px -250px}
 .login_btn a#douban:hover{background-position:-150px -250px}
+.login_btn a#twitter{background-position:0px -300px}
+.login_btn a#twitter:hover{background-position:-150px -300px}
