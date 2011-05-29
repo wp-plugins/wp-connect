@@ -3,7 +3,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && 'bind.php' == basename($_SERVER['SCRIP
 die ('Please do not load this page directly. Thanks!');
 $wptm_options = get_option('wptm_options');
 $wptm_advanced = get_option('wptm_advanced');
-$action = IS_PROFILE_PAGE ? $plugin_url.'/save.php?do=profile' : '';
+$action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $plugin_url;?>/css/style.css" />
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/jquery-1.2.6.pack.js"></script>
