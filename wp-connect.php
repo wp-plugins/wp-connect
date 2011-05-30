@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。。
-Version: 1.6.2
+Version: 1.6.3
 */
 
 $wpurl = get_bloginfo('wpurl');
@@ -94,7 +94,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">我不能绑定帐号</td>
-            <td><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>勾选后可以在下面手动填写授权码 [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
+            <td><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>勾选后可以在帐号绑定下面手动填写授权码 [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <th>同步内容设置</th>
