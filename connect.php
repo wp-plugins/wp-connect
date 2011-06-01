@@ -367,9 +367,14 @@ function wp_connect_login($userinfo, $tmail, $tid, $uid = '') {
 		wp_die("An error occurred!");
 	} 
 	$callback = $_SESSION['wp_url_back'];
-	if (preg_match("/\b$userinfo[1]\b/i", $wptm_connect['disable_username'])) {
-		wp_die("很遗憾！”$userinfo[1]” 被系统保留，请更换微博帐号登录！返回 <a href='$callback'>$callback</a>");
-	} 
+	$disable_username = explode(',', $wptm_connect['disable_username']);
+	if($userinfo[1]){
+		if(in_array($userinfo[1],$disable_username) && !$uid) {
+			wp_die("很遗憾！”$userinfo[1]” 被系统保留，请更换帐号登录！返回 <a href='$callback'>$callback</a>");
+		}
+	} else {
+		wp_die("获取用户授权信息失败，请重新登录 或者 清除浏览器缓存再试! 返回 <a href='$callback'>$callback</a>");
+	}
 	$avatar = $userinfo[0];
 	$t = strtolower($_SESSION['wp_url_login']);
 	$password = wp_generate_password();
@@ -392,7 +397,7 @@ function wp_connect_login($userinfo, $tmail, $tid, $uid = '') {
 			$bind = array_filter($bind);
 		} 
         $level = get_user_meta($wpuid, $wpdb -> prefix . 'user_level', true); //判断用户级别
-		if ($bind) {
+		if ($t && $bind) {
 			$sina = $bind['sina'];
 			$qq = $bind['qq'];
 			$sohu = $bind['sohu'];
@@ -696,6 +701,7 @@ if (!function_exists('connect_login_form_login')) {
 		} 
 	} 
 	function connect_login_form_logout() {
+		$_SESSION['wp_url_login'] = "";
 		$_SESSION["openid"] = "";
 		setcookie("kx_connect_session_key", "", time() - 3600);
 	} 
