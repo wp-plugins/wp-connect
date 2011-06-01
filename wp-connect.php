@@ -194,7 +194,7 @@ function wp_connect_do_page() {
       <form method="post" id="formdrag" action="options-general.php?page=wp-connect#share">
         <?php wp_nonce_field('share-options');?>
         <h3>分享设置</h3>
-		<?php if (!function_exists('wp_connect_advanced')) {echo '<p><span style="color:#D54E21;"><strong>社会化分享按钮功能只针对捐赠用户！</strong></span></p>';} elseif (!$wptm_advanced['secret']){echo '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写授权码！</strong></span></p>';}?>
+		<?php if (!function_exists('wp_connect_advanced')) {echo '<p><span style="color:#D54E21;"><strong>社会化分享按钮功能只针对捐赠用户！</strong></span></p>';} elseif (WP_CONNECT_ADVANCED != "true"){echo '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';}?>
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">分享按钮</td>
