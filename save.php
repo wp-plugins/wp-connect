@@ -21,8 +21,9 @@ if ($_GET['do'] == "renren") {
 		$name = $_POST["name"];
 		$head = $_POST["tinyurl"];
 		$url = 'http://www.renren.com/profile.do?id='.$uid;
-		$renren_api_key = $_POST["renren_api_key"];
-		$renren_secret = $_POST["renren_secret"];
+		$_SESSION['wp_url_login'] = "";
+		//$renren_api_key = $_POST["renren_api_key"];
+		//$renren_secret = $_POST["renren_secret"];
 
 		if (!is_user_logged_in()) {
 			$tmail = $uid . '@renren.com';
