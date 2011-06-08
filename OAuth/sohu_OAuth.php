@@ -48,7 +48,7 @@ class sohuClient
     function update( $text, $value = '' ) 
     {  
         $param = array(); 
-        $param['status'] = $text; 
+        $param['status'] = urlencode($text); 
 
 		if ($value[0] == "image" && $value[1]) {
 			$param['pic'] = $value[1];
