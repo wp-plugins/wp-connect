@@ -1,6 +1,6 @@
 <?php
 define('ROOT_PATH', dirname(dirname(__FILE__)));
-$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'file_get_contents', 'mb_strlen', 'gzinflate', 'openssl_open');
+$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'curl_exec', 'file_get_contents', 'mb_strlen', 'gzinflate', 'openssl_open');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
 	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.0'),
