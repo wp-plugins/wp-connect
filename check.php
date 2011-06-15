@@ -1,6 +1,6 @@
 <?php
 define('ROOT_PATH', dirname(dirname(__FILE__)));
-$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'file_get_contents', 'mb_strlen', 'openssl_open');
+$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'file_get_contents', 'mb_strlen', 'gzinflate', 'openssl_open');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
 	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.0'),
@@ -99,10 +99,10 @@ function function_support(&$func_items) {
 		} 
 		if ($status) {
 			$func_str .= "<td>支持</td>\n";
-			$func_str .= "<td><img src=\"http://smyx.googlecode.com/svn/wp-connect/images/0.gif\" class=\"yes\"/></td>\n";
+			$func_str .= "<td><img src=\"images/0.gif\" class=\"yes\"/></td>\n";
 		} else {
 			$func_str .= "<td>不支持</td>\n";
-			$func_str .= "<td><img src=\"http://smyx.googlecode.com/svn/wp-connect/images/0.gif\" class=\"no\"/></td>\n";
+			$func_str .= "<td><img src=\"images/0.gif\" class=\"no\"/></td>\n";
 		} 
 		$func_str .= "</tr>";
 	} 
