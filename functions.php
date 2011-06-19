@@ -13,8 +13,9 @@ function wp_update_list($title, $postlink, $pic, $account) {
 		$url = get_t_cn(urlencode($postlink));
 	}
 	$status = wp_status($title, $postlink, 140); //网易/人人/饭否/做啥/雷猴
-	$status2 = wp_status($title, urlencode($postlink), 140); //嘀咕
-	$status3 = wp_status($title, urlencode($postlink), 200, 1); //搜狐/人间网
+	$digu = wp_status($title, urlencode($postlink), 140); //嘀咕
+	$renjian = wp_status($title, urlencode($postlink), 200, 1); //人间网
+	$sohu = wp_status($title, $postlink, 200, 1); //搜狐
 	$twitter = wp_status($title, wp_urlencode($postlink), 140); //Twitter
     $wbto = wp_status($title, $postlink, 140, 1); //微博通
     $baidu = wp_status($title, urlencode($postlink), 140, 1); //百度
@@ -27,11 +28,11 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	$qq = wp_status($title, $postlink, 140, 1); //腾讯
 	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $qq, $pic); } //140*
 	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
-	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status3, $pic); } //+
+	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $sohu, $pic); } //+
 	if($account['douban']) { wp_update_douban($account['douban'], $douban); } //128
-	if($account['digu']) { wp_update_digu($account['digu'], $status2); } //140
+	if($account['digu']) { wp_update_digu($account['digu'], $digu); } //140
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
-	if($account['renjian']) { wp_update_renjian($account['renjian'], $status3, $pic); } //+
+	if($account['renjian']) { wp_update_renjian($account['renjian'], $renjian, $pic); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['wbto']) { wp_update_wbto($account['wbto'], $wbto, $pic); } //140+
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $follow5, $pic); } //200*
@@ -61,11 +62,15 @@ function wp_status($content, $url, $length, $num = '') {
 	$temp_length = (mb_strlen($content, 'utf-8')) + (mb_strlen($url, 'utf-8'));
 	if ($num) {
 		$temp_length = (wp_strlen($content)) + (wp_strlen($url));
-	} 
-	if ($temp_length > $length - 3) { // ...
-		$chars = $length - 6 - mb_strlen($url, 'utf-8'); // ' - '
+	}
+	if ($url) {
+		$length = $length - 4; // ' - '
+		$url = ' '.$url;
+	}
+	if ($temp_length > $length) {
+		$chars = $length - 3 - mb_strlen($url, 'utf-8'); // '...'
 		if ($num) {
-			$chars = $length - 3 - wp_strlen($url);
+			$chars = $length - wp_strlen($url);
 			$str = mb_substr($content, 0, $chars, 'utf-8');
 			preg_match_all("/([\x{0000}-\x{00FF}]){1}/u", $str, $half_width); // 半角字符
 			$chars = $chars + count($half_width[0])/2;
@@ -73,7 +78,7 @@ function wp_status($content, $url, $length, $num = '') {
 		$content = mb_substr($content, 0, $chars, 'utf-8');
 		$content = $content . "...";
 	} 
-	$status = $content . ' ' . $url;
+	$status = $content . $url;
 	return trim($status);
 }
 

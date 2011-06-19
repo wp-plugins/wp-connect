@@ -204,10 +204,14 @@ function wp_connect_qq(){
 	
 	$qq = $qq ->data;
 
+	//$tmail = $qq->email;
+	//if(!$tmail){
 	$tmail = $qq->name.'@t.qq.com';
+	//}
+	$url = "http://t.qq.com/".$qq->name;
 	$tid = "qtid";
 		
-	wp_connect_login($qq->head.'|'.$qq->name.'|'.$qq->nick.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
+	wp_connect_login($qq->head.'|'.$qq->name.'|'.$qq->nick.'|'.$url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
 // 搜狐微博
 function wp_connect_sohu(){
