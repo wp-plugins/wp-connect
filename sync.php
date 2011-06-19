@@ -618,9 +618,11 @@ function wp_connect_publish($post_ID) {
 	} elseif ($sync_option == '3') { // 同步 文章摘要/内容
 		$title = $tags . $post_content;
 		$postlink = "";
-		$connect = "";
 	} elseif ($sync_option == '4') { // 同步 文章摘要/内容+链接
 		$title = $tags . $post_content;
+	} elseif ($sync_option == '5') { // 同步 标题 + 内容
+		$title = $title . $tags . $post_content;
+		$postlink = "";
 	} else {
 	    $title = $title . $tags;
 	}

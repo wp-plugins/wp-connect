@@ -84,6 +84,14 @@ class qqClient
 			return $this -> oauth -> post('http://open.t.qq.com/api/t/add?format=json' , $param);
 		}
     }
+
+    // 获取视频信息
+	function getvideoinfo( $url )
+	{
+		$params = array();
+		$params['url'] = $url;
+		return $this->oauth->post('http://open.t.qq.com/api/t/getvideoinfo?format=json', $params);
+	}
     
 	// 获取自己信息
     function verify_credentials() 
