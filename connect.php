@@ -72,7 +72,6 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 	if($wptm_connect['twitter']) {
 	echo '<a id="twitter" title="Twitter" href="'.$plugin_url.'/login.php?go=TWITTER" rel="nofollow"></a>';
 	}
-	echo  $_COOKIE["kx_connect_session_key"];
 ?>
 </p>
 <!-- 请不要删除以下信息，谢谢！-->
@@ -499,7 +498,7 @@ function wp_connect_profile_fields( $user ) {
 	<label><input name="without" type="checkbox" value="1" <?php if($bind['without']) echo "checked"; ?> />都不同名</label>
 	<label><input name="sina" type="checkbox" value="1" <?php if($bind['sina']) echo "checked"; ?> />新浪微博</label> <label><input name="qq" type="checkbox" value="1" <?php if($bind['qq']) echo "checked"; ?> />腾讯微博</label> <label><input name="sohu" type="checkbox" value="1" <?php if($bind['sohu']) echo "checked"; ?> />搜狐微博</label> <label><input name="netease" type="checkbox" value="1" <?php if($bind['netease']) echo "checked"; ?> />网易微博</label> <label><input name="douban" type="checkbox" value="1" <?php if($bind['douban']) echo "checked"; ?> />豆瓣</label> <br /><label><input name="renren" type="checkbox" value="1" <?php if($bind['renren']) echo "checked"; ?> />人人网</label> <label><input name="kaixin001" type="checkbox" value="1" <?php if($bind['kaixin001']) echo "checked"; ?> />开心网</label> <label><input name="google" type="checkbox" value="1" <?php if($bind['google']) echo "checked"; ?> />Google</label> <label><input name="yahoo" type="checkbox" value="1" <?php if($bind['yahoo']) echo "checked"; ?> />Yahoo</label> <label><input name="twitter" type="checkbox" value="1" <?php if($bind['twitter']) echo "checked"; ?> />Twitter</label><br /><span class="description">提示: 为了您的帐号安全，用户名跟第三方网站帐号相同时请勾选，<b>不同名的切记不要勾选！</b></span></td>
 </tr>
-<?php if (function_exists('wp_connect_bind_qq') && $wptm_connect['qqlogin']) {wp_connect_bind_qq( $user );}?>
+<?php if (function_exists('wp_connect_bind_qq') && $wptm_connect['qqlogin'] && $wptm_connect['qq_app_key']) {wp_connect_bind_qq( $user );}?>
 </table>
 <?php
 }
