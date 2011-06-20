@@ -72,7 +72,6 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 	if($wptm_connect['twitter']) {
 	echo '<a id="twitter" title="Twitter" href="'.$plugin_url.'/login.php?go=TWITTER" rel="nofollow"></a>';
 	}
-	echo  $_COOKIE["kx_connect_session_key"];
 ?>
 </p>
 <!-- 请不要删除以下信息，谢谢！-->
