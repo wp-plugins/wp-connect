@@ -442,7 +442,8 @@ function wp_connect_avatar($avatar, $email = '', $size = '32') {
 	} 
 	if (is_object($email)) {
 		$email = $email -> user_id;
-	} 
+	}
+	if (!$email) {return $avatar;}
 	if (preg_match("/@t.sina.com.cn/i", $comment_email)) {
 		if ($stid = get_usermeta($email, 'stid')) {
 			$out = 'http://tp3.sinaimg.cn/' . $stid . '/50/1.jpg';
