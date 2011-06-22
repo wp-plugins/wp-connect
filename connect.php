@@ -533,6 +533,7 @@ function wp_connect_avatar($avatar, $email = '', $size = '32') {
 	if (is_object($email)) {
 		$email = $email -> user_id;
 	} 
+	if (!$email) {return $avatar;}
     $qqavatar = get_user_meta($email, 'qqavatar', true);
 	if ($qqavatar) {
 		if ($qqtid = get_user_meta($email, 'qqtid', true)) {
