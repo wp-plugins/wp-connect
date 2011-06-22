@@ -608,8 +608,10 @@ function wp_connect_publish($post_ID) {
 			} else { // > 30 || < 60
 				$title = $title;
 			} 
+		} else {
+			$title = $title;
 		} 
-	} 
+	}
 	if ($wptm_options['enable_shorten']) { // 是否使用博客默认短网址
 		$postlink = $shortlink;
 	}
