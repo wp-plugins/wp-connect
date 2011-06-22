@@ -507,6 +507,7 @@ function wp_connect_publish($post_ID) {
 	$excerpt = $thePost -> post_excerpt;
 	$post_author_ID = $thePost -> post_author;
 	$post_date = strtotime($thePost -> post_date);
+	$post_modified = strtotime($thePost -> post_modified);
     $post_content = wp_replace($content);
     // 是否有摘要
 	if($excerpt) {
@@ -598,16 +599,11 @@ function wp_connect_publish($post_ID) {
 		$title = $new_prefix . $title;
 	} else { // 后台快速发布，xmlrpc等发布
 		if ($thePost -> post_status == 'publish') {
-			if ($time - $post_date <= 30) {  // 新文章(包括延迟<=30秒)
+			if ($post_modified == $post_date || $time - $post_date <= 30) {  // 新文章(包括延迟<=30秒)
 				$title = $new_prefix . $title;
-			} elseif ($time - $post_date >= 60) {
-				if (($time - $post_date < $update_days) || $update_days == 0) { // 判断当前时间与文章发布时间差
-					return;
-				} 
-				$title = $update_prefix . $title;
-			} else { // > 30 || < 60
-				$title = $title;
-			} 
+			} else {
+			    $title = $title;
+			}
 		} else {
 			$title = $title;
 		} 
