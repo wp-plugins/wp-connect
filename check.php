@@ -94,6 +94,12 @@ function function_support(&$func_items) {
 \" target=\"_blank\" style=\"color:#f50\">需要在PHP扩展里打开扩展extension=php_mbstring</a>";
 			} 
 			$func_str .= "</td>\n";
+		} else if ($item == "gzinflate") {
+			$func_str .= "<td>$item()";
+			if (!$status) {
+				$func_str .= " <span style=\"color:green\">不支持该函数，意味着不能使用 “捐赠版”。</span>";
+			} 
+			$func_str .= "</td>\n";
 		} else {
 			$func_str .= "<td>$item()</td>\n";
 		} 

@@ -102,14 +102,13 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 $(function () {
   var tabContainers = $('div.tabs > div');
   tabContainers.hide().filter(':first').show();
-  $(window).bind('hashchange', function () {
-    var hash = window.location.hash || '#sync';
+  $('div.tabs ul.nav a').click(function () {
     tabContainers.hide();
-    tabContainers.filter(hash).show();
+    tabContainers.filter(this.hash).show();
     $('div.tabs ul.nav a').removeClass('selected');
-    $('a[hash=' + hash + ']').addClass('selected');
-  });
-  $(window).trigger( "hashchange" );
+    $(this).addClass('selected');
+    return false;
+  }).filter(':first').click();
 });
 $(".close").show();
 $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5, #leihou, #wbto").click(function () {
