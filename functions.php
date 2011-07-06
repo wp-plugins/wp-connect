@@ -5,12 +5,12 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$sina = wp_status($title, urlencode($postlink), 140, 1);
-	$output = array('qq', 'sina');
+	$output = array();
 	if($account['sina']) { $ms = wp_update_t_sina($account['sina'], $sina, $pic); } //140*
-	$output['qq'] = $ms['id'];
+	$output['sina'] = $ms['id'];
     // 是否使用t.cn短网址
 	if ($wptm_options['t_cn']) {
-		$url = get_t_cn(urlencode($postlink));
+		$postlink = get_t_cn(urlencode($postlink));
 	}
 	$status = wp_status($title, $postlink, 140); //网易/人人/饭否/做啥/雷猴
 	$digu = wp_status($title, urlencode($postlink), 140); //嘀咕
