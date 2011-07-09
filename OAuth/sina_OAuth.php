@@ -120,6 +120,12 @@ class sinaClient
 	
 	} 
 
+	// 获取API的访问频率限制。返回当前小时内还能访问的次数。
+    function rate_limiting()
+	{
+        return $this->oauth->get( 'http://api.t.sina.com.cn/account/rate_limit_status.json' );
+	}
+
 } 
 
 /** 

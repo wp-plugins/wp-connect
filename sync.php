@@ -486,6 +486,7 @@ function wp_connect_sidebox() {
 function wp_connect_add_sidebox() {
 	if (function_exists('add_meta_box')) {
 		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'post', 'side', 'high');
+		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'page', 'side', 'high');
 	} 
 } 
 add_action('admin_menu', 'wp_connect_add_sidebox');
@@ -493,12 +494,7 @@ add_action('admin_menu', 'wp_connect_add_sidebox');
 // 发布
 function wp_connect_publish($post_ID) {
 	global $wptm_options;
-	if (get_option('timezone_string')) {
-		date_default_timezone_set(get_option('timezone_string'));
-		$time = time();
-	} elseif (get_option('gmt_offset')) {
-		$time = time() + (get_option('gmt_offset') * 3600);
-	} 
+	$time = time();
 	$title = wp_replace(get_the_title($post_ID));
 	$postlink = get_permalink($post_ID);
 	$shortlink = get_bloginfo('url') . "/?p=" . $post_ID;
@@ -509,8 +505,10 @@ function wp_connect_publish($post_ID) {
 	$post_date = strtotime($thePost -> post_date);
 	$post_modified = strtotime($thePost -> post_modified);
     $post_content = wp_replace($content);
-    // 是否有摘要
-	if($excerpt) {
+	// 匹配视频、图片
+	$pic = wp_multi_media_url($content);
+	// 是否有摘要
+	if ($excerpt) {
 		$post_content = wp_replace($excerpt);
 	}
 	$wptm_profile = get_user_meta($post_author_ID, 'wptm_profile', true);
@@ -567,11 +565,6 @@ function wp_connect_publish($post_ID) {
 		$tags = ' ' . $tags;
 	} 
 	$tags = $cats . $tags;
-	// 匹配视频、图片
-	$pic = wp_multi_media_url($content);
-	if($pic[0] == "video" && $pic[1]) {
-		$tags = $pic[1].$tags;
-    }
 	// 是否为新发布
 	if (($thePost -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) {
 		if ($_POST['publish_no_sync']) {
@@ -624,5 +617,9 @@ function wp_connect_publish($post_ID) {
 	} else {
 	    $title = $title . $tags;
 	}
+	// 是否有视频
+	if($pic[0] == "video" && $pic[1]) {
+		$postlink = trim($pic[1].' '.$postlink);
+    }
 	wp_update_list($title, $postlink, $pic, $account);
 } 

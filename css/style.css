@@ -38,3 +38,4 @@ a.close{background:url(../images/close.gif) no-repeat 0 0}
 #dragmarker img{float:left}
 #dragDropMoveLayer{position:absolute; display:none; border:1px solid #000; filter:alpha(opacity=90); opacity:0.9}
 #dragbox li{list-style-type:none; cursor:default; float:left; padding-right:3px}
+.tabs #connect, .tabs #share, .tabs #advanced, .tabs #check{display:none}

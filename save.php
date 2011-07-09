@@ -1,5 +1,6 @@
 <?php
 include "../../../wp-config.php";
+date_default_timezone_set("PRC");
 $wptm_options = get_option('wptm_options');
 
 if ($_GET['do'] == "profile") {
@@ -29,22 +30,6 @@ if ($_GET['do'] == "renren") {
 			$tmail = $uid . '@renren.com';
 			$tid = "rtid";
 			wp_connect_login($head . '|' . $uid . '|' . $name . '|' . $url . '|||renren', $tmail, $tid);
-		} 
-	} 
-} 
-
-if ($_GET['do'] == "renren") {
-	if ($_SESSION['wp_url_back']) {
-		$uid = $_POST["uid"];
-		$name = $_POST["name"];
-		$tinyurl = $_POST["tinyurl"];
-		$renren_api_key = $_POST["renren_api_key"];
-		$renren_secret = $_POST["renren_secret"];
-
-		if (!is_user_logged_in()) {
-			$tmail = $uid . '@renren.com';
-			$tid = "rtid";
-			wp_connect_login($name . '|' . $uid . '|' . $name . '||||' . $tinyurl, $tmail, $tid);
 		} 
 	} 
 }

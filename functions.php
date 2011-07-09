@@ -13,29 +13,26 @@ function wp_update_list($title, $postlink, $pic, $account) {
 		$postlink = get_t_cn(urlencode($postlink));
 	}
 	$status = wp_status($title, $postlink, 140); //网易/人人/饭否/做啥/雷猴
+	$status2 = wp_status($title, $postlink, 200, 1); //搜狐/follow5
+	$qq = wp_status($title, $postlink, 140, 1); //腾讯
+	$kaixin001 = wp_status($title, $postlink, 200); //开心
 	$digu = wp_status($title, urlencode($postlink), 140); //嘀咕
-	$renjian = wp_status($title, urlencode($postlink), 200, 1); //人间网
-	$sohu = wp_status($title, $postlink, 200, 1); //搜狐
 	$twitter = wp_status($title, wp_urlencode($postlink), 140); //Twitter
     $wbto = wp_status($title, $postlink, 140, 1); //微博通
     $baidu = wp_status($title, urlencode($postlink), 140, 1); //百度
-	$kaixin001 = wp_status($title, $postlink, 200); //开心
 	$douban = wp_status($title, $postlink, 128); //豆瓣
-	if($pic[0] == "video" && $pic[1]) {
-		$title = str_replace($pic[1], '', $title);
-    }
-	$follow5 = wp_status($title, $postlink, 200, 1); //follow5
-	$qq = wp_status($title, $postlink, 140, 1); //腾讯
+	$renjian = wp_status($title, urlencode($postlink), 200, 1); //人间网
+
 	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $qq, $pic); } //140*
 	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
-	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $sohu, $pic); } //+
+	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status2, $pic); } //+
 	if($account['douban']) { wp_update_douban($account['douban'], $douban); } //128
 	if($account['digu']) { wp_update_digu($account['digu'], $digu); } //140
 	if($account['fanfou']) { wp_update_fanfou($account['fanfou'], $status); } //140
 	if($account['renjian']) { wp_update_renjian($account['renjian'], $renjian, $pic); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['wbto']) { wp_update_wbto($account['wbto'], $wbto, $pic); } //140+
-	if($account['follow5']) { wp_update_follow5($account['follow5'], $follow5, $pic); } //200*
+	if($account['follow5']) { wp_update_follow5($account['follow5'], $status2, $pic); } //200*
 	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); }
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380

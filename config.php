@@ -1,6 +1,5 @@
 <?php
-if (isset($_SERVER['SCRIPT_FILENAME']) && 'config.php' == basename($_SERVER['SCRIPT_FILENAME']))
-	die ('Please do not load this page directly. Thanks!');
+date_default_timezone_set("PRC");
 $wptm_options = get_option('wptm_options');
 $qq = get_option('wptm_openqq');
 $sina = get_option('wptm_opensina');
