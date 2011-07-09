@@ -102,7 +102,7 @@ var wpurl = "<?php echo get_bloginfo('wpurl');?>";
 <link type="text/css" href="<?=$plugin_url?>/css/page.css" rel="stylesheet" />
 <form action="" method="post" id="tform">
   <fieldset>
-    <div id="say">
+    <div id="say">说说你的新鲜事
       <div id="wordage">你还可以输入 <span>140</span> 字</div>
     </div>
     <p id="v1"><textarea cols="60" rows="5" name="message" id="message" onblur="textCounter(this.form.message,140);" onKeyDown="textCounter(this.form.message,140);" onKeyUp="textCounter(this.form.message,140);"><?=($pwderror)?$_POST['message']:''?></textarea></p>
