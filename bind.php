@@ -13,8 +13,12 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="openqq"<?php echo ($account['openqq']['app_key']) ? ' class="bind"': '';?> title="腾讯微博开放平台">腾讯微博</a>
 <a href="javascript:;" id="opensina"<?php echo ($account['opensina']['app_key']) ? ' class="bind"': '';?> title="新浪微博开放平台">新浪微博</a>
 <a href="javascript:;" id="opensohu"<?php echo ($account['opensohu']['app_key']) ? ' class="bind"': '';?> title="搜狐微博开放平台">搜狐微博</a>
+网易微博｛
+<a href="javascript:;" id="opennetease"<?php echo ($account['opennetease']['app_key']) ? ' class="bind"': '';?> title="网易微博开放平台">Key</a>
+<a href="javascript:;" id="source"<?php echo ($account['source']['name'] && $account['source']['url']) ? ' class="bind"': '';?> title="网易微博来源字段">来源字段</a> ｝ 
 <span>[ <a href="http://loginsns.com/#faqs_15" target="_blank">如何获得APP Key？</a>]</span>
-<p>(以上设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) 注意：更换app key后，相应的帐号请重新绑定！</p>
+<p class="source"><form method="post" action=""><?php wp_nonce_field('source');?>网易微博: ｛ 来源名称：<input type="text" name="sourcename" value="<?php echo $account['source']['name'];?>" /> 来源链接：<input type="text" name="sourceurl" value="<?php echo $account['source']['url'];?>" /> <input type="submit" name="source" value="提交" /> ｝</form></p>
+<p>(以上设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) </p><p style="color:red">注意：更换app key后，相应的帐号请重新绑定！</p>
 <?php }?>
 <div id="tlist">
 <h3>帐号绑定</h3>
@@ -115,7 +119,7 @@ $(function () {
   });
 });
 $(".close").show();
-$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5, #leihou, #wbto").click(function () {
+$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5, #leihou, #wbto").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   var pic = id.replace('open', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + pic + ".png");
@@ -134,8 +138,9 @@ $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, 
   $("#username_opensina").attr("value", "<?php echo $account['opensina']['app_key'];?>");
   $("#username_openqq").attr("value", "<?php echo $account['openqq']['app_key'];?>");
   $("#username_opensohu").attr("value", "<?php echo $account['opensohu']['app_key'];?>");
+  $("#username_opennetease").attr("value", "<?php echo $account['opennetease']['app_key'];?>");
   $(".password").attr("value", "");
-  if(id == "openqq" || id == "opensina" || id == "opensohu") {
+  if(id == "openqq" || id == "opensina" || id == "opensohu" || id == "opennetease") {
 	$(".account").hide();
     $(".token").hide();
     $(".appkey").show();
@@ -176,6 +181,7 @@ $("#demo_delete").floatdialog("dialog_delete");
 $("#openqq").floatdialog("dialog_openqq");
 $("#opensina").floatdialog("dialog_opensina");
 $("#opensohu").floatdialog("dialog_opensohu");
+$("#opennetease").floatdialog("dialog_opennetease");
 $("#twitter, #bind_twitter").floatdialog("dialog_twitter");
 $("#qq, #bind_qq").floatdialog("dialog_qq");
 $("#sina, #bind_sina").floatdialog("dialog_sina");
@@ -200,6 +206,9 @@ $('#update').click(function () {
 });
 $('.wrap').click(function () {
    $('.updated').slideUp("normal");
+});
+$("#source").click(function () {
+  $('.source').toggle();
 });
 $(function () {
    $('.show_botton').append( $('.hide_botton').html() );

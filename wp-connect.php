@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。。
-Version: 1.7
+Version: 1.7.1
 */
 
 $wpurl = get_bloginfo('wpurl');
@@ -198,12 +198,12 @@ function wp_connect_do_page() {
 		<?php if (!function_exists('wp_connect_advanced')) {echo '<p><span style="color:#D54E21;"><strong>社会化分享按钮功能只针对捐赠用户！</strong></span></p>';} elseif (WP_CONNECT_ADVANCED != "true"){echo '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';}?>
         <table class="form-table">
           <tr>
-            <td width="25%" valign="top">分享按钮</td>
-            <td><label><input name="enable_share" type="radio" value="1" <?php if($wptm_share['enable_share'] == 1) echo "checked "; ?>> 添加到文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php if($wptm_share['enable_share'] == 2) echo "checked "; ?>> 我要在主题适当位置调用函数</label> [ <a href="http://loginsns.com/#share" target="_blank">查看说明</a> ]</td>
+            <td width="25%" valign="top">添加按钮</td>
+            <td><label><input name="enable_share" type="radio" value="3" <?php if($wptm_share['enable_share'] == 3) echo "checked "; ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php if($wptm_share['enable_share'] == 1) echo "checked "; ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php if($wptm_share['enable_share'] == 2) echo "checked "; ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://loginsns.com/#share" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
-            <td><label><input name="css" type="checkbox" value="1" <?php if($wptm_share['css']) echo "checked "; ?> />使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
+            <td><label><input name="css" type="checkbox" value="1" <?php checked($wptm_share['css']); ?> />使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
             </td>
           </tr>
           <tr>
@@ -215,7 +215,21 @@ function wp_connect_do_page() {
 			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/#share_2" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
         </table>
-        <p style="padding-left:10px;">添加社会化分享按钮，可以上下左右拖拽排序(记得保存！) <span style="color:#440">[如果不能拖拽请刷新页面]</span>：
+        <h3>Google+1</h3>
+        <table class="form-table">
+          <tr>
+            <td width="25%" valign="top">是否开启“Google+1”功能</td>
+            <td><input name="enable_plusone" type="checkbox" value="1" <?php checked($wptm_share['enable_plusone']); ?>></td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">添加按钮</td>
+            <td><label><input name="plusone" type="radio" value="1" <?php checked($wptm_share['plusone'] == 1); ?>>文章前面</label> <label><input name="plusone" type="radio" value="2" <?php checked($wptm_share['plusone'] == 2); ?>>文章末尾</label> <label><input name="plusone" type="radio" value="3" <?php checked($wptm_share['plusone'] == 3); ?>> 调用函数</label> ( <code>&lt;?php wp_google_plusone();?&gt;</code> )</td>
+          </tr>
+            <td width="25%" valign="top">显示设置</td>
+            <td>选择尺寸 <select name="plusone_size"><option value="small"<?php selected($wptm_share['plusone_size'] == 'small');?>>小（15 像素）</option><option value="medium"<?php selected($wptm_share['plusone_size'] == 'medium');?> >中（20 像素）</option><option value="standard"<?php selected($wptm_share['plusone_size'] == 'standard');?> >标准（24 像素）</option><option value="tall"<?php selected($wptm_share['plusone_size'] == 'tall');?> >高（60 像素）</option></select> )  <label><input name="plusone_count" type="checkbox" value="1" <?php checked($wptm_share['plusone_count']); ?> />包含计数</label></td>
+          </tr>
+        </table>
+        <h3>添加社会化分享按钮，可以上下左右拖拽排序(记得保存！) <span style="color:#440">[如果不能拖拽请刷新页面]</span>：</h3>
 		  <ul id="dragbox">
 		  <?php
 		  if (WP_CONNECT_ADVANCED == "true") {
@@ -228,7 +242,6 @@ function wp_connect_do_page() {
 		  }?>
 		    <div class="clear"></div>
 		  </ul>
-		</p>
 		  <div id="dragmarker">
 		    <img src="<?php echo $plugin_url;?>/images/marker_top.gif">
 		    <img src="<?php echo $plugin_url;?>/images/marker_middle.gif" id="dragmarkerline">
@@ -253,11 +266,12 @@ function wp_connect_do_page() {
          <li>3. 去掉登录二次点击。<span style="color: red;">NEW!</span></li>
          <li>4、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/#web" target="_blank">查看</a> ]</li>
          <li>5、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/#share" target="_blank">查看</a> ]</li>
-         <li>6、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</li>
-         <li>7、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/#show" target="_blank">查看</a> ]</li>
-         <li>8、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/#gtalk" target="_blank">查看</a> ]</li>
-         <li>9、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/#gtalk_11" target="_blank">查看</a> ]</li>
-         <li>10、<a href="http://loginsns.com/#more" target="_blank">查看更多功能</a></li>
+         <li>6. 支持使用Google+1按钮(在“分享设置”中开启)。</li>
+         <li>7、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</li>
+         <li>8、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/#show" target="_blank">查看</a> ]</li>
+         <li>9、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/#gtalk" target="_blank">查看</a> ]</li>
+         <li>10、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/#gtalk_11" target="_blank">查看</a> ]</li>
+         <li>11、<a href="http://loginsns.com/#more" target="_blank">查看更多功能</a></li>
 		 <li>最低捐赠：10元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/#donate" target="_blank">查看详细描述</a></li>
 		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
 		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>

@@ -122,7 +122,7 @@ function function_support(&$func_items) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>环境检查-WordPress连接微博</title>
 <style type="text/css">
-body{margin-top:0px;font-family:Helvetica,Arial,Verdana,sans-serif; font-size:12px; background:#fafafa; color:#333; line-height:1.6em}
+body{margin-top:0px;font-family:Helvetica,Arial,Verdana,sans-serif; font-size:12px; background:#fff; color:#333; line-height:1.6em}
 h3{margin:0px;font-size:1.17em;}
 table{margin:10px 0; width:600px; text-align:left; border-collapse:collapse; border:1px solid #ebebeb}
 table th{font-weight:bold; text-align:left; padding:10px 8px; background:#ebebeb}

@@ -8,11 +8,10 @@ if ($wptm_connect['enable_connect']) { // 是否开启连接微博功能
 	add_action('comment_form', 'wp_connect');
     add_action("login_form", "wp_connect");
     add_action("register_form", "wp_connect",12);
-    if($wptm_connect['renren']) {
-		add_filter('language_attributes', 'wp_connect_renren_header');
+    if($wptm_connect['renren'] && $wptm_connect['renren_api_key'] && $wptm_connect['renren_secret']) {
 		add_action('the_content','wp_connect_renren_share');
     }
-    if($wptm_connect['kaixin001']) {
+    if($wptm_connect['kaixin001'] && $wptm_connect['kaixin001_api_key'] && $wptm_connect['kaixin001_secret']) {
 		add_action('the_content','wp_connect_kaixin001_share');
     }
 }
@@ -63,8 +62,8 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 	if($wptm_connect['netease']) {
 	echo '<a id="netease" title="网易微博" href="'.$plugin_url.'/login.php?go=NETEASE" rel="nofollow"></a>';
 	}
-	if($wptm_connect['renren']) {
-	echo '<a id="renren" title="人人网" href="javascript:;" onclick="XN.Connect.requireSession(function(){rr_login();});return false;"></a>';
+	if($wptm_connect['renren'] && $wptm_connect['renren_api_key'] && $wptm_connect['renren_secret']) {
+	echo '<a id="renren" title="人人网" href="'.$plugin_url.'/renren.php?login=RENREN" rel="nofollow"></a>';
 	}
 	if($wptm_connect['douban']) {
 	echo '<a id="douban" title="豆瓣" href="'.$plugin_url.'/login.php?go=DOUBAN" rel="nofollow"></a>';
@@ -96,14 +95,11 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 	if($wptm_connect['douban']) {
 	echo '<span><img src="'.$plugin_url.'/images/btn_douban.png" alt="豆瓣" /></span>';
 	}
-	if($wptm_connect['renren']) {
+	if($wptm_connect['renren'] && $wptm_connect['renren_api_key'] && $wptm_connect['renren_secret']) {
 	echo '<span><img src="'.$plugin_url.'/images/btn_renren.png" alt="人人网" /></span>';
 	}
 	if($wptm_connect['twitter']) {
 	echo '<span><img src="'.$plugin_url.'/images/btn_twitter.png" alt="Twitter" /></span>';
-	}
-	if($wptm_connect['renren']) {
-	wp_connect_renren();
 	}
 	echo '</div></div><div class="clear"></div>';
 }
@@ -317,26 +313,7 @@ function wp_connect_douban(){
 		
 	wp_connect_login($douban_id.'|'.$douban_xmlns->uid.'|'.$douban->title.'|'.$douban_url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid); 
 }
-// 人人网
-function wp_connect_renren() {
-   global $plugin_url, $wptm_connect;
-   $renren_api_key = $wptm_connect['renren_api_key'];
-   $renren_secret = $wptm_connect['renren_secret'];
-echo '<script type="text/javascript">
-var xmlHttp;function rr_login(){XN_RequireFeatures(["Api"],function(){XN.Main.apiClient.users_getLoggedInUser(function(result,ex){if(!ex){XN.Main.apiClient.users_getInfo([result.uid],[],function(result,ex){if(!ex){if(window.XMLHttpRequest){xmlHttp=new XMLHttpRequest()}else if(window.ActiveXObject){xmlHttp=new ActiveXObject("Microsoft.XMLHTTP")}xmlHttp.open("POST","'.$plugin_url.'/save.php?do=renren",true);xmlHttp.onreadystatechange=rr_change;xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");xmlHttp.send("uid="+result[0].uid+"&name="+result[0].name+"&tinyurl="+result[0].tinyurl+"&renren_api_key='.$renren_api_key.'&renren_secret='.$renren_secret.'")}})}})})}function rr_change(){if(xmlHttp.readyState==4){location.replace("'.$_SESSION['wp_url_back'].'")}}
-</script>
-<script type="text/javascript" src="http://static.connect.renren.com/js/v1.0/FeatureLoader.jsp"></script>
-<script type="text/javascript"> 
-XN_RequireFeatures(["EXNML"], function () {
-  XN.Main.init("'.$renren_api_key.'", "'.$plugin_url.'/xd_receiver.html");
-});
-</script>';
-}
-$wpdontpeep = WP_DONTPEEP;
-function wp_connect_renren_header($language) {
-    return $language.' xmlns:xn="http://www.renren.com/2009/xnml"';
-}
-
+//分享到人人网
 function wp_connect_renren_share($content) {
 	if(is_user_logged_in() && is_singular()) {
 	    $share = '<a href="#" name="xn_share">分享到人人网</a><script type="text/javascript" src="http://static.connect.renren.com/js/share.js"></script>';
@@ -347,7 +324,7 @@ function wp_connect_renren_share($content) {
 	}
 	return $content;
 }
-
+//分享到开心网
 function wp_connect_kaixin001_share($content) {
 	if(is_user_logged_in() && is_singular()) {
 	    $share = '<script src="http://rest.kaixin001.com/api/Repaste_js.php" type="text/javascript"></script>
@@ -478,6 +455,7 @@ function wp_connect_author_page($input) {
 	return $input;
 }
 */
+$wpdontpeep = WP_DONTPEEP;
 if($wptm_connect['enable_connect']) {
 	add_action( 'show_user_profile', 'wp_connect_profile_fields' );
 	add_action( 'edit_user_profile', 'wp_connect_profile_fields' );
@@ -612,6 +590,7 @@ function wp_connect_comment($id){
 	
 	$content = wp_replace($comments->comment_content);
 	$link = get_permalink($comment_post_id)."#comment-".$id;
+	$source = get_option('wptm_source');
 
     require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	if($stid){
@@ -655,7 +634,7 @@ function wp_connect_comment($id){
 			$to = new neteaseClient(APP_KEY, APP_SECRET,$tdata['oauth_token'], $tdata['oauth_token_secret']);
             if($wptm_connect['netease_username']) { $content = '@'.$wptm_connect['netease_username'].' '.$content; }
 			$status = wp_status($content, $link, 163);
-			$result = $to -> update($status);
+			$result = $to -> update($status, $source);
 		}
 	}
 	if($dtid){
