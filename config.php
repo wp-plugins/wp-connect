@@ -4,12 +4,15 @@ $wptm_options = get_option('wptm_options');
 $qq = get_option('wptm_openqq');
 $sina = get_option('wptm_opensina');
 $sohu = get_option('wptm_opensohu');
+$netease = get_option('wptm_opennetease');
 $qq_app_key = ($qq['app_key'] && !$wptm_options['bind']) ? $qq['app_key'] : 'd05d3c9c3d3748b09f231ef6d991d3ac';
 $qq_app_secret = ($qq['secret'] && !$wptm_options['bind']) ? $qq['secret'] : 'e049e5a4c656a76206e55c91b96805e8';
 $sina_app_key = ($sina['app_key'] && !$wptm_options['bind']) ? $sina['app_key'] : '1624795996';
 $sina_app_secret = ($sina['secret'] && !$wptm_options['bind']) ? $sina['secret'] : '7ecad0335a50c49a88939149e74ccf81';
 $sohu_app_key = ($sohu['app_key'] && !$wptm_options['bind']) ? $sohu['app_key'] : 'O9bieKU1lSKbUBI9O0Nf';
 $sohu_app_secret = ($sohu['secret'] && !$wptm_options['bind']) ? $sohu['secret'] : 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u';
+$netease_app_key = ($netease['app_key'] && !$wptm_options['bind']) ? $netease['app_key'] : '9fPHd1CNVZAKGQJ3';
+$netease_app_secret = ($netease['secret'] && !$wptm_options['bind']) ? $netease['secret'] : 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO';
 define("WP_POST" , 'REQUEST');
 define("WP_CONNECT" , get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=wp-connect');
 // ÌÚÑ¶Î¢²©
@@ -22,8 +25,8 @@ define("SINA_APP_SECRET" , $sina_app_secret);
 define("SOHU_APP_KEY" , $sohu_app_key);
 define("SOHU_APP_SECRET" , $sohu_app_secret);
 // ÍøÒ×Î¢²©
-define("APP_KEY" , '9fPHd1CNVZAKGQJ3');
-define("APP_SECRET" , 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO');
+define("APP_KEY" , $netease_app_key);
+define("APP_SECRET" , $netease_app_secret);
 // ¶¹°ê
 define("DOUBAN_APP_KEY" , '0502b2569b45aed90f081703d1d10c8b');
 define("DOUBAN_APP_SECRET" , 'be87ce9c179080b0');
