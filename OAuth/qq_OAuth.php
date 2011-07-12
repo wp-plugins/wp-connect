@@ -99,6 +99,25 @@ class qqClient
         return $this->oauth->get( 'http://open.t.qq.com/api/user/info?format=json' );
     } 
 
+	// 根据微博ID批量获取微博内容
+    function get_list( $ids )
+    {
+		$params = array();
+		$params['ids'] = $ids;
+        return $this->oauth->get( 'http://open.t.qq.com/api/t/list?format=json', $params );
+    } 
+
+	// 其他用户发表时间线索引
+    function user_timeline_ids( $page = 0, $count = 20, $name )
+    {
+		$params = array();
+		$params['name'] = $name;
+		$params['reqnum'] = $count;
+		$params['pageflag'] = $page;
+		$params['type'] = 3;
+        return $this->oauth->get( 'http://open.t.qq.com/api/statuses/user_timeline_ids?format=json', $params );
+    } 
+
 }
 
 /** 

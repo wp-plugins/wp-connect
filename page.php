@@ -61,9 +61,9 @@ function wp_update_page() {
 	if (isset($_POST['twitter']) && $account['twitter']) {
 		wp_update_twitter($account['twitter'], $status);
 	} 
-	if (isset($_POST['leihou']) && $account['leihou']) {
-		wp_update_leihou($account['leihou'], $status, $url);
-	}
+	//if (isset($_POST['leihou']) && $account['leihou']) {
+	//	wp_update_leihou($account['leihou'], $status, $url);
+	//}
 }
 
 function wp_connect_script_page () {
@@ -136,8 +136,6 @@ var wpurl = "<?php echo get_bloginfo('wpurl');?>";
     <label for="renjian">人间网</label>
     <input name="zuosa" id="zuosa" type="checkbox" value="checkbox" checked />
     <label for="zuosa">做啥</label>
-    <input name="leihou" id="leihou" type="checkbox" value="checkbox" checked />
-    <label for="leihou">雷猴</label>
     <input name="follow5" id="follow5" type="checkbox" value="checkbox" checked />
     <label for="follow5">Follow5</label>
     <input name="wbto" id="wbto" type="checkbox" value="checkbox" checked />

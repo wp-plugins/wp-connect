@@ -36,7 +36,6 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="renjian" class="renjian<?php echo ($account['renjian']['password']) ? ' bind': '';?>" title="人间网"><b></b></a>
 <a href="javascript:;" id="zuosa" class="zuosa<?php echo ($account['zuosa']['password']) ? ' bind': '';?>" title="做啥"><b></b></a>
 <a href="javascript:;" id="follow5" class="follow5<?php echo ($account['follow5']['password']) ? ' bind': '';?>" title="Follow5"><b></b></a>
-<a href="javascript:;" id="leihou" class="leihou<?php echo ($account['leihou']['password']) ? ' bind': '';?>" title="雷猴"><b></b></a>
 <a href="javascript:;" id="wbto" class="wbto<?php echo ($account['wbto']['password']) ? ' bind': '';?>" title="微博通wbto.cn"><b></b></a>
 </div>
 <?php

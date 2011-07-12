@@ -1,12 +1,12 @@
 ﻿=== WP Connect ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,leihou,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,雷猴,微博通,登录,登陆,连接,同步
+Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步
 Requires at least: 3.0
 Tested up to: 3.2
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 
-支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。
+支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。
 
 == Description ==
 
@@ -14,7 +14,7 @@ Stable tag: 1.7.2
 
 1. 可以使用腾讯微博、新浪微博、搜狐微博、网易微博、人人帐号、豆瓣帐号、Twitter登录WordPress博客，支持同步评论到相对应的微博。 (捐赠版还支持QQ、开心网、Google、Yahoo等登录WordPress博客)
 
-2. 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、百度说吧、饭否、人间网、做啥、雷猴、Follow5、享拍微博通等。
+2. 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、百度说吧、饭否、人间网、做啥、Follow5、享拍微博通等。
 
 3. 支持自定义API Key，用于显示微博的“来自xxx”，请在“同步设置”的开放平台下面填写。
 
@@ -76,6 +76,13 @@ Stable tag: 1.7.2
 下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
+
+= 1.7.3 =
+*2011/07/12
+修正人人网和开心网浏览器跳转bug。
+重要更新：加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！
+连接设置增加一个“调用函数”的选项。
+删除雷猴。
 
 = 1.7.2 =
 *2011/07/11

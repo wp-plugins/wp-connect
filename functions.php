@@ -37,7 +37,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
 	if($account['baidu']) { wp_update_baidu($account['baidu'], $baidu); } //140*
-	if($account['leihou']) { wp_update_leihou($account['leihou'], $status, $pic); } //140
+	//if($account['leihou']) { wp_update_leihou($account['leihou'], $status, $pic); } //140
 	return $output;
 }
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
@@ -117,10 +117,67 @@ function wp_in_array($a, $b) {
 	return false;
 }
 
+function key_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
+	$ckey_length = 4;
+	$key = ($key) ? md5($key) : '';
+	$keya = md5(substr($key, 0, 16));
+	$keyb = md5(substr($key, 16, 16));
+	$keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length): substr(md5(microtime()), - $ckey_length)) : '';
+
+	$cryptkey = $keya . md5($keya . $keyc);
+	$key_length = strlen($cryptkey);
+
+	$string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) : sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
+	$string_length = strlen($string);
+
+	$result = '';
+	$box = range(0, 255);
+
+	$rndkey = array();
+	for($i = 0; $i <= 255; $i++) {
+		$rndkey[$i] = ord($cryptkey[$i % $key_length]);
+	} 
+
+	for($j = $i = 0; $i < 256; $i++) {
+		$j = ($j + $box[$i] + $rndkey[$i]) % 256;
+		$tmp = $box[$i];
+		$box[$i] = $box[$j];
+		$box[$j] = $tmp;
+	} 
+
+	for($a = $j = $i = 0; $i < $string_length; $i++) {
+		$a = ($a + 1) % 256;
+		$j = ($j + $box[$a]) % 256;
+		$tmp = $box[$a];
+		$box[$a] = $box[$j];
+		$box[$j] = $tmp;
+		$result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+	} 
+
+	if ($operation == 'DECODE') {
+		if ((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) && substr($result, 10, 16) == substr(md5(substr($result, 26) . $keyb), 0, 16)) {
+			return substr($result, 26);
+		} else {
+			return '';
+		} 
+	} else {
+		return $keyc . str_replace('=', '', base64_encode($result));
+	} 
+} 
+
+function key_encode($string) {
+	return key_authcode($string, 'ENCODE', 'WP-CONNECT');
+} 
+
+function key_decode($string) {
+	return key_authcode($string, 'DECODE', 'WP-CONNECT');
+} 
+
 if (!function_exists('get_t_cn')) {
 // 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {
-		$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source=744243473&url_long=' . $long_url;
+		$source = SINA_APP_KEY;
+		$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source='.$source.'&url_long='.$long_url;
 		$request = new WP_Http;
 		$result = $request -> request($api_url);
 		$result = $result['body'];
@@ -197,7 +254,8 @@ function wp_update_douban($douban, $status) {
 function wp_update_digu($digu, $status) {
 	$api_url = 'http://api.minicloud.com.cn/statuses/update.json';
 	$body = array('content' => $status);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$digu['username']}:{$digu['password']}"));
+	$password = key_decode($digu['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$digu['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
@@ -205,7 +263,8 @@ function wp_update_digu($digu, $status) {
 function wp_update_fanfou($fanfou, $status) {
 	$api_url = 'http://api.fanfou.com/statuses/update.json';
 	$body = array('status' => $status);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$fanfou['username']}:{$fanfou['password']}"));
+	$password = key_decode($fanfou['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$fanfou['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
@@ -218,7 +277,8 @@ function wp_update_renjian($renjian, $status, $value) {
 		$body['status_type'] = "PICTURE";
 		$body['url'] = $value[1];
 	}
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$renjian['username']}:{$renjian['password']}"));
+	$password = key_decode($renjian['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$renjian['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
@@ -226,7 +286,8 @@ function wp_update_renjian($renjian, $status, $value) {
 function wp_update_zuosa($zuosa, $status) {
 	$api_url = 'http://api.zuosa.com/statuses/update.json';
 	$body = array('status' => $status);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$zuosa['username']}:{$zuosa['password']}"));
+	$password = key_decode($zuosa['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$zuosa['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
@@ -239,7 +300,8 @@ function wp_update_follow5($follow5, $status, $value) {
 	if ($value[1]) {
 		$body['link'] = $value[1];
 	} 
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$follow5['username']}:{$follow5['password']}"));
+	$password = key_decode($follow5['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$follow5['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
@@ -254,19 +316,21 @@ function wp_update_wbto($wbto, $status, $value) {
 	} else {
 	    $api_url = 'http://wbto.cn/api/update.json';
 	}
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$wbto['username']}:{$wbto['password']}"));
+	$password = key_decode($wbto['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$wbto['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // 雷猴
-function wp_update_leihou($leihou, $status, $value) {
-	wp_t_update("http://leihou.com/statuses/update.json", $leihou, $status, $value);
-}
+//function wp_update_leihou($leihou, $status, $value) {
+//	wp_t_update("http://leihou.com/statuses/update.json", $leihou, $status, $value);
+//}
 // 人人网
 function wp_update_renren($renren, $status) {
 	$cookie = tempnam('./tmp', 'renren');
+	$password = key_decode($renren['password']);
 	$ch = wp_getCurl($cookie, "http://passport.renren.com/PLogin.do");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($renren["username"]) . '&password=' . urlencode($renren["password"]) . '&autoLogin=true&origURL=http%3A%2F%2Fwww.renren.com%2FHome.do&domain=renren.com');
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($renren["username"]) . '&password=' . urlencode($password) . '&autoLogin=true&origURL=http%3A%2F%2Fwww.renren.com%2FHome.do&domain=renren.com');
 	$str = wp_update_result($ch);
 	$pattern = "/get_check:'([^']+)'/";
 	preg_match($pattern, $str, $matches);
@@ -279,8 +343,9 @@ function wp_update_renren($renren, $status) {
 // 开心网
 function wp_update_kaixin001($kaixin001, $status) {
 	$cookie = tempnam('./tmp', 'kaixin001');
+	$password = key_decode($kaixin001['password']);
 	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/home/?id=");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($kaixin001["username"]) . '&password=' . urlencode($kaixin001["password"]) . '&remember=1&from=&refuid=0&refcode=&bind=&gotourl=&login=+%E7%99%BB+%E5%BD%95+');
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($kaixin001["username"]) . '&password=' . urlencode($password) . '&remember=1&from=&refuid=0&refcode=&bind=&gotourl=&login=+%E7%99%BB+%E5%BD%95+');
 	$str = wp_update_result($ch);
 	$pattern = "/state.php\?verify=([^\"]+)\"/";
 	preg_match($pattern, $str, $matches);
@@ -293,8 +358,9 @@ function wp_update_kaixin001($kaixin001, $status) {
 // 百度说吧
 function wp_update_baidu($baidu, $status) {
 	$cookie = tempnam('./tmp', 'baidu');
+	$password = key_decode($baidu['password']);
 	$ch = wp_getCurl($cookie, "http://t.baidu.com/userlogin");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'UserLoginForm%5Busername%5D=' . urlencode($baidu["username"]) . '&UserLoginForm%5Bpassword%5D=' . urlencode($baidu["password"]) . '&UserLoginForm%5BrememberMe%5D=0');
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'UserLoginForm%5Busername%5D=' . urlencode($baidu["username"]) . '&UserLoginForm%5Bpassword%5D=' . urlencode($password) . '&UserLoginForm%5BrememberMe%5D=0');
 	curl_setopt($ch, CURLOPT_REFERER, 'http://t.baidu.com/');
 	$str = wp_update_result($ch);
 
@@ -329,8 +395,9 @@ function wp_update_result($ch) {
 	unset($ch);
 	return $str;
 }
-
+/*
 function wp_t_update($url, $user, $status, $value) {
+	$password = key_decode($user['password']);
 	if ($value[0] == "image" && $value[1]) {
 		$content = file_get_contents($value[1]);
 		$filename = reset(explode('?' , basename($value[1])));
@@ -356,7 +423,7 @@ function wp_t_update($url, $user, $status, $value) {
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $multipartbody);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: multipart/form-data; boundary=$boundary"));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_USERPWD, $user["username"] . ':' . $user["password"]);
+	curl_setopt($ch, CURLOPT_USERPWD, $user["username"] . ':' . $password);
 	$ret = curl_exec($ch);
 	return $ret;
 }
@@ -378,6 +445,7 @@ function wp_get_image_mime($file) {
 	} 
 	return $mime;
 } 
+*/
 // 社会化分享按钮，共52个
 function wp_social_share_title() {
 	return array("qzone" => "QQ空间",

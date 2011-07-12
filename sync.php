@@ -25,6 +25,7 @@ function wp_connect_header () {
 		delete_option("wptm_connect");
 		delete_option("wptm_advanced");
 		delete_option("wptm_share");
+		delete_option("wptm_version");
 		delete_option("wptm_openqq");
 		delete_option("wptm_opensina");
 		delete_option("wptm_opensohu");
@@ -45,7 +46,7 @@ function wp_connect_header () {
 		delete_option("wptm_renjian");
 		delete_option("wptm_zuosa");
 		delete_option("wptm_follow5");
-		delete_option("wptm_leihou");
+		delete_option("wptm_leihou"); /*old*/
 		delete_option("wptm_wbto");
 		$deactivate_url = 'plugins.php?action=deactivate&plugin=wp-connect/wp-connect.php';
 		if(function_exists('wp_nonce_url')) {
@@ -81,6 +82,7 @@ function wp_connect_update() {
 	$disable_username = (trim($_POST['disable_username'])) ? trim($_POST['disable_username']) : 'admin';
 	$wptm_connect = array(
 		'enable_connect' => trim($_POST['enable_connect']),
+		'manual' => trim($_POST['manual']),
 		'qqlogin' => trim($_POST['qqlogin']),
 		'sina' => trim($_POST['sina']),
 		'qq' => trim($_POST['qq']),
@@ -108,7 +110,7 @@ function wp_connect_update() {
 		);
 	$update = array(
 		'username' => trim($_POST['username']),
-		'password' => trim($_POST['password'])
+		'password' => key_encode(trim($_POST['password']))
 		);
 	$appkey = array(
 		'app_key' => trim($_POST['username']),
@@ -125,10 +127,12 @@ function wp_connect_update() {
 	$updated = '<div class="updated"><p><strong>' . __('Settings saved.') . '</strong></p></div>';
 	if (isset($_POST['update_options'])) {
 		update_option("wptm_options", $update_options);
+		update_option('wptm_version', WP_CONNECT_VERSION);
 		echo $updated;
 	} 
 	if (isset($_POST['wptm_connect'])) {
 		update_option("wptm_connect", $wptm_connect);
+		update_option('wptm_version', WP_CONNECT_VERSION);
 		echo $updated;
 	}
 	if (isset($_POST['update_openqq'])) {
@@ -207,10 +211,10 @@ function wp_connect_update() {
 		update_option("wptm_follow5", $update);
 		echo $updated;
 	}
-	if (isset($_POST['update_leihou'])) {
-		update_option("wptm_leihou", $update);
-		echo $updated;
-	}
+	//if (isset($_POST['update_leihou'])) {
+	//	update_option("wptm_leihou", $update);
+	//	echo $updated;
+	//}
 	if (isset($_POST['update_wbto'])) {
 		update_option("wptm_wbto", $update);
 		echo $updated;
@@ -273,9 +277,9 @@ function wp_connect_update() {
 	if (isset($_POST['delete_follow5'])) {
 		update_option("wptm_follow5", '');
 	}
-	if (isset($_POST['delete_leihou'])) {
-		update_option("wptm_leihou", '');
-	}
+	//if (isset($_POST['delete_leihou'])) {
+	//	update_option("wptm_leihou", '');
+	//}
 	if (isset($_POST['delete_wbto'])) {
 		update_option("wptm_wbto", '');
 	}
@@ -301,7 +305,7 @@ function wp_option_account() {
 	'renjian' => get_option('wptm_renjian'),
 	'fanfou' => get_option('wptm_fanfou'),
 	'zuosa' => get_option('wptm_zuosa'),
-	'leihou' => get_option('wptm_leihou'),
+	//'leihou' => get_option('wptm_leihou'),
 	'wbto' => get_option('wptm_wbto'),
 	'follow5' => get_option('wptm_follow5'));
 	return $account;
@@ -343,7 +347,7 @@ function wp_usermeta_account( $user_id ) {
 	'fanfou' => get_user_meta($user_id, 'wptm_fanfou', true),
 	'zuosa' => get_user_meta($user_id, 'wptm_zuosa', true),
 	'follow5' => get_user_meta($user_id, 'wptm_follow5', true),
-	'leihou' => get_user_meta($user_id, 'wptm_leihou', true),
+	//'leihou' => get_user_meta($user_id, 'wptm_leihou', true),
 	'wbto' => get_user_meta($user_id, 'wptm_wbto', true));
 	return $account;
 }
@@ -352,7 +356,7 @@ define("WP_DONTPEEP" , 'Yp64QLB0Ho8ymIRs');
 function wp_user_profile_update( $user_id ) {
 	$update = array(
 		'username' => trim($_POST['username']),
-		'password' => trim($_POST['password'])
+		'password' => key_encode(trim($_POST['password']))
 		);
 	$token = array(
 		'oauth_token' => trim($_POST['username']),
@@ -400,9 +404,9 @@ function wp_user_profile_update( $user_id ) {
 	if (isset($_POST['update_follow5'])) {
 		update_usermeta( $user_id, 'wptm_follow5', $update);
 	}
-	if (isset($_POST['update_leihou'])) {
-		update_usermeta( $user_id, 'wptm_leihou', $update);
-	}
+	//if (isset($_POST['update_leihou'])) {
+	//	update_usermeta( $user_id, 'wptm_leihou', $update);
+	//}
 	if (isset($_POST['update_wbto'])) {
 		update_usermeta( $user_id, 'wptm_wbto', $update);
 	}
@@ -449,9 +453,9 @@ function wp_user_profile_update( $user_id ) {
 	if (isset($_POST['delete_follow5'])) {
 		update_usermeta( $user_id, 'wptm_follow5', '');
 	}
-	if (isset($_POST['delete_leihou'])) {
-		update_usermeta( $user_id, 'wptm_leihou', '');
-	}
+	//if (isset($_POST['delete_leihou'])) {
+	//	update_usermeta( $user_id, 'wptm_leihou', '');
+	//}
 	if (isset($_POST['delete_wbto'])) {
 		update_usermeta( $user_id, 'wptm_wbto', '');
 	}
@@ -472,7 +476,7 @@ function wp_user_profile_fields( $user ) {
 <table class="form-table">
 <tr>
 	<th>同步内容设置</th>
-	<td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_profile['sync_option']; ?>" onkeyup="value=value.replace(/[^1-4]/g,'')" /> (填数字，留空为不同步) <br />提示：1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接
+	<td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_profile['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步) <br />提示：1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接
 	</td>
 </tr>
 <tr>

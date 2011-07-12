@@ -22,7 +22,6 @@ ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
 #tlist .renjian{background:url(../images/renjian.png) no-repeat}
 #tlist .zuosa{background:url(../images/zuosa.png) no-repeat}
 #tlist .follow5{background:url(../images/follow5.png) no-repeat}
-#tlist .leihou{background:url(../images/leihou.png) no-repeat}
 #tlist .wbto{background:url(../images/wbto.png) no-repeat}
 #tlist a, .openqq, .opensina, .opensohu{display:inline-block; margin-right:7px; overflow:hidden; position:relative; vertical-align:middle; height:32px; width:32px; background-position:0px 0px}
 a.bind {color:green}

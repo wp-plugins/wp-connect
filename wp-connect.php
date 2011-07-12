@@ -4,16 +4,22 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。。
-Version: 1.7.2
+Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。
+Version: 1.7.3
 */
 
+define('WP_CONNECT_VERSION', '1.7.3');
 $wpurl = get_bloginfo('wpurl');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
+$wptm_version = get_option('wptm_version');
+
+if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
+	update_option('wptm_version', WP_CONNECT_VERSION);
+}
 
 add_action('admin_menu', 'wp_connect_add_page');
 
@@ -36,8 +42,8 @@ function wp_connect_add_page() {
 }
 
 function wp_connect_warning() {
-	global $wp_version;
-	if (!function_exists('curl_init') || version_compare($wp_version, '3.0', '<') || (!get_option('wptm_options') && !get_option('wptm_connect'))) {
+	global $wp_version,$wptm_options, $wptm_connect, $wptm_version;
+	if (!function_exists('curl_init') || version_compare($wp_version, '3.0', '<') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options)) {
 		echo '<div class="updated">';
 		if (!function_exists('curl_init')) {
 			echo '<p><strong>很遗憾！您的服务器(主机)当前配置不支持curl，会影响“WordPress连接微博”插件的部分功能！请联系空间商重新配置。</strong></p>';
@@ -45,7 +51,10 @@ function wp_connect_warning() {
 		if (version_compare($wp_version, '3.0', '<')) {
 			echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
 		} 
-		if (!get_option('wptm_options') && !get_option('wptm_connect')) {
+		if (($wptm_options || $wptm_connect) && !$wptm_version) {
+			echo '<p><strong>重要更新：从1.7.3版本开始，加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！然后请点击一次“同步设置”下面的“保存更改”按钮。<a href="options-general.php?page=wp-connect">现在去更改</a></strong></p>';
+		}
+		if (!$wptm_options && !$wptm_connect) {
 			echo '<p><strong>您还没有对“WordPress连接微博”进行设置，<a href="options-general.php?page=wp-connect">现在去设置</a></strong></p>';
 		} 
 		echo '</div>';
@@ -64,7 +73,7 @@ function wp_connect_do_page() {
 		$wptm_advanced = get_option('wptm_advanced');
 		$wptm_share = get_option('wptm_share');
 	} else {
-	    $disabled = " disabled";
+	    $disabled = "title=\"捐赠版才能使用\" disabled";
 	}
 	$account = wp_option_account();
 	$_SESSION['wp_url_bind'] = WP_CONNECT;
@@ -136,8 +145,8 @@ function wp_connect_do_page() {
         <h3>连接设置</h3>
         <table class="form-table">
           <tr>
-            <td width="25%" valign="top">是否开启“连接微博”功能</td>
-            <td><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>></td>
+            <td width="25%" valign="top">基本设置</td>
+            <td><label><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>>开启功能</label> <label><input name="manual" type="checkbox" value="1" <?php checked($wptm_connect['manual']);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> )</td>
           </tr>
           <tr>
             <td width="25%" valign="top">添加按钮</td>

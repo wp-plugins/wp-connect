@@ -1,7 +1,7 @@
 <?php
 include "../../../wp-config.php";
 $wptm_connect = get_option('wptm_connect');
-require_once( 'OAuth/renren.class.php' );
+require_once('OAuth/renren.class.php');
 session_start();
 if ($_GET['login'] == "RENREN") {
 	// Authorization Code
@@ -9,6 +9,11 @@ if ($_GET['login'] == "RENREN") {
 	$url = $oauth -> getAuthorizeUrl();
 	header("Location: $url");
 } else {
+	if ($_SESSION['wp_url_back']) {
+		$redirect_to = $_SESSION['wp_url_back'];
+	} else {
+		$redirect_to = admin_url('profile.php');
+	}
 	if ($_GET['code']) {
 		$code = $_GET['code']; 
 		// Access Token
@@ -27,21 +32,20 @@ if ($_GET['login'] == "RENREN") {
 		// 第二个参数请参考config.inc.php文件中的配置进行设置。
 		$renren = $client -> POST('users.getInfo'); 
 		// var_dump($renren);
-		if ($_SESSION['wp_url_back']) {
-			$renren = $renren[0];
-			$uid = $renren['uid'];
-			$name = $renren['name'];
-			$head = $renren['tinyurl'];
-			$url = 'http://www.renren.com/profile.do?id=' . $uid;
-			$_SESSION['wp_url_login'] = "";
-			if (!is_user_logged_in()) {
-				$tmail = $uid . '@renren.com';
-				$tid = "rtid";
-				wp_connect_login($head . '|' . $uid . '|' . $name . '|' . $url . '|||renren', $tmail, $tid);
-			} 
-		} 
+		$renren = $renren[0];
+		$uid = $renren['uid'];
+		$name = $renren['name'];
+		$head = $renren['tinyurl'];
+		$url = 'http://www.renren.com/profile.do?id=' . $uid;
+		$_SESSION['wp_url_login'] = "";
+		$tmail = $uid . '@renren.com';
+		$tid = "rtid";
+		wp_connect_login($head . '|' . $uid . '|' . $name . '|' . $url . '|||renren', $tmail, $tid);
+		wp_safe_redirect($redirect_to);
+	} else {
+		$redirect_to = wp_login_url($_SESSION['wp_url_back']);
+		header('Location:' . $redirect_to);
 	} 
-	echo '<script  type="text/javascript"> history.back() ;</script>';
 } 
 
 ?>
