@@ -109,7 +109,7 @@ $(function () {
   tabContainers.hide().filter(hash).show();
   $(css).addClass('selected');
 
-  $('div.tabs ul.nav a').click(function () {
+  $('.sync,.connect,.share,.advanced,.check').click(function () {
     tabContainers.hide();
     tabContainers.filter(this.hash).show();
     $('div.tabs ul.nav a').removeClass('selected');
