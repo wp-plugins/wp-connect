@@ -165,7 +165,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
     <?php echo(function_support($funs_list));?>
   </tbody>
 </table>
-<?php echo '<p>'.$getinfo.'</p>';?>
+<?php echo ($getinfo) ? '<p>'.$getinfo.'</p>' : '';?>
 <script type="text/javascript">
 var a = document.getElementById("t1").getElementsByTagName("tr");
    for(i=0;i<a.length;i++)
