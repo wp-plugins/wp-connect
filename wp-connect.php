@@ -100,15 +100,15 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
-            <td><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(国内主机用户必须勾选才能使用Twitter)</td>
+            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">我不能绑定帐号</td>
-            <td><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>勾选后可以在帐号绑定下面手动填写授权码 [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
+            <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>(选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <th>同步内容设置</th>
-            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类 <input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签)</td>
+            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label></td>
           </tr>
           <tr>
             <th>自定义消息</th>
@@ -121,16 +121,15 @@ function wp_connect_do_page() {
           <tr>
             <td width="25%" valign="top">自定义页面</td>
             <td>密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" />
-               [ <a href="http://loginsns.com/#faqs_4" target="_blank">如何使用？</a> ] <input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</td>
+               [ <a href="http://loginsns.com/#faqs_4" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">多作者博客</td>
-            <td><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>>(是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。)</td>
+            <td><label><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>>是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">自定义短网址</td>
-            <td><input name="enable_shorten" type="checkbox"  value="1" <?php if($wptm_options['enable_shorten']) echo "checked "; ?>>博客默认 ( http://yourblog.com/?p=1 )
-              <input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</td>
+            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php if($wptm_options['enable_shorten']) echo "checked "; ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</label></td>
           </tr>
         </table>
         <p class="submit">
@@ -212,7 +211,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
-            <td><label><input name="css" type="checkbox" value="1" <?php checked($wptm_share['css']); ?> />使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
+            <td><label title="假如没有复制到主题样式中，请务必勾选！"><input name="css" type="checkbox" value="1" <?php checked($wptm_share['css']); ?> />使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
             </td>
           </tr>
           <tr>
@@ -298,7 +297,7 @@ function wp_connect_do_page() {
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">默认用户ID</td>
-			    <td><input name="user_id" type="text" size="2" maxlength="4" value="<?php echo $wptm_advanced['user_id'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> (这是为Google Talk发布文章设置的)</td>
+			    <td><label><input name="user_id" type="text" size="2" maxlength="4" value="<?php echo $wptm_advanced['user_id'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 这是为Google Talk发布文章设置的</label> ( 提示: 当前登录的用户ID是<?php echo wp_get_user_id();?> )</td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">自定义页面</td>
