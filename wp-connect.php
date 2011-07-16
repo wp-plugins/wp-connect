@@ -320,7 +320,7 @@ function wp_connect_do_page() {
 	  </form>
     </div>
     <div id="check">　
-        <iframe width="100%" height="620" frameborder="0" scrolling="no" src="<?php echo $plugin_url . '/check.php'?>"></iframe>
+        <iframe width="100%" height="650" frameborder="0" scrolling="no" src="<?php echo $plugin_url . '/check.php'?>"></iframe>
     </div>
   </div>
 </div>
