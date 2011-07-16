@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set("PRC");
 define('ROOT_PATH', dirname(dirname(__FILE__)));
 $funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'curl_exec', 'file_get_contents', 'mb_strlen', 'gzinflate', 'openssl_open');
 $surrounding_list = array
@@ -114,13 +115,14 @@ function function_support(&$func_items) {
 	} 
 	return $func_str;
 } 
-
+if($_GET['i']) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>环境检查-WordPress连接微博</title>
+<meta name="robots" content="noarchive">
 <style type="text/css">
 body{margin-top:0px;font-family:Helvetica,Arial,Verdana,sans-serif; font-size:12px; background:#fff; color:#333; line-height:1.6em}
 h3{margin:0px;font-size:1.17em;}
@@ -135,6 +137,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </head>
 <body>
 <h3>环境检查</h3>
+<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="http://loginsns.com/#faqs_20" target="_blank">详细</a></p>
 <table id="t1">
   <thead>
     <tr>
@@ -162,6 +165,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
     <?php echo(function_support($funs_list));?>
   </tbody>
 </table>
+<?php echo '<p>'.$getinfo.'</p>';?>
 <script type="text/javascript">
 var a = document.getElementById("t1").getElementsByTagName("tr");
    for(i=0;i<a.length;i++)
