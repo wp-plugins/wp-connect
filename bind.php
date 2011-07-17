@@ -17,7 +17,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="opennetease"<?php echo ($account['opennetease']['app_key']) ? ' class="bind"': '';?> title="网易微博开放平台">Key</a>
 <a href="javascript:;" id="source"<?php echo ($account['source']['name'] && $account['source']['url']) ? ' class="bind"': '';?> title="网易微博来源字段">来源字段</a> ｝ 
 <span>[ <a href="http://loginsns.com/#faqs_15" target="_blank">如何获得APP Key？</a>]</span>
-<p class="source"><form method="post" action=""><?php wp_nonce_field('source');?>网易微博: ｛ 来源名称：<input type="text" name="sourcename" value="<?php echo $account['source']['name'];?>" /> 来源链接：<input type="text" name="sourceurl" value="<?php echo $account['source']['url'];?>" /> <input type="submit" name="source" value="提交" /> ｝</form></p>
+<p><form method="post" action="" class="source"><?php wp_nonce_field('source');?>网易微博: ｛ 来源名称：<input type="text" name="sourcename" value="<?php echo $account['source']['name'];?>" /> 来源链接：<input type="text" name="sourceurl" value="<?php echo $account['source']['url'];?>" /> <input type="submit" name="source" value="提交" /> ｝</form></p>
 <p>(以上设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) </p><p style="color:red">注意：更换app key后，相应的帐号请重新绑定！</p>
 <?php }?>
 <div id="tlist">
