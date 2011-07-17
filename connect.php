@@ -5,7 +5,7 @@ $login_loaded = false;
 add_action('init', 'wp_connect_init');
 
 if ($wptm_connect['enable_connect']) { // 是否开启连接微博功能
-    if(!$wptm_connect['manual'])
+    if(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2)
 	add_action('comment_form', 'wp_connect');
     add_action("login_form", "wp_connect");
     add_action("register_form", "wp_connect",12);
