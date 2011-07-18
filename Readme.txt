@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步
 Requires at least: 3.0
 Tested up to: 3.2
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 
 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。
 
@@ -76,6 +76,14 @@ Stable tag: 1.7.3
 下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
+
+= 1.7.4 =
+*2011/07/18
+后台增加和完善了部分描述，更容易理解和入手！
+添加mb_strlen和mb_substr函数的支持，没有安装mbstring扩展也能使用本插件了。
+解决了：腾讯微博授权时显示“出错了 没有oauth_token或oauth_token不合法，请返回重试！”，豆瓣登录时返回“很抱歉，豆瓣出错了。”，QQ登录时返回“Notice: Undefined index: oauth_token in ...”，具体请看 http://loginsns.com/#faqs_20
+
+注意：捐赠版请升级到v1.3.6
 
 = 1.7.3 =
 *2011/07/12

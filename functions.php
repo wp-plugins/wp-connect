@@ -40,9 +40,27 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	//if($account['leihou']) { wp_update_leihou($account['leihou'], $status, $pic); } //140
 	return $output;
 }
+
+if (!function_exists('mb_substr')) {
+	function mb_substr($str, $start = 0, $length = 0, $encode = 'utf-8') {
+		$encode_len = ($encode == 'utf-8') ? 3 : 2;
+		for($byteStart = $i = 0; $i < $start; ++$i) {
+			$byteStart += ord($str{$byteStart}) < 128 ? 1 : $encode_len; 
+			if ($str{$byteStart} == '') return '';
+		} 
+		for($i = 0, $byteLen = $byteStart; $i < $length; ++$i)
+		$byteLen += ord($str{$byteLen}) < 128 ? 1 : $encode_len;
+		return substr($str, $byteStart, $byteLen - $byteStart);
+	}
+} 
+if (!function_exists('mb_strlen')) {
+	function mb_strlen($str, $encode = 'utf-8') {
+		return ($encode == 'utf-8') ? strlen(utf8_decode($str)) : strlen($str);
+	}
+} 
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 function wp_strlen($text) {
-	$a = mb_strlen($text, 'UTF-8');
+	$a = mb_strlen($text, 'utf-8');
 	$b = strlen($text);
 	$c = $b / 3 ;
 	$d = ($a + $b) / 4;
@@ -87,8 +105,8 @@ function wp_replace($str) {
 }
 
 function wp_urlencode($url) {
-	$a = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
-	$b = array("!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
+	$a = array('+', '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
+	$b = array(" ", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
 	$url = str_replace($a, $b, urlencode($url));
 	return strtolower($url);
 }

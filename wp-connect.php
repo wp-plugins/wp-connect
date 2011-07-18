@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到16大微博和社区。
-Version: 1.7.3
+Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。<strong>注意：捐赠版已经更新到1.3.6 版本，请到群内下载升级！</strong>
+Version: 1.7.4
 */
 
-define('WP_CONNECT_VERSION', '1.7.3');
+define('WP_CONNECT_VERSION', '1.7.4');
 $wpurl = get_bloginfo('wpurl');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_options = get_option('wptm_options');
@@ -108,7 +108,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <th>同步内容设置</th>
-            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label></td>
+            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label></td>
           </tr>
           <tr>
             <th>自定义消息</th>
@@ -129,7 +129,11 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">自定义短网址</td>
-            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php if($wptm_options['enable_shorten']) echo "checked "; ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</label></td>
+            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</label></td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">服务器时间校正</td>
+            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” [ <a href="http://loginsns.com/#faqs_20" target="_blank">详情</a> ] 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！<br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>多了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >少了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
           </tr>
         </table>
         <p class="submit">

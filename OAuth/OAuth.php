@@ -427,7 +427,7 @@ class OAuthRequest {
      * util function: current timestamp 
      */ 
     private static function generate_timestamp() { 
-		return time(); 
+		return BJTIMESTAMP;
     } 
 
     /** 
@@ -607,7 +607,7 @@ class OAuthServer {
      */ 
     private function check_timestamp($timestamp) { 
         // verify that timestamp is recentish 
-        $now = time(); 
+        $now = BJTIMESTAMP;
         if ($now - $timestamp > $this->timestamp_threshold) { 
             throw new OAuthException( 
                 "Expired timestamp, yours $timestamp, ours $now" 

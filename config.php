@@ -5,6 +5,7 @@ $qq = get_option('wptm_openqq');
 $sina = get_option('wptm_opensina');
 $sohu = get_option('wptm_opensohu');
 $netease = get_option('wptm_opennetease');
+$time = ($wptm_options['char'] && $wptm_options['minutes']) ? time()+($wptm_options['char']*$wptm_options['minutes']*60) : time();
 $qq_app_key = ($qq['app_key'] && !$wptm_options['bind']) ? $qq['app_key'] : 'd05d3c9c3d3748b09f231ef6d991d3ac';
 $qq_app_secret = ($qq['secret'] && !$wptm_options['bind']) ? $qq['secret'] : 'e049e5a4c656a76206e55c91b96805e8';
 $sina_app_key = ($sina['app_key'] && !$wptm_options['bind']) ? $sina['app_key'] : '1624795996';
@@ -15,6 +16,7 @@ $netease_app_key = ($netease['app_key'] && !$wptm_options['bind']) ? $netease['a
 $netease_app_secret = ($netease['secret'] && !$wptm_options['bind']) ? $netease['secret'] : 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO';
 define("WP_POST" , 'REQUEST');
 define("WP_CONNECT" , get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=wp-connect');
+define("BJTIMESTAMP" , $time); //服务器时间校正
 // 腾讯微博
 define("QQ_APP_KEY" , $qq_app_key);
 define("QQ_APP_SECRET" , $qq_app_secret);

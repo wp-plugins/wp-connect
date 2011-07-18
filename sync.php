@@ -78,7 +78,9 @@ function wp_connect_update() {
 		'disable_ajax' => trim($_POST['disable_ajax']),
 		'multiple_authors' => trim($_POST['multiple_authors']),
 		'enable_shorten' => trim($_POST['enable_shorten']),
-		't_cn' => trim($_POST['t_cn'])
+		't_cn' => trim($_POST['t_cn']),
+		'char' => trim($_POST['char']),
+		'minutes' => trim($_POST['minutes'])
 		);
 	$disable_username = (trim($_POST['disable_username'])) ? trim($_POST['disable_username']) : 'admin';
 	$wptm_connect = array(
