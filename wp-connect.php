@@ -33,6 +33,7 @@ if ($wptm_connect['widget']) {
 }
 
 if ($wptm_options['enable_wptm']) { // 是否开启微博同步功能
+    add_action('admin_menu', 'wp_connect_add_sidebox');
 	add_action('publish_post', 'wp_connect_publish', 1);
 	add_action('publish_page', 'wp_connect_publish', 1);
 }

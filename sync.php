@@ -514,8 +514,7 @@ function wp_connect_add_sidebox() {
 		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'post', 'side', 'high');
 		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'page', 'side', 'high');
 	} 
-} 
-add_action('admin_menu', 'wp_connect_add_sidebox');
+}
 
 // 发布
 function wp_connect_publish($post_ID) {

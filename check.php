@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set("PRC");
 define('ROOT_PATH', dirname(dirname(__FILE__)));
 $funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'curl_exec', 'file_get_contents', 'gzinflate', 'openssl_open');
 $surrounding_list = array
@@ -115,7 +114,8 @@ function function_support(&$func_items) {
 	} 
 	return $func_str;
 } 
-if($_GET['i']) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
+if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
+date_default_timezone_set("PRC");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
