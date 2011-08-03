@@ -26,7 +26,6 @@ class neteaseClient
     { 
 		$param = array();
         $param['status'] = $text; 
-		$param['source'] = "<a href=\"http://www.smyx.net/wp-connect.html\">WordPress连接微博</a>"; 
 
 		if ($value[0] == "image" && $value[1]) {
 			$p = array();

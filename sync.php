@@ -30,7 +30,7 @@ function wp_connect_header () {
 		delete_option("wptm_opensina");
 		delete_option("wptm_opensohu");
 		delete_option("wptm_opennetease");
-		delete_option("wptm_source");
+		delete_option("wptm_source");/*old*/
 		delete_option("wptm_twitter");/*old*/
 		delete_option("wptm_twitter_oauth");
 		delete_option("wptm_qq");
@@ -123,10 +123,6 @@ function wp_connect_update() {
 		'oauth_token' => trim($_POST['username']),
 		'oauth_token_secret' => trim($_POST['password'])
 		);
-	$source = array(
-		'name' => trim($_POST['sourcename']),
-		'url' => trim($_POST['sourceurl'])
-		);
 	$updated = '<div class="updated"><p><strong>' . __('Settings saved.') . '</strong></p></div>';
 	if (isset($_POST['update_options'])) {
 		update_option("wptm_options", $update_options);
@@ -152,10 +148,6 @@ function wp_connect_update() {
 	}
 	if (isset($_POST['update_opennetease'])) {
 		update_option("wptm_opennetease", $appkey);
-		echo $updated;
-	}
-	if (isset($_POST['source'])) {
-		update_option("wptm_source", $source);
 		echo $updated;
 	}
 	if (isset($_POST['update_twitter'])) {
@@ -294,7 +286,6 @@ function wp_option_account() {
 	'opensina' => get_option('wptm_opensina'),
 	'opensohu' => get_option('wptm_opensohu'),
 	'opennetease' => get_option('wptm_opennetease'),
-	'source' => get_option('wptm_source'),
 	'qq' => get_option('wptm_qq'),
 	'sina' => get_option('wptm_sina'),
 	'sohu' => get_option('wptm_sohu'),

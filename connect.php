@@ -75,7 +75,7 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 ?>
 </p>
 <!-- 请不要删除以下信息，谢谢！-->
-<p class="author">程序提供: <a href="http://www.smyx.net/wp-connect.html" target="_blank">WordPress连接微博</a></p></div>
+<p class="author">程序提供: <a href="http://loginsns.com/" target="_blank">连接微博</a></p></div>
 </span></td></tr></table>
 </div>
 <div class="login_label">您可以使用以下帐号登录:</div>
@@ -674,6 +674,10 @@ function wp_get_user_info($uid) {
 	return $userinfo;
 }
 
+function wp_url_back() {
+	$_SESSION['wp_url_back'] = get_bloginfo('wpurl');
+}
+
 if (!function_exists('connect_login_form_login')) {
 	add_action("login_form_register", "connect_login_form_login");
 	add_action("login_form_login", "connect_login_form_login");
@@ -682,7 +686,11 @@ if (!function_exists('connect_login_form_login')) {
 		if (is_user_logged_in()) {
 			$redirect_to = admin_url('profile.php');
 			wp_safe_redirect($redirect_to);
-		} 
+		} else {
+			if(!$_GET['redirect_to']) {
+				add_action('login_footer', 'wp_url_back');
+			}
+		}
 	} 
 	function connect_login_form_logout() {
 		$_SESSION['wp_url_login'] = "";

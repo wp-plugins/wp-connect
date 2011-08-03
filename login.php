@@ -54,7 +54,8 @@ if ($_GET['go']) {
 	if ($_SESSION['wp_url_back']) {
 		$callback = $_SESSION['wp_url_back'];
 	} else {
-		$callback = admin_url('profile.php');
+		//$callback = admin_url('profile.php');
+		$callback = get_bloginfo('wpurl');
 	} 
 	header('Location:' . $callback);
 } 

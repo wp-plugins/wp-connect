@@ -241,10 +241,9 @@ function wp_update_t_sohu($sohu, $status, $value) {
 function wp_update_t_163($netease, $status, $value) {
 	if (!class_exists('neteaseOAuth')) {
 		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
-	} 
-	$source = get_option('wptm_source');
+	}
 	$to = new neteaseClient(APP_KEY, APP_SECRET, $netease['oauth_token'], $netease['oauth_token_secret']);
-	$result = $to -> update($status, $source, $value);
+	$result = $to -> update($status, $value);
 } 
 // Twitter
 function wp_update_twitter($twitter, $status) {

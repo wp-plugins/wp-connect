@@ -5,7 +5,7 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。<strong>注意：捐赠版已经更新到1.3.7 版本，请到群内下载升级！</strong>
-Version: 1.7.4
+Version: 1.7.5
 */
 
 define('WP_CONNECT_VERSION', '1.7.4');
@@ -88,7 +88,7 @@ function wp_connect_do_page() {
       <li><a href="#share" class="share">分享设置</a></li>
       <li><a href="#advanced" class="advanced">高级设置</a></li>
       <li><a href="#check" class="check">环境检查</a></li>
-      <li><a href="http://loginsns.com/" target="_blank">帮助文档</a></li>
+      <li><a href="http://loginsns.com/wiki/" target="_blank">帮助文档</a></li>
     </ul>
     <div id="sync">
       <form method="post" action="options-general.php?page=wp-connect">
@@ -117,12 +117,12 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">禁止同步的文章分类ID</td>
-            <td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用英文逗号(,)分开 (设置后该ID分类下的文章将不会同到微博) [ <a href="http://loginsns.com/#faqs_7" target="_blank">查看</a> ]</td>
+            <td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用英文逗号(,)分开 (设置后该ID分类下的文章将不会同到微博) [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs7" target="_blank">查看</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">自定义页面(一键发布到微博)</td>
             <td>密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" />
-               [ <a href="http://loginsns.com/#faqs_4" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
+               [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs4" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">多作者博客</td>
@@ -134,7 +134,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">服务器时间校正</td>
-            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” [ <a href="http://loginsns.com/#faqs_20" target="_blank">详情</a> ] 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！<br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>多了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >少了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
+            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs20" target="_blank">详情</a> ] 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！<br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>多了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >少了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
           </tr>
         </table>
         <p class="submit">
@@ -154,7 +154,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">显示设置</td>
-            <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> [ <a href="http://loginsns.com/#faqs_5" target="_blank">详细说明</a> ]</td>
+            <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs5" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">添加按钮</td>
@@ -174,17 +174,17 @@ function wp_connect_do_page() {
           <tr>
             <td width="25%" valign="top">QQ登录</td>
             <td>APP ID: <input name="qq_app_id" type="text" value='<?php echo $wptm_connect['qq_app_id'];?>' />
-              APP KEY: <input name="qq_app_key" type="text" value='<?php echo $wptm_connect['qq_app_key'];?>' /> [ <a href="http://loginsns.com/#faqs_qq" target="_blank">如何获取?</a> ] </td>
+              APP KEY: <input name="qq_app_key" type="text" value='<?php echo $wptm_connect['qq_app_key'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs1" target="_blank">如何获取?</a> ] </td>
           </tr>
           <tr>
             <td width="25%" valign="top">人人连接</td>
             <td>API Key: <input name="renren_api_key" type="text" value='<?php echo $wptm_connect['renren_api_key'];?>' />
-              Secret Key: <input name="renren_secret" type="text" value='<?php echo $wptm_connect['renren_secret'];?>' /> [ <a href="http://loginsns.com/#faqs_rr" target="_blank">如何获取?</a> ] </td>
+              Secret Key: <input name="renren_secret" type="text" value='<?php echo $wptm_connect['renren_secret'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs2" target="_blank">如何获取?</a> ] </td>
           </tr>
           <tr>
             <td width="25%" valign="top">开心网</td>
             <td>API Key: <input name="kaixin001_api_key" type="text" value='<?php echo $wptm_connect['kaixin001_api_key'];?>' />
-              Secret Key: <input name="kaixin001_secret" type="text" value='<?php echo $wptm_connect['kaixin001_secret'];?>' /> [ <a href="http://loginsns.com/#faqs_kx001" target="_blank">如何获取?</a> ] </td>
+              Secret Key: <input name="kaixin001_secret" type="text" value='<?php echo $wptm_connect['kaixin001_secret'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs3" target="_blank">如何获取?</a> ] </td>
           </tr>
 		  <tr>
 			<td width="25%" valign="top">Widget</td>
@@ -196,7 +196,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">网易微博评论者头像</td>
-            <td><label><input name="netease_avatar" type="checkbox" value="1" <?php if($wptm_connect['netease_avatar']) echo "checked "; ?>>已显示</label> [ <a href="http://loginsns.com/#faqs_10" target="_blank">详情</a> ]</td>
+            <td><label><input name="netease_avatar" type="checkbox" value="1" <?php if($wptm_connect['netease_avatar']) echo "checked "; ?>>已显示</label> [ <a href="http://loginsns.com/wiki/wordpress/faqs#faqs10" target="_blank">详情</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">禁止注册的用户名</td>
@@ -216,7 +216,7 @@ function wp_connect_do_page() {
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">添加按钮</td>
-            <td><label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://loginsns.com/#share" target="_blank">详细说明</a> ]</td>
+            <td><label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
@@ -229,7 +229,7 @@ function wp_connect_do_page() {
           </tr>
 		  <tr>
 			<td width="25%" valign="top">Google Analytics</td>
-			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/#share_2" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
+			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
         </table>
         <h3>Google+1</h3>
@@ -282,15 +282,15 @@ function wp_connect_do_page() {
          <li>1. 增加支持使用QQ、开心网、Google(谷歌)、Yahoo(雅虎)登录WordPress博客。<span style="color: red;">NEW!</span></li>
          <li>2. 登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。<span style="color: red;">NEW!</span></li>
          <li>3. 去掉登录二次点击。<span style="color: red;">NEW!</span></li>
-         <li>4、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/#web" target="_blank">查看</a> ]</li>
-         <li>5、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/#share" target="_blank">查看</a> ]</li>
+         <li>4、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/wap" target="_blank">查看</a> ]</li>
+         <li>5、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">查看</a> ]</li>
          <li>6. 支持使用Google+1按钮(在“分享设置”中开启)。</li>
          <li>7、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</li>
-         <li>8、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/#show" target="_blank">查看</a> ]</li>
-         <li>9、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/#gtalk" target="_blank">查看</a> ]</li>
-         <li>10、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/#gtalk_11" target="_blank">查看</a> ]</li>
-         <li>11、<a href="http://loginsns.com/#more" target="_blank">查看更多功能</a></li>
-		 <li>最低捐赠：10元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/#donate" target="_blank">查看详细描述</a></li>
+         <li>8、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</li>
+         <li>9、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看</a> ]</li>
+         <li>10、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/wordpress/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
+         <li>11、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
+		 <li>最低捐赠：10元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/donate" target="_blank">查看详细描述</a></li>
 		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
 		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
       </ul>

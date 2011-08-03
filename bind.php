@@ -13,11 +13,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="openqq"<?php echo ($account['openqq']['app_key']) ? ' class="bind"': '';?> title="腾讯微博开放平台">腾讯微博</a>
 <a href="javascript:;" id="opensina"<?php echo ($account['opensina']['app_key']) ? ' class="bind"': '';?> title="新浪微博开放平台">新浪微博</a>
 <a href="javascript:;" id="opensohu"<?php echo ($account['opensohu']['app_key']) ? ' class="bind"': '';?> title="搜狐微博开放平台">搜狐微博</a>
-网易微博｛
-<a href="javascript:;" id="opennetease"<?php echo ($account['opennetease']['app_key']) ? ' class="bind"': '';?> title="网易微博开放平台">Key</a>
-<a href="javascript:;" id="source"<?php echo ($account['source']['name'] && $account['source']['url']) ? ' class="bind"': '';?> title="网易微博来源字段">来源字段</a> ｝ 
-<span>[ <a href="http://loginsns.com/#faqs_15" target="_blank">如何获得APP Key？</a>]</span>
-<p><form method="post" action="" class="source"><?php wp_nonce_field('source');?>网易微博: ｛ 来源名称：<input type="text" name="sourcename" value="<?php echo $account['source']['name'];?>" /> 来源链接：<input type="text" name="sourceurl" value="<?php echo $account['source']['url'];?>" /> <input type="submit" name="source" value="提交" /> ｝</form></p>
+<a href="javascript:;" id="opennetease"<?php echo ($account['opennetease']['app_key']) ? ' class="bind"': '';?> title="网易微博开放平台">网易微博</a>
 <p>(以上设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) </p><p style="color:red">注意：更换app key后，相应的帐号请重新绑定！</p>
 <?php }?>
 <div id="tlist">
@@ -51,7 +47,7 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 		}
 		if (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users']) {
 			echo '<p>绑定帐号后，您可以登录本站，在本站的微博自定义发布页面发布信息到您绑定的帐号上。</p>';
-			echo '<p>您也可以捐助本人开发插件，以获得使用Gtalk指令进行更多便捷的操作。<a href="http://loginsns.com/#gtalk" target="_blank">查看详细</a></p>';
+			echo '<p>您也可以捐助本人开发插件，以获得使用Gtalk指令进行更多便捷的操作。<a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看详细</a></p>';
 		}
 		echo '<p><strong>请您再三确定您信任本站站长，否则导致微博等账户信息泄漏，插件开发者概不负责！</strong></p>';
 	}
@@ -118,7 +114,7 @@ $(function () {
   });
 });
 $(".close").show();
-$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #ms9911, #follow5, #leihou, #wbto").click(function () {
+$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   var pic = id.replace('open', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + pic + ".png");
@@ -132,7 +128,6 @@ $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, 
   $("#username_renjian").attr("value", "<?php echo $account['renjian']['username'];?>");
   $("#username_zuosa").attr("value", "<?php echo $account['zuosa']['username'];?>");
   $("#username_follow5").attr("value", "<?php echo $account['follow5']['username'];?>");
-  $("#username_leihou").attr("value", "<?php echo $account['leihou']['username'];?>");
   $("#username_wbto").attr("value", "<?php echo $account['wbto']['username'];?>");
   $("#username_opensina").attr("value", "<?php echo $account['opensina']['app_key'];?>");
   $("#username_openqq").attr("value", "<?php echo $account['openqq']['app_key'];?>");
@@ -140,16 +135,13 @@ $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, 
   $("#username_opennetease").attr("value", "<?php echo $account['opennetease']['app_key'];?>");
   $(".password").attr("value", "");
   if(id == "openqq" || id == "opensina" || id == "opensohu" || id == "opennetease") {
-	$(".account").hide();
-    $(".token").hide();
+	$(".account,.token").hide();
     $(".appkey").show();
   } else if(id == "twitter" || id == "qq" || id == "sina" || id == "sohu" || id == "netease" || id == "douban") {
-    $(".appkey").hide();
-	$(".account").hide();
+    $(".account,.appkey").hide();
     $(".token").show();
   } else {
-    $(".appkey").hide();
-    $(".token").hide();
+    $(".appkey,.token").hide();
 	$(".account").show();
   }
   $('#update').attr("name", 'update_' + id);
@@ -195,7 +187,6 @@ $("#fanfou").floatdialog("dialog_fanfou");
 $("#renjian").floatdialog("dialog_renjian");
 $("#zuosa").floatdialog("dialog_zuosa");
 $("#follow5").floatdialog("dialog_follow5");
-$("#leihou").floatdialog("dialog_leihou");
 $("#wbto").floatdialog("dialog_wbto");
 $('#update').click(function () {
   if (($(".username").val() == '') || ($(".password").val() == '')) {
@@ -205,9 +196,6 @@ $('#update').click(function () {
 });
 $('.wrap').click(function () {
    $('.updated').slideUp("normal");
-});
-$("#source").click(function () {
-  $('.source').toggle();
 });
 $(function () {
    $('.show_botton').append( $('.hide_botton').html() );
