@@ -8,7 +8,7 @@ Description: 支持使用11个第三方网站帐号登录 WordPress 博客，并
 Version: 1.7.5
 */
 
-define('WP_CONNECT_VERSION', '1.7.4');
+define('WP_CONNECT_VERSION', '1.7.5');
 $wpurl = get_bloginfo('wpurl');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_options = get_option('wptm_options');
