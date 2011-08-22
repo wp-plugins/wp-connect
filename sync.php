@@ -41,7 +41,7 @@ function wp_connect_header () {
 		delete_option("wptm_renren");
 		delete_option("wptm_kaixin001");
 		delete_option("wptm_digu");
-		delete_option("wptm_baidu");
+		delete_option("wptm_baidu");/*old*/
 		delete_option("wptm_fanfou");
 		delete_option("wptm_renjian");
 		delete_option("wptm_zuosa");
@@ -94,6 +94,10 @@ function wp_connect_update() {
 		'renren' => trim($_POST['renren']),
 		'kaixin001' => trim($_POST['kaixin001']),
 		'douban' => trim($_POST['douban']),
+		'taobao' => trim($_POST['taobao']),
+		'baidu' => trim($_POST['baidu']),
+		'tianya' => trim($_POST['tianya']),
+		'msn' => trim($_POST['msn']),
 		'google' => trim($_POST['google']),
 		'yahoo' => trim($_POST['yahoo']),
 		'twitter' => trim($_POST['twitter']),
@@ -108,6 +112,12 @@ function wp_connect_update() {
 		'renren_secret' => trim($_POST['renren_secret']),
 		'kaixin001_api_key' => trim($_POST['kaixin001_api_key']),
 		'kaixin001_secret' => trim($_POST['kaixin001_secret']),
+		'taobao_api_key' => trim($_POST['taobao_api_key']),
+		'taobao_secret' => trim($_POST['taobao_secret']),
+		'baidu_api_key' => trim($_POST['baidu_api_key']),
+		'baidu_secret' => trim($_POST['baidu_secret']),
+		'msn_api_key' => trim($_POST['msn_api_key']),
+		'msn_secret' => trim($_POST['msn_secret']),
 		'netease_avatar' => trim($_POST['netease_avatar']),
 		'disable_username' => $disable_username
 		);
@@ -185,11 +195,7 @@ function wp_connect_update() {
 	if (isset($_POST['update_digu'])) {
 		update_option("wptm_digu", $update);
 		echo $updated;
-	} 
-	if (isset($_POST['update_baidu'])) {
-		update_option("wptm_baidu", $update);
-		echo $updated;
-	} 
+	}
 	if (isset($_POST['update_fanfou'])) {
 		update_option("wptm_fanfou", $update);
 		echo $updated;
@@ -206,10 +212,6 @@ function wp_connect_update() {
 		update_option("wptm_follow5", $update);
 		echo $updated;
 	}
-	//if (isset($_POST['update_leihou'])) {
-	//	update_option("wptm_leihou", $update);
-	//	echo $updated;
-	//}
 	if (isset($_POST['update_wbto'])) {
 		update_option("wptm_wbto", $update);
 		echo $updated;
@@ -256,10 +258,7 @@ function wp_connect_update() {
 	}
 	if (isset($_POST['delete_digu'])) {
 		update_option("wptm_digu", '');
-	} 
-	if (isset($_POST['delete_baidu'])) {
-		update_option("wptm_baidu", '');
-	} 
+	}
 	if (isset($_POST['delete_fanfou'])) {
 		update_option("wptm_fanfou", '');
 	} 
@@ -272,9 +271,6 @@ function wp_connect_update() {
 	if (isset($_POST['delete_follow5'])) {
 		update_option("wptm_follow5", '');
 	}
-	//if (isset($_POST['delete_leihou'])) {
-	//	update_option("wptm_leihou", '');
-	//}
 	if (isset($_POST['delete_wbto'])) {
 		update_option("wptm_wbto", '');
 	}
@@ -295,7 +291,6 @@ function wp_option_account() {
 	'kaixin001' => get_option('wptm_kaixin001'),
 	'digu' => get_option('wptm_digu'),
 	'douban' => get_option('wptm_douban'),
-	'baidu' => get_option('wptm_baidu'),
 	'renjian' => get_option('wptm_renjian'),
 	'fanfou' => get_option('wptm_fanfou'),
 	'zuosa' => get_option('wptm_zuosa'),
@@ -336,7 +331,6 @@ function wp_usermeta_account( $user_id ) {
 	'kaixin001' => get_user_meta($user_id, 'wptm_kaixin001', true),
 	'digu' => get_user_meta($user_id, 'wptm_digu', true),
 	'douban' => get_user_meta($user_id, 'wptm_douban', true),
-	'baidu' => get_user_meta($user_id, 'wptm_baidu', true),
 	'renjian' => get_user_meta($user_id, 'wptm_renjian', true),
 	'fanfou' => get_user_meta($user_id, 'wptm_fanfou', true),
 	'zuosa' => get_user_meta($user_id, 'wptm_zuosa', true),
@@ -382,10 +376,7 @@ function wp_user_profile_update( $user_id ) {
 	}
 	if (isset($_POST['update_digu'])) {
 		update_usermeta( $user_id, 'wptm_digu', $update);
-	} 
-	if (isset($_POST['update_baidu'])) {
-		update_usermeta( $user_id, 'wptm_baidu', $update);
-	} 
+	}
 	if (isset($_POST['update_renjian'])) {
 		update_usermeta( $user_id, 'wptm_renjian', $update);
 	} 
@@ -398,9 +389,6 @@ function wp_user_profile_update( $user_id ) {
 	if (isset($_POST['update_follow5'])) {
 		update_usermeta( $user_id, 'wptm_follow5', $update);
 	}
-	//if (isset($_POST['update_leihou'])) {
-	//	update_usermeta( $user_id, 'wptm_leihou', $update);
-	//}
 	if (isset($_POST['update_wbto'])) {
 		update_usermeta( $user_id, 'wptm_wbto', $update);
 	}
@@ -431,10 +419,7 @@ function wp_user_profile_update( $user_id ) {
 	}
 	if (isset($_POST['delete_digu'])) {
 		update_usermeta( $user_id, 'wptm_digu', '');
-	} 
-	if (isset($_POST['delete_baidu'])) {
-		update_usermeta( $user_id, 'wptm_baidu', '');
-	} 
+	}
 	if (isset($_POST['delete_renjian'])) {
 		update_usermeta( $user_id, 'wptm_renjian', '');
 	} 
@@ -447,9 +432,6 @@ function wp_user_profile_update( $user_id ) {
 	if (isset($_POST['delete_follow5'])) {
 		update_usermeta( $user_id, 'wptm_follow5', '');
 	}
-	//if (isset($_POST['delete_leihou'])) {
-	//	update_usermeta( $user_id, 'wptm_leihou', '');
-	//}
 	if (isset($_POST['delete_wbto'])) {
 		update_usermeta( $user_id, 'wptm_wbto', '');
 	}
@@ -507,7 +489,10 @@ function wp_connect_add_sidebox() {
 	} 
 }
 
-// 发布
+/**
+ * 发布
+ * @since 1.8
+ */
 function wp_connect_publish($post_ID) {
 	global $wptm_options;
 	$time = time();
@@ -528,11 +513,13 @@ function wp_connect_publish($post_ID) {
 	if ($excerpt) {
 		$post_content = wp_replace($excerpt);
 	}
-	$wptm_profile = get_user_meta($post_author_ID, 'wptm_profile', true);
-	$account = wp_usermeta_account($post_author_ID);
+    if ($wptm_options['multiple_authors']) {
+		$wptm_profile = get_user_meta($post_author_ID, 'wptm_profile', true);
+	    $account = wp_usermeta_account($post_author_ID);
+	    $account = array_filter($account);
+	}
 	// 是否开启了多作者博客
-    if ( $wptm_options['multiple_authors'] && $wptm_profile['sync_option'] && (array_filter($account))) {
-		$account = $account;
+    if ( $wptm_options['multiple_authors'] && $wptm_profile['sync_option'] && $account ) {
 		$sync_option = $wptm_profile['sync_option'];
 	    $new_prefix = $wptm_profile['new_prefix'];
 	    $update_prefix = $wptm_profile['update_prefix'];
@@ -542,15 +529,13 @@ function wp_connect_publish($post_ID) {
 			return;
 		}
 		$account = wp_option_account();
+	    $account = array_filter($account);
 	    $sync_option = $wptm_options['sync_option'];
 	    $new_prefix = $wptm_options['new_prefix'];
 	    $update_prefix = $wptm_options['update_prefix'];
 	    $update_days = $wptm_options['update_days'] * 60 * 60 * 24;
 	}
 	// 是否绑定了帐号
-	if($account) {
-		$account = array_filter($account);
-	}
 	if (!$account) {
 		return;
 	}
@@ -636,10 +621,6 @@ function wp_connect_publish($post_ID) {
 	}
 	if($pic[0] == "image" && $wptm_options['disable_pic']) {
 		$pic = '';
-    }
-	// 是否有视频
-	if($pic[0] == "video" && $pic[1]) {
-		$postlink = trim($pic[1].' '.$postlink);
     }
 	wp_update_list($title, $postlink, $pic, $account);
 } 

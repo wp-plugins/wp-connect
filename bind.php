@@ -10,14 +10,17 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/floatdialog.js"></script>
 <?php if (!$wptm_options['bind'] && $_SESSION['wp_url_bind'] == WP_CONNECT) {?>
 <h3>开放平台</h3>
+<p>请点击下面链接填写开放平台KEY [ <a href="http://localhost/wiki/wordpress/faqs#key" target="_blank">如何获得？</a> ] : </p>
+<p>(以下设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写！)</p>
 <a href="javascript:;" id="openqq"<?php echo ($account['openqq']['app_key']) ? ' class="bind"': '';?> title="腾讯微博开放平台">腾讯微博</a>
 <a href="javascript:;" id="opensina"<?php echo ($account['opensina']['app_key']) ? ' class="bind"': '';?> title="新浪微博开放平台">新浪微博</a>
 <a href="javascript:;" id="opensohu"<?php echo ($account['opensohu']['app_key']) ? ' class="bind"': '';?> title="搜狐微博开放平台">搜狐微博</a>
 <a href="javascript:;" id="opennetease"<?php echo ($account['opennetease']['app_key']) ? ' class="bind"': '';?> title="网易微博开放平台">网易微博</a>
-<p>(以上设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写) </p><p style="color:red">注意：更换app key后，相应的帐号请重新绑定！</p>
+<p style="color:red">注意：更换APP key后，相应的帐号请重新绑定！</p>
 <?php }?>
 <div id="tlist">
 <h3>帐号绑定</h3>
+<p>请点击下面图标绑定微博账号: </p>
 <a href="javascript:;" id="<?php echo ($account['twitter']['oauth_token']) ? 'bind_twitter' : 'twitter';?>" class="twitter" title="Twitter"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['qq']['oauth_token']) ? 'bind_qq' : 'qq';?>" class="qq" title="腾讯微博"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['sina']['oauth_token']) ? 'bind_sina' : 'sina';?>" class="sina" title="新浪微博"><b></b></a>
@@ -27,7 +30,6 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="kaixin001" class="kaixin001<?php echo ($account['kaixin001']['password']) ? ' bind': '';?>" title="开心网"><b></b></a>
 <a href="javascript:;" id="digu" class="digu<?php echo ($account['digu']['password']) ? ' bind': '';?>" title="嘀咕"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['douban']['oauth_token']) ? 'bind_douban' : 'douban';?>" class="douban" title="豆瓣"><b></b></a>
-<a href="javascript:;" id="baidu" class="baidu<?php echo ($account['baidu']['password']) ? ' bind': '';?>" title="百度说吧"><b></b></a>
 <a href="javascript:;" id="fanfou" class="fanfou<?php echo ($account['fanfou']['password']) ? ' bind': '';?>" title="饭否"><b></b></a>
 <a href="javascript:;" id="renjian" class="renjian<?php echo ($account['renjian']['password']) ? ' bind': '';?>" title="人间网"><b></b></a>
 <a href="javascript:;" id="zuosa" class="zuosa<?php echo ($account['zuosa']['password']) ? ' bind': '';?>" title="做啥"><b></b></a>
@@ -114,7 +116,7 @@ $(function () {
   });
 });
 $(".close").show();
-$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #baidu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
+$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   var pic = id.replace('open', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + pic + ".png");
@@ -123,7 +125,6 @@ $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, 
   $("#username_renren").attr("value", "<?php echo $account['renren']['username'];?>");
   $("#username_kaixin001").attr("value", "<?php echo $account['kaixin001']['username'];?>");
   $("#username_digu").attr("value", "<?php echo $account['digu']['username'];?>");
-  $("#username_baidu").attr("value", "<?php echo $account['baidu']['username'];?>");
   $("#username_fanfou").attr("value", "<?php echo $account['fanfou']['username'];?>");
   $("#username_renjian").attr("value", "<?php echo $account['renjian']['username'];?>");
   $("#username_zuosa").attr("value", "<?php echo $account['zuosa']['username'];?>");
@@ -182,7 +183,6 @@ $("#douban, #bind_douban").floatdialog("dialog_douban");
 $("#renren").floatdialog("dialog_renren");
 $("#kaixin001").floatdialog("dialog_kaixin001");
 $("#digu").floatdialog("dialog_digu");
-$("#baidu").floatdialog("dialog_baidu");
 $("#fanfou").floatdialog("dialog_fanfou");
 $("#renjian").floatdialog("dialog_renjian");
 $("#zuosa").floatdialog("dialog_zuosa");

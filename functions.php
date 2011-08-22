@@ -1,28 +1,39 @@
 <?php
 include_once(dirname(__FILE__) . '/config.php');
-// 同步列表
+/**
+ * 同步列表
+ * @since 1.8
+ */
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
-	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
-	$sina = wp_status($title, urlencode($postlink), 140, 1);
-	$output = array();
-	if($account['sina']) { $ms = wp_update_t_sina($account['sina'], $sina, $pic); } //140*
-	$output['sina'] = $ms['id'];
+    // 是否有视频
+	if($pic[0] == "video" && $pic[1]) {
+		$vurl = $pic[1];
+		$url = $postlink;
+	} else {
+		$url = $postlink;
+	}
     // 是否使用t.cn短网址
 	if ($wptm_options['t_cn']) {
-		$postlink = get_t_cn(urlencode($postlink));
+		$url = get_t_cn(urlencode($url));
 	}
+    // 处理完毕输出链接
+	$postlink = trim($vurl.' '.$url);
+    // 截取字数
 	$status = wp_status($title, $postlink, 140); //网易/人人/饭否/做啥/雷猴
 	$status2 = wp_status($title, $postlink, 200, 1); //搜狐/follow5
+	$sina = wp_status($title, urlencode($postlink), 140, 1); //新浪
 	$qq = wp_status($title, $postlink, 140, 1); //腾讯
 	$kaixin001 = wp_status($title, $postlink, 200); //开心
 	$digu = wp_status($title, urlencode($postlink), 140); //嘀咕
 	$twitter = wp_status($title, wp_urlencode($postlink), 140); //Twitter
     $wbto = wp_status($title, $postlink, 140, 1); //微博通
-    $baidu = wp_status($title, urlencode($postlink), 140, 1); //百度
 	$douban = wp_status($title, $postlink, 128); //豆瓣
 	$renjian = wp_status($title, urlencode($postlink), 200, 1); //人间网
-
+    // 开始同步
+	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
+	$output = array();
+	if($account['sina']) { $ms = wp_update_t_sina($account['sina'], $sina, $pic); $output['sina'] = $ms['id'];} //140*
 	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $qq, $pic); } //140*
 	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
 	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status2, $pic); } //+
@@ -36,8 +47,6 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); }
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
-	if($account['baidu']) { wp_update_baidu($account['baidu'], $baidu); } //140*
-	//if($account['leihou']) { wp_update_leihou($account['leihou'], $status, $pic); } //140
 	return $output;
 }
 
@@ -108,7 +117,7 @@ function wp_urlencode($url) {
 	$a = array('+', '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
 	$b = array(" ", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
 	$url = str_replace($a, $b, urlencode($url));
-	return strtolower($url);
+	return $url;
 }
 
 // 匹配视频、图片
@@ -338,10 +347,6 @@ function wp_update_wbto($wbto, $status, $value) {
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
-// 雷猴
-//function wp_update_leihou($leihou, $status, $value) {
-//	wp_t_update("http://leihou.com/statuses/update.json", $leihou, $status, $value);
-//}
 // 人人网
 function wp_update_renren($renren, $status) {
 	$cookie = tempnam('./tmp', 'renren');
@@ -372,26 +377,6 @@ function wp_update_kaixin001($kaixin001, $status) {
 	curl_setopt($ch, CURLOPT_REFERER, '   http://wap.kaixin001.com/home/');
 	$ret = wp_update_result($ch);
 }
-// 百度说吧
-function wp_update_baidu($baidu, $status) {
-	$cookie = tempnam('./tmp', 'baidu');
-	$password = key_decode($baidu['password']);
-	$ch = wp_getCurl($cookie, "http://t.baidu.com/userlogin");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'UserLoginForm%5Busername%5D=' . urlencode($baidu["username"]) . '&UserLoginForm%5Bpassword%5D=' . urlencode($password) . '&UserLoginForm%5BrememberMe%5D=0');
-	curl_setopt($ch, CURLOPT_REFERER, 'http://t.baidu.com/');
-	$str = wp_update_result($ch);
-
-	preg_match('/logmt=(.*);.*/U', $str, $matches);
-	$verify = $matches[1];
-	$ch = wp_getCurl($cookie, 'https://passport.baidu.com/logm?tpl=sn&t=' . $verify . '&u=http%3A%2F%2Ft.baidu.com%2F');
-	$ret = wp_update_result($ch);
-
-	$ch = wp_getCurl($cookie, "http://t.baidu.com/message/post?");
-	$params = 'm_content=' . $status . '&pic_id=0&pic_filename=&pic_id_water=0&pic_filename_water=';
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-	curl_setopt($ch, CURLOPT_REFERER, 'http://t.baidu.com/');
-	$out = wp_update_result($ch);
-}
 
 function wp_getCurl($cookie, $url) {
 	$ch = curl_init();
@@ -412,57 +397,7 @@ function wp_update_result($ch) {
 	unset($ch);
 	return $str;
 }
-/*
-function wp_t_update($url, $user, $status, $value) {
-	$password = key_decode($user['password']);
-	if ($value[0] == "image" && $value[1]) {
-		$content = file_get_contents($value[1]);
-		$filename = reset(explode('?' , basename($value[1])));
-		$mime = wp_get_image_mime($value[1]);
-	} 
-	$boundary = uniqid('------------------');
-	$MPboundary = '--' . $boundary;
-	$endMPboundary = $MPboundary . '--';
-	if ($value[0] == "image" && $value[1]) {
-		$multipartbody .= $MPboundary . "\r\n";
-		$multipartbody .= 'Content-Disposition: form-data; name="pic"; filename="' . $filename . '"' . "\r\n";
-		$multipartbody .= "Content-Type: {$mime}\r\n\r\n";
-		$multipartbody .= $content . "\r\n";
-	} 
-	$multipartbody .= $MPboundary . "\r\n";
-	$multipartbody .= 'content-disposition: form-data; name="status"' . "\r\n\r\n";
-	$multipartbody .= $status . "\r\n";
-	$multipartbody .= "\r\n" . $endMPboundary;
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $multipartbody);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: multipart/form-data; boundary=$boundary"));
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_USERPWD, $user["username"] . ':' . $password);
-	$ret = curl_exec($ch);
-	return $ret;
-}
-
-function wp_get_image_mime($file) {
-	$ext = strtolower(pathinfo($file , PATHINFO_EXTENSION));
-	switch ($ext) {
-		case 'jpg':
-		case 'jpeg':
-			$mime = 'image/jpg';
-			break;
-		case 'png';
-			$mime = 'image/png';
-			break;
-		case 'gif';
-		default:
-			$mime = 'image/gif';
-			break;
-	} 
-	return $mime;
-} 
-*/
 // 社会化分享按钮，共52个
 function wp_social_share_title() {
 	return array("qzone" => "QQ空间",

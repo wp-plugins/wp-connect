@@ -54,16 +54,10 @@ function wp_update_page() {
 	} 
 	if (isset($_POST['kaixin001']) && $account['kaixin001']) {
 		wp_update_kaixin001($account['kaixin001'], $status);
-	} 
-	if (isset($_POST['baidu']) && $account['baidu']) {
-		wp_update_baidu($account['baidu'], $status);
-	} 
+	}
 	if (isset($_POST['twitter']) && $account['twitter']) {
 		wp_update_twitter($account['twitter'], $status);
-	} 
-	//if (isset($_POST['leihou']) && $account['leihou']) {
-	//	wp_update_leihou($account['leihou'], $status, $url);
-	//}
+	}
 }
 
 function wp_connect_script_page () {
@@ -99,13 +93,13 @@ function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value
 function selectall(form){for(var i=0;i<form.elements.length;i++){var box = form.elements[i];if (box.name != "chkall")box.checked = form.clickall.checked;}}
 var wpurl = "<?php echo get_bloginfo('wpurl');?>";
 </script>
-<link type="text/css" href="<?=$plugin_url?>/css/page.css" rel="stylesheet" />
+<link type="text/css" href="<?php echo $plugin_url;?>/css/page.css" rel="stylesheet" />
 <form action="" method="post" id="tform">
   <fieldset>
     <div id="say">说说你的新鲜事
       <div id="wordage">你还可以输入 <span>140</span> 字</div>
     </div>
-    <p id="v1"><textarea cols="60" rows="5" name="message" id="message" onblur="textCounter(this.form.message,140);" onKeyDown="textCounter(this.form.message,140);" onKeyUp="textCounter(this.form.message,140);"><?=($pwderror)?$_POST['message']:''?></textarea></p>
+    <p id="v1"><textarea cols="60" rows="5" name="message" id="message" onblur="textCounter(this.form.message,140);" onKeyDown="textCounter(this.form.message,140);" onKeyUp="textCounter(this.form.message,140);"><?php echo ($pwderror)?$_POST['message']:'';?></textarea></p>
     图片地址：<p>
     <p id="v2"><input name="url" id="url" size="50" type="text" /></p>
     发布到：
@@ -128,8 +122,6 @@ var wpurl = "<?php echo get_bloginfo('wpurl');?>";
     <label for="digu">嘀咕</label>
     <input name="douban" id="douban" type="checkbox" value="checkbox" checked />
     <label for="douban">豆瓣</label>
-    <input name="baidu" id="baidu" type="checkbox" value="checkbox" checked />
-    <label for="baidu">百度说吧</label>
     <input name="fanfou" id="fanfou" type="checkbox" value="checkbox" checked />
     <label for="fanfou">饭否</label>
     <input name="renjian" id="renjian" type="checkbox" value="checkbox" checked />
@@ -142,11 +134,11 @@ var wpurl = "<?php echo get_bloginfo('wpurl');?>";
     <label for="wbto">微博通</label></p>
     <?php if (!is_user_logged_in() || !$wptm_advanced['registered_users']) {?>
     <p id="v3">密码：
-    <input name="password" id="password" type="password" value="<?=(!$pwderror)?$_POST['password']:''?>" /> <span<?=$pwderror?>>密码错误！</span>
+    <input name="password" id="password" type="password" value="<?php echo (!$pwderror)?$_POST['password']:'';?>" /> <span<?php echo $pwderror;?>>密码错误！</span>
 	</p>
 	<?php } ?>
     <p><input type="submit" id="publish" value="发表" /></p>
-    <p class="loading"><img src="<?=$plugin_url?>/images/loading.gif" alt="Loading" /></p>
+    <p class="loading"><img src="<?php echo $plugin_url;?>/images/loading.gif" alt="Loading" /></p>
 	<p class="error">你没有绑定帐号，请到我的资料页面或者到插件页面绑定！</p>
 	<p class="success">发表成功！</p>
   </fieldset>

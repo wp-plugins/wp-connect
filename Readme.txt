@@ -1,18 +1,18 @@
 ﻿=== WP Connect ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: wp connect,twitter,qq,sina,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,百度说吧,豆瓣,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步
+Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.7.5
+Stable tag: 1.8
 
-支持使用11个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。
+支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。
 
 == Description ==
 
-帮助文档: http://loginsns.com/
+帮助文档: http://loginsns.com/wiki/
 
-1. 可以使用腾讯微博、新浪微博、搜狐微博、网易微博、人人帐号、豆瓣帐号、Twitter登录WordPress博客，支持同步评论到相对应的微博。 (捐赠版还支持QQ、开心网、Google、Yahoo等登录WordPress博客)
+1. 可以使用腾讯微博、新浪微博、搜狐微博、网易微博、人人帐号、豆瓣帐号、Twitter登录WordPress博客，支持同步评论到相对应的微博。 (捐赠版还支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客)
 
 2. 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、百度说吧、饭否、人间网、做啥、Follow5、享拍微博通等。
 
@@ -41,7 +41,9 @@ Stable tag: 1.7.5
 
 以下是捐赠版功能：
 
-1. 增加支持使用QQ、开心网、Google(谷歌)、Yahoo(雅虎)登录WordPress博客。
+描述：支持更多的第三方网站帐号(共15个)登录WordPress博客，支持使用Google talk/网页/手机wap发布文章和发布微博；使用gtalk发布/回复/修改/删除评论等。
+
+1. 增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。
 
 2. 登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。
 
@@ -76,6 +78,12 @@ Stable tag: 1.7.5
 下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
+
+= 1.8 =
+*2011/08/22
+新增:支持使用 MSN、淘宝网帐号、百度帐号、天涯社区帐号 登录WordPress博客。(捐赠版)
+因“百度说吧”已经下线，故删除“百度说吧”的同步功能。
+其他一些细节修改！
 
 = 1.7.5 =
 *2011/08/03

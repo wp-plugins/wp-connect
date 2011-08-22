@@ -32,6 +32,10 @@ define("APP_SECRET" , $netease_app_secret);
 // 豆瓣
 define("DOUBAN_APP_KEY" , '0502b2569b45aed90f081703d1d10c8b');
 define("DOUBAN_APP_SECRET" , 'be87ce9c179080b0');
+// 天涯
+define("TIANYA_APP_KEY" , 'ef9461411f2845a35ac06dc120710bf604e4f3f07');
+define("TIANYA_APP_SECRET" , 'ea401fa98aba3a75f6e65e9a201031c9');
+
 // Twitter ,假如Twitter勾选代理，不能修改下面的值噢！
 define("T_APP_KEY" , 'q5Hy9KIYnHX1fEfKZ8Vzog');
 define("T_APP_SECRET" , '9y8GHzzHM77KDJTe79k2vgkMctRrMvtnCNFcuetOUM');

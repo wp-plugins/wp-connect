@@ -34,6 +34,12 @@ switch ($_GET['go']) {
 		} 
 		$to = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET);
 		break;
+	case "TIANYA":
+		if (!class_exists('tianyaOAuth')) {
+			include dirname(__FILE__) . '/OAuth/tianya_OAuth.php';
+		} 
+		$to = new tianyaOAuth(TIANYA_APP_KEY, TIANYA_APP_SECRET);
+		break;
 	case "TWITTER":
 		if (!class_exists('twitterOAuth')) {
 			include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
