@@ -10,7 +10,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/floatdialog.js"></script>
 <?php if (!$wptm_options['bind'] && $_SESSION['wp_url_bind'] == WP_CONNECT) {?>
 <h3>开放平台</h3>
-<p>请点击下面链接填写开放平台KEY [ <a href="http://localhost/wiki/wordpress/faqs#key" target="_blank">如何获得？</a> ] : </p>
+<p>请点击下面链接填写开放平台KEY [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获得？</a> ] : </p>
 <p>(以下设置是为了显示微博的“来自XXX”，如果没有申请和审核通过千万不要填写！)</p>
 <a href="javascript:;" id="openqq"<?php echo ($account['openqq']['app_key']) ? ' class="bind"': '';?> title="腾讯微博开放平台">腾讯微博</a>
 <a href="javascript:;" id="opensina"<?php echo ($account['opensina']['app_key']) ? ' class="bind"': '';?> title="新浪微博开放平台">新浪微博</a>
