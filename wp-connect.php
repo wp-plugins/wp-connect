@@ -16,7 +16,7 @@ $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
-$wp_connect_advanced_version = "1.4";
+$wp_connect_advanced_version = "1.4.1";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
