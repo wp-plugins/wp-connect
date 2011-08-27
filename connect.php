@@ -463,7 +463,7 @@ function wp_connect_login($userinfo, $tmail, $tid, $uid = '') {
 	} 
 
 	if ($userinfo[1]) {
-		if ($tmail != $user_email && $is_login) {
+		if ($tmail != $user_email && ($is_login || !$user_login)) {
 			$wpuid = wp_insert_user($userdata);
 		} 
 		if (!$bind && $tid != 'qqtid') {
