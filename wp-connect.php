@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.4.1 版本，请到群内下载升级！</strong>
-Version: 1.8.1
+Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.4.2 版本，请到群内下载升级！</strong>
+Version: 1.8.2
 */
 
-define('WP_CONNECT_VERSION', '1.8.1');
+define('WP_CONNECT_VERSION', '1.8.2');
 $wpurl = get_bloginfo('wpurl');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_options = get_option('wptm_options');
@@ -16,7 +16,7 @@ $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
-$wp_connect_advanced_version = "1.4.1";
+$wp_connect_advanced_version = "1.4.2";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
@@ -288,17 +288,18 @@ function wp_connect_do_page() {
 <?php if (!function_exists('wp_connect_advanced')) {?>
       <ul>
          <li>高级设置只针对捐赠用户，目前增加功能如下：</li>
-         <li><strong>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
-         <li>2、登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。<span style="color: red;">NEW!</span></li>
-         <li>3、去掉登录二次点击。<span style="color: red;">NEW!</span></li>
-         <li>4、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/wap" target="_blank">查看</a> ]</li>
-         <li>5、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">查看</a> ]</li>
-         <li>6、支持使用Google+1按钮(在“分享设置”中开启)。</li>
-         <li><strong>7、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</strong></li>
-         <li>8、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</li>
-         <li>9、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看</a> ]</li>
-         <li>10、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/wordpress/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
-         <li>11、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
+		 <li><strong>1、支持<a href="http://loginsns.com/robot.php" target="_blank">微博机器人</a>(包括<a href="http://loginsns.com/wiki/qqrobot" target="_blank">QQ机器人</a>、<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布微博。 </strong> <span style="color: red;">NEW!</span></li>
+         <li><strong>2、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
+         <li>3、登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。<span style="color: red;">NEW!</span></li>
+         <li>4、去掉登录二次点击。<span style="color: red;">NEW!</span></li>
+         <li>5、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/wap" target="_blank">查看</a> ]</li>
+         <li>6、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">查看</a> ]</li>
+         <li>7、支持使用Google+1按钮(在“分享设置”中开启)。</li>
+         <li><strong>8、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</strong></li>
+         <li>9、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</li>
+         <li>10、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/wiki/gtalk" target="_blank">查看</a> ]</li>
+         <li>11、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
+         <li>12、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
 		 <li>最低捐赠：15元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/donate" target="_blank">查看详细描述</a></li>
 		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
 		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>

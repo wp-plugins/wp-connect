@@ -39,49 +39,53 @@ class qqClient
 	function show_user( $name )
 	{
 		$params = array();
+		$params['format'] = 'json';
 		$params['name'] = $name;
-		return $this->oauth->get( 'http://open.t.qq.com/api/user/other_info?format=json' ,  $params );
+		return $this->oauth->get( 'http://open.t.qq.com/api/user/other_info' ,  $params );
 	}
 
     // 其他用户发表时间线
 	function user_timeline( $page = 0, $count = 20, $name )
 	{
 		$params = array();
+		$params['format'] = 'json';
 		$params['name'] = $name;
 		$params['reqnum'] = $count;
 		$params['pageflag'] = $page;
 
-		return $this->oauth->get('http://open.t.qq.com/api/statuses/user_timeline?format=json', $params );
+		return $this->oauth->get('http://open.t.qq.com/api/statuses/user_timeline', $params );
 	}
 
     // 其他帐户听众列表
 	function followers( $count = 20 , $name )
 	{
 		$params = array();
+		$params['format'] = 'json';
 		$params['name'] = $name;
 		$params['reqnum'] = $count;
-		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist?format=json' , $params );
+		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist' , $params );
 	}
     // 发表微博(文本、图片、视频、音乐)
     function update( $text, $value = '' ) 
     { 
-		$param = array();
-		$param['content'] = $text;
-		$param['clientip'] = $this -> get_ip();
+		$params = array();
+		$params['format'] = 'json';
+		$params['content'] = $text;
+		$params['clientip'] = $this -> get_ip();
 
 		if ($value[0] == "image" && $value[1]) {
-			$param['pic'] = $value[1];
-			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic?format=json', $param, true);
+			$params['pic'] = $value[1];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic', $params, true);
 		} elseif ($value[0] == "video") {
-			$param['url'] = $value[1];
-			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_video?format=json', $param);
+			$params['url'] = $value[1];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_video', $params);
 		} elseif ($value[0] == "music") {
-			$param['author'] = $value[1];
-			$param['title'] = $value[2];
-			$param['url'] = $value[3];
-			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_music?format=json', $param);
+			$params['author'] = $value[1];
+			$params['title'] = $value[2];
+			$params['url'] = $value[3];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_music', $params);
 		} else {
-			return $this -> oauth -> post('http://open.t.qq.com/api/t/add?format=json' , $param);
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add' , $params);
 		}
     }
 
@@ -89,33 +93,38 @@ class qqClient
 	function getvideoinfo( $url )
 	{
 		$params = array();
+		$params['format'] = 'json';
 		$params['url'] = $url;
-		return $this->oauth->post('http://open.t.qq.com/api/t/getvideoinfo?format=json', $params);
+		return $this->oauth->post('http://open.t.qq.com/api/t/getvideoinfo', $params);
 	}
     
 	// 获取自己信息
     function verify_credentials() 
     { 
-        return $this->oauth->get( 'http://open.t.qq.com/api/user/info?format=json' );
+		$params = array();
+		$params['format'] = 'json';
+        return $this->oauth->get( 'http://open.t.qq.com/api/user/info', $params );
     } 
 
 	// 根据微博ID批量获取微博内容
     function get_list( $ids )
     {
 		$params = array();
+		$params['format'] = 'json';
 		$params['ids'] = $ids;
-        return $this->oauth->get( 'http://open.t.qq.com/api/t/list?format=json', $params );
+        return $this->oauth->get( 'http://open.t.qq.com/api/t/list', $params );
     } 
 
 	// 其他用户发表时间线索引
     function user_timeline_ids( $page = 0, $count = 20, $name )
     {
 		$params = array();
+		$params['format'] = 'json';
 		$params['name'] = $name;
 		$params['reqnum'] = $count;
 		$params['pageflag'] = $page;
 		$params['type'] = 3;
-        return $this->oauth->get( 'http://open.t.qq.com/api/statuses/user_timeline_ids?format=json', $params );
+        return $this->oauth->get( 'http://open.t.qq.com/api/statuses/user_timeline_ids', $params );
     } 
 
 }

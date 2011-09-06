@@ -2,13 +2,19 @@
 include_once(dirname(__FILE__) . '/config.php');
 /**
  * 同步列表
- * @since 1.8
+ * @since 1.8.2
  */
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
-    // 是否有视频
-	if($pic[0] == "video" && $pic[1]) {
+	if($pic[0] == 'video' && $pic[1]) { // 是否有视频
 		$vurl = $pic[1];
+		$url = $postlink;
+	} elseif($pic[0] == 'music' && $pic[1]) {
+		if($pic[2] && $pic[3]) {
+			$vurl = '#'.$pic[1].'#'.$pic[2].' '.$pic[3]; // #歌手# 歌曲 url
+		} else {
+			$vurl = $pic[1]; // url
+		}
 		$url = $postlink;
 	} else {
 		$url = $postlink;

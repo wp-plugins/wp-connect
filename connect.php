@@ -371,7 +371,7 @@ function wp_connect_kaixin001_share($content) {
 }
 /**
  * 登录
- * @since 1.8
+ * @since 1.8.1
  */
 function wp_connect_login($userinfo, $tmail, $tid, $uid = '') {
 	global $wpdb, $wpurl, $wptm_connect;
