@@ -491,14 +491,13 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布
- * @since 1.8
+ * @since 1.8.2
  */
 function wp_connect_publish($post_ID) {
-	global $wptm_options;
+	global $wptm_options, $wpurl;
 	$time = time();
 	$title = wp_replace(get_the_title($post_ID));
 	$postlink = get_permalink($post_ID);
-	$shortlink = get_bloginfo('url') . "/?p=" . $post_ID;
 	$thePost = get_post($post_ID);
 	$content = $thePost -> post_content;
 	$excerpt = $thePost -> post_excerpt;
@@ -604,7 +603,11 @@ function wp_connect_publish($post_ID) {
 		} 
 	}
 	if ($wptm_options['enable_shorten']) { // 是否使用博客默认短网址
-		$postlink = $shortlink;
+		if($thePost->post_type == 'page') {
+			$postlink = $wpurl . "/?page_id=" . $post_ID;
+		} else {
+		    $postlink = $wpurl . "/?p=" . $post_ID;
+		}
 	}
 	if ($sync_option == '2') { // 同步 前缀+标题+摘要/内容+链接
 		$title = $title . $tags . " - " . $post_content;
