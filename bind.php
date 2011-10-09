@@ -20,7 +20,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <?php }?>
 <div id="tlist">
 <h3>帐号绑定</h3>
-<p>请点击下面图标绑定微博账号: </p>
+<p>请点击下面图标绑定微博账号: (友情提醒：绑定太多帐号会导致发布文章时缓慢或者响应超时！)</p>
 <a href="javascript:;" id="<?php echo ($account['twitter']['oauth_token']) ? 'bind_twitter' : 'twitter';?>" class="twitter" title="Twitter"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['qq']['oauth_token']) ? 'bind_qq' : 'qq';?>" class="qq" title="腾讯微博"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['sina']['oauth_token']) ? 'bind_sina' : 'sina';?>" class="sina" title="新浪微博"><b></b></a>
@@ -40,7 +40,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
 	if ($_SESSION['wp_url_bind'] == WP_CONNECT) {
 		if ($wptm_options['multiple_authors']) {
-		    echo '<p>假如管理员只想同步自己发布的文章，请到 <a href="' . admin_url('profile.php') . '">我的资料</a> 里面绑定帐号。否则请在这里绑定 (即所有作者的文章都会同步到您绑定的微博上)。<br/>每位作者都可以自定义设置，互不干扰！</p>';
+		    echo '<p>您已经开启了多作者博客，假如管理员只想同步自己发布的文章，请到 <a href="' . admin_url('profile.php') . '">我的资料</a> 里面绑定帐号。否则请在这里绑定 (即所有作者的文章都会同步到您绑定的微博上)。<br/>每位作者都可以自定义设置，互不干扰！</p>';
 		}
 		echo '<p>“我的资料”页面的设置或绑定优先级最大。当管理员在资料页有绑定任何一个帐号，则这里的帐号绑定将失效。</p>';
 	} else {
@@ -49,7 +49,7 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 		}
 		if (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users']) {
 			echo '<p>绑定帐号后，您可以登录本站，在本站的微博自定义发布页面发布信息到您绑定的帐号上。</p>';
-			echo '<p>您也可以捐助本人开发插件，以获得使用Gtalk指令进行更多便捷的操作。<a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看详细</a></p>';
+			echo '<p>您也可以捐助本人开发插件，以获得使用gtalk机器人进行更多便捷的操作。<a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看详细</a></p>';
 		}
 		echo '<p><strong>请您再三确定您信任本站站长，否则导致微博等账户信息泄漏，插件开发者概不负责！</strong></p>';
 	}
@@ -107,7 +107,7 @@ $(function () {
   tabContainers.hide().filter(hash).show();
   $(css).addClass('selected');
 
-  $('.sync,.connect,.share,.advanced,.check').click(function () {
+  $('.sync,.blog,.connect,.share,.advanced,.check').click(function () {
     tabContainers.hide();
     tabContainers.filter(this.hash).show();
     $('div.tabs ul.nav a').removeClass('selected');

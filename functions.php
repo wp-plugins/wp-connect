@@ -39,7 +39,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
     // 开始同步
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$output = array();
-	if($account['sina']) { $ms = wp_update_t_sina($account['sina'], $sina, $pic); $output['sina'] = $ms['id'];} //140*
+	if($account['sina']) { $ms = wp_update_t_sina($account['sina'], $sina, $pic); $output['sina'] = $ms['mid'];} //140*
 	if($account['qq']) { $output['qq'] = wp_update_t_qq($account['qq'], $qq, $pic); } //140*
 	if($account['netease']) { wp_update_t_163($account['netease'], $status, $pic); } //163
 	if($account['sohu']) { wp_update_t_sohu($account['sohu'], $status2, $pic); } //+
@@ -198,8 +198,8 @@ function key_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 	} 
 } 
 
-function key_encode($string) {
-	return key_authcode($string, 'ENCODE', 'WP-CONNECT');
+function key_encode($string, $expiry = 0) {
+	return key_authcode($string, 'ENCODE', 'WP-CONNECT', $expiry);
 } 
 
 function key_decode($string) {

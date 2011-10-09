@@ -102,7 +102,18 @@ class sinaClient
 		} else {
             return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/update.json' , $param ); 
 		}
-    }  
+    } 
+	
+    // 对一条微博信息进行评论
+    function comment( $sid , $text , $cid = false ) 
+    { 
+        $param = array();
+        $param['id'] = $sid;
+        $param['comment'] = $text;
+        if( $cid ) $param['cid '] = $cid;
+
+        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/comment.json' , $param  ); 
+    }
     
     // 获取自己信息
     function verify_credentials() 

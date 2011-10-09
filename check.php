@@ -1,9 +1,9 @@
 <?php
 define('ROOT_PATH', dirname(dirname(__FILE__)));
-$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'curl_exec', 'file_get_contents', 'gzinflate', 'openssl_open');
+$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'curl_exec', 'file_get_contents', 'zend_loader_enabled', 'gzinflate', 'openssl_open');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
-	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.0'),
+	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.2'),
 	'attachmentupload' => array('p' => '附件上传', 'r' => '不限制', 'b' => '2M'),
 	'gdversion' => array('p' => 'GD 库', 'r' => '1.0', 'b' => '2.0'),
 	'diskspace' => array('p' => '磁盘空间', 'r' => '10M', 'b' => '不限制')
@@ -94,10 +94,19 @@ function function_support(&$func_items) {
 \" target=\"_blank\" style=\"color:#f50\">需要在PHP扩展里打开扩展extension=php_mbstring</a>";
 			} 
 			$func_str .= "</td>\n";
+		} else if ($item == "zend_loader_enabled") {
+			$version = function_exists('zend_loader_version') ? zend_loader_version() : '';
+			$func_str .= "<td>Zend Optimizer ". $version;
+			if (!$status) {
+				$func_str .= " <span style=\"color:green\">不支持Zend，意味着不能使用 “捐赠版”。</span>";
+			} else {
+				$func_str .= ($version >= '3.3.0' ) ? '' : " <span style=\"color:green\">版本太低，请升级到3.3.0或以上版本，否则不能使用 “捐赠版”</span>";
+			}
+			$func_str .= "</td>\n";
 		} else if ($item == "gzinflate") {
 			$func_str .= "<td>$item()";
 			if (!$status) {
-				$func_str .= " <span style=\"color:green\">不支持该函数，意味着不能使用 “捐赠版”。</span>";
+				$func_str .= " <span style=\"color:green\">不支持该函数，意味着不能使用 “IM机器人”。</span>";
 			} 
 			$func_str .= "</td>\n";
 		} else {

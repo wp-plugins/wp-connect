@@ -4,19 +4,20 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.4.2 版本，请到群内下载升级！</strong>
-Version: 1.8.2
+Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.5 版本，请到群内下载升级！</strong>
+Version: 1.9
 */
 
-define('WP_CONNECT_VERSION', '1.8.2');
+define('WP_CONNECT_VERSION', '1.9');
 $wpurl = get_bloginfo('wpurl');
+$siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
-$wp_connect_advanced_version = "1.4.2";
+$wp_connect_advanced_version = "1.5";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
@@ -35,8 +36,8 @@ if ($wptm_connect['widget']) {
 
 if ($wptm_options['enable_wptm']) { // 是否开启微博同步功能
     add_action('admin_menu', 'wp_connect_add_sidebox');
-	add_action('publish_post', 'wp_connect_publish', 1);
-	add_action('publish_page', 'wp_connect_publish', 1);
+	add_action('publish_post', 'wp_connect_publish');
+	add_action('publish_page', 'wp_connect_publish');
 }
 
 function wp_connect_add_page() {
@@ -67,17 +68,38 @@ function wp_connect_warning() {
 }
 add_action('admin_notices', 'wp_connect_warning');
 
+function verify_qzone() {
+	if (function_exists('fsockopen')) {
+		error_reporting(0);
+		ini_set('display_errors', 0);
+		$fp = fsockopen("smtp.qq.com", 25, $errno, $errstr, 10);
+		if (!$fp) {
+			echo "很抱歉！您的服务器不能同步到QQ空间，因为腾讯邮件客户端的 smtp.qq.com:25 禁止您的服务器访问！请不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
+		} else {
+			echo "恭喜！检查通过，请在上面填写QQ号码和密码，然后发布一篇文章试试，如果不能同步(多试几次)，请务必删除刚刚填写QQ号码和密码，并保存修改，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
+		} 
+	} else {
+		echo "很抱歉！您的服务器不支持fsockopen()函数，不能同步到QQ空间，请联系空间商开启！请暂时不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
+	} 
+} 
+
 // 设置
 function wp_connect_do_page() {
-	global $plugin_url;
+	global $wpurl,$plugin_url,$wptm_donate;
 	wp_connect_update();
 	$wptm_options = get_option('wptm_options');
 	$wptm_connect = get_option('wptm_connect');
 	if(function_exists('wp_connect_advanced')) {
 	    wp_connect_advanced();
+		$wptm_blog = get_option('wptm_blog');
+		$blog_options = get_option('wptm_blog_options');
 		$wptm_advanced = get_option('wptm_advanced');
 		$wptm_share = get_option('wptm_share');
+		if (WP_CONNECT_ADVANCED != "true"){
+			$error = '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';
+		}
 	} else {
+		$error = '<p><span style="color:#D54E21;"><strong>该功能只针对捐赠用户！</strong></span></p>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -87,29 +109,22 @@ function wp_connect_do_page() {
   <h2>WordPress连接微博</h2>
   <div class="tabs">
     <ul class="nav">
-      <li><a href="#sync" class="sync">同步设置</a></li>
+      <li><a href="#sync" class="sync">同步微博</a></li>
+      <li><a href="#blog" class="blog">同步博客</a></li>
       <li><a href="#connect" class="connect">连接设置</a></li>
       <li><a href="#share" class="share">分享设置</a></li>
       <li><a href="#advanced" class="advanced">高级设置</a></li>
       <li><a href="#check" class="check">环境检查</a></li>
-      <li><a href="http://loginsns.com/wiki/" target="_blank">帮助文档</a></li>
+      <li><a href="http://loginsns.com/wiki/wordpress/function" target="_blank">帮助文档</a></li>
     </ul>
     <div id="sync">
       <form method="post" action="options-general.php?page=wp-connect">
         <?php wp_nonce_field('sync-options');?>
-        <h3>同步设置</h3>
+        <h3>同步微博</h3>
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">是否开启“微博同步”功能</td>
             <td><input name="enable_wptm" type="checkbox" value="1" <?php if($wptm_options['enable_wptm']) echo "checked "; ?>></td>
-          </tr>
-          <tr>
-            <td width="25%" valign="top">Twitter是否使用代理？</td>
-            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label></td>
-          </tr>
-          <tr>
-            <td width="25%" valign="top">我不能绑定帐号</td>
-            <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>(选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <th>同步内容设置</th>
@@ -125,7 +140,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">自定义页面(一键发布到微博)</td>
-            <td>密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" />
+            <td>自定义密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" />
                [ <a href="http://loginsns.com/wiki/wordpress/faqs#page" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
@@ -137,8 +152,16 @@ function wp_connect_do_page() {
             <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</label></td>
           </tr>
           <tr>
+            <td width="25%" valign="top">Twitter是否使用代理？</td>
+            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label></td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">我不能绑定帐号</td>
+            <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>(选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
+          </tr>
+          <tr>
             <td width="25%" valign="top">服务器时间校正</td>
-            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！[ <a href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">查看详细</a> ] <br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>多了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >少了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
+            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！[ <a href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">查看详细</a> ] <br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>快了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >慢了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
           </tr>
         </table>
         <p class="submit">
@@ -146,6 +169,45 @@ function wp_connect_do_page() {
         </p>
       </form>
       <?php include( dirname(__FILE__) . '/bind.php' );?>
+    </div>
+    <div id="blog">
+      <form method="post" action="options-general.php?page=wp-connect#blog">
+        <?php wp_nonce_field('blog-options');?>
+        <h3>同步博客</h3>
+		<?php echo $error;?>
+		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
+	    <table class="form-table">
+            <tr>
+                <td width="25%" valign="top">是否开启“同步博客”功能</td>
+                <td><input name="enable_blog" type="checkbox" value="1" <?php if($blog_options[0]) echo "checked "; ?>></td>
+            </tr>
+		    <tr>
+			    <td width="25%" valign="top">是否添加文章版权信息</td>
+			    <td><input type="checkbox" name="copyright" value="1" <?php if($blog_options[1]) echo "checked "; ?>/></td>
+		    </tr>
+		    <tr>
+			    <td width="25%" valign="top">新浪博客</td>
+			    <td><label>邮 箱: <input type="text" name="user_sina" value="<?php echo $wptm_blog[0][1];?>" /></label> <label>密 码: <input type="password" name="pass_sina" /></label><?php if($wptm_blog[0][2]) echo ' (密码留空表示不修改)';?></td>
+		    </tr>
+		    <tr>
+			    <td width="25%" valign="top">网易博客</td>
+			    <td><label>邮 箱: <input type="text" name="user_163" value="<?php echo $wptm_blog[1][1];?>" /></label> <label>密 码: <input type="password" name="pass_163" /></label><?php if($wptm_blog[1][2]) echo ' (密码留空表示不修改)';?></td>
+		    </tr>
+		    <tr>
+			    <td width="25%" valign="top">QQ空间</td>
+			    <td><label>Q Q: <input type="text" name="user_qzone" value="<?php echo $wptm_blog[2][1];?>" /></label> <label>密 码: <input type="password" name="pass_qzone" /></label><?php if($wptm_blog[2][2]) echo ' (密码留空表示不修改)';?></td>
+		    </tr>
+        </table>
+        <p class="submit">
+		  <input type="hidden" name="expiry" value="<?php echo $blog_options[2]; ?>" />
+          <input type="submit" name="blog_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
+        </p>
+      </form>
+      <form method="post" action="options-general.php?page=wp-connect#blog">
+        <p><?php if (isset($_POST['verify_qzone'])) verify_qzone();?></p>
+		<p class="submit"><input type="submit" name="verify_qzone" value="检查是否支持同步到QQ空间" /></p>
+	  </form>
+	  <p style="color:green;">注意事项：<br />1、修改文章时会同步修改对应的博客文章，而不是创建新的博客文章，快速编辑和密码保护的文章不会同步或更新。<br />QQ空间只会同步一次，并且修改文章时不会更新到QQ空间。<br />2、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用15天后将不再添加！<br />3、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。</p>
     </div>
     <div id="connect">
       <form method="post" action="options-general.php?page=wp-connect#connect">
@@ -200,28 +262,31 @@ function wp_connect_do_page() {
 			<td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_connect['widget']) echo "checked "; ?>/>是否开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
 		  </tr>
           <tr>
-            <td width="25%" valign="top">绑定微博帐号</td>
-            <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，<br />仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
-          </tr>
-          <tr>
-            <td width="25%" valign="top">网易微博评论者头像</td>
-            <td><label><input name="netease_avatar" type="checkbox" value="1" <?php if($wptm_connect['netease_avatar']) echo "checked "; ?>>已显示</label> [ <a href="http://loginsns.com/wiki/wordpress/faqs#netease-avatar" target="_blank">详情</a> ]</td>
-          </tr>
-          <tr>
             <td width="25%" valign="top">禁止注册的用户名</td>
             <td><input name="disable_username" type="text" size="60" value='<?php echo $wptm_connect['disable_username'];?>' /> 用英文逗号(,)分开</td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">设置@帐号</td>
+            <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
           </tr>
         </table>
         <p class="submit">
           <input type="submit" name="wptm_connect" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
+        <h3>高级评论</h3>
+		<?php echo $error;?>
+<p>捐赠用户还可以这样玩转评论：[ <a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">查看详细</a> ]</p>
+<p>假设A是管理员，B和C是新浪微博用户，D是腾讯微博用户。</p>
+<p>①新浪微博用户 B 在网站上评论并勾选了同步到微博，假设同步后的微博消息为 F ，那么管理员A和同是新浪微博用户的C回复时，可以不必勾选同步(系统将自动判断)，会直接在你的网站和B的微博消息 F 下评论。<br />②假如腾讯微博用户 D 回复了A在网站上的评论，那么他会借用 <span style="color:green;">高级设置 填写的 默认用户ID 对应的WP帐号下绑定的新浪微博帐号</span>通知B，B的微博消息 F 下会显示如下评论：“腾讯微博网友(D)在网站上的评论: 评论内容”。<br />注意：①中提到的功能只支持腾讯微博和新浪微博，其他微博以 @帐号 的形式同步回复。</p>
+<p><strong>所有非捐赠用户仅支持 @微博帐号 的形式同步评论。</strong></p>
+<p><strong>提示：管理员请用 高级设置填写的 默认用户ID 对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 登录本站，然后在<a href="<?php echo admin_url('profile.php');?>">我的资料</a>页面绑定登录帐号(腾讯、新浪微博)！</strong></p>
     </div>
     <div id="share">
       <form method="post" id="formdrag" action="options-general.php?page=wp-connect#share">
         <?php wp_nonce_field('share-options');?>
         <h3>分享设置</h3>
-		<?php if (!function_exists('wp_connect_advanced')) {echo '<p><span style="color:#D54E21;"><strong>社会化分享按钮功能只针对捐赠用户！</strong></span></p>';} elseif (WP_CONNECT_ADVANCED != "true"){echo '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';}?>
+		<?php echo $error;?>
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">添加按钮</td>
@@ -240,12 +305,16 @@ function wp_connect_do_page() {
 			<td width="25%" valign="top">Google Analytics</td>
 			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
+		  <tr>
+			<td width="25%" valign="top">选择文本分享</td>
+			<td><label><input type="checkbox" name="selection" value="1" <?php if($wptm_share['selection']) echo "checked "; ?>/><strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong></label></td>
+		  </tr>
         </table>
         <h3>Google+1</h3>
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">是否开启“Google+1”功能</td>
-            <td><input name="enable_plusone" type="checkbox" value="1" <?php checked($wptm_share['enable_plusone']); ?>></td>
+            <td><input name="enable_plusone" type="checkbox" value="1" <?php checked($wptm_share['enable_plusone']); ?>> (提示: Google+1在国内使用不稳定，如果发现网站打开速度变慢，请关闭该功能。)</td>
           </tr>
           <tr>
             <td width="25%" valign="top">添加按钮</td>
@@ -258,15 +327,7 @@ function wp_connect_do_page() {
         </table>
         <h3>添加社会化分享按钮，可以上下左右拖拽排序(记得保存！) <span style="color:#440">[如果不能拖拽请刷新页面]</span>：</h3>
 		  <ul id="dragbox">
-		  <?php
-		  if (WP_CONNECT_ADVANCED == "true") {
-		  	wp_social_share_options();
-		  } else {
-		  	$social = wp_social_share_title();
-		  	foreach($social as $key => $title) {
-			  	echo "<li id=\"drag\"><input name=\"$key\" type=\"checkbox\" value=\"$key\" />$title</li>";
-		  	}
-		  }?>
+		  <?php if (WP_CONNECT_ADVANCED == "true") {wp_social_share_options();echo '<img src="http://smyx.sinaapp.com/t.php?img='.$wptm_donate.'" style="display:none" />';} else {$social = wp_social_share_title();foreach($social as $key => $title) {echo "<li id=\"drag\"><input name=\"$key\" type=\"checkbox\" value=\"$key\" />$title</li>";}}?>
 		    <div class="clear"></div>
 		  </ul>
 		  <div id="dragmarker">
@@ -288,18 +349,19 @@ function wp_connect_do_page() {
 <?php if (!function_exists('wp_connect_advanced')) {?>
       <ul>
          <li>高级设置只针对捐赠用户，目前增加功能如下：</li>
-		 <li><strong>1、支持<a href="http://loginsns.com/robot.php" target="_blank">微博机器人</a>(包括<a href="http://loginsns.com/wiki/qqrobot" target="_blank">QQ机器人</a>、<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布微博。 </strong> <span style="color: red;">NEW!</span></li>
-         <li><strong>2、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
-         <li>3、登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。<span style="color: red;">NEW!</span></li>
-         <li>4、去掉登录二次点击。<span style="color: red;">NEW!</span></li>
-         <li>5、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/wap" target="_blank">查看</a> ]</li>
-         <li>6、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">查看</a> ]</li>
-         <li>7、支持使用Google+1按钮(在“分享设置”中开启)。</li>
-         <li><strong>8、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</strong></li>
-         <li>9、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</li>
-         <li>10、支持使用Google talk指令 发布/修改文章(支持同步)，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。[ <a href="http://loginsns.com/wiki/gtalk" target="_blank">查看</a> ]</li>
-         <li>11、支持在捐赠者间用Google talk指令 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
-         <li>12、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
+         <li><strong>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
+         <li><strong>2、支持在“我的个人资料”页面绑定QQ帐号、腾讯微博、新浪微博(可以是任意帐号，不需要跟WP用户名同名)，绑定后您可以使用用户名或者微博帐号登录你的网站。而且绑定后还能支持使用<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>。</strong><span style="color: red;">NEW!</span></li>
+         <li><strong>3、同步博客</strong>，支持同步到新浪博客、网易博客、QQ空间。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/function#同步博客" target="_blank">查看</a> ]</li>
+         <li>4、登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。<span style="color: red;">NEW!</span></li>
+         <li>5、去掉登录二次点击。<span style="color: red;">NEW!</span></li>
+         <li>6、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/wap" target="_blank">查看</a> ]</li>
+         <li>7、支持使用社会化分享按钮功能[52个]，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<br /><strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong><span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">查看</a> ]</li>
+         <li>8、支持使用Google+1按钮(在“分享设置”中开启)。</li>
+         <li><strong>9、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</strong></li>
+         <li>10、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</li>
+         <li>11、支持使用<a href="http://loginsns.com/robot.php" target="_blank">IM机器人</a>(包括<a href="http://loginsns.com/wiki/qqrobot" target="_blank">QQ机器人</a>、<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布/修改文章(支持同步)，获得最新评论，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
+         <li>12、支持在捐赠者间用gtalk机器人 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
+         <li>13、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
 		 <li>最低捐赠：15元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/donate" target="_blank">查看详细描述</a></li>
 		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
 		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
@@ -330,6 +392,7 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
+        <p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>
 <?php } ?>
       </form>
       <form method="post" action="">
@@ -337,8 +400,8 @@ function wp_connect_do_page() {
 		<p class="submit"><input type="submit" name="wptm_delete" value="卸载 WordPress连接微博" onclick="return confirm('您确定要卸载WordPress连接微博？')" /></p>
 	  </form>
     </div>
-    <div id="check">　
-        <iframe width="100%" height="650" frameborder="0" scrolling="no" src="<?php echo $plugin_url . '/check.php'?>"></iframe>
+    <div id="check">
+	<p><iframe width="100%" height="660" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
     </div>
   </div>
 </div>

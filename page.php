@@ -91,7 +91,7 @@ function wp_to_microblog() {
 <script type="text/javascript">
 function textCounter(field,maxlimit){if(field.value.length>maxlimit){field.value=field.value.substring(0,maxlimit)}else{document.getElementById("wordage").childNodes[1].innerHTML=maxlimit-field.value.length}}
 function selectall(form){for(var i=0;i<form.elements.length;i++){var box = form.elements[i];if (box.name != "chkall")box.checked = form.clickall.checked;}}
-var wpurl = "<?php echo get_bloginfo('wpurl');?>";
+var wpurl = "<?php echo $wpurl;?>";
 </script>
 <link type="text/css" href="<?php echo $plugin_url;?>/css/page.css" rel="stylesheet" />
 <form action="" method="post" id="tform">

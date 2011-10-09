@@ -61,7 +61,7 @@ if ($_GET['go']) {
 		$callback = $_SESSION['wp_url_back'];
 	} else {
 		//$callback = admin_url('profile.php');
-		$callback = get_bloginfo('wpurl');
+		$callback = get_bloginfo('url');
 	} 
 	header('Location:' . $callback);
 } 

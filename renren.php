@@ -13,7 +13,7 @@ if ($_GET['login'] == "RENREN") {
 	if ($_SESSION['wp_url_back']) {
 		$redirect_to = $_SESSION['wp_url_back'];
 	} else {
-		$redirect_to = get_bloginfo('wpurl');
+		$redirect_to = get_bloginfo('url');
 	}
 	if ($_GET['code']) {
 		$code = $_GET['code']; 
@@ -34,14 +34,20 @@ if ($_GET['login'] == "RENREN") {
 			$renren = $client -> POST('users.getInfo'); 
 			// var_dump($renren);
 			$renren = $renren[0];
-			$uid = $renren['uid'];
+			$username = $renren['uid'];
 			$name = $renren['name'];
 			$head = $renren['tinyurl'];
-			$url = 'http://www.renren.com/profile.do?id=' . $uid;
-			$tmail = $uid . '@renren.com';
+			$_SESSION['wp_url_login'] = "renren";
+			$url = 'http://www.renren.com/profile.do?id=' . $username;
+			$email = $username . '@renren.com';
 			$tid = "rtid";
-			wp_connect_login($head . '|' . $uid . '|' . $name . '|' . $url . '|||renren', $tmail, $tid);
-			wp_safe_redirect($redirect_to);
+            $uid = (email_exists($email)) ? email_exists($email) : get_user_by_meta_value('renrenid', $username);
+		    if ($uid) { // logined
+				wp_connect_login($head . '|' . $username . '|' . $name . '|' . $url . '|||'.$username, $email, $tid, $uid);
+		    } else {
+				wp_connect_login($head . '|' . $username . '|' . $name . '|' . $url . '|||'.$username, $email, $tid);
+		    } 
+			header('Location:' . $redirect_to);
 		} else {
 			wp_die("获取用户授权信息失败，请重新<a href=" . site_url('wp-login.php', 'login') . ">登录</a> 或者 清除浏览器缓存再试!  <a href='$redirect_to'>返回</a>");
 		} 

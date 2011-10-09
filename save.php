@@ -1,7 +1,6 @@
 <?php
 include "../../../wp-config.php";
 date_default_timezone_set("PRC");
-$wptm_options = get_option('wptm_options');
 
 if ($_GET['do'] == "profile") {
 	if (is_user_logged_in()) {
@@ -17,6 +16,7 @@ if ($_GET['do'] == "profile") {
 } 
 
 if ($_GET['do'] == "page") {
+	$wptm_options = get_option('wptm_options');
 	$wptm_advanced = get_option('wptm_advanced');
 	$password = $_POST['password'];
 	if (isset($_POST['message'])) {
@@ -25,5 +25,19 @@ if ($_GET['do'] == "page") {
 		} else { echo 'pwderror'; }
 	} 
 } 
+
+if ($_GET['do'] == "login") {
+	if ($_SESSION['wp_url_back']) {
+		$redirect_to = $_SESSION['wp_url_back'];
+	} else {
+		$redirect_to = get_bloginfo('url');
+	}
+    
+	$login_userinfo = $_SESSION['wp_login_userinfo'];
+	if ($login_userinfo) {
+		wp_connect_login($login_userinfo[0], $login_userinfo[1], $login_userinfo[2]);
+		header('Location:' . $redirect_to);
+	}
+}
 
 ?>

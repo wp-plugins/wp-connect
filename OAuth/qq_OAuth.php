@@ -89,6 +89,17 @@ class qqClient
 		}
     }
 
+    // 对一条微博信息进行评论
+    function comment( $sid , $text ) 
+    { 
+		$params = array();
+		$params['format'] = 'json';
+		$params['content'] = $text;
+		$params['reid'] = $sid;
+		$params['clientip'] = $this -> get_ip();
+		return $this -> oauth -> post('http://open.t.qq.com/api/t/comment' , $params);
+    }
+
     // 获取视频信息
 	function getvideoinfo( $url )
 	{

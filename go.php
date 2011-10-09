@@ -53,7 +53,7 @@ if (is_user_logged_in()) {
 		$_SESSION['keys'] = $keys;
 
 		if(!$_SESSION['wp_url_bind']){
-		    $aurl = get_bloginfo('wpurl');
+		    $aurl = get_bloginfo('url');
 		}
 
 		header('Location:' . $aurl);

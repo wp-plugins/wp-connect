@@ -7,9 +7,9 @@
 .dialog_login .clear{clear:both}
 /*.login_button{margin:4px 6px 16px 0px;padding:0px 5px 5px 0px;width:100%}*/
 .login_icons{display:block;height:32px;clear:both}
-.login_icons span {padding-right:3px}
+.login_icons span {margin:0;padding-right:3px}
 .login_icons span:hover{cursor:pointer}
-.login_icons img{border:none}
+.login_icons img{display:inline;border:none}
 #login_box{font-size:13px;padding:14px 20px;background-color:#fff}
 #login_box a{color:#21759B;text-decoration:none}
 #login_box a:hover{color:#D54E21;}
