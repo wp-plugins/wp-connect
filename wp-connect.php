@@ -46,7 +46,7 @@ function wp_connect_add_page() {
 
 function wp_connect_warning() {
 	global $wp_version,$wp_connect_advanced_version,$wptm_options, $wptm_connect, $wptm_version;
-	if (!function_exists('curl_init') || version_compare($wp_version, '3.0', '<') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options) || function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $wp_connect_advanced_version, '<')) {
+	if (!function_exists('curl_init') || version_compare($wp_version, '3.0', '<') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options) || function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $wp_connect_advanced_version, '<') && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
 		echo '<div class="updated">';
 		if (!function_exists('curl_init')) {
 			echo '<p><strong>很遗憾！您的服务器(主机)当前配置不支持curl，会影响“WordPress连接微博”插件的部分功能！请联系空间商重新配置。</strong></p>';
@@ -54,7 +54,7 @@ function wp_connect_warning() {
 		if (version_compare($wp_version, '3.0', '<')) {
 			echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
 		} 
-		if (function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $wp_connect_advanced_version, '<')) {
+		if (function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $wp_connect_advanced_version, '<') && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
 			echo "<p><strong>您的“WordPress连接微博 高级设置”(捐赠版)版本太低，请到QQ群内下载最新版，解压后用ftp工具上传升级！</strong></p>";
 		} 
 		if (($wptm_options || $wptm_connect) && !$wptm_version) {
@@ -392,8 +392,7 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
-        <p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>
-<?php } ?>
+        <?php if (function_exists('wp_connect_comments')) { echo '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>'; }} ?>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
