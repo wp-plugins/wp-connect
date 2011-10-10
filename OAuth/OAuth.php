@@ -802,7 +802,8 @@ class OAuthUtil {
         	    $mime = $value[0]; 
 			} else {
 			    $url = ltrim($value , '@');
-			    $content = file_get_contents($url);
+			    //$content = file_get_contents($url);
+				$content = get_url_contents($url);
 			    $filename = reset(explode('?' , basename($url)));
 			    $mime = self :: get_image_mime($url);
 			}

@@ -55,7 +55,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
 	return $output;
 }
-
+// 自定义函数 start
 if (!function_exists('mb_substr')) {
 	function mb_substr($str, $start = 0, $length = 0, $encode = 'utf-8') {
 		$encode_len = ($encode == 'utf-8') ? 3 : 2;
@@ -72,7 +72,33 @@ if (!function_exists('mb_strlen')) {
 	function mb_strlen($str, $encode = 'utf-8') {
 		return ($encode == 'utf-8') ? strlen(utf8_decode($str)) : strlen($str);
 	}
-} 
+}
+if (!function_exists('file_get_contents')) {
+	function file_get_contents($url) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$content = curl_exec($ch);
+		curl_close($ch);
+		return $content;
+	} 
+}
+function get_url_contents($url) {
+	if (extension_loaded('curl')) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$content = curl_exec($ch);
+		curl_close($ch);
+	} else {
+		$content = file_get_contents($url);
+	} 
+	return $content;
+}
+// 自定义函数 end
+
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 function wp_strlen($text) {
 	$a = mb_strlen($text, 'utf-8');
