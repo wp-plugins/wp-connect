@@ -114,6 +114,17 @@ class sinaClient
 
         return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/comment.json' , $param  ); 
     }
+
+    // 转发一条微博消息
+    function repost( $sid , $text ) 
+    { 
+        $param = array();
+        $param['id'] = $sid;
+        $param['status'] = $text;
+        $param['is_comment'] = 3;
+
+        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/repost.json' , $param  );
+    }
     
     // 获取自己信息
     function verify_credentials() 
