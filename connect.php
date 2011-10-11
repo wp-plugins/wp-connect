@@ -308,7 +308,9 @@ function wp_connect_netease(){
 	//$tmail = $netease->email;
 	$oid = $netease->id;
 	$tid = "ntid";
-    $uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('neteaseid', $oid);
+    //$uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('neteaseid', $oid);
+	$uid = ($e = email_exists($tmail)) ? $e : (($o = get_user_by_meta_value('neteaseid', $oid)) ? $o : get_user_by_meta_value('neteaseid', $username));
+
 	if ($uid) {
 		wp_connect_login($netease->profile_image_url.'|'.$username.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$oid, $tmail, $tid, $uid);
 	} else {
