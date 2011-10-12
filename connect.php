@@ -673,14 +673,13 @@ if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 add_filter("get_avatar", "wp_connect_avatar",10,4);
 function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	global $comment;
-	// 检查是否是注册用户
-	if ( is_object($comment) ) {
+    if ( is_numeric($id_or_email) ) {
+		$userid = (int) $id_or_email;
+        $user = get_userdata($userid);
+		if ($user) $user_email = $user->user_email;
+	} elseif ( is_object($comment) ) {
 		$id_or_email = $comment -> user_id;
 		$user_email = $comment -> comment_author_email;
-	} elseif ( is_numeric($id_or_email) ) {
-		$uid = (int) $id_or_email;
-        $user = get_userdata($uid);
-		if ($user) $user_email = $user->user_email;
 	} elseif ( is_object($id_or_email) ) {
 		$user_email = $id_or_email -> user_email;
 		$id_or_email = $id_or_email -> user_id;
@@ -688,7 +687,8 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 
 	if (!$id_or_email) {
 		return $avatar;
-	} 
+	}
+
 	$email = ($user_email) ? $user_email : $id_or_email;
 	$tmail = strstr($email, '@');
 	$uid = str_replace($tmail, '', $email);
@@ -701,7 +701,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		$head = $tname[$tmail];
 		$out = str_replace('[head]', $uid, $head[0]);
 		$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-		if($user_email && !is_admin()) $avatar = "<a href='{$head[1]}{$uid}' target='_blank'>$avatar</a>";
+		if(!$userid && $user_email) $avatar = "<a href='{$head[1]}{$uid}' target='_blank'>$avatar</a>";
 	} elseif($user_email) {
 		$name = array('@t.sina.com.cn' => array('stid', 'http://tp3.sinaimg.cn/[head]/50/1.jpg','http://weibo.com/'),
 			'@t.qq.com' => array('qtid', '[head]/40','http://t.qq.com/'),
@@ -724,7 +724,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 			if ($tid = get_user_meta($id_or_email, $head[0], true)) {
 				$out = str_replace('[head]', $tid, $head[1]);
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-				if($head[2] && !is_admin()) {
+				if(!$userid && $head[2]) {
 					$avatar = "<a href='{$head[2]}{$uid}' target='_blank'>$avatar</a>";
 				}
 			} 
