@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.9.3
+Stable tag: 1.9.4
 
 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。
 
@@ -84,6 +84,13 @@ Stable tag: 1.9.3
 下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
+
+= 1.9.4 =
+*2011/10/13
+
+新增：后台点击用户头像可以进入该用户的微博/SNS主页。
+修改：解决同步博客换行问题。(捐赠版)
+（小提示：新版本经过几次bug修正，应该稳定，建议升级！）
 
 = 1.9.3 =
 *2011/10/12
