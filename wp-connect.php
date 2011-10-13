@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.5.3 版本，请到群内下载升级！</strong>
-Version: 1.9.5
+Version: 1.9.4
 */
 
-define('WP_CONNECT_VERSION', '1.9.5');
+define('WP_CONNECT_VERSION', '1.9.4');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
