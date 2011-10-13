@@ -97,84 +97,6 @@ function get_url_contents($url) {
 	} 
 	return $content;
 }
-// 自定义函数 end
-
-// 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
-function wp_strlen($text) {
-	$a = mb_strlen($text, 'utf-8');
-	$b = strlen($text);
-	$c = $b / 3 ;
-	$d = ($a + $b) / 4;
-	if ($a == $b) { // 纯英文、符号、数字
-		return $b / 2; 
-	} elseif ($a == $c) { // 纯中文
-		return $a;
-	} elseif ($a != $c) { // 混合
-		return $d;
-	} 
-}
-// 截取字数
-function wp_status($content, $url, $length, $num = '') {
-	$temp_length = (mb_strlen($content, 'utf-8')) + (mb_strlen($url, 'utf-8'));
-	if ($num) {
-		$temp_length = (wp_strlen($content)) + (wp_strlen($url));
-	}
-	if ($url) {
-		$length = $length - 4; // ' - '
-		$url = ' '.$url;
-	}
-	if ($temp_length > $length) {
-		$chars = $length - 3 - mb_strlen($url, 'utf-8'); // '...'
-		if ($num) {
-			$chars = $length - wp_strlen($url);
-			$str = mb_substr($content, 0, $chars, 'utf-8');
-			preg_match_all("/([\x{0000}-\x{00FF}]){1}/u", $str, $half_width); // 半角字符
-			$chars = $chars + count($half_width[0])/2;
-		} 
-		$content = mb_substr($content, 0, $chars, 'utf-8');
-		$content = $content . "...";
-	} 
-	$status = $content . $url;
-	return trim($status);
-}
-
-function wp_replace($str) {
-	$a = array('&#160;', '&#038;', '&#8211;', '&#8216;', '&#8217;', '&#8220;', '&#8221;', '&amp;', '&lt;', '&gt', '&ldquo;', '&rdquo;', '&nbsp;', 'Posted by Wordmobi');
-	$b = array(' ', '&', '-', '‘', '’', '“', '”', '&', '<', '>', '“', '”', ' ', '');
-	$str = str_replace($a, $b, strip_tags($str));
-	return trim($str);
-}
-
-function wp_urlencode($url) {
-	$a = array('+', '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
-	$b = array(" ", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
-	$url = str_replace($a, $b, urlencode($url));
-	return $url;
-}
-
-// 匹配视频、图片
-function wp_multi_media_url($content) {
-	preg_match_all('/<embed[^>]+src=[\"\']{1}(([^\"\'\s]+)\.swf)[\"\']{1}[^>]+>/isU', $content, $video);
-	preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
-	$v_sum = count($video[1]);
-	$p_sum = count($image[1]);
-	if ($v_sum > 0) { //优先级 视频 > 图片
-		$url = array("video", $video[1][0]);
-	} elseif ($p_sum > 0) {
-		$url = array("image", $image[1][0]);
-	} 
-	return $url;
-}
-
-function wp_in_array($a, $b) {
-	$arrayA = explode(',', $a);
-	$arrayB = explode(',', $b);
-	foreach($arrayB as $val) {
-		if (in_array($val, $arrayA))
-			return true;
-	} 
-	return false;
-}
 
 function key_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 	$ckey_length = 4;
@@ -230,7 +152,94 @@ function key_encode($string, $expiry = 0) {
 
 function key_decode($string) {
 	return key_authcode($string, 'DECODE', 'WP-CONNECT');
+}
+// 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
+function wp_strlen($text) {
+	$a = mb_strlen($text, 'utf-8');
+	$b = strlen($text);
+	$c = $b / 3 ;
+	$d = ($a + $b) / 4;
+	if ($a == $b) { // 纯英文、符号、数字
+		return $b / 2; 
+	} elseif ($a == $c) { // 纯中文
+		return $a;
+	} elseif ($a != $c) { // 混合
+		return $d;
+	} 
+}
+// 截取字数
+function wp_status($content, $url, $length, $num = '') {
+	$temp_length = (mb_strlen($content, 'utf-8')) + (mb_strlen($url, 'utf-8'));
+	if ($num) {
+		$temp_length = (wp_strlen($content)) + (wp_strlen($url));
+	}
+	if ($url) {
+		$length = $length - 4; // ' - '
+		$url = ' '.$url;
+	}
+	if ($temp_length > $length) {
+		$chars = $length - 3 - mb_strlen($url, 'utf-8'); // '...'
+		if ($num) {
+			$chars = $length - wp_strlen($url);
+			$str = mb_substr($content, 0, $chars, 'utf-8');
+			preg_match_all("/([\x{0000}-\x{00FF}]){1}/u", $str, $half_width); // 半角字符
+			$chars = $chars + count($half_width[0])/2;
+		} 
+		$content = mb_substr($content, 0, $chars, 'utf-8');
+		$content = $content . "...";
+	} 
+	$status = $content . $url;
+	return trim($status);
+}
+
+function wp_in_array($a, $b) {
+	$arrayA = explode(',', $a);
+	$arrayB = explode(',', $b);
+	foreach($arrayB as $val) {
+		if (in_array($val, $arrayA))
+			return true;
+	} 
+	return false;
+}
+
+function wp_urlencode($url) {
+	$a = array('+', '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D');
+	$b = array(" ", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]");
+	$url = str_replace($a, $b, urlencode($url));
+	return $url;
+}
+
+function wp_replace($str) {
+	$a = array('&#160;', '&#038;', '&#8211;', '&#8216;', '&#8217;', '&#8220;', '&#8221;', '&amp;', '&lt;', '&gt', '&ldquo;', '&rdquo;', '&nbsp;', 'Posted by Wordmobi');
+	$b = array(' ', '&', '-', '‘', '’', '“', '”', '&', '<', '>', '“', '”', ' ', '');
+	$str = str_replace($a, $b, strip_tags($str));
+	return trim($str);
+}
+// 自定义函数 end
+
+// 匹配视频、图片
+function wp_multi_media_url($content) {
+	preg_match_all('/<embed[^>]+src=[\"\']{1}(([^\"\'\s]+)\.swf)[\"\']{1}[^>]+>/isU', $content, $video);
+	preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
+	$v_sum = count($video[1]);
+	$p_sum = count($image[1]);
+	if ($v_sum > 0) { //优先级 视频 > 图片
+		$url = array("video", $video[1][0]);
+	} elseif ($p_sum > 0) {
+		$url = array("image", $image[1][0]);
+	} 
+	return $url;
 } 
+
+add_action( 'admin_footer', 'set_admin_footer_define', 1);
+function set_admin_footer_define() {
+	define('IS_ADMIN_FOOTER', true);
+}
+
+function is_admin_footer() {
+	if ( defined('IS_ADMIN_FOOTER'))
+		return true;
+}
 
 if (!function_exists('get_t_cn')) {
 // 以下代码来自 t.cn 短域名WordPress 插件
