@@ -669,41 +669,49 @@ if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 	if (function_exists('wp_connect_bind_qq'))
 	update_usermeta( $user_id, 'qqavatar', $_POST['qqavatar'] );
 }
-// 头像
+/**
+ * 头像
+ * @since 1.9.3
+ */
 add_filter("get_avatar", "wp_connect_avatar",10,4);
 function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	global $comment;
     if ( is_numeric($id_or_email) ) {
-		$userid = (int) $id_or_email;
-        $user = get_userdata($userid);
-		if ($user) $user_email = $user->user_email;
+		$uid = $userid = (int) $id_or_email;
+        $user = get_userdata($uid);
+		if ($user) $email = $user->user_email;
 	} elseif ( is_object($comment) ) {
-		$id_or_email = $comment -> user_id;
-		$user_email = $comment -> comment_author_email;
+		$uid = $comment -> user_id;
+		$email = $comment -> comment_author_email;
 	} elseif ( is_object($id_or_email) ) {
-		$user_email = $id_or_email -> user_email;
-		$id_or_email = $id_or_email -> user_id;
+		$uid = $id_or_email -> user_id;
+		$email = $id_or_email -> user_email;
+	} else {
+		$uid = email_exists($id_or_email);
+        $email = $id_or_email;
 	}
 
-	if (!$id_or_email) {
+	if (!$email) {
 		return $avatar;
 	}
-
-	$email = ($user_email) ? $user_email : $id_or_email;
 	$tmail = strstr($email, '@');
-	$uid = str_replace($tmail, '', $email);
+	$username = str_replace($tmail, '', $email);
 	$tname = array(//'@qq.com' => 'http://face6.qun.qq.com/cgi/svr/face/getface?type=1&uin=[head]',
 		'@t.sina.com.cn' => array('http://tp3.sinaimg.cn/[head]/50/1.jpg','http://weibo.com/'),
 		'@douban.com' => array('http://t.douban.com/icon/u[head]-1.jpg','http://www.douban.com/people/'),
 		'@tianya.cn' => array('http://tx.tianyaui.com/logo/small/[head]','http://my.tianya.cn/')
 		);
-	if ( $tmail && array_key_exists($tmail, $tname) && is_numeric($uid) ) {
+	if (is_numeric($username) && array_key_exists($tmail, $tname)) {
 		$head = $tname[$tmail];
-		$out = str_replace('[head]', $uid, $head[0]);
+		$out = str_replace('[head]', $username, $head[0]);
 		$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-		if(!$userid && $user_email) $avatar = "<a href='{$head[1]}{$uid}' target='_blank'>$avatar</a>";
-	} elseif($user_email) {
-		$name = array('@t.sina.com.cn' => array('stid', 'http://tp3.sinaimg.cn/[head]/50/1.jpg','http://weibo.com/'),
+		if(is_admin()) {
+			if(!is_admin_footer()) $avatar = "<a href='{$head[1]}{$username}' target='_blank'>$avatar</a>";
+		} elseif(!$userid) {
+			$avatar = "<a href='{$head[1]}{$username}' target='_blank'>$avatar</a>";
+		}
+	} elseif ($uid) {
+		$tname = array('@t.sina.com.cn' => array('stid', 'http://tp3.sinaimg.cn/[head]/50/1.jpg','http://weibo.com/'),
 			'@t.qq.com' => array('qtid', '[head]/40','http://t.qq.com/'),
 			'@renren.com' => array('rtid', '[head]','http://www.renren.com/profile.do?id='),
 			'@kaixin001.com' => array('ktid', '[head]','http://www.kaixin001.com/home/?uid='),
@@ -714,23 +722,23 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 			'@tianya.cn' => array('tytid', 'http://tx.tianyaui.com/logo/small/[head]','http://my.tianya.cn/'),
 			'@twitter.com' => array('ttid', '[head]','http://twitter.com/')
 			);
-		if (get_user_meta($id_or_email, 'qqavatar', true)) {
-			if ($tid = get_user_meta($id_or_email, 'qqtid', true)) {
-				$out = $tid;
+		if (get_user_meta($uid, 'qqavatar', true)) {
+			if ($out = get_user_meta($uid, 'qqtid', true)) {
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
 			} 
-		} elseif ($tmail && array_key_exists($tmail, $name)) {
-			$head = $name[$tmail];
-			if ($tid = get_user_meta($id_or_email, $head[0], true)) {
+		} elseif ( array_key_exists($tmail, $tname) ) {
+			$head = $tname[$tmail];
+			if ($tid = get_user_meta($uid, $head[0], true)) {
 				$out = str_replace('[head]', $tid, $head[1]);
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-				if(!$userid && $head[2]) {
-					$avatar = "<a href='{$head[2]}{$uid}' target='_blank'>$avatar</a>";
+				if(is_admin()) {
+					if(!is_admin_footer()) $avatar = "<a href='{$head[2]}{$username}' target='_blank'>$avatar</a>";
+			    } elseif(!$userid) {
+					$avatar = "<a href='{$head[2]}{$username}' target='_blank'>$avatar</a>";
 				}
 			} 
-		} elseif (get_user_meta($id_or_email, 'taobaoid', true)) {
-			if ($tid = get_user_meta($id_or_email, 'tbtid', true)) {
-				$out = $tid;
+		} elseif (get_user_meta($uid, 'taobaoid', true)) {
+			if ($out = get_user_meta($uid, 'tbtid', true)) {
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
 			} 
 		} 
