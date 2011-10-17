@@ -392,7 +392,7 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
-        <?php if (function_exists('wp_connect_comments')) { echo '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>'; }} ?>
+        <?php if (version_compare(WP_CONNECT_ADVANCED_VERSION, '1.5', '>')) { echo '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>'; }} ?>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
