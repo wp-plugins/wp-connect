@@ -415,7 +415,7 @@ function wp_update_kaixin001($kaixin001, $status) {
 	$verify = $matches[1];
 	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/records/submit.php?verify=" . $verify . "&url=%2Fhome%2F%3Fid%3D");
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'content=' . urlencode($status));
-	curl_setopt($ch, CURLOPT_REFERER, '   http://wap.kaixin001.com/home/');
+	curl_setopt($ch, CURLOPT_REFERER, 'http://wap.kaixin001.com/home/');
 	$ret = wp_update_result($ch);
 }
 
@@ -423,7 +423,6 @@ function wp_getCurl($cookie, $url) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
 	curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie);
-	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

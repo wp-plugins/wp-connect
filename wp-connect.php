@@ -4,7 +4,7 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.5.3 版本，请到群内下载升级！</strong>
+Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.5.4 版本，请到群内下载升级！</strong>
 Version: 1.9.5
 */
 
@@ -17,7 +17,7 @@ $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
-$wp_connect_advanced_version = "1.5.3";
+$wp_connect_advanced_version = "1.5.4";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
@@ -97,6 +97,9 @@ function wp_connect_do_page() {
 		$wptm_share = get_option('wptm_share');
 		if (WP_CONNECT_ADVANCED != "true"){
 			$error = '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';
+			if (version_compare(WP_CONNECT_ADVANCED_VERSION, '1.5', '>')) {
+				$update_tips = '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>';
+			}
 		}
 	} else {
 		$error = '<p><span style="color:#D54E21;"><strong>该功能只针对捐赠用户！</strong></span></p>';
@@ -346,7 +349,7 @@ function wp_connect_do_page() {
       <form method="post" action="options-general.php?page=wp-connect#advanced">
         <?php wp_nonce_field('advanced-options');?>
         <h3>高级设置</h3>
-<?php if (!function_exists('wp_connect_advanced')) {?>
+		<?php if (!function_exists('wp_connect_advanced')) {?>
       <ul>
          <li>高级设置只针对捐赠用户，目前增加功能如下：</li>
          <li><strong>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
@@ -366,7 +369,7 @@ function wp_connect_do_page() {
 		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
 		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
       </ul>
-<?php } else { ?>
+	  <?php } else { ?>
 	    <table class="form-table">
 		    <tr>
 			    <td width="25%" valign="top">授权码</td>
@@ -392,7 +395,7 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
-        <?php if (function_exists('wp_connect_comments')) { echo '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>'; }} ?>
+        <?php echo $update_tips;} ?>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
