@@ -40,17 +40,20 @@ if ($wptm_options['enable_wptm']) { // 是否开启微博同步功能
 	add_action('publish_page', 'wp_connect_publish');
 }
 
+function donate_143() {
+	if (WP_CONNECT_ADVANCED_VERSION && WP_CONNECT_ADVANCED_VERSION == '1.4.3') {
+		return true;
+	}
+}
+
 function wp_connect_add_page() {
 	add_options_page('WordPress连接微博', 'WordPress连接微博', 'manage_options', 'wp-connect', 'wp_connect_do_page');
 }
 
 function wp_connect_warning() {
 	global $wp_version,$wp_connect_advanced_version,$wptm_options, $wptm_connect, $wptm_version;
-	if (!function_exists('curl_init') || version_compare($wp_version, '3.0', '<') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options) || function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $wp_connect_advanced_version, '<') && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
+	if (version_compare($wp_version, '3.0', '<') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options) || function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $wp_connect_advanced_version, '<') && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
 		echo '<div class="updated">';
-		if (!function_exists('curl_init')) {
-			echo '<p><strong>很遗憾！您的服务器(主机)当前配置不支持curl，会影响“WordPress连接微博”插件的部分功能！请联系空间商重新配置。</strong></p>';
-		} 
 		if (version_compare($wp_version, '3.0', '<')) {
 			echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
 		} 
@@ -99,6 +102,10 @@ function wp_connect_do_page() {
 			$error = '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';
 			if (version_compare(WP_CONNECT_ADVANCED_VERSION, '1.5', '>')) {
 				$update_tips = '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>';
+			}
+		} else {
+			if (donate_143()) {
+				$donate_143 = '<p><span style="color:#D54E21;"><strong>该捐赠版本不能使用该功能！</strong></span></p>';
 			}
 		}
 	} else {
@@ -177,7 +184,7 @@ function wp_connect_do_page() {
       <form method="post" action="options-general.php?page=wp-connect#blog">
         <?php wp_nonce_field('blog-options');?>
         <h3>同步博客</h3>
-		<?php echo $error;?>
+		<?php echo $error.$donate_143;?>
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
@@ -308,10 +315,12 @@ function wp_connect_do_page() {
 			<td width="25%" valign="top">Google Analytics</td>
 			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
+		  <?php if(!$donate_143) { ?>
 		  <tr>
 			<td width="25%" valign="top">选择文本分享</td>
 			<td><label><input type="checkbox" name="selection" value="1" <?php if($wptm_share['selection']) echo "checked "; ?>/><strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong></label></td>
 		  </tr>
+		  <?php } ?>
         </table>
         <h3>Google+1</h3>
         <table class="form-table">
