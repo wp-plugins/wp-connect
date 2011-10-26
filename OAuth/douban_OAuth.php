@@ -156,9 +156,9 @@ class doubanOAuth {/*{{{*/
 		$req = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $args);
 		$req->sign_request($this->sha1_method, $this->consumer, $this->token);
 		switch ($method) {
-			case 'GET': return $this->http($req->to_url());
-			case 'POST': return $this->http($req->get_normalized_http_url(),
-    		$req->to_header(), $post_data);
+			case 'GET': return $this->http($req->to_url(),'GET');
+			case 'POST': return $this->http($req->get_normalized_http_url(),'POST',
+				$post_data, $req->to_header());
 		}
 	}/*}}}*/
 
@@ -167,29 +167,17 @@ class doubanOAuth {/*{{{*/
 	 *
 	 * @return API results
 	 */
-	function http($url, $header_str = NULL, $post_data = null) {/*{{{*/
-		$ch = curl_init();
-		if (defined("CURL_CA_BUNDLE_PATH")) curl_setopt($ch, CURLOPT_CAINFO, CURL_CA_BUNDLE_PATH);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		if (isset($header_str)) {
-			$header = array('Content-Type: application/atom+xml',$header_str);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+	function http($url, $method, $postfields = null , $multi = false) {
+		if($method=='POST'){
+			$multi = WP_Http::processHeaders($multi);
+			$header = array("Content-Type"=>"application/atom+xml");
+			$header = array_merge($header, $multi['headers']);
 		}
-		//////////////////////////////////////////////////
-		///// Set to 1 to verify Douban's SSL Cert //////
-		//////////////////////////////////////////////////
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		if (isset($post_data)) {
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-		}
-		$response = curl_exec($ch);
-		$this->http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		$this->last_api_call = $url;
-		curl_close ($ch);
-		return $response;
-	}/*}}}*/
-}/*}}}*/
+		$params = array(
+			"method" => $method,
+			"body" => $postfields,
+			"headers" => $header
+		);
+		return class_http($url, $params);
+	}
+}

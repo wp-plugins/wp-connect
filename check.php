@@ -1,6 +1,8 @@
 <?php
+if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
+date_default_timezone_set("PRC");
 define('ROOT_PATH', dirname(dirname(__FILE__)));
-$funs_list = array('mysql_connect', 'curl_init', 'curl_setopt', 'curl_exec', 'file_get_contents', 'zend_loader_enabled', 'gzinflate', 'openssl_open');
+$funs_list = array('close_curl', 'close_fopen', 'close_http', 'openssl_open', 'zend_loader_enabled', 'fsockopen','hash_hmac', 'gzinflate');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
 	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.2'),
@@ -8,6 +10,47 @@ $surrounding_list = array
 	'gdversion' => array('p' => 'GD 库', 'r' => '1.0', 'b' => '2.0'),
 	'diskspace' => array('p' => '磁盘空间', 'r' => '10M', 'b' => '不限制')
 	);
+
+if (!function_exists('close_curl')) {
+	function close_curl() {
+		if (!extension_loaded('curl')) {
+			return " <span style=\"color:blue\">请在php.ini中打开扩展extension=php_curl.dll</span>";
+		} else {
+			$func_str = '';
+			if (!function_exists('curl_init')) {
+				$func_str .= "curl_init() ";
+			} 
+			if (!function_exists('curl_setopt')) {
+				$func_str .= "curl_setopt() ";
+			} 
+			if (!function_exists('curl_exec')) {
+				$func_str .= "curl_exec()";
+			} 
+			if ($func_str)
+				return " <span style=\"color:blue\">不支持 $func_str 等函数，请在php.ini里面的disable_functions中删除这些函数的禁用！</span>";
+		} 
+	} 
+} 
+if (!function_exists('close_fopen')) {
+	function close_fopen() {
+		if (!@ini_get('allow_url_fopen')) {
+			return " <span style=\"color:blue\">不能使用 fopen() 和 file_get_contents() 函数。请在php.ini中设置allow_url_fopen = On</span>";
+		} else {
+			if (!function_exists('fopen')) {
+				return " <span style=\"color:blue\">不支持 fopen() 函数，请在php.ini里面的disable_functions中删除这些函数的禁用！</span>";
+			} 
+		} 
+	} 
+} 
+
+if (!function_exists('close_http')) {
+	function close_http() {
+		if (close_curl() && close_fopen()) {
+			return true;
+		} 
+	} 
+}
+
 function surrounding_support(&$p) {
 	foreach($p as $key => $item) {
 		$p[$key]['status'] = 1;
@@ -17,7 +60,7 @@ function surrounding_support(&$p) {
 				$p[$key]['status'] = 0;
 			} 
 		} elseif ($key == 'attachmentupload') {
-			$p[$key]['current'] = @ini_get('file_uploads') ? ini_get('upload_max_filesize') : '未知';
+			$p[$key]['current'] = @ini_get('allow_url_fopen') ? ini_get('upload_max_filesize') : '未知';
 		} elseif ($key == 'gdversion') {
 			$tmp = function_exists('gd_info') ? gd_info() : array();
 			$p[$key]['current'] = empty($tmp['GD Version']) ? '不存在' : $tmp['GD Version'];
@@ -81,17 +124,31 @@ function function_support(&$func_items) {
 	foreach($func_items as $item) {
 		$status = function_exists($item);
 		$func_str .= "<tr>\n";
-		if (preg_match("/openssl/", $item)) {
-			$func_str .= "<td>$item()";
-			if (!$status) {
-				$func_str .= " <a href=\"http://www.soso.com/q?w=%C8%E7%BA%CE%20%D4%DAPHP%C0%A9%D5%B9%C0%EF%20%B4%F2%BF%AA%20openssl%D6%A7%B3%D6\" target=\"_blank\" style=\"color:#f50\">在PHP扩展里打开openssl支持可以解决此问题</a>";
+		if ($item == "close_curl") {
+			$func_str .= "<td>CURL";
+			if ($curl = close_curl()) {
+				$status = '';
+				$func_str .= $curl;
 			} 
 			$func_str .= "</td>\n";
-		} else if ($item == "mb_strlen") {
+		} else if ($item == "close_fopen") {
+			$func_str .= "<td>fopen";
+			if ($fopen = close_fopen()) {
+				$status = '';
+				$func_str .= $fopen;
+			} 
+			$func_str .= "</td>\n";
+		} else if ($item == "close_http") {
+			$func_str .= "<td>HTTP";
+			if (close_http()) {
+				$status = '';
+			} 
+			$func_str .= " <span style=\"color:green\">上面的 CURL 或者 fopen 必须支持一个！</span>";
+			$func_str .= "</td>\n";
+		} else if (preg_match("/openssl/", $item)) {
 			$func_str .= "<td>$item()";
 			if (!$status) {
-				$func_str .= " <a href=\"http://www.soso.com/q?pid=s.idx&w=PHP+%B4%F2%BF%AA%C0%A9%D5%B9extension%3Dphp_mbstring
-\" target=\"_blank\" style=\"color:#f50\">需要在PHP扩展里打开扩展extension=php_mbstring</a>";
+				$func_str .= " <span style=\"color:blue\">请在php.ini中打开扩展extension=php_openssl.dll</span>";
 			} 
 			$func_str .= "</td>\n";
 		} else if ($item == "zend_loader_enabled") {
@@ -122,9 +179,7 @@ function function_support(&$func_items) {
 		$func_str .= "</tr>";
 	} 
 	return $func_str;
-} 
-if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
-date_default_timezone_set("PRC");
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -166,8 +221,8 @@ img.no{width:12px; height:12px; background-position:0 -22px}
   <thead>
     <tr>
       <th>函数名称</th>
-      <th>状态</th>
-      <th>结果</th>
+      <th width="40">状态</th>
+      <th width="30">结果</th>
     </tr>
   </thead>
   <tbody>

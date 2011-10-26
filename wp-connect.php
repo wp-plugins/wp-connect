@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.5.4 版本，请到群内下载升级！</strong>
-Version: 1.9.5
+Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。<strong>注意：捐赠版已经更新到1.5.5 版本，请到群内下载升级！</strong>
+Version: 1.9.6
 */
 
-define('WP_CONNECT_VERSION', '1.9.5');
+define('WP_CONNECT_VERSION', '1.9.6');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -17,7 +17,7 @@ $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
-$wp_connect_advanced_version = "1.5.4";
+$wp_connect_advanced_version = "1.5.5";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
@@ -72,17 +72,17 @@ function wp_connect_warning() {
 add_action('admin_notices', 'wp_connect_warning');
 
 function verify_qzone() {
-	if (function_exists('fsockopen')) {
+	if (!close_socket()) {
 		error_reporting(0);
 		ini_set('display_errors', 0);
-		$fp = fsockopen("smtp.qq.com", 25, $errno, $errstr, 10);
+		$fp = sfsockopen("smtp.qq.com", 25, $errno, $errstr, 10);
 		if (!$fp) {
 			echo "很抱歉！您的服务器不能同步到QQ空间，因为腾讯邮件客户端的 smtp.qq.com:25 禁止您的服务器访问！请不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
 		} else {
 			echo "恭喜！检查通过，请在上面填写QQ号码和密码，然后发布一篇文章试试，如果不能同步(多试几次)，请务必删除刚刚填写QQ号码和密码，并保存修改，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
 		} 
 	} else {
-		echo "很抱歉！您的服务器不支持fsockopen()函数，不能同步到QQ空间，请联系空间商开启！请暂时不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
+		echo "很抱歉！您的服务器不支持 fsockopen() 或者 pfsockopen() 或者 stream_socket_client() 任一函数，不能同步到QQ空间，请联系空间商开启！请暂时不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
 	} 
 } 
 
@@ -358,7 +358,7 @@ function wp_connect_do_page() {
       <form method="post" action="options-general.php?page=wp-connect#advanced">
         <?php wp_nonce_field('advanced-options');?>
         <h3>高级设置</h3>
-		<?php if (!function_exists('wp_connect_advanced')) {?>
+		<?php if (function_exists('wp_connect_advanced')) {?>
       <ul>
          <li>高级设置只针对捐赠用户，目前增加功能如下：</li>
          <li><strong>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
@@ -374,8 +374,8 @@ function wp_connect_do_page() {
          <li>11、支持使用<a href="http://loginsns.com/robot.php" target="_blank">IM机器人</a>(包括<a href="http://loginsns.com/wiki/qqrobot" target="_blank">QQ机器人</a>、<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布/修改文章(支持同步)，获得最新评论，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
          <li>12、支持在捐赠者间用gtalk机器人 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
          <li>13、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
-		 <li>最低捐赠：15元人民币起，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/donate" target="_blank">查看详细描述</a></li>
-		 <li><strong>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</strong></li>
+		 <li><p><strong>最低捐赠：<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>(15元人民币起) 或者 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>($5美元起) ，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/donate" target="_blank">查看详细描述</a></strong></p></li>
+		 <li>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</li>
 		 <li><strong>本人承接各类网站制作(包括WordPress主题和插件)，价格优惠！</strong><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:3249892:42" alt="联系我！" title="联系我！"></a></li>
       </ul>
 	  <?php } else { ?>

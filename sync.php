@@ -1,4 +1,24 @@
 <?php
+function wp_sync_list() {
+	$weibo = array("twitter" => "Twitter",
+		"qq" => "腾讯微博",
+		"sina" => "新浪微博",
+		"netease" => "网易微博",
+		"sohu" => "搜狐微博",
+		"renren" => "人人网",
+		"kaixin001" => "开心网",
+		"digu" => "嘀咕",
+		"douban" => "豆瓣",
+		"tianya" => "天涯微博",
+		"fanfou" => "饭否",
+		"renjian" => "人间网",
+		"zuosa" => "做啥",
+		"follow5" => "Follow5",
+		"wbto" => "微博通"
+		);
+	return $weibo;
+}
+
 function wp_connect_header () {
 	global $plugin_url;
 	if (isset($_POST['add_twitter'])) {
@@ -18,6 +38,9 @@ function wp_connect_header () {
 	}
 	if (isset($_POST['add_douban'])) {
 		header('Location:' . $plugin_url. '/go.php?OAuth=DOUBAN');
+	}
+	if (isset($_POST['add_tianya'])) {
+		header('Location:' . $plugin_url. '/go.php?OAuth=TIANYA');
 	}
 	// 删除数据库+停用插件
 	if (isset($_POST['wptm_delete'])) {
@@ -40,6 +63,7 @@ function wp_connect_header () {
 		delete_option("wptm_sohu");
 		delete_option("wptm_netease");
 		delete_option("wptm_douban");
+		delete_option("wptm_tianya");
 		delete_option("wptm_renren");
 		delete_option("wptm_kaixin001");
 		delete_option("wptm_digu");
@@ -185,6 +209,10 @@ function wp_connect_update() {
 		update_option("wptm_douban", $token);
 		echo $updated;
 	}
+	if (isset($_POST['update_tianya'])) {
+		update_option("wptm_tianya", $token);
+		echo $updated;
+	}
 	if (isset($_POST['update_renren'])) {
 		update_option("wptm_renren", $update);
 		echo $updated;
@@ -251,6 +279,9 @@ function wp_connect_update() {
 	if (isset($_POST['delete_douban'])) {
 		update_option("wptm_douban", '');
 	}
+	if (isset($_POST['delete_tianya'])) {
+		update_option("wptm_tianya", '');
+	}
 	if (isset($_POST['delete_renren'])) {
 		update_option("wptm_renren", '');
 	}
@@ -292,6 +323,7 @@ function wp_option_account() {
 	'kaixin001' => get_option('wptm_kaixin001'),
 	'digu' => get_option('wptm_digu'),
 	'douban' => get_option('wptm_douban'),
+	'tianya' => get_option('wptm_tianya'),
 	'renjian' => get_option('wptm_renjian'),
 	'fanfou' => get_option('wptm_fanfou'),
 	'zuosa' => get_option('wptm_zuosa'),
@@ -331,6 +363,7 @@ function wp_usermeta_account( $user_id ) {
 	'kaixin001' => get_user_meta($user_id, 'wptm_kaixin001', true),
 	'digu' => get_user_meta($user_id, 'wptm_digu', true),
 	'douban' => get_user_meta($user_id, 'wptm_douban', true),
+	'tianya' => get_user_meta($user_id, 'wptm_tianya', true),
 	'renjian' => get_user_meta($user_id, 'wptm_renjian', true),
 	'fanfou' => get_user_meta($user_id, 'wptm_fanfou', true),
 	'zuosa' => get_user_meta($user_id, 'wptm_zuosa', true),
@@ -367,6 +400,9 @@ function wp_user_profile_update( $user_id ) {
 	} 
 	if (isset($_POST['update_douban'])) {
 		update_usermeta( $user_id, "wptm_douban", $token);
+	}
+	if (isset($_POST['update_tianya'])) {
+		update_usermeta( $user_id, "wptm_tianya", $token);
 	}
 	if (isset($_POST['update_renren'])) {
 		update_usermeta( $user_id, 'wptm_renren', $update);
@@ -410,6 +446,9 @@ function wp_user_profile_update( $user_id ) {
 	}
 	if (isset($_POST['delete_douban'])) {
 		update_usermeta( $user_id, 'wptm_douban', '');
+	}
+	if (isset($_POST['delete_tianya'])) {
+		update_usermeta( $user_id, 'wptm_tianya', '');
 	}
 	if (isset($_POST['delete_renren'])) {
 		update_usermeta( $user_id, 'wptm_renren', '');
@@ -632,6 +671,6 @@ function wp_connect_publish($post_ID) {
 	}
 	if($pic[0] == "image" && $wptm_options['disable_pic']) {
 		$pic = '';
-    }
+	}
 	wp_update_list($title, $postlink, $pic, $account);
 } 

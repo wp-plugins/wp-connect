@@ -27,7 +27,8 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="<?php echo ($account['netease']['oauth_token']) ? 'bind_netease' : 'netease';?>" class="netease" title="网易微博"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['sohu']['oauth_token']) ? 'bind_sohu' : 'sohu';?>" class="sohu" title="搜狐微博"><b></b></a>
 <a href="javascript:;" id="renren" class="renren<?php echo ($account['renren']['password']) ? ' bind': '';?>" title="人人网"><b></b></a>
-<a href="javascript:;" id="kaixin001" class="kaixin001<?php echo ($account['kaixin001']['password']) ? ' bind': '';?>" title="开心网"><b></b></a>
+<!--<a href="javascript:;" id="kaixin001" class="kaixin001<?php echo ($account['kaixin001']['password']) ? ' bind': '';?>" title="开心网"><b></b></a>-->
+<a href="javascript:;" id="<?php echo ($account['tianya']['oauth_token']) ? 'bind_tianya' : 'tianya';?>" class="tianya" title="天涯微博"><b></b></a>
 <a href="javascript:;" id="digu" class="digu<?php echo ($account['digu']['password']) ? ' bind': '';?>" title="嘀咕"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['douban']['oauth_token']) ? 'bind_douban' : 'douban';?>" class="douban" title="豆瓣"><b></b></a>
 <a href="javascript:;" id="fanfou" class="fanfou<?php echo ($account['fanfou']['password']) ? ' bind': '';?>" title="饭否"><b></b></a>
@@ -116,7 +117,7 @@ $(function () {
   });
 });
 $(".close").show();
-$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, '?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
+$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,'?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   var pic = id.replace('open', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + pic + ".png");
@@ -138,7 +139,7 @@ $("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, 
   if(id == "openqq" || id == "opensina" || id == "opensohu" || id == "opennetease") {
 	$(".account,.token").hide();
     $(".appkey").show();
-  } else if(id == "twitter" || id == "qq" || id == "sina" || id == "sohu" || id == "netease" || id == "douban") {
+  } else if(id == "twitter" || id == "qq" || id == "sina" || id == "sohu" || id == "netease" || id == "douban" || id == "tianya") {
     $(".account,.appkey").hide();
     $(".token").show();
   } else {
@@ -154,14 +155,14 @@ $(".bind").click(function () {
   $("#delete").show();
 });
 <?php if(!$wptm_options['bind']) {?>
-$("#twitter, #qq, #sina, #sohu, #netease, #douban").click(function () {
+$("#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya").click(function () {
   var id = $(this).attr("id");
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $(".dialog_add").attr("id", "dialog_" + id);
   $(".add").attr("name", "add_" + id);
 });
 <?php }?>
-$("#bind_twitter, #bind_qq, #bind_sina, #bind_sohu, #bind_netease, #bind_douban").click(function () {
+$("#bind_twitter, #bind_qq, #bind_sina, #bind_sohu, #bind_netease, #bind_douban, #bind_tianya").click(function () {
   var id = $(this).attr("id").replace('bind_', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $(".dialog_delete").attr("id", "dialog_" + id);
@@ -180,6 +181,7 @@ $("#sina, #bind_sina").floatdialog("dialog_sina");
 $("#sohu, #bind_sohu").floatdialog("dialog_sohu");
 $("#netease, #bind_netease").floatdialog("dialog_netease");
 $("#douban, #bind_douban").floatdialog("dialog_douban");
+$("#tianya, #bind_tianya").floatdialog("dialog_tianya");
 $("#renren").floatdialog("dialog_renren");
 $("#kaixin001").floatdialog("dialog_kaixin001");
 $("#digu").floatdialog("dialog_digu");

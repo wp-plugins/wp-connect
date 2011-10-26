@@ -181,8 +181,7 @@ function wp_connect_sina(){
 	$sina = $to->OAuthRequest('http://api.t.sina.com.cn/account/verify_credentials.json', 'GET',array());
 
 	if($sina == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+		return wp_noauth();
 	}
 
 	//$sina = simplexml_load_string($sina);
@@ -226,8 +225,7 @@ function wp_connect_qq(){
 	$qq = $to->OAuthRequest('http://open.t.qq.com/api/user/info?format=json', 'GET',array());
 
 	if($qq == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+		return wp_noauth();
 	}
 	
 	$qq = json_decode($qq);
@@ -267,8 +265,7 @@ function wp_connect_sohu(){
 	$sohu = $to->OAuthRequest('http://api.t.sohu.com/account/verify_credentials.json', 'GET',array());
 
 	if($sohu == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+		return wp_noauth();
 	}
 
 	$sohu = json_decode($sohu);
@@ -298,8 +295,7 @@ function wp_connect_netease(){
 	$netease = $to->OAuthRequest('http://api.t.163.com/account/verify_credentials.json', 'GET',array());
 
 	if($netease == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+		return wp_noauth();
 	}
 
 	$netease = json_decode($netease);
@@ -331,8 +327,7 @@ function wp_connect_twitter(){
 	$twitter = $to->OAuthRequest('http://api.twitter.com/1/account/verify_credentials.json', 'GET',array());
 
 	if($twitter == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+		return wp_noauth();
 	}
 
 	$twitter = json_decode($twitter);
@@ -360,8 +355,7 @@ function wp_connect_douban(){
 	
 	$douban = $to->OAuthRequest('http://api.douban.com/people/%40me', array(), 'GET');
 	if($douban == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+		return wp_noauth();
 	}
 	
 	$douban = simplexml_load_string($douban);
@@ -395,22 +389,19 @@ function wp_connect_tianya(){
 
 	$tianya = $to->get_user_info();
 
-	if($tianya == "no auth"){
-		echo '<script type="text/javascript">window.close();</script>';
-		return;
+	if (!is_array($tianya) || $tianya['error_msg']) {
+		return wp_noauth();
 	}
 
-	$tianya = json_decode($tianya);
-
-	$tianya = $tianya->user;
-	$username = $tianya->user_id;
+	$tianya = $tianya['user'];
+	$username = $tianya['user_id'];
 	$tmail = $username.'@tianya.cn';
 	$tid = "tytid";
     $uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('tytid', $username);
 	if ($uid) {
-		wp_connect_login($username.'|'.$username.'|'.$tianya->user_name.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid, $uid);
+		wp_connect_login($username.'|'.$username.'|'.$tianya['user_name'].'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid, $uid);
 	} else {
-		wp_connect_login($username.'|'.$username.'|'.$tianya->user_name.'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid);
+		wp_connect_login($username.'|'.$username.'|'.$tianya['user_name'].'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid);
 	}
 }
 // 分享到SNS
@@ -453,6 +444,11 @@ function get_weibo($tid) {
 	if (array_key_exists($tid, $name)) {
 		return $name[$tid];
 	} 
+}
+
+function wp_noauth() {
+	$redirect_to = ($_SESSION['wp_url_back']) ? $_SESSION['wp_url_back'] : get_bloginfo('url');
+	return wp_die("获取用户授权信息失败，请重新<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a> 或者 清除浏览器缓存再试! [ <a href=\"".$redirect_to."\">返回</a> ]");
 }
 
 function wp_connect_error($userinfo, $tmail, $tid, $wpuid = '', $user_email = '') {

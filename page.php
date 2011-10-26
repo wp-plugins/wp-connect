@@ -5,6 +5,7 @@ function wp_update_page() {
 	$wptm_advanced = get_option('wptm_advanced');
 	$status = $text = mb_substr(trim(strip_tags($_POST['message'])), 0, 140, 'utf-8');
 	$urls = trim(stripslashes($_POST['url']));
+	$url = '';
 	if (function_exists('wp_connect_advanced')) {
 		include_once(WP_PLUGIN_DIR . '/wp-connect-advanced/page.php');
 	} else {
@@ -27,7 +28,10 @@ function wp_update_page() {
 		if ($_POST['subject'] == 2 && $sina['original_pic']) {
 			$url = array('image', $sina['original_pic']);
 		} 
-	} 
+	}
+	if (isset($_POST['tianya']) && $account['tianya']) {
+		wp_update_douban($account['tianya'], $status, $url);
+	}
 	if (isset($_POST['douban']) && $account['douban']) {
 		wp_update_douban($account['douban'], $status);
 	} 
@@ -104,34 +108,12 @@ var wpurl = "<?php echo $wpurl;?>";
     <p id="v2"><input name="url" id="url" size="50" type="text" /></p>
     发布到：
     <p><label><input type="checkbox" id="clickall" onclick="selectall(this.form);" checked /> 全选</label>
-    <input name="twitter" id="twitter" type="checkbox" value="checkbox" checked />
-    <label for="twitter">Twitter</label>
-    <input name="qq" id="qq" type="checkbox" value="checkbox" checked />
-    <label for="qq">腾讯微博</label>
-    <input name="sina" id="sina" type="checkbox" value="checkbox" checked />
-    <label for="sina">新浪微博</label>
-    <input name="netease" id="netease" type="checkbox" value="checkbox" checked />
-    <label for="netease">网易微博</label>
-    <input name="sohu" id="sohu" type="checkbox" value="checkbox" checked />
-    <label for="sohu">搜狐微博</label>
-    <input name="renren" id="renren" type="checkbox" value="checkbox" checked />
-    <label for="renren">人人网</label>
-    <input name="kaixin001" id="kaixin001" type="checkbox" value="checkbox" checked />
-    <label for="kaixin001">开心网</label><br />
-    <input name="digu" id="digu" type="checkbox" value="checkbox" checked />
-    <label for="digu">嘀咕</label>
-    <input name="douban" id="douban" type="checkbox" value="checkbox" checked />
-    <label for="douban">豆瓣</label>
-    <input name="fanfou" id="fanfou" type="checkbox" value="checkbox" checked />
-    <label for="fanfou">饭否</label>
-    <input name="renjian" id="renjian" type="checkbox" value="checkbox" checked />
-    <label for="renjian">人间网</label>
-    <input name="zuosa" id="zuosa" type="checkbox" value="checkbox" checked />
-    <label for="zuosa">做啥</label>
-    <input name="follow5" id="follow5" type="checkbox" value="checkbox" checked />
-    <label for="follow5">Follow5</label>
-    <input name="wbto" id="wbto" type="checkbox" value="checkbox" checked />
-    <label for="wbto">微博通</label></p>
+<?php
+$weibo_sync = wp_sync_list();
+foreach($weibo_sync as $key => $name) {
+	echo "<label><input name=\"$key\" id=\"$key\" type=\"checkbox\" value=\"1\" checked /> $name</label>\r\n";
+}
+?></p>
     <?php if (!is_user_logged_in() || !$wptm_advanced['registered_users']) {?>
     <p id="v3">密码：
     <input name="password" id="password" type="password" value="<?php echo (!$pwderror)?$_POST['password']:'';?>" /> <span<?php echo $pwderror;?>>密码错误！</span>

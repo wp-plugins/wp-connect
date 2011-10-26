@@ -16,6 +16,7 @@ $netease_app_key = ($netease['app_key'] && !$wptm_options['bind']) ? $netease['a
 $netease_app_secret = ($netease['secret'] && !$wptm_options['bind']) ? $netease['secret'] : 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO';
 define("WP_POST" , 'REQUEST');
 define("WP_CONNECT" , get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=wp-connect');
+define("MY_PLUGIN_URL" , get_bloginfo('wpurl').'/wp-content/plugins/wp-connect');
 define("BJTIMESTAMP" , $time); //服务器时间校正
 // 腾讯微博
 define("QQ_APP_KEY" , $qq_app_key);

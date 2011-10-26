@@ -40,6 +40,12 @@ if (is_user_logged_in()) {
 		$b = new doubanOAuth(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
 		$tok = "wptm_douban";
 		$tid = "DOUBAN";
+	} elseif ($_GET['OAuth'] == "tianya" || $_GET['OAuth'] == "TIANYA" || $_GET['callback'] == "TIANYA") {
+		include_once("OAuth/tianya_OAuth.php");
+		$a = new tianyaOAuth(TIANYA_APP_KEY, TIANYA_APP_SECRET);
+		$b = new tianyaOAuth(TIANYA_APP_KEY, TIANYA_APP_SECRET, $_SESSION['keys']['oauth_token'], $_SESSION['keys']['oauth_token_secret']);
+		$tok = "wptm_tianya";
+		$tid = "TIANYA";
 	} else {
 		return false;
 	} 

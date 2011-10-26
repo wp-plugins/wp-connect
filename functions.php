@@ -52,7 +52,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $status2, $pic); } //200*
 	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); }
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
-	if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
+	//if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380
 	return $output;
 }
 // 自定义函数 start
@@ -73,29 +73,128 @@ if (!function_exists('mb_strlen')) {
 		return ($encode == 'utf-8') ? strlen(utf8_decode($str)) : strlen($str);
 	}
 }
-if (!function_exists('file_get_contents')) {
-	function file_get_contents($url) {
+
+function close_curl() {
+	if (!extension_loaded('curl')) {
+		return " <span style=\"color:blue\">请在php.ini中打开扩展extension=php_curl.dll</span>";
+	} else {
+		$func_str = '';
+		if (!function_exists('curl_init')) {
+			$func_str .= "curl_init() ";
+		} 
+		if (!function_exists('curl_setopt')) {
+			$func_str .= "curl_setopt() ";
+		} 
+		if (!function_exists('curl_exec')) {
+			$func_str .= "curl_exec()";
+		} 
+		if ($func_str)
+			return " <span style=\"color:blue\">不支持 $func_str 等函数，请在php.ini里面的disable_functions中删除这些函数的禁用！</span>";
+	} 
+} 
+
+function close_socket() {
+	if (function_exists('fsockopen')) {
+		$fp = 'fsockopen()';
+	} elseif (function_exists('pfsockopen')) {
+		$fp = 'pfsockopen()';
+	} elseif (function_exists('stream_socket_client')) {
+		$fp = 'stream_socket_client()';
+	} 
+	if (!$fp) {
+		return " <span style=\"color:blue\">必须支持以下函数中的其中一个： fsockopen() 或者 pfsockopen() 或者 stream_socket_client() 函数，请在php.ini里面的disable_functions中删除这些函数的禁用！</span>";
+	} 
+} 
+
+function sfsockopen($host, $port, $errno, $errstr, $timeout) {
+	if(function_exists('fsockopen')) {
+		$fp = @fsockopen($host, $port, $errno, $errstr, $timeout);
+	} elseif(function_exists('pfsockopen')) {
+		$fp = @pfsockopen($host, $port, $errno, $errstr, $timeout);
+	} elseif(function_exists('stream_socket_client'))  {
+		$fp = @stream_socket_client($host.':'.$port, $errno, $errstr, $timeout);
+	}
+	return $fp;
+}
+
+function get_url_array($url) {
+	return json_decode(get_url_contents($url), true);
+}
+
+function get_url_contents($url) {
+	if (!close_curl()) {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		$content = curl_exec($ch);
 		curl_close($ch);
 		return $content;
-	} 
-}
-function get_url_contents($url) {
-	if (extension_loaded('curl')) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$content = curl_exec($ch);
-		curl_close($ch);
 	} else {
-		$content = file_get_contents($url);
+		$params = array();
+		if (@ini_get('allow_url_fopen')) {
+			if (function_exists('file_get_contents')) {
+				return file_get_contents($url);
+			}
+			if (function_exists('fopen')) {
+				$params['http'] = 'streams';
+			}
+		} elseif (function_exists('fsockopen')) {
+			$params['http'] = 'fsockopen';
+		} else {
+			return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+		}
+		$params += array("method" => 'GET',
+			"timeout" => 30,
+			"sslverify" => false
+			);
+		return http_request($url, $params);
+	}
+}
+
+function http_ssl($url) {
+	$arrURL = parse_url($url);
+	$r['ssl'] = $arrURL['scheme'] == 'https' || $arrURL['scheme'] == 'ssl';
+	$is_ssl = isset($r['ssl']) && $r['ssl'];
+	if ($is_ssl && !extension_loaded('openssl'))
+		return wp_die('您的主机不支持openssl，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+}
+
+function class_http($url, $params = array()) {
+	if ($params['http']) {
+		$class = 'WP_Http_' . ucfirst($params['http']);
+	} else {
+		if (!close_curl()) {
+			$class = 'WP_Http_Curl';
+		} else {
+			http_ssl($url);
+			if (@ini_get('allow_url_fopen') && function_exists('fopen')) {
+				$class = 'WP_Http_Streams';
+		    } elseif (function_exists('fsockopen')) {
+			    $class = 'WP_Http_Fsockopen';
+		    } else {
+			    return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+		    }
+		}
+	}
+	$http = new $class;
+	$response = $http -> request($url, $params);
+	if (!is_array($response)) {
+		$errors = $response -> errors;
+		$error = $errors['http_request_failed'][0];
+		if (!$error)
+			$error = $errors['http_failure'][0];
+		wp_die('出错了: ' . $error . '<br /><br />可能是您的主机不支持，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
 	} 
-	return $content;
+	return $response['body'];
+}
+
+function post_user($username, $password, $pwd) { // $pwd为旧密码
+	$username = trim($username);
+    $password = trim($password);
+	return array($username, (!$username) ? '' : (($password) ? key_encode($password) : $pwd));
 }
 
 function key_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
@@ -262,81 +361,94 @@ function wp_update_api($status) {
 }
 
 // 腾讯微博
-function wp_update_t_qq($qq, $status, $value) {
+function wp_update_t_qq($tok, $status, $value) {
 	if (!class_exists('qqOAuth')) {
 		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
 	} 
-	$to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET, $qq['oauth_token'], $qq['oauth_token_secret']);
+	$to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
 	$result = $to -> update($status, $value);
 	return $result['data']['id'];
 }
 // 新浪微博
-function wp_update_t_sina($sina, $status, $value) {
+function wp_update_t_sina($tok, $status, $value) {
 	if (!class_exists('sinaOAuth')) {
 		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
 	} 
-	$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $sina['oauth_token'], $sina['oauth_token_secret']);
+	$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
     $result = $to -> update($status, $value);
 	return $result;
 } 
 // 搜狐微博
-function wp_update_t_sohu($sohu, $status, $value) {
+function wp_update_t_sohu($tok, $status, $value) {
 	if (!class_exists('sohuOAuth')) {
 		include dirname(__FILE__) . '/OAuth/sohu_OAuth.php';
 	} 
-	$to = new sohuClient(SOHU_APP_KEY, SOHU_APP_SECRET, $sohu['oauth_token'], $sohu['oauth_token_secret']);
+	$to = new sohuClient(SOHU_APP_KEY, SOHU_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
 	$result = $to -> update($status, $value);
+	return $result;
 }
 // 网易微博
-function wp_update_t_163($netease, $status, $value) {
+function wp_update_t_163($tok, $status, $value) {
 	if (!class_exists('neteaseOAuth')) {
 		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
 	}
-	$to = new neteaseClient(APP_KEY, APP_SECRET, $netease['oauth_token'], $netease['oauth_token_secret']);
+	$to = new neteaseClient(APP_KEY, APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
 	$result = $to -> update($status, $value);
+	return $result;
 } 
 // Twitter
-function wp_update_twitter($twitter, $status) {
+function wp_update_twitter($tok, $status, $value = '') {
 	global $wptm_options;
 	if ($wptm_options['enable_proxy']) {
-		$text = "twitter={$status}&t1={$twitter['oauth_token']}&t2={$twitter['oauth_token_secret']}";
+		$text = "twitter={$status}&pic={$value}&t1={$tok['oauth_token']}&t2={$tok['oauth_token_secret']}";
 		wp_update_api($text);
 	} else {
 		if (!class_exists('twitterOAuth')) {
 			include dirname(__FILE__) . '/OAuth/twitter_OAuth.php';
 		}
-		$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $twitter['oauth_token'], $twitter['oauth_token_secret']);
-		$result = $to -> update($status);
+		$to = new twitterClient(T_APP_KEY, T_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
+		$result = $to -> update($status, $value);
+		return $result;
 	}
 }
 // 豆瓣
-function wp_update_douban($douban, $status) {
+function wp_update_douban($tok, $status) {
 	if (!class_exists('doubanOAuth')) {
 		include dirname(__FILE__) . '/OAuth/douban_OAuth.php';
 	} 
-	$to = new doubanClient(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $douban['oauth_token'], $douban['oauth_token_secret']);
+	$to = new doubanClient(DOUBAN_APP_KEY, DOUBAN_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
 	$result = $to -> update($status);
+	return $result;
+} 
+// 天涯
+function wp_update_tianya($tok, $status, $value) {
+	if (!class_exists('tianyaOAuth')) {
+		include dirname(__FILE__) . '/OAuth/tianya_OAuth.php';
+	}
+	$to = new tianyaClient(TIANYA_APP_KEY, TIANYA_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
+	$result = $to -> update($status, $value);
+	return $result;
 } 
 // 嘀咕
-function wp_update_digu($digu, $status) {
+function wp_update_digu($user, $status) {
 	$api_url = 'http://api.minicloud.com.cn/statuses/update.json';
 	$body = array('content' => $status);
-	$password = key_decode($digu['password']);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$digu['username']}:$password"));
+	$password = key_decode($user['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
 // 饭否
-function wp_update_fanfou($fanfou, $status) {
+function wp_update_fanfou($user, $status) {
 	$api_url = 'http://api.fanfou.com/statuses/update.json';
 	$body = array('status' => $status);
-	$password = key_decode($fanfou['password']);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$fanfou['username']}:$password"));
+	$password = key_decode($user['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // 人间网
-function wp_update_renjian($renjian, $status, $value) {
+function wp_update_renjian($user, $status, $value) {
 	$api_url = 'http://api.renjian.com/v2/statuses/create.json';
 	$body = array();
 	$body['text'] = $status;
@@ -344,22 +456,22 @@ function wp_update_renjian($renjian, $status, $value) {
 		$body['status_type'] = "PICTURE";
 		$body['url'] = $value[1];
 	}
-	$password = key_decode($renjian['password']);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$renjian['username']}:$password"));
+	$password = key_decode($user['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
 // 做啥网
-function wp_update_zuosa($zuosa, $status) {
+function wp_update_zuosa($user, $status) {
 	$api_url = 'http://api.zuosa.com/statuses/update.json';
 	$body = array('status' => $status);
-	$password = key_decode($zuosa['password']);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$zuosa['username']}:$password"));
+	$password = key_decode($user['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
 // Follow5
-function wp_update_follow5($follow5, $status, $value) {
+function wp_update_follow5($user, $status, $value) {
 	$api_url = 'http://api.follow5.com/api/statuses/update.xml?api_key=C1D656C887DB993D6FB6CA4A30754ED8';
 	$body = array();
 	$body['source'] = 'qq_wp_follow5';
@@ -367,13 +479,13 @@ function wp_update_follow5($follow5, $status, $value) {
 	if ($value[1]) {
 		$body['link'] = $value[1];
 	} 
-	$password = key_decode($follow5['password']);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$follow5['username']}:$password"));
+	$password = key_decode($user['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // wbto
-function wp_update_wbto($wbto, $status, $value) {
+function wp_update_wbto($user, $status, $value) {
 	$body = array();
 	$body['source'] = 'wordpress';
 	$body['content'] = urlencode($status);
@@ -383,17 +495,17 @@ function wp_update_wbto($wbto, $status, $value) {
 	} else {
 	    $api_url = 'http://wbto.cn/api/update.json';
 	}
-	$password = key_decode($wbto['password']);
-	$headers = array('Authorization' => 'Basic ' . base64_encode("{$wbto['username']}:$password"));
+	$password = key_decode($user['password']);
+	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // 人人网
-function wp_update_renren($renren, $status) {
+function wp_update_renren($user, $status) {
 	$cookie = tempnam('./tmp', 'renren');
-	$password = key_decode($renren['password']);
+	$password = key_decode($user['password']);
 	$ch = wp_getCurl($cookie, "http://passport.renren.com/PLogin.do");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($renren["username"]) . '&password=' . urlencode($password) . '&autoLogin=true&origURL=http%3A%2F%2Fwww.renren.com%2FHome.do&domain=renren.com');
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($user["username"]) . '&password=' . urlencode($password) . '&autoLogin=true&origURL=http%3A%2F%2Fwww.renren.com%2FHome.do&domain=renren.com');
 	$str = wp_update_result($ch);
 	$pattern = "/get_check:'([^']+)'/";
 	preg_match($pattern, $str, $matches);
@@ -404,11 +516,11 @@ function wp_update_renren($renren, $status) {
 	$ret = wp_update_result($ch);
 } 
 // 开心网
-function wp_update_kaixin001($kaixin001, $status) {
+function wp_update_kaixin001($user, $status) {
 	$cookie = tempnam('./tmp', 'kaixin001');
-	$password = key_decode($kaixin001['password']);
+	$password = key_decode($user['password']);
 	$ch = wp_getCurl($cookie, "http://wap.kaixin001.com/home/?id=");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($kaixin001["username"]) . '&password=' . urlencode($password) . '&remember=1&from=&refuid=0&refcode=&bind=&gotourl=&login=+%E7%99%BB+%E5%BD%95+');
+	curl_setopt($ch, CURLOPT_POSTFIELDS, 'email=' . urlencode($user["username"]) . '&password=' . urlencode($password) . '&remember=1&from=&refuid=0&refcode=&bind=&gotourl=&login=+%E7%99%BB+%E5%BD%95+');
 	$str = wp_update_result($ch);
 	$pattern = "/state.php\?verify=([^\"]+)\"/";
 	preg_match($pattern, $str, $matches);

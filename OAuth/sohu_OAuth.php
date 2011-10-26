@@ -245,78 +245,15 @@ class sohuOAuth {
      * 
      * @return string API results 
      */ 
-    function http($url, $method, $postfields = NULL , $multi = false) { 
-        $this->http_info = array(); 
-        $ci = curl_init(); 
-        /* Curl settings */ 
-        curl_setopt($ci, CURLOPT_USERAGENT, $this->useragent); 
-        curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->connecttimeout); 
-        curl_setopt($ci, CURLOPT_TIMEOUT, $this->timeout); 
-        curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE); 
-
-        curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer); 
-
-        curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader')); 
-
-        curl_setopt($ci, CURLOPT_HEADER, FALSE); 
-
-        switch ($method) { 
-        case 'POST': 
-            curl_setopt($ci, CURLOPT_POST, TRUE); 
-            if (!empty($postfields)) { 
-                curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields); 
-                //echo "=====post data======\r\n";
-                //echo $postfields;
-            } 
-            break; 
-        case 'DELETE': 
-            curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE'); 
-            if (!empty($postfields)) { 
-                $url = "{$url}?{$postfields}"; 
-            } 
-        } 
-
-        $header_array = array(); 
-        $header_array2=array(); 
-        if( $multi ) 
-        	$header_array2 = array("Content-Type: multipart/form-data; boundary=" . OAuthUtil::$boundary , "Expect: ");
-        foreach($header_array as $k => $v) 
-            array_push($header_array2,$k.': '.$v); 
-
-        curl_setopt($ci, CURLOPT_HTTPHEADER, $header_array2 ); 
-        curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE ); 
-
-        //echo $url."<hr/>"; 
-
-        curl_setopt($ci, CURLOPT_URL, $url); 
-
-        $response = curl_exec($ci); 
-        $this->http_code = curl_getinfo($ci, CURLINFO_HTTP_CODE); 
-        $this->http_info = array_merge($this->http_info, curl_getinfo($ci)); 
-        $this->url = $url; 
-
-        //echo '=====info====='."\r\n";
-        //print_r( curl_getinfo($ci) ); 
-        
-        //echo '=====$response====='."\r\n";
-        //print_r( $response ); 
-
-        curl_close ($ci); 
-        return $response; 
-    } 
-
-    /** 
-     * Get the header info to store. 
-     * 
-     * @return int 
-     */ 
-    function getHeader($ch, $header) { 
-        $i = strpos($header, ':'); 
-        if (!empty($i)) { 
-            $key = str_replace('-', '_', strtolower(substr($header, 0, $i))); 
-            $value = trim(substr($header, $i + 2)); 
-            $this->http_header[$key] = $value; 
-        } 
-        return strlen($header); 
-    } 
-} 
+	function http($url, $method, $postfields = null , $multi = false) {
+		$params = array(
+			"method" => $method,
+			"timeout" => $this -> timeout,
+			"user-agent" => $this -> useragent,
+			"sslverify" => $this -> ssl_verifypeer,
+			"body" => $postfields,
+			"headers" => ($multi) ? array("Content-Type" => "multipart/form-data; boundary=" . OAuthUtil :: $boundary , "Expect: ") : ''
+		);
+		return class_http($url, $params);
+	}
+}

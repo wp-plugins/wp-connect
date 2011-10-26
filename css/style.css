@@ -15,6 +15,7 @@ ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
 #tlist .renren{background:url(../images/renren.png) no-repeat}
 #tlist .kaixin001{background:url(../images/kaixin001.png) no-repeat}
 #tlist .digu{background:url(../images/digu.png) no-repeat}
+#tlist .tianya{background:url(../images/tianya.png) no-repeat}
 #tlist .douban{background:url(../images/douban.png) no-repeat}
 #tlist .digu{background:url(../images/digu.png) no-repeat}
 #tlist .fanfou{background:url(../images/fanfou.png) no-repeat}
@@ -24,7 +25,7 @@ ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
 #tlist .wbto{background:url(../images/wbto.png) no-repeat}
 #tlist a, .openqq, .opensina, .opensohu{display:inline-block; margin-right:7px; overflow:hidden; position:relative; vertical-align:middle; height:32px; width:32px; background-position:0px 0px}
 a.bind {color:green}
-.bind b, #bind_twitter b, #bind_qq b, #bind_sina b, #bind_sohu b, #bind_netease b, #bind_douban b{bottom:0px; right:0px; display:block; overflow:hidden; position:absolute; width:15px; height:14px; background:url(../images/bind.gif) no-repeat 0 0}
+.bind b, #bind_twitter b, #bind_qq b, #bind_sina b, #bind_sohu b, #bind_netease b, #bind_douban b, #bind_tianya b{bottom:0px; right:0px; display:block; overflow:hidden; position:absolute; width:15px; height:14px; background:url(../images/bind.gif) no-repeat 0 0}
 .dialog, .dialog_add, .dialog_delete{text-align:center}
 a.close{background:url(../images/close.gif) no-repeat 0 0}
 .dialog .appkey, .dialog .account, .dialog .token, .dialog #delete{display:none}
