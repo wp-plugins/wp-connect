@@ -150,7 +150,7 @@ function get_url_contents($url) {
 			"timeout" => 30,
 			"sslverify" => false
 			);
-		return http_request($url, $params);
+		return class_http($url, $params);
 	}
 }
 
