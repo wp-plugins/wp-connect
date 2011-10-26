@@ -2,7 +2,7 @@
 include_once(dirname(__FILE__) . '/config.php');
 /**
  * 同步列表
- * @since 1.8.2
+ * @since 1.9.8
  */
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
@@ -50,6 +50,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['wbto']) { wp_update_wbto($account['wbto'], $wbto, $pic); } //140+
 	if($account['follow5']) { wp_update_follow5($account['follow5'], $status2, $pic); } //200*
+	if($account['tianya']) { wp_update_tianya($account['tianya'], $sina, $pic); } //140*
 	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); }
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
 	//if($account['kaixin001']) { wp_update_kaixin001($account['kaixin001'], $kaixin001); } //380

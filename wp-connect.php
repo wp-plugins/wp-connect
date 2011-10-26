@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。<strong>注意：捐赠版已经更新到1.5.5 版本，请到群内下载升级！</strong>
-Version: 1.9.7
+Version: 1.9.8
 */
 
-define('WP_CONNECT_VERSION', '1.9.7');
+define('WP_CONNECT_VERSION', '1.9.8');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -358,7 +358,7 @@ function wp_connect_do_page() {
       <form method="post" action="options-general.php?page=wp-connect#advanced">
         <?php wp_nonce_field('advanced-options');?>
         <h3>高级设置</h3>
-		<?php if (function_exists('wp_connect_advanced')) {?>
+		<?php if (!function_exists('wp_connect_advanced')) {?>
       <ul>
          <li>高级设置只针对捐赠用户，目前增加功能如下：</li>
          <li><strong>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</strong><span style="color: red;">NEW!</span></li>
