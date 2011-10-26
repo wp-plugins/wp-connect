@@ -6,7 +6,7 @@ function wp_sync_list() {
 		"netease" => "网易微博",
 		"sohu" => "搜狐微博",
 		"renren" => "人人网",
-		"kaixin001" => "开心网",
+		//"kaixin001" => "开心网",
 		"digu" => "嘀咕",
 		"douban" => "豆瓣",
 		"tianya" => "天涯微博",
