@@ -117,7 +117,7 @@ $(function () {
   });
 });
 $(".close").show();
-$("<?php if($wptm_options['bind']) echo '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,'?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
+$("<?php if($wptm_options['bind']) {echo '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,';} elseif($wptm_options['enable_proxy']) {echo '#twitter,';}?>#openqq, #opensina, #opensohu, #opennetease, #renren, #kaixin001, #digu, #fanfou, #renjian, #zuosa, #follow5, #wbto").click(function () {
   var id = $(this).attr("id").replace('_porxy', '');
   var pic = id.replace('open', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + pic + ".png");
