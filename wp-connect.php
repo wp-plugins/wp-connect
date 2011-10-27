@@ -163,7 +163,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
-            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label></td>
+            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">我不能绑定帐号</td>
