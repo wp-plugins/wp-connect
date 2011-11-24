@@ -37,15 +37,16 @@ if ($_GET['login'] == "RENREN") {
 			$username = $renren['uid'];
 			$name = $renren['name'];
 			$head = $renren['tinyurl'];
-			$_SESSION['wp_url_login'] = "renren";
 			$url = 'http://www.renren.com/profile.do?id=' . $username;
 			$email = $username . '@renren.com';
 			$tid = "rtid";
-            $uid = (email_exists($email)) ? email_exists($email) : get_user_by_meta_value('renrenid', $username);
-		    if ($uid) { // logined
-				wp_connect_login($head . '|' . $username . '|' . $name . '|' . $url . '|||'.$username, $email, $tid, $uid);
+            $uid = get_user_by_meta_value('renrenid', $username);
+			if(!$uid) $uid = email_exists($email);
+		    $userinfo = array($tid, $username, $name, $head, $url, $username);
+		    if ($uid) {
+				wp_connect_login($userinfo, $email, $uid);
 		    } else {
-				wp_connect_login($head . '|' . $username . '|' . $name . '|' . $url . '|||'.$username, $email, $tid);
+				wp_connect_login($userinfo, $email);
 		    } 
 			header('Location:' . $redirect_to);
 		} else {

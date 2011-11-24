@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.9.9
+Stable tag: 1.9.10
 
 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。
 
@@ -16,7 +16,7 @@ Stable tag: 1.9.9
 
 1. 可以使用腾讯微博、新浪微博、搜狐微博、网易微博、人人帐号、豆瓣帐号、Twitter登录WordPress博客，支持同步评论到相对应的微博。 (捐赠版还支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客)
 
-2. 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、天涯微博、饭否、人间网、做啥、Follow5、享拍微博通等。
+2. 发布或更新文章时同步一条该文章信息到Twitter、腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网，嘀咕、豆瓣、天涯微博、饭否、人间网、做啥、享拍微博通等。
 
 3. 支持自定义API Key，用于显示微博的“来自xxx”，请在“同步设置”的开放平台下面填写。
 
@@ -24,7 +24,7 @@ Stable tag: 1.9.9
 
 5. 支持多作者博客，每位作者发布的文章都可以同步到他们各自绑定的微博上。
 
-6. 目前支持同时把文章出现的第一张图片同步到 腾讯微博、新浪微博、搜狐微博、网易微博、Follow5、人间网、雷猴、享拍微博通。
+6. 目前支持同时把文章出现的第一张图片同步到 腾讯微博、新浪微博、搜狐微博、网易微博、人间网、雷猴、享拍微博通。
 
 7. 把文章出现的第一个视频同步到支持视频的微博。
 
@@ -84,6 +84,12 @@ Stable tag: 1.9.9
 下载 WordPress连接微博 插件，上传wp-connect目录及其文件到 "/wp-content/plugins/" 插件目录，在后台管理中激活插件，到设置页面开启功能并设置，以及账号绑定等.
 
 == Changelog ==
+
+= 1.9.10 =
+*2011/11/10
+
+修改：去除同名帐号，今后将改为可以绑定登录帐号。
+修改：因为follow5网站已经关闭，故删除同步功能。
 
 = 1.9.9 =
 *2011/10/27

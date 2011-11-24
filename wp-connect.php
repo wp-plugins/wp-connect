@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
-Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到15大微博和社区。<strong>注意：捐赠版已经更新到1.5.6 版本，请到群内下载升级！</strong>
-Version: 1.9.9
+Description: 支持使用15个第三方网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到13大微博和社区。<strong>注意：捐赠版已经更新到1.6 版本，请到群内下载升级！</strong>
+Version: 1.9.10
 */
 
-define('WP_CONNECT_VERSION', '1.9.9');
+define('WP_CONNECT_VERSION', '1.9.10');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -17,7 +17,7 @@ $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
-$wp_connect_advanced_version = "1.5.6";
+$wp_connect_advanced_version = "1.6";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
@@ -46,6 +46,12 @@ function wp_connect_add_page() {
 
 function donate_version($version, $operator = '<') {
 	if (function_exists('wp_connect_advanced') && version_compare(WP_CONNECT_ADVANCED_VERSION, $version, $operator)) {
+		return true;
+	}
+}
+
+function is_donate() {
+	if (function_exists('wp_connect_advanced') && WP_CONNECT_ADVANCED == "true") {
 		return true;
 	}
 }

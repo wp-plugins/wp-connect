@@ -35,7 +35,7 @@ if ($_GET['do'] == "login") {
     
 	$login_userinfo = $_SESSION['wp_login_userinfo'];
 	if ($login_userinfo) {
-		wp_connect_login($login_userinfo[0], $login_userinfo[1], $login_userinfo[2]);
+		wp_connect_login($login_userinfo[0], $login_userinfo[1]);
 		header('Location:' . $redirect_to);
 	}
 }

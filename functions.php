@@ -2,7 +2,7 @@
 include_once(dirname(__FILE__) . '/config.php');
 /**
  * 同步列表
- * @since 1.9.8
+ * @since 1.9.10
  */
 function wp_update_list($title, $postlink, $pic, $account) {
 	global $wptm_options;
@@ -30,7 +30,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	$status2 = wp_status($title, $postlink, 200, 1); //搜狐/follow5
 	$sina = wp_status($title, urlencode($postlink), 140, 1); //新浪
 	$qq = wp_status($title, $postlink, 140, 1); //腾讯
-	$kaixin001 = wp_status($title, $postlink, 200); //开心
+	//$kaixin001 = wp_status($title, $postlink, 200); //开心
 	$digu = wp_status($title, urlencode($postlink), 140); //嘀咕
 	$twitter = wp_status($title, wp_urlencode($postlink), 140); //Twitter
     $wbto = wp_status($title, $postlink, 140, 1); //微博通
@@ -49,7 +49,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	if($account['renjian']) { wp_update_renjian($account['renjian'], $renjian, $pic); } //+
 	if($account['zuosa']) { wp_update_zuosa($account['zuosa'], $status); } //140
 	if($account['wbto']) { wp_update_wbto($account['wbto'], $wbto, $pic); } //140+
-	if($account['follow5']) { wp_update_follow5($account['follow5'], $status2, $pic); } //200*
+	//if($account['follow5']) { wp_update_follow5($account['follow5'], $status2, $pic); } //200*
 	if($account['tianya']) { wp_update_tianya($account['tianya'], $sina, $pic); } //140*
 	if($account['twitter']) { wp_update_twitter($account['twitter'], $twitter); }
 	if($account['renren']) { wp_update_renren($account['renren'], $status); } //140
@@ -292,6 +292,22 @@ function wp_status($content, $url, $length, $num = '') {
 	return trim($status);
 }
 
+function ifab($a, $b) {
+	return $a ? $a : $b;
+} 
+
+function ifb($a, $b) {
+	return $a ? $b : '';
+} 
+
+function ifac($a, $b, $c) {
+	return $a ? $a : ($b ? $c : '');
+} 
+
+function ifabc($a, $b, $c) {
+	return $a ? $a : ($b ? $b : $c);
+} 
+
 function wp_in_array($a, $b) {
 	$arrayA = explode(',', $a);
 	$arrayB = explode(',', $b);
@@ -472,6 +488,7 @@ function wp_update_zuosa($user, $status) {
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 } 
 // Follow5
+/*
 function wp_update_follow5($user, $status, $value) {
 	$api_url = 'http://api.follow5.com/api/statuses/update.xml?api_key=C1D656C887DB993D6FB6CA4A30754ED8';
 	$body = array();
@@ -485,6 +502,7 @@ function wp_update_follow5($user, $status, $value) {
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
+*/
 // wbto
 function wp_update_wbto($user, $status, $value) {
 	$body = array();
@@ -517,6 +535,7 @@ function wp_update_renren($user, $status) {
 	$ret = wp_update_result($ch);
 } 
 // 开心网
+/*
 function wp_update_kaixin001($user, $status) {
 	$cookie = tempnam('./tmp', 'kaixin001');
 	$password = key_decode($user['password']);
@@ -531,7 +550,7 @@ function wp_update_kaixin001($user, $status) {
 	curl_setopt($ch, CURLOPT_REFERER, 'http://wap.kaixin001.com/home/');
 	$ret = wp_update_result($ch);
 }
-
+*/
 function wp_getCurl($cookie, $url) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
