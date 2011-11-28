@@ -148,7 +148,7 @@ function get_weibo($tid) {
 
 function wp_login_account($uid) {
 	$user = get_userdata($uid);
-	return array($user -> login_sina, $user -> login_qq, $user -> login_sohu, $user -> login_netease, $user -> login_douban);
+	return array($user -> login_sina, $user -> login_qq, $user -> login_netease, $user -> login_sohu, $user -> login_douban);
 }
 
 function wp_connect($id = "") {
