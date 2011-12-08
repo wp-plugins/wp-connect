@@ -129,7 +129,7 @@ function get_weibo($tid) {
 		'mtid' => array('msn', 'msn', 'Windows Live', '', ''),
 		'stid' => array('sina', 'st', '新浪微博', 'http://weibo.com/', 't.sina.com.cn'),
 		'qtid' => array('qq', 'tqq', '腾讯微博', 'http://t.qq.com/', 't.qq.com'),
-		'shtid' => array('sohu', 'sohu', '搜狐微博', ' http://t.sohu.com/', 't.sohu.com'),
+		'shtid' => array('sohu', 'sohu', '搜狐微博', ' http://t.sohu.com/u/', 't.sohu.com'),
 		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', 't.163.com'),
 		'rtid' => array('renren', 'renren', '人人网', 'http://www.renren.com/profile.do?id=', 'renren.com'),
 		'ktid' => array('kaixin', 'kaixin', '开心网', 'http://www.kaixin001.com/home/?uid=', 'kaixin001.com'),
