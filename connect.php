@@ -148,7 +148,7 @@ function get_weibo($tid) {
 
 function wp_login_account($uid) {
 	$user = get_userdata($uid);
-	return array($user -> login_sina, $user -> login_qq, $user -> login_netease, $user -> login_sohu, $user -> login_douban);
+	return array($user -> login_sina, $user -> login_qq, $user -> login_sohu, $user -> login_netease, $user -> login_douban);
 }
 
 function wp_connect($id = "") {
@@ -485,7 +485,7 @@ function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
 
 /**
  * 登录
- * @since 1.9.10
+ * @since 1.9.11
  */
 function wp_connect_login($userinfo, $tmail, $uid = '') {
 	global $wpdb, $wptm_connect;
@@ -556,6 +556,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 		if ($tid == $id) {
 			update_usermeta($wpuid, $tid, $user_uid);
 		} else {
+			if ($user_head)
 			update_usermeta($wpuid, $tid, $user_head);
 			update_usermeta($wpuid, $id, $user_uid);
 		}
@@ -669,10 +670,8 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 					}
 				}
 			} 
-		} elseif (get_user_meta($uid, 'taobaoid', true)) {
-			if ($out = get_user_meta($uid, 'tbtid', true)) {
+		} elseif ($out = get_user_meta($uid, 'tbtid', true)) {
 				$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-			}
 		//} elseif (get_user_meta($uid, 'neteaseid', true)) {
 		//	if ($out = get_user_meta($uid, 'ntid', true)) {
 		//		$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
