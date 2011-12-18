@@ -451,7 +451,8 @@ function wp_noauth() {
  * @since 1.9.10
  */
 function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
-	global $plugin_url;
+	global $wpurl;
+	$plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 	if ($_SESSION['wp_url_back']) {
 		$redirect_to = $_SESSION['wp_url_back'];
 	} else {
