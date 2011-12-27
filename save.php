@@ -5,7 +5,7 @@ date_default_timezone_set("PRC");
 if ($_GET['do'] == "profile") {
 	if (is_user_logged_in()) {
 		session_start();
-		if ($_POST['add_twitter'] || $_POST['add_qq'] || $_POST['add_sina'] || $_POST['add_sohu'] || $_POST['add_netease'] || $_POST['add_douban'] || $_POST['add_tianya']) {
+		if ($_POST['add_twitter'] || $_POST['add_qq'] || $_POST['add_sina'] || $_POST['add_sohu'] || $_POST['add_netease'] || $_POST['add_douban'] || $_POST['add_tianya'] || $_POST['add_renren'] || $_POST['add_kaixin']) {
 			wp_connect_header();
 		} else {
 			$user_id = $_SESSION['user_id'];

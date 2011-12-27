@@ -47,18 +47,15 @@ function wp_update_page() {
 	if (isset($_POST['zuosa']) && $account['zuosa']) {
 		wp_update_zuosa($account['zuosa'], $status);
 	} 
-	//if (isset($_POST['follow5']) && $account['follow5']) {
-	//	wp_update_follow5($account['follow5'], $text, $url);
-	//} 
 	if (isset($_POST['wbto']) && $account['wbto']) {
 		wp_update_wbto($account['wbto'], $status, $url);
 	}
 	if (isset($_POST['renren']) && $account['renren']) {
 		wp_update_renren($account['renren'], $status);
 	} 
-	//if (isset($_POST['kaixin001']) && $account['kaixin001']) {
-	//	wp_update_kaixin001($account['kaixin001'], $status);
-	//}
+	if (isset($_POST['kaixin001']) && $account['kaixin001']) {
+		wp_update_kaixin001($account['kaixin001'], $status, $url);
+	}
 	if (isset($_POST['twitter']) && $account['twitter']) {
 		wp_update_twitter($account['twitter'], $status);
 	}
