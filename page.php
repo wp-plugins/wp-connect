@@ -30,7 +30,7 @@ function wp_update_page() {
 		} 
 	}
 	if (isset($_POST['tianya']) && $account['tianya']) {
-		wp_update_douban($account['tianya'], $status, $url);
+		wp_update_tianya($account['tianya'], $status, $url);
 	}
 	if (isset($_POST['douban']) && $account['douban']) {
 		wp_update_douban($account['douban'], $status);
