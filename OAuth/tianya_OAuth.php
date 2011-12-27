@@ -14,17 +14,18 @@ class tianyaClient
     function __construct( $akey , $skey , $accecss_token , $accecss_token_secret ) 
     { 
         $this->oauth = new tianyaOAuth( $akey , $skey , $accecss_token , $accecss_token_secret );
-		$this->appkey = $akey;
-		$this->secret = $accecss_token_secret;
+		$this->param['appkey'] = $akey;
+		$this->param['oauth_token'] = $accecss_token;
+		$this->param['oauth_token_secret'] = $accecss_token_secret;
+		$this->param['timestamp'] = BJTIMESTAMP;
+		$this->param['tempkey'] = strtoupper(md5(BJTIMESTAMP.$akey.$accecss_token.$accecss_token_secret.$skey));
     }
 
     // 发表微博(文本、图片)
     function update( $text, $value )
     {
+		$param = $this->param;
 		$param['word'] = $text;
-		$param['appkey'] = $this->appkey;
-		$param['oauth_token_secret'] = $this->secret;
-
 		if ($value[0] == "image" && $value[1]) {
 			$param['media'] = $value[1];
 			return $this->oauth->post( 'http://open.tianya.cn/api/weibo/addimg.php' , $param , true );
@@ -35,8 +36,7 @@ class tianyaClient
 
 	function get_user_info()
 	{
-		$param['appkey'] = $this->appkey;
-		$param['oauth_token_secret'] = $this->secret;
+		$param = $this->param;
 		return $this->oauth->get( 'http://open.tianya.cn/api/user/info.php',  $param );
 	}
 } 
