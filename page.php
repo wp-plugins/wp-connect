@@ -36,7 +36,7 @@ function wp_update_page() {
 		wp_update_digu($account['digu'], $status);
 	} 
 	if (isset($_POST['tianya']) && $account['tianya']) {
-		wp_update_douban($account['tianya'], $status, $url);
+		wp_update_tianya($account['tianya'], $status, $url);
 	}
 	if (isset($_POST['fanfou']) && $account['fanfou']) {
 		wp_update_fanfou($account['fanfou'], $status);
