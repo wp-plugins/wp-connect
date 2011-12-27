@@ -352,7 +352,7 @@ function set_admin_footer_define() {
 	global $wp_version;
 	define('IS_ADMIN_FOOTER', true);
 	if (version_compare($wp_version, '3.2.1', '>'))  //WordPress V3.3
-		echo "<style type=\"text/css\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n";
+		echo "<style type=\"text/css\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n"; 
 }
 
 function is_admin_footer() {
@@ -378,18 +378,6 @@ function wp_update_api($status) {
 	$api_url = 'http://www.smyx.net/apps/api.php';
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $status));
-}
-// v2.0
-function wp_update_share($mediaUserID, $content, $url) {
-	global $wptm_basic;
-	require(dirname(__FILE__) . "/class/Denglu.php");
-    $api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
-	try {
-		return $api -> share( $mediaUserID, $content, $url, '' );
-	}
-	catch(DengluException $e) {
-		wp_die($e->geterrorDescription());
-	}
 }
 
 // 腾讯微博
@@ -501,9 +489,9 @@ function wp_update_zuosa($user, $status) {
 	$headers = array('Authorization' => 'Basic ' . base64_encode("{$user['username']}:$password"));
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
-}
-/*
+} 
 // Follow5
+/*
 function wp_update_follow5($user, $status, $value) {
 	$api_url = 'http://api.follow5.com/api/statuses/update.xml?api_key=C1D656C887DB993D6FB6CA4A30754ED8';
 	$body = array();

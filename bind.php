@@ -9,7 +9,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/jquery-1.2.6.pack.js"></script>
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/floatdialog.js"></script>
 <h3>帐号绑定</h3>
-<p>请点击下面图标绑定账号: (友情提醒：绑定太多帐号会导致发布文章时缓慢或者响应超时！)</p>
+<p>请点击下面图标绑定微博账号: (友情提醒：绑定太多帐号会导致发布文章时缓慢或者响应超时！)</p>
 <?php if (!$wptm_options['bind'] && $_SESSION['wp_url_bind'] == WP_CONNECT) {
 	echo '<p style="color:green;">如果同步时要显示微博的“来自XXX”，请到 <a href="#open" class="open">开放平台</a> 页面填写申请的key，更换APP key后，相应的帐号请重新绑定！</p>';
 }?>
@@ -44,6 +44,7 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 		}
 		if (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users']) {
 			echo '<p>绑定帐号后，您可以登录本站，在本站的微博自定义发布页面发布信息到您绑定的帐号上。</p>';
+			echo '<p>您也可以捐助本人开发插件，以获得使用gtalk机器人进行更多便捷的操作。<a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看详细</a></p>';
 		}
 		echo '<p><strong>请您再三确定您信任本站站长，否则导致微博等账户信息泄漏，插件开发者概不负责！</strong></p>';
 	}
@@ -96,12 +97,12 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 <script type="text/javascript">
 $(function () {
   var tabContainers = $('div.tabs > div');
-  var hash = window.location.hash || "<?php echo ($version == 1 && $wptm_basic['appid'] && $wptm_basic['appkey']) ? '#sync' : '#basic';?>";
+  var hash = window.location.hash || '#sync';
   var css = hash.replace('#', '.');
   tabContainers.hide().filter(hash).show();
   $(css).addClass('selected');
 
-  $('.basic,.sync,.blog,.connect,.open,.share,.advanced,.check').click(function () {
+  $('.sync,.blog,.connect,.open,.share,.advanced,.check').click(function () {
     tabContainers.hide();
     tabContainers.filter(this.hash).show();
     $('div.tabs ul.nav a').removeClass('selected');
