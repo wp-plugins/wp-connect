@@ -403,7 +403,7 @@ function wp_connect_do_page() {
          <li>8、支持使用Google+1按钮(在“分享设置”中开启)。</li>
          <li><strong>9、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</strong></li>
          <li>10、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</li>
-         <li>11、支持使用<a href="http://loginsns.com/robot.php" target="_blank">IM机器人</a>(包括<a href="http://loginsns.com/wiki/qqrobot" target="_blank">QQ机器人</a>、<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布/修改文章(支持同步)，获得最新评论，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
+         <li>11、支持使用<a href="http://loginsns.com/robot.php" target="_blank">IM机器人</a>(包括<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布/修改文章(支持同步)，获得最新评论，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</li>
          <li>12、支持在捐赠者间用gtalk机器人 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</li>
          <li>13、<a href="http://loginsns.com/wiki/wordpress#more" target="_blank">查看更多功能</a></li>
 		 <li><p><strong>最低捐赠：<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>(15元人民币起) 或者 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>($5美元起) ，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/#more" target="_blank">查看详细描述</a></strong></p></li>

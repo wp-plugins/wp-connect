@@ -309,10 +309,11 @@ function wp_connect_netease(){
 	}
 
 	$netease = json_decode($netease);
+	// return var_dump($netease);
     $username = $netease->screen_name;
 	$old_email = $username.'@t.163.com';
 	$email = $netease->email;
-	$oid = $netease->id;
+	// $oid = $netease->id;
 	$tid = "ntid";
     $uid = ifabc(email_exists($email), email_exists($old_email), get_user_by_meta_value('neteaseid', $username));
 	$userinfo = array($tid, $username, $netease->name, $netease->profile_image_url, $netease->url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);

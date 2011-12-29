@@ -502,7 +502,7 @@ function wp_connect_add_sidebox() {
  */
 function wp_connect_publish($post_ID) {
 	global $wptm_options, $siteurl;
-	@ini_set("max_execution_time", 60);
+	@ini_set("max_execution_time", 120);
 	$time = time();
 	$post = get_post($post_ID);
 	$title = wp_replace($post -> post_title);
