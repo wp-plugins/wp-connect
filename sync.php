@@ -131,10 +131,10 @@ function open_appkey() {
 function connect_denglu_first() {
 	$wptm_basic = get_option("wptm_basic");
 	if ($wptm_basic) return;
-	$sitename = get_bloginfo('name');
-	$url = get_bloginfo('wpurl');
-	$email = get_option('admin_email');
-	$content = array('sitename'=>$sitename, 'siteurl'=>$url, 'email'=>$email);
+	$content = array('sitename'=> get_bloginfo('name'),
+		'siteurl'=>get_bloginfo('wpurl').'/', 
+		'email'=>get_option('admin_email')
+	);
 	$content = json_encode($content);
 	//return var_dump($content);
 	require(dirname(__FILE__) . "/class/Denglu.php");
@@ -167,7 +167,7 @@ function connect_denglu_first_update() {
 	$wptm_basic = get_option("wptm_basic");
 	if ($wptm_basic) return;
 	$content = array('sitename'=> get_bloginfo('name'),
-		'siteurl'=>get_bloginfo('wpurl'), 
+		'siteurl'=>get_bloginfo('wpurl').'/', 
 		'email'=>get_option('admin_email'),
         'keys' => open_appkey()
 	);
