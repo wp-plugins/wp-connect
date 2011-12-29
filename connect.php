@@ -127,7 +127,7 @@ function get_weibo($tid) {
 		'mtid' => array('msn', 'msn', 'Windows Live', '', ''),
 		'stid' => array('sina', 'st', '新浪微博', 'http://weibo.com/', 't.sina.com.cn', 'http://tp3.sinaimg.cn/[head]/50/0/1'),
 		'qtid' => array('qq', 'tqq', '腾讯微博', 'http://t.qq.com/', 't.qq.com', '[head]/40'),
-		'shtid' => array('sohu', 'sohu', '搜狐微博', ' http://t.sohu.com/u/', 't.sohu.com'),
+		'shtid' => array('sohu', 'sohu', '搜狐微博', 'http://t.sohu.com/u/', 't.sohu.com'),
 		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', 't.163.com'),
 		'rtid' => array('renren', 'renren', '人人网', 'http://www.renren.com/profile.do?id=', 'renren.com'),
 		'ktid' => array('kaixin', 'kaixin', '开心网', 'http://www.kaixin001.com/home/?uid=', 'kaixin001.com'),
@@ -135,9 +135,9 @@ function get_weibo($tid) {
 		'ytid' => array('yahoo', 'yahoo', '雅虎', '', ''),
 		'qqtid' => array('qq', 'qq', 'QQ登录', '', ''),
 		'tbtid' => array('taobao', 'taobao', '淘宝网', '', ''),
-		'tytid' => array('tianya', 'tyt', '天涯', ' http://my.tianya.cn/', 'tianya.cn', 'http://tx.tianyaui.com/logo/small/[head]'),
+		'tytid' => array('tianya', 'tyt', '天涯', 'http://my.tianya.cn/', 'tianya.cn', 'http://tx.tianyaui.com/logo/small/[head]'),
 		'bdtid' => array('baidu', 'baidu', '百度', '', 'baidu.com', 'http://himg.bdimg.com/sys/portraitn/item/[head].jpg'),
-		'ttid' => array('twitter', 'twitter', 'Twitter', ' http://twitter.com/', 'twitter.com')
+		'ttid' => array('twitter', 'twitter', 'Twitter', 'http://twitter.com/', 'twitter.com')
 		);
 	if (array_key_exists($tid, $name)) {
 		return $name[$tid];
@@ -309,11 +309,11 @@ function wp_connect_netease(){
 	}
 
 	$netease = json_decode($netease);
-	// return var_dump($netease);
+	//return var_dump($netease);
     $username = $netease->screen_name;
 	$old_email = $username.'@t.163.com';
 	$email = $netease->email;
-	// $oid = $netease->id;
+	//$oid = $netease->id;
 	$tid = "ntid";
     $uid = ifabc(email_exists($email), email_exists($old_email), get_user_by_meta_value('neteaseid', $username));
 	$userinfo = array($tid, $username, $netease->name, $netease->profile_image_url, $netease->url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
