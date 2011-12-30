@@ -572,7 +572,6 @@ if ($wptm_connect['enable_connect'] && function_exists('wp_connect_bind_qq')) {
 function wp_connect_profile_fields( $user ) {
 	global $wptm_connect;
 	if ( $wptm_connect['sina'] || $wptm_connect['qq'] || ($wptm_connect['qqlogin']) ) {
-		global $wptm_connect;
         $user_id = $user->ID;
 		echo '<h3>登录绑定</h3><table class="form-table">';
         wp_connect_bind_qq( $user );
