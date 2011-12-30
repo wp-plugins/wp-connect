@@ -19,7 +19,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.1";
+$wp_connect_advanced_version = "1.6.2";
 
 // 修复2.0升级导致的数据库bug
 function delete_2_0_bug() {
