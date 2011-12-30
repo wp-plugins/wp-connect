@@ -137,7 +137,7 @@ function connect_denglu_first() {
 	);
 	$content = json_encode($content);
 	//return var_dump($content);
-	require(dirname(__FILE__) . "/class/Denglu.php");
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
     $api = new Denglu('', '', 'utf-8');
 	try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
 		$ret = $api -> register_denglu($content);
@@ -172,7 +172,7 @@ function connect_denglu_first_update() {
         'keys' => open_appkey()
 	);
 	$content = json_encode($content);
-	require(dirname(__FILE__) . "/class/Denglu.php");
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 	$api = new Denglu('', '', 'utf-8');
 	try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
 		$ret = $api -> register_denglu($content);
@@ -250,10 +250,10 @@ function connect_denglu_update() {
 	$userdata = connect_denglu_update_data();
 	// return var_dump($userdata);
 	if ($userdata) {
-		$content = array_slice($userdata, 0, 50, true); 
+		$content = array_slice($userdata, 0, 50, true);
 		// return var_dump($content);
 		$content = json_encode($content);
-		require(dirname(__FILE__) . "/class/Denglu.php");
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
 		try {
 			$output = $api -> update_denglu($content);
