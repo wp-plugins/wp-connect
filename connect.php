@@ -585,8 +585,9 @@ $wpdontpeep = WP_DONTPEEP;
  * @since 1.9.12
  */
 add_filter("get_avatar", "wp_connect_avatar",10,4);
-function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
+function wp_connect_avatar($avatar, $id_or_email = '', $size = '32', $default = '') {
 	global $comment;
+	if ($default) return $avatar;
 	if (is_numeric($id_or_email)) {
 		$uid = $userid = (int) $id_or_email;
 		$user = get_userdata($uid);
@@ -601,7 +602,6 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		$uid = email_exists($id_or_email);
 		$email = $id_or_email;
 	} 
-
 	if (!$email) {
 		return $avatar;
 	} 
