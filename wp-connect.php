@@ -124,7 +124,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<p><span style="color:#D54E21;"><strong>该功能只针对捐赠用户！</strong></span></p>';
+		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>的一部分(捐赠版)。</strong></span></p>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
