@@ -162,7 +162,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<p><span style="color:#D54E21;"><strong>该功能只针对捐赠用户！</strong></span></p>';
+		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>的一部分(捐赠版)。</strong></span></p>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -177,8 +177,8 @@ function wp_connect_do_page() {
       <li><a href="#sync" class="sync">同步微博</a></li>
       <li><a href="#connect" class="connect">登录设置</a></li>
 	  <li><a href="#open" class="open">开放平台</a></li>
-      <?php if (is_donate()) { ?>
 	  <li><a href="#blog" class="blog">同步博客</a></li>
+      <?php if (is_donate()) { ?>
       <li><a href="#share" class="share">分享设置</a></li>
       <li><a href="#advanced" class="advanced">高级设置</a></li>
 	  <?php }} ?>
@@ -361,7 +361,6 @@ function wp_connect_do_page() {
         </p>
       </form>
 	</div>
-	<?php if(is_donate()) { ?>
     <div id="blog">
       <form method="post" action="options-general.php?page=wp-connect#blog">
         <?php wp_nonce_field('blog-options');?>
@@ -411,6 +410,7 @@ function wp_connect_do_page() {
 	  </form>
 	  <p style="color:green;font-size:13px">注意事项：<br />1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br /><strong>7、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
     </div>
+	<?php if(is_donate()) { ?>
     <div id="share">
       <form method="post" id="formdrag" action="options-general.php?page=wp-connect#share">
         <?php wp_nonce_field('share-options');?>
