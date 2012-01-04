@@ -461,7 +461,7 @@ function wp_connect_comment($id) {
 			//} 
 			$url = get_permalink($post_id) . '#comment-' . $id;
 			if ($wptm_options['t_cn']) {
-				$url = get_t_cn(urlencode($url));
+				$url = url_short_t_cn($url);
 			} 
 			// $title = wp_replace($post -> post_title);
 			$username = get_user_meta($user_id, 'login_name', true);
