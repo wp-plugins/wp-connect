@@ -21,7 +21,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	}
     // 是否使用t.cn短网址
 	if ($wptm_options['t_cn']) {
-		$url = get_t_cn(urlencode($url));
+		$url = url_short_t_cn($url);
 	}
     // 处理完毕输出链接
 	$postlink = trim($vurl.' '.$url);
@@ -360,17 +360,25 @@ function is_admin_footer() {
 		return true;
 }
 
+//t.cn短网址
+function url_short_t_cn($long_url) {
+	$source = SINA_APP_KEY;
+	$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source=' . $source . '&url_long=' . urlencode($long_url);
+	$request = new WP_Http;
+	$result = $request -> request($api_url);
+	$result = $result['body'];
+	$result = json_decode($result, true);
+	$url = $result[0]['url_short'];
+	if (!$url)
+		$url = $long_url;
+	return $url;
+} 
+//兼容旧版
 if (!function_exists('get_t_cn')) {
 // 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {
-		$source = SINA_APP_KEY;
-		$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source='.$source.'&url_long='.$long_url;
-		$request = new WP_Http;
-		$result = $request -> request($api_url);
-		$result = $result['body'];
-		$result = json_decode($result);
-		return $result[0] -> url_short;
-	} 
+		return url_short_t_cn(urldecode($long_url));
+	}
 }
 
 // api
