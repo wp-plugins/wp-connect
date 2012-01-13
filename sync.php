@@ -273,7 +273,7 @@ function connect_denglu_update() {
 				} 
 			} 
 			// return var_dump($results);
-			wp_connect_update();
+			connect_denglu_update();
 		} 
 	} 
 }
