@@ -21,7 +21,7 @@ function wp_update_list($title, $postlink, $pic, $account) {
 	}
     // 是否使用t.cn短网址
 	if ($wptm_options['t_cn']) {
-		$url = url_short_t_cn($url);
+		$url = get_url_short($url);
 	}
     // 处理完毕输出链接
 	$postlink = trim($vurl.' '.$url);
@@ -307,6 +307,14 @@ function ifabc($a, $b, $c) {
 	return $a ? $a : ($b ? $b : $c);
 } 
 
+function filter_value($v) { // array_filter $callback
+	if (is_array($v)) $v = $v[0];
+	if ($v !== "") {
+		return true;
+	} 
+	return false;
+} 
+
 function wp_in_array($a, $b) {
 	$arrayA = explode(',', $a);
 	$arrayB = explode(',', $b);
@@ -360,7 +368,17 @@ function is_admin_footer() {
 		return true;
 }
 
-//t.cn短网址
+// 自定义短网址
+function get_url_short($url) {
+	global $wptm_options;
+	if ($wptm_options['t_cn'] == 1) {
+		$url = url_short_t_cn($url);
+	} elseif ($wptm_options['t_cn'] == 2) {
+		$url = url_short_dwz_cn($url);
+	} 
+	return $url;
+} 
+// 新浪t.cn短网址
 function url_short_t_cn($long_url) {
 	$source = SINA_APP_KEY;
 	$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source=' . $source . '&url_long=' . urlencode($long_url);
@@ -373,12 +391,24 @@ function url_short_t_cn($long_url) {
 		$url = $long_url;
 	return $url;
 } 
-//兼容旧版
+// 兼容旧版
 if (!function_exists('get_t_cn')) {
-// 以下代码来自 t.cn 短域名WordPress 插件
+	// 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {
 		return url_short_t_cn(urldecode($long_url));
-	}
+	} 
+} 
+// 百度dwz.cn短网址
+function url_short_dwz_cn($long_url) {
+	$request = new WP_Http;
+	$api_url = 'http://dwz.cn/create.php';
+	$result = $request -> request($api_url , array('method' => 'POST', "timeout" => 5, 'body' => 'url=' . urlencode($long_url)));
+	$result = $result['body'];
+	$result = json_decode($result, true);
+	$url = $result['tinyurl'];
+	if (!$url)
+		$url = $long_url;
+	return $url;
 }
 
 // api

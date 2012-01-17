@@ -74,8 +74,10 @@ class qqClient
 		$params['clientip'] = $this -> get_ip();
 
 		if ($value[0] == "image" && $value[1]) {
-			$params['pic'] = $value[1];
-			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic', $params, true);
+			//$params['pic'] = $value[1];
+			//return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic', $params, true);
+			$params['pic_url'] = $value[1];
+			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic_url', $params);
 		} elseif ($value[0] == "video") {
 			$params['url'] = $value[1];
 			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_video', $params);

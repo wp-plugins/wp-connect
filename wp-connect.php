@@ -4,22 +4,23 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
-Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.0.4
+Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。新增社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
+Version: 2.1
 */
 
-define('WP_CONNECT_VERSION', '2.0.4');
+define('WP_CONNECT_VERSION', '2.1');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
 $wptm_basic = get_option('wptm_basic');
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
+$wptm_comment = get_option('wptm_comment');
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.2";
+$wp_connect_advanced_version = "1.6.3";
 
 // 修复2.0升级导致的数据库bug
 function delete_2_0_bug() {
@@ -28,7 +29,7 @@ function delete_2_0_bug() {
 }
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
-	if ($wptm_version == '2.0' && $wptm_basic) { // v2.0 bug
+	if (version_compare($wptm_version, '2.1', '<') && $wptm_basic) { // v2.0 bug
 		$wptm_basic['denglu'] = '';
 		update_option('wptm_basic', $wptm_basic);
 		delete_2_0_bug(); // wp 3.3
@@ -138,6 +139,7 @@ function wp_connect_do_page() {
 	wp_connect_update();
 	$wptm_options = get_option('wptm_options');
 	$wptm_connect = get_option('wptm_connect');
+	$wptm_comment = get_option('wptm_comment');
 	$wptm_key = get_option('wptm_key');
 	$blog_token = get_option('blog_token');
     $qq = get_option('wptm_openqq');
@@ -162,10 +164,11 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>的一部分(捐赠版)。</strong></span></p>';
+		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>的一部分。</strong></span></p>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
+	$_SESSION['user_id'] = '';
 	$_SESSION['wp_url_bind'] = WP_CONNECT;
 ?>
 <div class="wrap">
@@ -176,6 +179,7 @@ function wp_connect_do_page() {
 	  <?php if ($version == 1) { ?>
       <li><a href="#sync" class="sync">同步微博</a></li>
       <li><a href="#connect" class="connect">登录设置</a></li>
+	  <li><a href="#comment" class="comment">评论设置</a></li>
 	  <li><a href="#open" class="open">开放平台</a></li>
 	  <li><a href="#blog" class="blog">同步博客</a></li>
       <?php if (is_donate()) { ?>
@@ -239,9 +243,10 @@ function wp_connect_do_page() {
           <input type="submit" name="basic_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-	  <p><strong>友情提示：<a href="http://developer.denglu.cc/index.php?title=QQ%E4%BA%92%E8%81%94%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">QQ登录</a>、<a href="http://developer.denglu.cc/index.php?title=MSN%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">MSN</a>、<a href="http://developer.denglu.cc/index.php?title=%E4%BA%BA%E4%BA%BA%E7%BD%91%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">人人网</a>、<a href="http://developer.denglu.cc/index.php?title=%E5%BC%80%E5%BF%83%E7%BD%91%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">开心网</a>、<a href="http://developer.denglu.cc/index.php?title=%E6%B7%98%E5%AE%9D%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">淘宝网</a>、<a href="http://developer.denglu.cc/index.php?title=%E7%99%BE%E5%BA%A6%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">百度</a>、<a href="http://developer.denglu.cc/index.php?title=Yahoo%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">雅虎</a>需要 绑定域名 或者填写 回调地址，请点击对应链接查看申请流程。</strong></p>
-	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
+	  <p><strong>友情提示：</strong></p>
 	  <p style="color:green"><strong>从灯鹭wordpressV1.0旧版升级的用户需要在灯鹭平台修改回调地址。<a href="http://www.denglu.cc/source/wordpress2.0.html#old_update" target="_blank">详细描述</a></strong></p>
+	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
+	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
 	  <h3>卸载插件</h3>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
@@ -272,7 +277,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">自定义页面(一键发布到微博)</td>
-            <td>自定义密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" />
+            <td>自定义密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" autocomplete="off" />
                [ <a href="http://www.denglu.cc/source/wordpress_faqs.html#page" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
@@ -281,7 +286,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">自定义短网址</td>
-            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><input name="t_cn" type="checkbox"  value="1" <?php if($wptm_options['t_cn']) echo "checked "; ?>>http://t.cn/xxxxxx ( 新浪微博短网址 )</label></td>
+            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><strong>短网址</strong> <select name="t_cn"><option value="">选择</option><option value="1"<?php selected($wptm_options['t_cn'] == "1");?>>t.cn (新浪)</option><option value="2"<?php selected($wptm_options['t_cn'] == "2");?>>dwz.cn (百度)</option></select></label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
@@ -317,29 +322,60 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">登录样式</td>
-            <td><label><input name="style" type="radio" value="1" <?php checked(!$wptm_connect['style'] || $wptm_connect['style'] == 1);?> />默认风格</label><br /><label><input name="style" type="radio" value="2" <?php checked($wptm_connect['style'] == 2);?> />自定义样式 (请在下面粘帖从 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a> 获取的js代码)</label><br /><textarea name="custom_style" cols="80" rows="4"><?php echo stripslashes($wptm_connect['custom_style']);?></textarea>
+            <td><label><input name="style" type="radio" value="1" <?php checked(!$wptm_connect['style'] || $wptm_connect['style'] == 1 || $wptm_connect['style'] == 2);?> />默认风格(本地化) </label><label><input name="style" type="radio" value="3" <?php checked($wptm_connect['style'] == 3);?> />通用风格</label><br /><label><input name="style" type="radio" value="4" <?php checked($wptm_connect['style'] == 4);?> />自定义样式 (请在下面粘帖从 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a> 获取的js代码)</label><br /><textarea name="custom_style" cols="80" rows="4"><?php echo stripslashes($wptm_connect['custom_style']);?></textarea>
             </td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">@微博帐号</td>
+            <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
           </tr>
 		  <tr>
 			<td width="25%" valign="top">小工具</td>
 			<td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_connect['widget']) echo "checked "; ?>/>是否开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
 		  </tr>
+		  <tr>
+			<td width="25%" valign="top">禁止头像</td>
+			<td><label><input type="checkbox" name="head" value="1" <?php if($wptm_connect['head']) echo "checked "; ?>/>不使用登录者的微博/社区头像作为她的头像</label></td>
+		  </tr>
+		  <?php if (is_donate()) { ?>
+		  <tr>
+			<td width="25%" valign="top">绑定登录帐号</td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/>在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
+		  </tr>
+		  <?php } ?>
           <tr>
             <td width="25%" valign="top">禁止注册的用户名</td>
             <td><input name="disable_username" type="text" size="60" value='<?php echo $wptm_connect['disable_username'];?>' /> 用英文逗号(,)分开</td>
-          </tr>
-          <tr>
-            <td width="25%" valign="top">@微博帐号</td>
-            <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
           </tr>
         </table>
         <p class="submit">
           <input type="submit" name="wptm_connect" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-	  <p><strong>友情提示：<a href="http://developer.denglu.cc/index.php?title=QQ%E4%BA%92%E8%81%94%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">QQ登录</a>、<a href="http://developer.denglu.cc/index.php?title=MSN%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">MSN</a>、<a href="http://developer.denglu.cc/index.php?title=%E4%BA%BA%E4%BA%BA%E7%BD%91%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">人人网</a>、<a href="http://developer.denglu.cc/index.php?title=%E5%BC%80%E5%BF%83%E7%BD%91%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">开心网</a>、<a href="http://developer.denglu.cc/index.php?title=%E6%B7%98%E5%AE%9D%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">淘宝网</a>、<a href="http://developer.denglu.cc/index.php?title=%E7%99%BE%E5%BA%A6%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">百度</a>、<a href="http://developer.denglu.cc/index.php?title=Yahoo%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">雅虎</a>需要 绑定域名 或者填写 回调地址，请点击对应链接查看申请流程。</strong></p>
-	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
+	  <p><strong>友情提示：</strong></p>
 	  <p style="color:green"><strong>从灯鹭wordpressV1.0旧版升级的用户需要在灯鹭平台修改回调地址。<a href="http://www.denglu.cc/source/wordpress2.0.html#old_update" target="_blank">详细描述</a></strong></p>
+	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
+	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
+    </div>
+    <div id="comment">
+      <form method="post" action="options-general.php?page=wp-connect#comment">
+        <?php wp_nonce_field('comment-options');?>
+        <h3>评论设置</h3>
+	    <table class="form-table">
+            <tr>
+                <td width="25%" valign="top">是否开启“社会化评论”功能</td>
+                <td><input name="enable_comment" type="checkbox" value="1" <?php if($wptm_comment['enable_comment']) echo "checked "; ?>></td>
+            </tr>
+		    <tr>
+			    <td width="25%" valign="top">单篇文章评论开关</td>
+			    <td><label><input name="comments_open" type="checkbox" value="1" <?php if(!$wptm_comment || $wptm_comment['comments_open']) echo "checked "; ?>>继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能。</label></td>
+		    </tr>
+        </table>
+        <p class="submit">
+          <input type="submit" name="comment_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
+        </p>
+      </form>
+	  <span style="color:green"><p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p><strong><p>评论的相关设置及管理，请在灯鹭平台操作。</p><p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu-comments/" target="_blank">社会化评论</a> 插件</p></strong><p>我们将在下一版本加入评论导入导出功能及小工具（最新评论、活跃用户等）</p></span>
     </div>
     <div id="open">
       <form method="post" action="options-general.php?page=wp-connect#open">
@@ -408,7 +444,7 @@ function wp_connect_do_page() {
         <p><?php if (isset($_POST['verify_qzone'])) verify_qzone();?></p>
 		<p class="submit"><input type="submit" name="verify_qzone" value="检查是否支持同步到QQ空间(邮箱接口)" /></p>
 	  </form>
-	  <p style="color:green;font-size:13px">注意事项：<br />1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br /><strong>7、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
+	  <p style="color:green;font-size:13px">注意事项：<br />1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
     </div>
 	<?php if(is_donate()) { ?>
     <div id="share">

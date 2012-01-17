@@ -1,15 +1,15 @@
 <?php
-
 /**
  * 目的：把基础方法用protected的形式封装在base里，不直接展现给最终用户
- * @author hyperion_cc
- * @version 1.0
- * @created 09-八月-2011 15:00:39
+ * @author hyperion_cc, smyx
+ * @version 1.0.3
+ * @created 2012-1-13 10:33:00
  */
 class Denglu
 {
 	protected $appID;
 	protected $apiKey;
+	protected $enableSSL;
 
 	/**
 	 * denglu API的域名，默认http://open.denglu.cc
@@ -24,11 +24,15 @@ class Denglu
 		'unbind' => '/api/v3/unbind',
 		'login' => '/api/v3/send_login_feed',
 		'getUserInfo' => '/api/v3/user_info',
-		'register' => '/api/v4/create_account',
-		'update' => '/api/v4/import_user',
 		'share' => '/api/v3/share',
 		'getMedia' => '/api/v3/get_media',
-		'unbindAll' => '/api/v3/all_unbind'
+		'unbindAll' => '/api/v3/all_unbind',
+		'getBind' => '/api/v3/bind_info',
+		'getInvite' => '/api/v3/friends',
+		'getRecommend' => '/api/v3/recommend_user',
+		'sendInvite' => '/api/v3/invite',
+		'register' => '/api/v4/create_account',
+		'importUser' => '/api/v4/import_user'
 	);
 
 
@@ -80,26 +84,24 @@ class Denglu
 	 */
 	function Denglu($appID, $apiKey, $charset, $signatureMethod = 'MD5')//
 	{
-		
 		$this->appID = $appID;
 		$this->apiKey = $apiKey;
 		$this->signatureMethod = $signatureMethod;
 		$this->charset = $charset;
+		$this->setEnableSSL();
 	}
 
 	/**
 	 * 获取登陆/绑定链接
 	 * 
-	 * @param isBind
-	 *            是否用于绑定（非绑定则为登录）
 	 * @param Provider
 	 *            通过Denglu.Provider p = Denglu.Provider.guess(mediaNameEn) 获取。
 	 *            mediaNameEn获取媒体列表中得到
 	 * @param uid
-	 *            用户网站的用户ID，绑定时需要
+	 *            用户网站的用户ID，绑定时需要（没有提供即为非绑定，也就是登录）
 	 * @throws DengluException
 	 */
-	function getAuthUrl($Provider, $isBind = false, $uid = 0 )
+	function getAuthUrl($Provider, $uid = 0)
 	{
 		$authUrl = $this->domain;
 		
@@ -109,11 +111,21 @@ class Denglu
 			return array('errorCode'=>1,'errorDescription'=>'Please update your denglu-scripts to the latest version!');
 		}
 		
-		if($isBind && $uid>0){
+		if($uid>0){
 			$authUrl .= '?uid='.$uid;
 		}
 		
 		return $authUrl;
+	}
+
+	function register($content)
+	{
+		return $this->callApi('register',array('data'=>$content) );
+	}
+
+	function importUser($content)
+	{
+		return $this->callApi('importUser',array('appid'=>$this->appID, 'data'=>$content) );
 	}
 
 	/**
@@ -151,7 +163,7 @@ class Denglu
 	}
 
 	/**
-	 * 获取当前应用ID绑定的所有社会化媒体及其属性
+	 * 获取已选择平台供应商 
 	 * 
 	 * 
 	 * 返回值 eg:
@@ -174,15 +186,106 @@ class Denglu
 	{
 		return $this->callApi('getMedia',array('appid'=>$this->appID));
 	}
-
-	function register_denglu($content)
+	/**
+	 *
+	 * 获得同一用户的多个社会化媒体用户信息
+	 *
+	 * @param uid
+	 *			用户网站的用户ID(可选)
+	 *
+	 * @param muid
+	 *			社会化媒体的用户ID
+	 *
+	 * @return 返回值
+	 * 				eq: array(
+	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'张三'),
+	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'李四'),
+	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'王五')
+	 * 				)
+	 *
+	 */
+	function getBind($muid, $uid = '')
 	{
-		return $this->callApi('register',array('data'=>$content) );
+		$params = array();
+		$params['appid'] = $this->appID;
+		if ($muid)
+			$params['muid'] = $muid;
+		if ($uid)
+			$params['uid'] = $uid;
+		return $this->callApi('getBind',$params);
 	}
 
-	function update_denglu($content)
+	/**
+	 *
+	 * 获取可以邀请的媒体用户列表
+	 *
+	 * @param uid
+	 *			用户网站的用户ID(可选)
+	 *
+	 * @param muid
+	 *			社会化媒体的用户ID
+	 *
+	 * @return 返回值
+	 * 				eq: array(
+	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'张三'),
+	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'李四'),
+	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'王五')
+	 * 				)
+	 *
+	 */
+	function getInvite($muid,$uid=null)
 	{
-		return $this->callApi('update',array('appid'=>$this->appID, 'data'=>$content) );
+		if(empty($muid) || !isset($muid)){
+			return $this->callApi('getBind',array('appid'=>$this->appID, 'uid'=>$uid));
+		}
+		return $this->callApi('getBind',array('appid'=>$this->appID, 'muid'=>$muid));
+	}
+
+	/**
+	 *
+	 * 获取可以推荐的媒体用户列表
+	 *
+	 * @param uid
+	 *			用户网站的用户ID(可选)
+	 *
+	 * @param muid
+	 *			社会化媒体的用户ID
+	 *
+	 * @return 返回值
+	 * 				eq: array(
+	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'张三'),
+	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'李四'),
+	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'王五')
+	 * 				)
+	 *
+	 */
+	function getRecommend($muid,$uid=null)
+	{
+		if(empty($muid) || !isset($muid)){
+			return $this->callApi('getBind',array('appid'=>$this->appID, 'uid'=>$uid));
+		}
+		return $this->callApi('getBind',array('appid'=>$this->appID, 'muid'=>$muid));
+	}
+
+	/**
+	 *
+	 * 发送邀请
+	 *
+	 * @param muid
+	 *			社会化媒体的用户ID
+	 *
+	 * @param uid
+	 *			用户网站的用户ID(可选)
+	 *
+	 * @return 返回值 eg: {"result": "1"}
+	 *
+	 */
+	function sendInvite($invitemuids, $muid, $uid=null)
+	{
+		if(empty($muid) || !isset($muid)){
+			return $this->callApi('sendInvite',array('appid'=>$this->appID, 'uid'=>$uid, 'invitemuid'=>$invitemuids));
+		}
+		return $this->callApi('sendInvite',array('appid'=>$this->appID, 'muid'=>$muid, 'invitemuid'=>$invitemuids));
 	}
 
 	/**
@@ -282,7 +385,7 @@ class Denglu
 				$param[$key] = implode(',',$v);
 			}
 			if(strtolower($this->charset)!='utf-8'){
-				$param[$key] = $this->charsetConvert($v,'GBK','UTF-8');
+				$param[$key] = $this->charsetConvert($v,'UTF-8','GBK');
 			}
 		}
 		$param['timestamp'] = time().'000';
@@ -308,7 +411,7 @@ class Denglu
 		
 		$result = $this->parseJson($result);
 		if(strtolower($this->charset)=='gbk'){
-			$result = $this->charsetConvert($result, "GBK", "UTF8");
+			$result = $this->charsetConvert($result, "GBK", "UTF-8");
 		}
 		
 		if(is_array($result) && isset($result['errorCode'])){
@@ -373,7 +476,7 @@ class Denglu
 	 * @param request 发送的http参数
 	 */
 	///////function makeRequest($request)
-	protected function makeRequest($url, $post = '' ) {
+	protected function makeRequest($url, $post = '', $method='' ) {
 		$params = array(
 			"timeout" => 60,
 			"user-agent" => $_SERVER[HTTP_USER_AGENT],
@@ -385,31 +488,38 @@ class Denglu
 		} else {
 		    $params['method'] = 'GET';
 		}
-		return class_http($url, $params);//new
+		return class_http($url, $params); //new
 		$return = '';
 		$matches = parse_url($url);
 		$host = $matches['host'];
 		if(empty($matches['query'])) $matches['query']='';
 		$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
 		$port = 80;
-	
-		if($post) {
-			$out = "POST $path HTTP/1.0\r\n";
-			$out .= "Accept: */*\r\n";
-			$out .= "Accept-Language: zh-cn\r\n";
-			$out .= "Content-Type: application/x-www-form-urlencoded\r\n";
-			$out .= "User-Agent: $_SERVER[HTTP_USER_AGENT]\r\n";
-			$out .= "Host: $host\r\n";
-			$out .= 'Content-Length: '.strlen($post)."\r\n";
-			$out .= "Connection: Close\r\n";
-			$out .= "Cache-Control: no-cache\r\n";
-			$out .= "Cookie: \r\n\r\n";
-			$out .= $post;
-		} else {
+
+		if($this->enableSSL){
+			$url .= '?'.$post;
+			$url = str_replace('http://','https://',$url);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL,$url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_POST, 0);
+			curl_setopt($ch, CURLOPT_USERAGENT, 'denglu');
+			$return = curl_exec($ch);
+			return $return;
+		}
+		if(!$method){
+			$url .= '?'.$post;
+			$matches = parse_url($url);
+			$host = $matches['host'];
+			if(empty($matches['query'])) $matches['query']='';
+			$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
+
 			$out = "GET $path HTTP/1.0\r\n";
 			$out .= "Accept: */*\r\n";
 			$out .= "Accept-Language: zh-cn\r\n";
-			$out .= "User-Agent: $_SERVER[HTTP_USER_AGENT]\r\n";
+			$out .= "User-Agent: denglu\r\n";
 			$out .= "Host: $host\r\n";
 			$out .= "Connection: Close\r\n";
 			$out .= "Cookie: \r\n\r\n";
@@ -490,7 +600,7 @@ class Denglu
 				return $x;
 			}
 		}
-		return json_decode($input, true);
+		return json_decode($input,1);	
 	}
 
 	/**
@@ -542,6 +652,12 @@ class Denglu
 	function setappID($newVal)
 	{
 		$this->appID = $newVal;
+	}
+
+	function setEnableSSL(){
+		if(function_exists('curl_init') && function_exists('curl_exec')){
+			$this->enableSSL = true;
+		}
 	}
 
 }
@@ -597,6 +713,7 @@ class DengluException extends Exception
 	{
 		return $this->errorDescription;
 	}
-}
 
+	
+}
 ?>

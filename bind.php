@@ -101,7 +101,7 @@ $(function () {
   tabContainers.hide().filter(hash).show();
   $(css).addClass('selected');
 
-  $('.basic,.sync,.blog,.connect,.open,.share,.advanced,.check').click(function () {
+  $('.basic,.sync,.blog,.connect,.comment,.open,.share,.advanced,.check').click(function () {
     tabContainers.hide();
     tabContainers.filter(this.hash).show();
     $('div.tabs ul.nav a').removeClass('selected');

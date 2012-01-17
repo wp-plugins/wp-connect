@@ -18,29 +18,29 @@ function wp_sync_list() {
 	return $weibo;
 }
 
-add_action('init', 'wp_connect_header');
-function wp_connect_header () {
+add_action('admin_init', 'wp_connect_header');
+function wp_connect_header() {
 	global $plugin_url;
 	if (isset($_POST['add_twitter'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=TWITTER');
+		header('Location:' . $plugin_url. '/go.php?bind=twitter');
 	}
 	if (isset($_POST['add_qq'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=QQ');
+		header('Location:' . $plugin_url. '/go.php?bind=qq');
 	}
 	if (isset($_POST['add_sina'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=SINA');
+		header('Location:' . $plugin_url. '/go.php?bind=sina');
 	}
 	if (isset($_POST['add_sohu'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=SOHU');
+		header('Location:' . $plugin_url. '/go.php?bind=sohu');
 	}
 	if (isset($_POST['add_netease'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=NETEASE');
+		header('Location:' . $plugin_url. '/go.php?bind=netease');
 	}
 	if (isset($_POST['add_douban'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=DOUBAN');
+		header('Location:' . $plugin_url. '/go.php?bind=douban');
 	}
 	if (isset($_POST['add_tianya'])) {
-		header('Location:' . $plugin_url. '/go.php?OAuth=TIANYA');
+		header('Location:' . $plugin_url. '/go.php?bind=tianya');
 	}
 	if (isset($_POST['add_renren'])) {
 		header('Location:' . $plugin_url. '-advanced/blogbind.php?bind=renren');
@@ -57,6 +57,7 @@ function wp_connect_header () {
 		delete_option("wptm_blog");
 		delete_option("wptm_blog_options");
 		delete_option("wptm_connect");
+		delete_option("wptm_comment"); // new
 		delete_option("wptm_advanced");
 		delete_option("wptm_share");
 		delete_option("wptm_version");
@@ -127,6 +128,53 @@ function open_appkey() {
 	}
 	return $out;
 } 
+// 获取已选择平台供应商 
+function get_media() {
+	global $wptm_basic;
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+	try {
+		$ret = $api -> getMedia();
+	}
+	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+		//wp_die($e->geterrorDescription()); //返回错误信息
+	}
+	if (is_array($ret))
+		return $ret;
+}
+// 获取到用户的所有平台账号绑定关系
+function get_bindInfo($muid, $uid = '') {
+	$wptm_basic = get_option("wptm_basic");
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+	try {
+		$ret = $api -> getBind($muid, $uid);
+	}
+	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+		wp_die($e->geterrorDescription()); //返回错误信息
+	}
+	return $ret;
+}
+// 平台账号绑定及解绑
+function set_bind($mediaUID, $uid = '', $uname = '', $uemail = '') {
+	$wptm_basic = get_option("wptm_basic");
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+	if ($uid) {
+		try {
+			$ret = $api -> bind($mediaUID, $uid, $uname, $uemail);
+		} 
+		catch(DengluException $e) {
+		} 
+	} else {
+		try {
+			$ret = $api -> unbind($mediaUID);
+		} 
+		catch(DengluException $e) {
+		} 
+	} 
+	return $ret;
+} 
 // 连接denglu.cc，首次安装
 function connect_denglu_first() {
 	$wptm_basic = get_option("wptm_basic");
@@ -140,7 +188,7 @@ function connect_denglu_first() {
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
     $api = new Denglu('', '', 'utf-8');
 	try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
-		$ret = $api -> register_denglu($content);
+		$ret = $api -> register($content);
 	}
 	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
 		// return false;
@@ -175,7 +223,7 @@ function connect_denglu_first_update() {
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 	$api = new Denglu('', '', 'utf-8');
 	try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
-		$ret = $api -> register_denglu($content);
+		$ret = $api -> register($content);
 	}
 	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
 		wp_die($e->geterrorDescription()); //返回错误信息
@@ -256,7 +304,7 @@ function connect_denglu_update() {
 		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
 		try {
-			$output = $api -> update_denglu($content);
+			$output = $api -> importUser($content);
 		} 
 		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
 			wp_die($e -> geterrorDescription()); //返回错误信息
@@ -360,7 +408,9 @@ function wp_connect_update() {
 			'qq_username' => trim($_POST['qq_username']),
 			'sohu_username' => trim($_POST['sohu_username']),
 			'netease_username' => trim($_POST['netease_username']),
+			'head' => trim($_POST['head']),
 			'widget' => trim($_POST['widget']),
+			'denglu_bind' => trim($_POST['denglu_bind']),
 			'disable_username' => $disable_username
 			);
 		update_option("wptm_connect", $wptm_connect);
@@ -380,6 +430,10 @@ function wp_connect_update() {
 		update_option("wptm_key", $keys);
 		update_option("wptm_opensina", array('app_key'=>trim($_POST['sina1']),'secret'=>trim($_POST['sina2'])));
 		update_option("wptm_openqq", array('app_key'=>trim($_POST['tqq1']),'secret'=>trim($_POST['tqq2'])));
+		echo $updated;
+	}
+	if (isset($_POST['comment_options'])) {
+		update_option("wptm_comment", array('enable_comment'=>trim($_POST['enable_comment']),'comments_open'=>trim($_POST['comments_open'])));
 		echo $updated;
 	}
 	if (isset($_POST['update_twitter'])) {
@@ -502,25 +556,6 @@ function wp_option_account() {
 	return array_filter($account);
 }
 // 我的资料
-if($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
-   add_action( 'show_user_profile', 'wp_user_profile_fields' , 12);
-   add_action( 'edit_user_profile', 'wp_user_profile_fields' , 12);
-   add_action( 'personal_options_update', 'wp_save_user_profile_fields' );
-   add_action( 'edit_user_profile_update', 'wp_save_user_profile_fields' );
-}
-
-function wp_save_user_profile_fields( $user_id ) {
- 
-if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
-    $update_days = (trim($_POST['update_days'])) ? trim($_POST['update_days']) : '0';
-	$wptm_profile = array(
-		'sync_option' => trim($_POST['sync_option']),
-		'new_prefix' => trim($_POST['new_prefix']),
-		'update_prefix' => trim($_POST['update_prefix']),
-		'update_days' => $update_days
-		);
-    update_usermeta( $user_id, 'wptm_profile', $wptm_profile );
-}
 // 读取数据库
 function wp_usermeta_account($uid) {
 	$user = get_userdata($uid);
@@ -638,7 +673,27 @@ function wp_user_profile_update( $user_id ) {
 	}
 }
 
-// 设置
+// 我的资料 同步设置
+if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
+	add_action('show_user_profile', 'wp_user_profile_fields', 12);
+	add_action('edit_user_profile', 'wp_user_profile_fields', 12);
+	add_action('personal_options_update', 'wp_save_user_profile_fields', 12);
+	add_action('edit_user_profile_update', 'wp_save_user_profile_fields', 12);
+} 
+
+function wp_save_user_profile_fields($user_id) {
+	if (!current_user_can('edit_user', $user_id)) {
+		return false;
+	} 
+	$update_days = (trim($_POST['update_days'])) ? trim($_POST['update_days']) : '0';
+	$wptm_profile = array('sync_option' => trim($_POST['sync_option']),
+		'new_prefix' => trim($_POST['new_prefix']),
+		'update_prefix' => trim($_POST['update_prefix']),
+		'update_days' => $update_days
+		);
+	update_usermeta($user_id, 'wptm_profile', $wptm_profile);
+}
+
 function wp_user_profile_fields( $user ) {
 	global $plugin_url, $user_level, $wptm_options, $wptm_advanced;
 	$user_id = $user->ID;
@@ -697,9 +752,10 @@ function wp_connect_add_sidebox() {
  * @since 1.9
  */
 function wp_connect_publish($post_ID) {
-	global $wptm_options, $siteurl;
+	global $wptm_options;
 	@ini_set("max_execution_time", 120);
 	$time = time();
+	$siteurl = get_bloginfo('url');
 	$post = get_post($post_ID);
 	$title = wp_replace($post -> post_title);
 	$content = $post -> post_content;
