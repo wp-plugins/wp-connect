@@ -47,7 +47,7 @@ function get_tid($id) {
 		'8' => 'ktid',
 		'9' => 'dtid',
 		'10' => 'sdotid',
-		'11' => '139tid',
+		'11' => 'ydtid',
 		'12' => 'ytid',
 		'13' => 'qqtid',
 		'14' => 'dreamtid',
@@ -57,7 +57,7 @@ function get_tid($id) {
 		'18' => 'alitid',
 		'19' => 'bdtid',
 		'20' => 'ktid',
-		'21' => '163tid',
+		'21' => 'wytid',
 		'22' => 'qqtid'
 		);
 	return $name[$id];
