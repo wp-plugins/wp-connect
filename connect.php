@@ -511,7 +511,7 @@ function denglu_bindInfo($user) {
 
 /**
  * 头像
- * @since 1.9.13
+ * @since 1.9.14
  */
 if (empty($wptm_connect['head'])) {
 	add_filter("get_avatar", "wp_connect_avatar", 10, 4);
@@ -523,9 +523,9 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		$user = get_userdata($uid);
 		if ($user) $email = $user -> user_email;
 	} elseif (is_object($comment)) {
-		$user = $comment;
-		$uid = $user -> user_id;
-		$email = $user -> comment_author_email;
+		$uid = $comment -> user_id;
+		$email = $comment -> comment_author_email;
+		if ($uid) $user = get_userdata($uid);
 	} elseif (is_object($id_or_email)) {
 		$user = $id_or_email;
 		$uid = $user -> user_id;

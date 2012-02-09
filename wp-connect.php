@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。新增社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.1
+Version: 2.1.1
 */
 
-define('WP_CONNECT_VERSION', '2.1');
+define('WP_CONNECT_VERSION', '2.1.1');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -164,7 +164,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>的一部分。</strong></span></p>';
+		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>版本的一部分。</strong></span></p>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -375,7 +375,7 @@ function wp_connect_do_page() {
           <input type="submit" name="comment_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-	  <span style="color:green"><p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p><strong><p>评论的相关设置及管理，请在灯鹭平台操作。</p><p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu-comments/" target="_blank">社会化评论</a> 插件</p></strong><p>我们将在下一版本加入评论导入导出功能及小工具（最新评论、活跃用户等）</p></span>
+	  <span style="color:green"><p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p><strong><p>评论的相关设置及管理，请在灯鹭平台操作。</p><p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu-comments/" target="_blank">社会化评论</a> 插件</p></strong></span>
     </div>
     <div id="open">
       <form method="post" action="options-general.php?page=wp-connect#open">
@@ -539,6 +539,7 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php echo $update_tips; ?>
+		<p style="color:green"><strong>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/#more" target="_blank">详细说明</a> ]</strong></p>
       </form>
     </div>
 	<?php } ?>
