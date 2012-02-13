@@ -749,24 +749,23 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布
- * @since 1.9
+ * @since 1.9.14
  */
 function wp_connect_publish($post_ID) {
+	if (isset($_POST['publish_no_sync'])) {
+		return;
+	} 
 	global $wptm_options;
 	@ini_set("max_execution_time", 120);
 	$time = time();
-	$siteurl = get_bloginfo('url');
 	$post = get_post($post_ID);
 	$title = wp_replace($post -> post_title);
 	$content = $post -> post_content;
 	$excerpt = $post -> post_excerpt;
-	$postlink = get_permalink($post_ID);
 	$post_author_ID = $post -> post_author;
 	$post_date = strtotime($post -> post_date);
 	$post_modified = strtotime($post -> post_modified);
     $post_content = wp_replace($content);
-	// 匹配视频、图片
-	$pic = wp_multi_media_url($content);
 	// 是否有摘要
 	if ($excerpt) {
 		$post_content = wp_replace($excerpt);
@@ -795,6 +794,35 @@ function wp_connect_publish($post_ID) {
 	if (!$account) {
 		return;
 	}
+	// 是否为新发布
+	if (($post -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) {
+		$title = $new_prefix . $title;
+	} elseif ((($_POST['originalaction'] == "editpost") && (($_POST['prev_status'] == 'publish') || ($_POST['original_post_status'] == 'publish'))) && $post -> post_status == 'publish') { // 是否已发布
+		if (isset($_POST['publish_new_sync'])) {
+			$update_prefix = $new_prefix;
+		} elseif (!isset($_POST['publish_update_sync'])) {
+			if ($update_days == 0 || ($time - $post_date < $update_days)) { // 判断当前时间与文章发布时间差
+				return;
+			} 
+		}
+		$title = $update_prefix . $title;
+	} elseif (isset($_POST['_inline_edit'])) { // 是否是快速编辑
+		$quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' . $_POST['jj'] . ' ' . $_POST['hh'] . ':' . $_POST['mn'] . ':00';
+		$post_date = strtotime($quicktime);
+		if ($update_days == 0 || ($time - $post_date < $update_days)) { // 判断当前时间与文章发布时间差
+			return;
+		} 
+		$title = $update_prefix . $title;
+	} elseif(defined('DOING_CRON')) { // 定时发布
+		$title = $new_prefix . $title;
+	} else { // 后台快速发布，xmlrpc等发布
+		if ($post -> post_status == 'publish') {
+			if ($post_modified == $post_date || $time - $post_date <= 30) {  // 新文章(包括延迟<=30秒)
+				$title = $new_prefix . $title;
+			}
+		}
+	}
+	// 微博话题
 	$cat_ids = $wptm_options['cat_ids'];
 	$enable_cats = $wptm_options['enable_cats'];
 	$enable_tags = $wptm_options['enable_tags'];
@@ -823,7 +851,7 @@ function wp_connect_publish($post_ID) {
 		} 
 	}
 	$tags = $cats . $tags;
-	if($tags){
+	if ($tags){
 		$tags = explode(',', rtrim($tags, ','));
         if (count($tags) == 1) {
 			$tags = '#' . $tags[0] . '# ';
@@ -831,49 +859,18 @@ function wp_connect_publish($post_ID) {
 		    $tags = '#' . $tags[0] . '# #' . $tags[1] . '# ';
 		}
     }
-	// 是否为新发布
-	if (($post -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) {
-		if ($_POST['publish_no_sync']) {
-			return;
-		} 
-		$title = $new_prefix . $title;
-	} elseif ((($_POST['originalaction'] == "editpost") && (($_POST['prev_status'] == 'publish') || ($_POST['original_post_status'] == 'publish'))) && $post -> post_status == 'publish') { // 是否已发布
-		if (!$_POST['publish_update_sync']) {
-			if (($time - $post_date < $update_days) || $update_days == 0) { // 判断当前时间与文章发布时间差
-				return;
-			} 
-		} 
-		if ($_POST['publish_new_sync']) {
-			$update_prefix = $new_prefix;
-		} 
-		$title = $update_prefix . $title;
-	} elseif ($_POST['_inline_edit']) { // 是否是快速编辑
-		$quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' . $_POST['jj'] . ' ' . $_POST['hh'] . ':' . $_POST['mn'] . ':00';
-		$post_date = strtotime($quicktime);
-		if (($time - $post_date < $update_days) || $update_days == 0) { // 判断当前时间与文章发布时间差
-			return;
-		} 
-		$title = $update_prefix . $title;
-	} elseif(defined('DOING_CRON')) { // 定时发布
-		$title = $new_prefix . $title;
-	} else { // 后台快速发布，xmlrpc等发布
-		if ($post -> post_status == 'publish') {
-			if ($post_modified == $post_date || $time - $post_date <= 30) {  // 新文章(包括延迟<=30秒)
-				$title = $new_prefix . $title;
-			} else {
-			    $title = $title;
-			}
-		} else {
-			$title = $title;
-		} 
-	}
+	// 文章URL
 	if ($wptm_options['enable_shorten']) { // 是否使用博客默认短网址
+		$siteurl = get_bloginfo('url');
 		if($post->post_type == 'page') {
 			$postlink = $siteurl . "/?page_id=" . $post_ID;
 		} else {
 		    $postlink = $siteurl . "/?p=" . $post_ID;
 		}
+	} else {
+		$postlink = get_permalink($post_ID);
 	}
+	// 同步内容格式
 	if ($sync_option == '2') { // 同步 前缀+标题+摘要/内容+链接
 		$title = $tags . $title . " - " . $post_content;
 	} elseif ($sync_option == '3') { // 同步 文章摘要/内容
@@ -887,8 +884,10 @@ function wp_connect_publish($post_ID) {
 	} else {
 	    $title = $tags . $title;
 	}
+	// 匹配视频、图片
+	$pic = wp_multi_media_url($content);
 	if($pic[0] == "image" && $wptm_options['disable_pic']) {
 		$pic = '';
 	}
 	wp_update_list($title, $postlink, $pic, $account);
-} 
+}
