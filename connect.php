@@ -474,7 +474,7 @@ function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
 			$tip = "很遗憾！用户名 $user_name 已被占用。";
 		} 
 	} 
-	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" /></a></p>");
+	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" border=\"0\" /></a></p>");
 }
 
 /**
@@ -542,6 +542,14 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 			'user_email' => $tmail
 		);
 		$wpuid = wp_insert_user($userdata);
+		if (!is_numeric($wpuid)) {
+			$errors = $wpuid -> errors;
+			if ($errors['existing_user_email']) {
+				wp_die("该电子邮件地址 {$tmail} 已被注册。 [ <a href='$redirect_to'>返回</a> ]");
+			} elseif ($errors['existing_user_login']) {
+				wp_die("该用户名 {$user_name} 已被注册。 [ <a href='$redirect_to'>返回</a> ]");
+			}
+		}
 	} 
 	if ($wpuid) {
 		$weibo = get_weibo($tid);
