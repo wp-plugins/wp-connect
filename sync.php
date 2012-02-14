@@ -13,8 +13,7 @@ function wp_sync_list() {
 		"fanfou" => "饭否",
 		"renjian" => "人间网",
 		"zuosa" => "做啥",
-		"wbto" => "微博通"
-		);
+		"wbto" => "微博通");
 	return $weibo;
 }
 
@@ -88,8 +87,8 @@ function wp_connect_header() {
 		}
 	}
 }
-
-function get_appkey() { // v1.9.12
+// 开放平台KEY v1.9.12
+function get_appkey() {
 	global $wptm_connect;
 	$sohu = get_option('wptm_opensohu');
 	$netease = get_option('wptm_opennetease');
@@ -110,13 +109,8 @@ function get_appkey() { // v1.9.12
  * 写入数据库
  */
 function wp_connect_update() {
-	$update = array('username' => trim($_POST['username']),
-		'password' => key_encode(trim($_POST['password']))
-		);
-	$token = array('oauth_token' => trim($_POST['username']),
-		'oauth_token_secret' => trim($_POST['password'])
-		);
 	$updated = '<div class="updated"><p><strong>' . __('Settings saved.') . '</strong></p></div>';
+	// 同步微博设置
 	if (isset($_POST['update_options'])) {
 		$update_days = (trim($_POST['update_days'])) ? trim($_POST['update_days']) : '0';
 		$update_options = array('enable_wptm' => trim($_POST['enable_wptm']),
@@ -142,6 +136,7 @@ function wp_connect_update() {
 		update_option('wptm_version', WP_CONNECT_VERSION);
 		echo $updated;
 	} 
+	// 登录设置
 	if (isset($_POST['wptm_connect'])) {
 		$disable_username = (trim($_POST['disable_username'])) ? trim($_POST['disable_username']) : 'admin';
 		$wptm_connect = array('enable_connect' => trim($_POST['enable_connect']),
@@ -172,6 +167,7 @@ function wp_connect_update() {
 		update_option('wptm_version', WP_CONNECT_VERSION);
 		echo $updated;
 	}
+	// 开放平台
 	if (isset($_POST['wptm_key'])) {
 		$keys =  array( '2' => array(trim($_POST['msn1']), trim($_POST['msn2'])),
 			'5' => array(trim($_POST['sohu1']), trim($_POST['sohu2'])),
@@ -187,6 +183,12 @@ function wp_connect_update() {
 		update_option("wptm_openqq", array('app_key'=>trim($_POST['tqq1']),'secret'=>trim($_POST['tqq2'])));
 		echo $updated;
 	}
+	$update = array('username' => trim($_POST['username']),
+		'password' => key_encode(trim($_POST['password']))
+		);
+	$token = array('oauth_token' => trim($_POST['username']),
+		'oauth_token_secret' => trim($_POST['password'])
+		);
 	if (isset($_POST['update_twitter'])) {
 		update_option("wptm_twitter_oauth", $token);
 		echo $updated;

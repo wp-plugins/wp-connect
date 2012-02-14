@@ -442,6 +442,7 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php echo $update_tips;} ?>
+		<p style="color:green"><strong>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/#more" target="_blank">详细说明</a> ]</strong></p>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
