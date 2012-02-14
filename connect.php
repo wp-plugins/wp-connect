@@ -228,9 +228,9 @@ function wp_connect_sina(){
 		$username = $sinaid;
 	}
 
-	$email = $sinaid.'@t.sina.com.cn';
+	$email = $sinaid.'@weibo.com';
 	$tid = "stid";
-	$uid = ifab(get_user_by_meta_value($tid, $sinaid), email_exists($email));
+	$uid = ifab(get_user_by_meta_value($tid, $sinaid), email_exists($email), get_user_by_meta_value('scid', $sinaid));
 	$userinfo = array($tid, $username, $sina->screen_name, $sinaid, $sina->url, $sinaid, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
@@ -264,10 +264,11 @@ function wp_connect_qq(){
 	//if(!$tmail){
 	$email = $username.'@t.qq.com';
 	//}
+	$head = $qq->head;
 	$url = "http://t.qq.com/".$username;
 	$tid = "qtid";
-	$uid = ifab(get_user_by_meta_value('tqqid', $username), email_exists($email));
-	$userinfo = array($tid, $username, $qq->nick, $qq->head, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
+	$uid = ifabc(get_user_by_meta_value('tqqid', $username), email_exists($email), get_user_by_meta_value('qcid', $head));
+	$userinfo = array($tid, $username, $qq->nick, $head, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
 	} else {
@@ -395,7 +396,7 @@ function wp_connect_douban(){
 
 	$email = $douban_id.'@douban.com';
 	$tid = "dtid";
-    $uid = ifab(get_user_by_meta_value($tid, $douban_id), email_exists($email));
+    $uid = ifabc(get_user_by_meta_value($tid, $douban_id), email_exists($email), get_user_by_meta_value('dcid', $douban_id));
 	$userinfo = array($tid, $username, $douban->title, $douban_id, $douban_url, $douban_id, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
