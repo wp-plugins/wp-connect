@@ -230,7 +230,7 @@ function wp_connect_sina(){
 
 	$email = $sinaid.'@weibo.com';
 	$tid = "stid";
-	$uid = ifab(get_user_by_meta_value($tid, $sinaid), email_exists($email), get_user_by_meta_value('scid', $sinaid));
+	$uid = ifabc(get_user_by_meta_value($tid, $sinaid), email_exists($email), get_user_by_meta_value('scid', $sinaid));
 	$userinfo = array($tid, $username, $sina->screen_name, $sinaid, $sina->url, $sinaid, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
