@@ -33,10 +33,10 @@ class WP_Connect_Login_Widget extends WP_Widget {
 
 		if (!is_user_logged_in()) {
 			wp_connect();
-		} else { ?>
+		} else { $url = is_singular() ? get_permalink() : ''; ?>
 			<ul>
 			<?php wp_register(); ?>
-			<li><?php wp_loginout(); ?></li>
+			<li><?php wp_loginout($url); ?></li>
 			</ul>
         <?php }
 		echo $after_widget;
