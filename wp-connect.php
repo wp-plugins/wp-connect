@@ -65,7 +65,7 @@ function this_version() {
 	$wptm_connect = get_option('wptm_connect');
 	if ($wptm_basic['denglu'] == 1) {
 		$version = 1; //已经安装了最新版
-	} elseif ($wptm_options || $wptm_connect) {
+	} elseif ($wptm_basic || $wptm_options || $wptm_connect) {
 		if ($wptm_basic['appid'] && $wptm_basic['appkey']) {
 			$version = 2;  //wordpress连接微博旧版,需要点击 数据升级
 		} else {
