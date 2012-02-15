@@ -283,7 +283,9 @@ function connect_denglu_update_data() {
 		// }
 		// }
 	}
-	$content = array_filter($result);
+	if (is_array($result)) {
+		$content = array_filter($result);
+	}
 	if (!$content) {
 		$wptm_basic['denglu'] = 1;
 		update_option("wptm_basic", $wptm_basic);
