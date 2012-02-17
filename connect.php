@@ -267,7 +267,8 @@ function wp_connect_qq(){
 	$head = $qq->head;
 	$url = "http://t.qq.com/".$username;
 	$tid = "qtid";
-	$uid = ifabc(get_user_by_meta_value('tqqid', $username), email_exists($email), get_user_by_meta_value('qcid', $head));
+	$uid = ifab(get_user_by_meta_value('tqqid', $username), email_exists($email));
+    if (!$uid && $head) $uid = get_user_by_meta_value('qcid', $head);
 	$userinfo = array($tid, $username, $qq->nick, $head, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
