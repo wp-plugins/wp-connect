@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
-Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。新增社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.1.1
+Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
+Version: 2.1.2
 */
 
-define('WP_CONNECT_VERSION', '2.1.1');
+define('WP_CONNECT_VERSION', '2.1.2');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -22,23 +22,22 @@ $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
 $wp_connect_advanced_version = "1.6.3";
 
-// 修复2.0升级导致的数据库bug
-function delete_2_0_bug() {
-	global $wpdb;
-	return $wpdb->query( "DELETE FROM $wpdb->usermeta WHERE meta_key = ''");
-}
-
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.1', '<') && $wptm_basic) { // v2.0 bug
+		function delete_2_0_bug() {
+			global $wpdb;
+			return $wpdb -> query("DELETE FROM $wpdb->usermeta WHERE meta_key = ''");
+		} 
 		$wptm_basic['denglu'] = '';
 		update_option('wptm_basic', $wptm_basic);
 		delete_2_0_bug(); // wp 3.3
-	}
+	} 
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
 
 add_action('admin_menu', 'wp_connect_add_page');
 
+include_once(dirname(__FILE__) . '/denglu.func.php'); //灯鹭自定义函数
 include_once(dirname(__FILE__) . '/sync.php');
 include_once(dirname(__FILE__) . '/functions.php');
 include_once(dirname(__FILE__) . '/connect.php');
@@ -243,15 +242,21 @@ function wp_connect_do_page() {
           <input type="submit" name="basic_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-	  <p><strong>友情提示：</strong></p>
-	  <p style="color:green"><strong>从灯鹭wordpressV1.0旧版升级的用户需要在灯鹭平台修改回调地址。<a href="http://www.denglu.cc/source/wordpress2.0.html#old_update" target="_blank">详细描述</a></strong></p>
-	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
-	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
+	  <h3>其他登录插件</h3>
+	  <p style="color:green">假如你以前使用过其他类似的登录插件（<a href="http://bbs.denglu.cc/thread-9361-1-1.html" target="_blank">查看列表</a>），可以点击以下按钮进行数据转换，以便旧用户能使用本插件正常登录。</p>
+      <form method="post" action="options-general.php?page=wp-connect#basic">
+	    <?php wp_nonce_field('other-plugins');?>
+		<span class="submit"><input type="submit" name="other_plugins" value="其他登录插件数据转换" /> (可能需要一些时间，请耐心等待！)</span>
+	  </form>
 	  <h3>卸载插件</h3>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
 		<span class="submit"><input type="submit" name="wptm_delete" value="卸载 WordPress连接微博" onclick="return confirm('您确定要卸载WordPress连接微博？')" /></span>
 	  </form>
+	  <p><strong>友情提示：</strong></p>
+	  <p style="color:green"><strong>从灯鹭wordpressV1.0旧版升级的用户需要在灯鹭平台修改回调地址。<a href="http://www.denglu.cc/source/wordpress2.0.html#old_update" target="_blank">详细描述</a></strong></p>
+	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
+	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
 	<?php } ?>
     </div>
     <div id="sync">
@@ -364,7 +369,7 @@ function wp_connect_do_page() {
 	    <table class="form-table">
             <tr>
                 <td width="25%" valign="top">是否开启“社会化评论”功能</td>
-                <td><input name="enable_comment" type="checkbox" value="1" <?php if($wptm_comment['enable_comment']) echo "checked "; ?>></td>
+                <td><input name="enable_comment" type="checkbox" value="1" <?php if($wptm_comment['enable_comment']) echo "checked "; ?>> <a href="http://www.denglu.cc/comment.html" target="_blank">查看官方网站</a></td>
             </tr>
 		    <tr>
 			    <td width="25%" valign="top">单篇文章评论开关</td>
@@ -375,6 +380,9 @@ function wp_connect_do_page() {
           <input type="submit" name="comment_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
+	  <h3>导入导出</h3>
+	  <p>导入数据到灯鹭平台。导入后，您原有的网站评论将在“灯鹭社会化评论”的评论框内显示。</p>
+	  <p><form method="post" action="options-general.php?page=wp-connect#comment"><span class="submit"><input type="submit" name="importComment" value="评论导入" /> (可能需要一些时间，请耐心等待！)</span></form></p>
 	  <span style="color:green"><p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p><strong><p>评论的相关设置及管理，请在灯鹭平台操作。</p><p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu-comments/" target="_blank">社会化评论</a> 插件</p></strong></span>
     </div>
     <div id="open">

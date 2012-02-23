@@ -34,34 +34,6 @@ function wp_connect_init() {
 		connect_denglu();
 	}
 }
-
-// 通过数字mediaID获得tid (2.0)
-function get_tid($id) {
-	$name = array('1' => 'gtid',
-		'2' => 'mtid',
-		'3' => 'stid',
-		'4' => 'qtid',
-		'5' => 'shtid',
-		'6' => 'ntid',
-		'7' => 'rtid',
-		'8' => 'ktid',
-		'9' => 'dtid',
-		'10' => 'sdotid',
-		'11' => 'ydtid',
-		'12' => 'ytid',
-		'13' => 'qqtid',
-		'14' => 'dreamtid',
-		'15' => 'alitid',
-		'16' => 'tbtid',
-		'17' => 'tytid',
-		'18' => 'alitid',
-		'19' => 'bdtid',
-		'20' => 'ktid',
-		'21' => 'wytid',
-		'22' => 'qqtid'
-		);
-	return $name[$id];
-} 
 // 通过tid获取微博信息
 function get_weibo($tid) {
 	$name = array('gtid' => array('google', 'google', 'Google', '', ''),
@@ -226,95 +198,8 @@ function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
 			$tip = "很遗憾！用户名 $user_name 已被占用。";
 		} 
 	} 
-	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" /></a></p>");
+	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" border=\"0\" /></a></p>");
 }
-
-/**
- * 登录 格式化
- * @since 2.1
- */
-function denglu_userInfo() {
-	global $wptm_basic;
-	if (!$wptm_basic['appid'] || !$wptm_basic['appkey']) {
-		wp_die("出错了，请先在插件页的 “基本设置” 页面填写 站点设置 必需的APP ID和 APP Key");
-	} 
-	require(dirname(__FILE__) . "/class/Denglu.php");
-	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
-	if (!empty($_GET['token'])) {
-		try {
-			$user = $api -> getUserInfoByToken($_GET['token']);
-		} 
-		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
-			wp_die($e -> geterrorDescription()); //返回错误信息
-		} 
-	} 
-	return $user;
-} 
-
-function connect_denglu() {
-	$user = denglu_userInfo();
-	$username = $user['mediaUserID'];
-	$homepage = $user['homepage'];
-	$mediaID = $user['mediaID'];
-	$tid = get_tid($mediaID);
-	$weibo = get_weibo($tid);
-	$mid = str_replace('tid', 'mid', $tid);
-	if ($homepage) {
-		$id = $weibo[1] . 'id';
-		$userid = str_replace($weibo[3], '', $homepage);
-	} elseif ($tid == 'qqtid') {
-		$id = $weibo[1] . 'id';
-		$path = explode('/', $user['profileImageUrl']);
-		$userid = $path[5];
-	} else {
-		$id = $mid;
-		$userid = $username;
-	} 
-	if ($user['email']) {
-		$email = $user['email'];
-		if ($id == $mid) {
-			$uid = ifab(email_exists($email), get_user_by_meta_value($id, $userid));
-		} else { // netease
-			$uid = ifabc(email_exists($email), get_user_by_meta_value($id, $userid), get_user_by_meta_value($mid, $username));
-		} 
-	} else {
-		$domain = ifab($weibo[4], 'denglu.cc');
-		if ($homepage) {
-			$email = $userid . '@' . $domain;
-		} else {
-			$email = $username . '@' . $domain;
-		} 
-		if ($id == $mid) {
-			$uid = get_user_by_meta_value($id, $userid);
-		} else {
-			$uid = ifab(get_user_by_meta_value($id, $userid), get_user_by_meta_value($mid, $username));
-		} 
-	} 
-	if (is_user_logged_in()) { // v2.1
-		if (($wpuid = $_SESSION['user_id']) && ($url_back = $_SESSION['wp_url_bind'])) {
-			if ($uid) {
-				$userinfo = wp_get_user_info($uid);
-				$user_login = $userinfo['user_login'];
-				wp_die("很遗憾！该帐号已被用户名 $user_login 绑定，您可以用该 <a href=\"" . wp_logout_url() . "\">用户名</a> 登录，并到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面解除绑定，再进行绑定该帐号！<strong>如果不能成功，请删除那个WP帐号，再进行绑定！</strong> <a href='$url_back'>返回</a>");
-			} else {
-				update_usermeta($wpuid, $mid, $username);
-				if ($homepage || $tid == 'qqtid') { // sina,tqq,sohu,netease,renren,kaixin,douban,qq,tianya
-					update_usermeta($wpuid, $weibo[1] . 'id', $userid);
-					if ($tid == 'qqtid')
-						update_usermeta($wpuid, $tid, $user['profileImageUrl']);
-				} 
-			} 
-		} 
-	} else {
-		$url = ifab($user['url'], $homepage);
-		$userinfo = array($tid, $username, $user['screenName'], $user['profileImageUrl'], $url, $userid, $username); //tid,username,nick,head,url,userid,mediaUserID
-		if ($uid) {
-			wp_connect_login($userinfo, $email, $uid);
-		} else {
-			wp_connect_login($userinfo, $email);
-		} 
-	} 
-} 
 
 /**
  * 登录
@@ -379,6 +264,14 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 			'user_email' => $tmail
 		);
 		$wpuid = wp_insert_user($userdata);
+		if (!is_numeric($wpuid)) {
+			$errors = $wpuid -> errors;
+			if ($errors['existing_user_email']) {
+				wp_die("该电子邮件地址 {$tmail} 已被注册。 [ <a href='$redirect_to'>返回</a> ]");
+			} elseif ($errors['existing_user_login']) {
+				wp_die("该用户名 {$user_name} 已被注册。 [ <a href='$redirect_to'>返回</a> ]");
+			}
+		}
 	} 
 	if ($wpuid) {
 		$weibo = get_weibo($tid);
@@ -465,48 +358,6 @@ function wp_connect_profile_fields($user) {
 		denglu_bindInfo($user);
 	} 
 	echo '</table>';
-}
-
-// 绑定帐号
-function denglu_bind_account($user) {
-	$account = array('qzone' => array(ifab($user -> qqid, $user -> qqmid), '腾讯QQ', 13),
-		'sina' => array(ifab($user -> stid, $user -> smid), '新浪微博', 3),
-		'tencent' => array(ifab($user -> tqqid, $user -> qmid), '腾讯微博', 4),
-		'renren' => array(ifab($user -> renrenid, $user -> rmid), '人人网', 7),
-		'taobao' => array($user -> tbmid, '淘宝网', 16),
-		'alipayquick' => array($user -> alimid, '支付宝', 18),
-		'douban' => array(ifab($user -> dtid, $user -> dmid), '豆瓣', 9),
-		'baidu' => array($user -> bdmid, '百度', 19),
-		'kaixin001' => array(ifab($user -> kaixinid , $user -> kmid), '开心网', 8),
-		'sohu' => array(ifab($user -> sohuid, $user -> shmid), '搜狐微博', 5),
-		'netease' => array(ifab($user -> neteaseid, $user -> nmid), '网易微博', 6),
-		'netease163' => array($user -> wymid, '网易通行证', 21),
-		'tianya' => array(ifab($user -> tytid, $user -> tymid), '天涯微博', 17),
-		'windowslive' => array($user -> mmid, 'MSN', 2),
-		'google' => array($user -> gmid, 'Google', 1),
-		'yahoo' => array($user -> ymid, 'Yahoo', 12)
-		);
-	return $account;
-} 
-
-function denglu_bindInfo($user) {
-	global $plugin_url;
-	$user_id = $user -> ID;
-	$_SESSION['user_id'] = $user_id;
-	$_SESSION['wp_url_bind'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-	$url = $plugin_url . '/login.php?user_id=' . $user_id;
-	$account = denglu_bind_account($user);
-	$binds = array_filter($account, filter_value) + $account;
-	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$plugin_url/css/style.css\" />";
-	echo "<tr><th>绑定帐号</th><td><span id=\"login_bind\">";
-	foreach($binds as $key => $vaule) {
-		if ($vaule[0]) {
-			echo "<a href=\"{$url}&meida_id={$vaule[2]}\" title=\"$vaule[1] (已绑定)\" class=\"btn_{$key} bind\" onclick=\"return confirm('Are you sure? ')\"><b></b></a>\r\n";
-		} else {
-			echo "<a href=\"{$url}&bind={$key}\" title=\"$vaule[1]\" class=\"btn_{$key}\"></a>\r\n";
-		} 
-	} 
-	echo "</span><p>( 说明：绑定后，您可以使用用户名或者用合作网站帐号登录本站。)</p></td></tr>";
 }
 
 /**
@@ -685,10 +536,39 @@ function wp_get_user_info($uid) {
 	$userinfo = array('user_login' => $user->user_login, 'user_pass' => $user->user_pass, 'user_email' => $user->user_email, 'user_url' => $user->user_url);
 	return $userinfo;
 }
+// 通过用户ID，获得用户数据
+function get_user_by_uid($user_id, $field = '') {
+	if (empty($field)) {
+		return get_userdata($user_id);
+	} 
+	global $wpdb;
+
+	if (!is_numeric($user_id))
+		return false;
+
+	$user_id = absint($user_id);
+	if (!$user_id)
+		return false;
+
+	$user = wp_cache_get($user_id, 'users');
+
+	if ($user) {
+		return array($field => $user -> $field);
+	} 
+
+	if (!$user = $wpdb -> get_row("SELECT $field FROM $wpdb->users WHERE ID = $user_id LIMIT 1", ARRAY_A))
+		return false;
+	return $user;
+}
 
 function get_username($uid) { // 通过用户ID，获得用户名
-	$user = get_userdata($uid);
-	return $user->user_login;
+	$user = get_user_by_uid($uid, 'user_login');
+	return $user['user_login'];
+}
+
+function get_useremail($uid) { // 通过用户ID，获得用户邮箱
+	$user = get_user_by_uid($uid, 'user_email');
+	return $user['user_email'];
 }
 
 function wp_url_back() {

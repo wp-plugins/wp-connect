@@ -2,8 +2,8 @@
 /**
  * 目的：把基础方法用protected的形式封装在base里，不直接展现给最终用户
  * @author hyperion_cc, smyx
- * @version 1.0.3
- * @created 2012-1-13 10:33:00
+ * @version 1.0.5
+ * @created 2012-2-23 11:45:00
  */
 class Denglu
 {
@@ -32,9 +32,9 @@ class Denglu
 		'getRecommend' => '/api/v3/recommend_user',
 		'sendInvite' => '/api/v3/invite',
 		'register' => '/api/v4/create_account',
-		'importUser' => '/api/v4/import_user'
+		'importUser' => '/api/v4/import_user',
+	    'importComment' => '/api/v4/import_comment'
 	);
-
 
 	/*
 	 * 系统的编码
@@ -126,6 +126,11 @@ class Denglu
 	function importUser($content)
 	{
 		return $this->callApi('importUser',array('appid'=>$this->appID, 'data'=>$content) );
+	}
+
+	function importComment($content)
+	{
+		return $this->callApi('importComment',array('appid'=>$this->appID, 'data'=>$content) );
 	}
 
 	/**
@@ -388,7 +393,7 @@ class Denglu
 				$param[$key] = $this->charsetConvert($v,'UTF-8','GBK');
 			}
 		}
-		$param['timestamp'] = time().'000';
+		$param['timestamp'] = BJTIMESTAMP.'000';
 		$param['sign_type'] = $this->signatureMethod;
 		$param['sign']  = $this->signRequest($param);
 	

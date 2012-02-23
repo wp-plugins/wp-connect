@@ -4,18 +4,18 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人
 Requires at least: 3.0
 Tested up to: 3.3.1
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 
-支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。
+支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。
 
 == Description ==
 
 WordPress连接微博
 
 
-[帮助文档](http://www.denglu.cc/source/wordpress2.0.html) 
+V2 [帮助文档](http://www.denglu.cc/source/wordpress2.0.html) 
 
-[旧版文档](http://loginsns.com/wiki/)
+V1 [旧版文档](http://loginsns.com/wiki/)
 
 
 1. 可以使用QQ空间、腾讯微博、新浪微博、搜狐微博、网易微博、人人网、开心网、豆瓣、淘宝网、支付宝、百度、天涯、MSN、Google、Yahoo、网易通行证等帐号登录WordPress博客，支持同步评论到腾讯微博、新浪微博、搜狐微博、网易微博、豆瓣。
@@ -66,13 +66,17 @@ WordPress连接微博
 
 == Changelog ==
 
+= 2.1.2 =
+
+优化部分代码。
+新增：评论导入功能
+新增：登录 社会化评论的同时也能登录您的网站了！反之亦然。
+
 = 2.1.1 =
-*2012/02/09
 
 修正：评论处头像不能显示的bug
 
 = 2.1 =
-*2012/01/16
 
 修正2.x系列部分bug
 
@@ -83,19 +87,18 @@ WordPress连接微博
 新增：支持使用本地化存储的方式，可以自己替换登录按钮图片，请勾选 默认风格(本地化)
 
 = 2.0.4 =
-*2011/12/30
 
 修正4个升级BUG
 
 = 2.0 =
-*2011/12/27
 
 完成与 [灯鹭平台](http://denglu.cc) 的对接，完美兼容WordPress连接微博旧版和灯鹭WordPress插件V1.0
 
-= 1.9.13 =
-*2011/11/12
+= 1.9.15 =
 
 V1系列最后一个版本，修正10多个bug和细节。
+
+新增：其他登录插件转换为WordPress连接微博插件数据。（登录设置里面）
 
 新增：支持修改WordPress用户名，只能修改一次，超级管理员用户不支持修改。
 
