@@ -99,7 +99,7 @@ if (!function_exists('class_http')) {
 		$r['ssl'] = $arrURL['scheme'] == 'https' || $arrURL['scheme'] == 'ssl';
 		$is_ssl = isset($r['ssl']) && $r['ssl'];
 		if ($is_ssl && !extension_loaded('openssl'))
-			return wp_die('您的主机不支持openssl，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+			return wp_die('您的主机不支持openssl，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
 	} 
 	function class_http($url, $params = array()) {
 		if ($params['http']) {
@@ -114,7 +114,7 @@ if (!function_exists('class_http')) {
 				} elseif (function_exists('fsockopen')) {
 					$class = 'WP_Http_Fsockopen';
 				} else {
-					return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+					return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
 				} 
 			} 
 		} 
@@ -125,7 +125,10 @@ if (!function_exists('class_http')) {
 			$error = $errors['http_request_failed'][0];
 			if (!$error)
 				$error = $errors['http_failure'][0];
-			wp_die('出错了: ' . $error . '<br /><br />可能是您的主机不支持，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+			if ($error == "couldn't connect to host") {
+				return;
+			}
+			wp_die('出错了: ' . $error . '<br /><br />可能是您的主机不支持，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
 		} 
 		return $response['body'];
 	} 
@@ -182,7 +185,7 @@ function get_url_contents($url) {
 		} elseif (function_exists('fsockopen')) {
 			$params['http'] = 'fsockopen';
 		} else {
-			return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php">环境检查</a>');
+			return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
 		} 
 		$params += array("method" => 'GET',
 			"timeout" => 30,
@@ -356,18 +359,26 @@ if (!function_exists('wp_replace')) {
 } 
 // 自定义函数 end
 
-// 匹配视频、图片
+// 匹配视频,图片 优先级
 function wp_multi_media_url($content) {
+	global $wptm_options;
 	preg_match_all('/<embed[^>]+src=[\"\']{1}(([^\"\'\s]+)\.swf)[\"\']{1}[^>]+>/isU', $content, $video);
-	preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
-	$v_sum = count($video[1]);
-	$p_sum = count($image[1]);
-	if ($v_sum > 0) { //优先级 视频 > 图片
-		$url = array("video", $video[1][0]);
-	} elseif ($p_sum > 0) {
-		$url = array("image", $image[1][0]);
+	if (empty($wptm_options['disable_pic'])) {
+		preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
+		$p_sum = count($image[1]);
+		if ($p_sum > 0) {
+			$p = array("image", $image[1][0]);
+		} 
 	} 
-	return $url;
+	$v_sum = count($video[1]);
+	if ($v_sum > 0) {
+		$v = array("video", $video[1][0]);
+	} 
+	if ($wptm_options['first_pic']) {
+		return ifab($p, $v);
+	} else {
+		return ifab($v, $p);
+	} 
 } 
 
 add_action('admin_footer', 'set_admin_footer_define', 1);

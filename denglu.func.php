@@ -157,7 +157,7 @@ function connect_denglu_update_data() {
 	global $wpdb;
 	$wptm_basic = get_option("wptm_basic");
 	if ($wptm_basic['denglu']) return;
-	@ini_set("max_execution_time", 120);
+	@ini_set("max_execution_time", 300);
 	$userids = $wpdb -> get_col($wpdb -> prepare("SELECT $wpdb->users.ID FROM $wpdb->users ORDER BY ID ASC"));
 	foreach ($userids as $uid) {
 		$user = get_userdata($uid);
@@ -214,7 +214,7 @@ function connect_denglu_update_data() {
 // 旧的wordpress连接微博插件，数据转换
 function connect_denglu_update() {
 	global $wptm_basic;
-	@ini_set("max_execution_time", 120);
+	@ini_set("max_execution_time", 300);
 	$userdata = connect_denglu_update_data(); 
 	// return var_dump($userdata);
 	if ($userdata) {
@@ -505,7 +505,7 @@ if (!function_exists('denglu_importComment')) {
 	} 
 	// 导入评论
 	function denglu_importComment() {
-		@ini_set("max_execution_time", 120);
+		@ini_set("max_execution_time", 300);
 		$data = import_comments_to_denglu(); 
 		// return var_dump($data);
 		if ($data) {

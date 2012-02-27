@@ -163,6 +163,7 @@ function wp_connect_update() {
 			'enable_cats' => trim($_POST['enable_cats']),
 			'enable_tags' => trim($_POST['enable_tags']),
 			'disable_pic' => trim($_POST['disable_pic']),
+			'first_pic' => trim($_POST['first_pic']),
 			'new_prefix' => trim($_POST['new_prefix']),
 			'update_prefix' => trim($_POST['update_prefix']),
 			'update_days' => $update_days,
@@ -553,7 +554,7 @@ function wp_connect_publish($post_ID) {
 	@ini_set("max_execution_time", 120);
 	$time = time();
 	$post = get_post($post_ID);
-	$title = wp_replace($post -> post_title);
+	$title = '【'. wp_replace($post -> post_title).'】';
 	$content = $post -> post_content;
 	$excerpt = $post -> post_excerpt;
 	$post_author_ID = $post -> post_author;
@@ -680,8 +681,5 @@ function wp_connect_publish($post_ID) {
 	}
 	// 匹配视频、图片
 	$pic = wp_multi_media_url($content);
-	if($pic[0] == "image" && $wptm_options['disable_pic']) {
-		$pic = '';
-	}
 	wp_update_list($title, $postlink, $pic, $account);
 }
