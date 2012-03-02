@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.1.3
+Version: 2.1.4
 */
 
-define('WP_CONNECT_VERSION', '2.1.3');
+define('WP_CONNECT_VERSION', '2.1.4');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -33,6 +33,12 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 		delete_2_0_bug(); // wp 3.3
 	} 
 	update_option('wptm_version', WP_CONNECT_VERSION);
+}
+
+function install_comments() {
+	global $wptm_basic, $wptm_comment;
+	if ($wptm_comment['enable_comment'] && $wptm_basic['appid'] && $wptm_basic['appkey']) 
+		return true;
 }
 
 add_action('admin_menu', 'wp_connect_add_page');
@@ -163,7 +169,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<p><span style="color:#D54E21;"><strong>该功能属于<a href="http://loginsns.com/wiki/" target="_blank">高级设置</a>版本的一部分。</strong></span></p>';
+		$error = '<p><strong><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/" target="_blank">捐赠版本</a>的独有功能。</strong></p>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -454,7 +460,6 @@ function wp_connect_do_page() {
 	  </form>
 	  <p style="color:green;font-size:13px">注意事项：<br />1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
     </div>
-	<?php if(is_donate()) { ?>
     <div id="share">
       <form method="post" id="formdrag" action="options-general.php?page=wp-connect#share">
         <?php wp_nonce_field('share-options');?>
@@ -550,7 +555,6 @@ function wp_connect_do_page() {
 		<p style="color:green"><strong>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/#more" target="_blank">详细说明</a> ]</strong></p>
       </form>
     </div>
-	<?php } ?>
     <div id="check">
 	<p><iframe width="100%" height="660" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
     </div>

@@ -10,7 +10,8 @@ if ($wptm_connect['enable_connect']) {
 	add_action("register_form", "wp_connect", 12);
 } 
 // 社会化评论
-if (!function_exists('denglu_comments') && $wptm_comment['enable_comment']) {
+if (!function_exists('denglu_comments') && install_comments()) {
+	include_once(dirname(__FILE__) . '/comments-widgets.php'); // 最新评论
 	add_filter('comments_template', 'denglu_comments');
 	function denglu_comments($file) {
 		global $post;

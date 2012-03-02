@@ -143,8 +143,12 @@ function wp_connect_update() {
 		return connect_denglu_update();
 	}
 	if (isset($_POST['importComment'])) { // 评论导入到灯鹭
-		denglu_importComment();
-		echo '<div class="updated"><p><strong>评论导入成功！</strong></p></div>';
+		if (function_exists('denglu_importComment')) {
+			denglu_importComment();
+			echo '<div class="updated"><p><strong>评论导入成功！</strong></p></div>';
+		} else {
+			echo '<div class="updated"><p><strong>请先开启社会化评论，并填写APP ID和APP Key</strong></p></div>';
+		}
 		return;
 	} 
 	// 评论

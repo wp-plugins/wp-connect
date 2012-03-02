@@ -176,9 +176,9 @@ $('#update').click(function () {
     return false;
   }
 });
-$('.wrap').click(function () {
-   $('.updated').slideUp("normal");
-});
+//$('.wrap').click(function () {
+//   $('.updated').slideUp("normal");
+//});
 $(function () {
    $('.show_botton').append( $('.hide_botton').html() );
    $('.hide_botton').hide();

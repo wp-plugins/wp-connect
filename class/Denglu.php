@@ -33,7 +33,9 @@ class Denglu
 		'sendInvite' => '/api/v3/invite',
 		'register' => '/api/v4/create_account',
 		'importUser' => '/api/v4/import_user',
-	    'importComment' => '/api/v4/import_comment'
+	    'importComment' => '/api/v4/import_comment',
+		'commentCount' => '/api/v4/get_comment_count',
+	    'latestComment' => '/api/v4/latest_comment'
 	);
 
 	/*
@@ -131,6 +133,16 @@ class Denglu
 	function importComment($content)
 	{
 		return $this->callApi('importComment',array('appid'=>$this->appID, 'data'=>$content) );
+	}
+
+	function commentCount($postid = '', $url = '') // $postid,$url´«Ò»¸ö
+	{
+		return $this->callApi('commentCount',array('appid'=>$this->appID, 'postid'=>$postid, 'url'=>$url) );
+	}
+
+	function latestComment($count)
+	{
+		return $this->callApi('latestComment',array('appid'=>$this->appID, 'count'=>$count) );
 	}
 
 	/**

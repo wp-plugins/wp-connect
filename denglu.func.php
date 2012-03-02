@@ -378,7 +378,7 @@ function denglu_bindInfo($user) {
 /**
  * 评论导入 v2.1.2
  */
-if (!function_exists('denglu_importComment')) {
+if (!function_exists('denglu_importComment') && install_comments()) {
 	// 通过Userid或者email获取tid
 	function get_usertid($email, $user_id = '') {
 		if ($last_login = get_user_meta($user_id, 'last_login', true)) {
@@ -535,5 +535,93 @@ if (!function_exists('denglu_importComment')) {
 		} 
 	} 
 } 
+/**
+ * 评论数 + 最新评论 v2.1.4
+ */
+if (!function_exists('denglu_comments_number') && install_comments()) {
+	// 获取评论数
+	function get_denglu_comment_counts($postid = '') {
+		global $wptm_basic;
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+		try {
+			$output = $api -> commentCount($postid);
+		} 
+		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+			// wp_die($e -> geterrorDescription()); //返回错误信息
+		} 
+		// return var_dump($output);
+		// $output = array(array("id"=>"160", "url"=>"http://open.denglu.cc", "count"=>160),array("id"=>"144", "url"=>"http://open.denglu.cc", "count"=>144));
+		if ($output) {
+			foreach($output as $vaule) {
+				$count[$vaule['id']] = $vaule['count'];
+			} 
+			return $count;
+		} 
+	} 
+	function get_denglu_comments_number($postid = '') {
+		if (!$postid) $postid = get_the_ID();
+		if ($_COOKIE["denglu_comment_counts"]) {
+			$count = json_decode(stripslashes($_COOKIE["denglu_comment_counts"]), true);
+		} else {
+			$count = get_denglu_comment_counts();
+		} 
+		return $count[$postid] ? $count[$postid] : 0;
+	} 
+	// 获取最新评论
+	function get_denglu_recent_comments($count = '') {
+		global $wptm_basic;
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+		try {
+			$output = $api -> latestComment($count);
+		} 
+		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+			// wp_die($e -> geterrorDescription()); //返回错误信息
+		} 
+		return $output;
+	} 
+	// 设置cookies
+	function denglu_comment_counts_cookie() {
+		if (!is_admin()) {
+			if (!$_COOKIE["denglu_comment_counts"]) {
+				if ($count = get_denglu_comment_counts()) {
+					setcookie("denglu_comment_counts", json_encode($count), time() + 1800); //缓存30分钟
+				}
+			} 
+			if (!$_COOKIE["denglu_recent_comments"]) {
+				if ($comments = get_denglu_recent_comments()) {
+					setcookie("denglu_recent_comments", json_encode($comments), time() + 300); //缓存5分钟
+				}
+			} 
+		} 
+	} 
+	add_action('init', 'denglu_comment_counts_cookie', 0);
 
+	function denglu_recent_comments($comments) {
+		if (is_array($comments)) {
+			echo '<ul id="denglu_recentcomments">';
+			foreach($comments as $comment) {
+				echo "<li>" . $comment['name'] . ": <a href=\"{$comment['url']}\">" . $comment['content'] . "...</a></li>";
+			} 
+			echo '</ul>';
+		} 
+	} 
+	// 替换自带的评论数函数
+	function denglu_comments_number($zero = false, $one = false, $more = false, $deprecated = '') {
+		global $id;
+		$number = get_denglu_comments_number($id);
+		if ($number > 1)
+			$output = str_replace('%', number_format_i18n($number), (false === $more) ? __('% Comments') : $more);
+		elseif ($number == 0)
+			$output = (false === $zero) ? __('No Comments') : $zero;
+		else // must be one
+			$output = (false === $one) ? __('1 Comment') : $one;
+
+		echo apply_filters('denglu_comments_number', $output, $number);
+	} 
+
+	add_filter('comments_number', 'denglu_comments_number');
+	add_filter('get_comments_number', 'get_denglu_comments_number', 0);
+}
 ?>
