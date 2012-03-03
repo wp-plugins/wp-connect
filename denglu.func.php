@@ -254,7 +254,7 @@ function denglu_userInfo() {
 	if (!$wptm_basic['appid'] || !$wptm_basic['appkey']) {
 		wp_die("出错了，请先在插件页的 “基本设置” 页面填写 站点设置 必需的APP ID和 APP Key");
 	} 
-	require(dirname(__FILE__) . "/class/Denglu.php");
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
 	if (!empty($_GET['token'])) {
 		try {
