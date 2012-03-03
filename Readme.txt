@@ -10,6 +10,8 @@ Stable tag: 2.1.5
 
 == Description ==
 
+插件名称：WordPress连接微博
+
 [帮助文档](http://www.denglu.cc/source/wordpress2.0.html) 
 
 [旧版文档](http://loginsns.com/wiki/)
