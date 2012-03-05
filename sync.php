@@ -510,7 +510,7 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布
- * @since 1.9.14
+ * @since 1.9.17
  */
 function wp_connect_publish($post_ID) {
 	if (isset($_POST['publish_no_sync'])) {
@@ -646,6 +646,6 @@ function wp_connect_publish($post_ID) {
 	    $title = $tags . $title;
 	}
 	// 匹配视频、图片
-	$pic = wp_multi_media_url($content);
+	$pic = wp_multi_media_url($content, $post_ID);
 	wp_update_list($title, $postlink, $pic, $account);
 } 
