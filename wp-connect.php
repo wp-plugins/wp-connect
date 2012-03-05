@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.1.5
+Version: 2.1.6
 */
 
-define('WP_CONNECT_VERSION', '2.1.5');
+define('WP_CONNECT_VERSION', '2.1.6');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -39,6 +39,18 @@ function install_comments() {
 	global $wptm_basic, $wptm_comment;
 	if ($wptm_comment['enable_comment'] && $wptm_basic['appid'] && $wptm_basic['appkey']) 
 		return true;
+}
+
+if (!function_exists('default_values')) { // 设置默认值
+	function default_values($key, $vaule, $array) {
+		if (!is_array($array)) {
+			return true;
+		} else {
+			if ($array[$key] == $vaule || !array_key_exists($key, $array)) {
+				return true;
+		    }
+		}
+	} 
 }
 
 add_action('admin_menu', 'wp_connect_add_page');
@@ -375,11 +387,19 @@ function wp_connect_do_page() {
 	    <table class="form-table">
             <tr>
                 <td width="25%" valign="top">是否开启“社会化评论”功能</td>
-                <td><input name="enable_comment" type="checkbox" value="1" <?php if($wptm_comment['enable_comment']) echo "checked "; ?>> <a href="http://www.denglu.cc/comment.html" target="_blank">查看官方网站</a></td>
+                <td><input name="enable_comment" type="checkbox" value="1" <?php if($wptm_comment['enable_comment']) echo "checked "; ?> /> <a href="http://www.denglu.cc/comment.html" target="_blank">查看官方网站</a></td>
             </tr>
 		    <tr>
 			    <td width="25%" valign="top">单篇文章评论开关</td>
-			    <td><label><input name="comments_open" type="checkbox" value="1" <?php if(!$wptm_comment || $wptm_comment['comments_open']) echo "checked "; ?>>继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能。</label></td>
+			    <td><label><input name="comments_open" type="checkbox" value="1" <?php if(default_values('comments_open', 1, $wptm_comment)) echo "checked ";?> />继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能。</label></td>
+		    </tr>
+		    <tr>
+			    <td width="25%" valign="top">评论数</td>
+			    <td><label><input name="comments_count" type="checkbox" value="1" <?php if(default_values('comments_count', 1, $wptm_comment)) echo "checked ";?> />使用灯鹭社会化评论统计的文章评论数</label></td>
+		    </tr>
+		    <tr>
+			    <td width="25%" valign="top">最新评论</td>
+			    <td><label><input name="latest_comments" type="checkbox" value="1" <?php if($wptm_comment['latest_comments']) echo "checked "; ?> />是否开启侧边栏“最新评论”功能 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
 		    </tr>
         </table>
         <p class="submit">

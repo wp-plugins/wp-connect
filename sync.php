@@ -153,7 +153,7 @@ function wp_connect_update() {
 	} 
 	// 评论
 	if (isset($_POST['comment_options'])) {
-		update_option("wptm_comment", array('enable_comment'=>trim($_POST['enable_comment']),'comments_open'=>trim($_POST['comments_open'])));
+		update_option("wptm_comment", array('enable_comment'=>trim($_POST['enable_comment']),'comments_open'=>trim($_POST['comments_open']),'comments_count'=>trim($_POST['comments_count']),'latest_comments'=>trim($_POST['latest_comments'])));
 		echo $updated;
 	}
     // Denglu.cc End
@@ -548,7 +548,7 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布
- * @since 1.9.14
+ * @since 1.9.17
  */
 function wp_connect_publish($post_ID) {
 	if (isset($_POST['publish_no_sync'])) {
@@ -684,6 +684,6 @@ function wp_connect_publish($post_ID) {
 	    $title = $tags . $title;
 	}
 	// 匹配视频、图片
-	$pic = wp_multi_media_url($content);
+	$pic = wp_multi_media_url($content, $post_ID);
 	wp_update_list($title, $postlink, $pic, $account);
 }

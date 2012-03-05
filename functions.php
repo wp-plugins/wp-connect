@@ -360,14 +360,19 @@ if (!function_exists('wp_replace')) {
 // 自定义函数 end
 
 // 匹配视频,图片 优先级
-function wp_multi_media_url($content) {
+function wp_multi_media_url($content, $post_ID = '') {
 	global $wptm_options;
 	preg_match_all('/<embed[^>]+src=[\"\']{1}(([^\"\'\s]+)\.swf)[\"\']{1}[^>]+>/isU', $content, $video);
 	if (empty($wptm_options['disable_pic'])) {
-		preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
-		$p_sum = count($image[1]);
-		if ($p_sum > 0) {
-			$p = array("image", $image[1][0]);
+		if ($post_ID && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
+			$image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post_ID), 'full');
+			$p = array("image", $image_url[0]);
+		} else {
+			preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
+			$p_sum = count($image[1]);
+			if ($p_sum > 0) {
+				$p = array("image", $image[1][0]);
+			} 
 		} 
 	} 
 	$v_sum = count($video[1]);

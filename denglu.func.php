@@ -536,7 +536,7 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 	} 
 } 
 /**
- * 评论数 + 最新评论 v2.1.4
+ * 评论数 + 最新评论 v2.1.6
  */
 if (!function_exists('denglu_comments_number') && install_comments()) {
 	// 获取评论数
@@ -559,12 +559,16 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 			return $count;
 		} 
 	} 
+
 	function get_denglu_comments_number($postid = '') {
 		if (!$postid) $postid = get_the_ID();
 		if ($_COOKIE["denglu_comment_counts"]) {
 			$count = json_decode(stripslashes($_COOKIE["denglu_comment_counts"]), true);
+		} elseif ($_SESSION['denglu_comment_counts']) {
+			$count = $_SESSION['denglu_comment_counts'];
 		} else {
 			$count = get_denglu_comment_counts();
+			$_SESSION['denglu_comment_counts'] = $count;
 		} 
 		return $count[$postid] ? $count[$postid] : 0;
 	} 
@@ -583,16 +587,17 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 	} 
 	// 设置cookies
 	function denglu_comment_counts_cookie() {
+		global $wptm_comment;
 		if (!is_admin()) {
-			if (!$_COOKIE["denglu_comment_counts"]) {
+			if (default_values('comments_count', 1, $wptm_comment) && !$_COOKIE["denglu_comment_counts"]) {
 				if ($count = get_denglu_comment_counts()) {
 					setcookie("denglu_comment_counts", json_encode($count), time() + 1800); //缓存30分钟
-				}
+				} 
 			} 
-			if (!$_COOKIE["denglu_recent_comments"]) {
+			if ($wptm_comment['latest_comments'] && used_widget('wp-connect-comment-widget') && !$_COOKIE["denglu_recent_comments"]) {
 				if ($comments = get_denglu_recent_comments()) {
 					setcookie("denglu_recent_comments", json_encode($comments), time() + 300); //缓存5分钟
-				}
+				} 
 			} 
 		} 
 	} 
@@ -621,7 +626,23 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 		echo apply_filters('denglu_comments_number', $output, $number);
 	} 
 
-	add_filter('comments_number', 'denglu_comments_number');
-	add_filter('get_comments_number', 'get_denglu_comments_number', 0);
-}
+	if (!function_exists('used_widget')) {
+		function used_widget($widget) {
+			$vaule = get_option('widget_' . $widget);
+			if (is_array($vaule) && count($vaule) > 1) {
+				return true;
+			} 
+		} 
+	} 
+
+	if ($wptm_comment['latest_comments']) {
+		include_once(dirname(__FILE__) . '/comments-widgets.php'); // 最新评论 小工具
+	} 
+
+	if (default_values('comments_count', 1, $wptm_comment)) {
+		add_filter('comments_number', 'denglu_comments_number');
+		add_filter('get_comments_number', 'get_denglu_comments_number', 0);
+	} 
+} 
+
 ?>

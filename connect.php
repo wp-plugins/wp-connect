@@ -11,7 +11,6 @@ if ($wptm_connect['enable_connect']) {
 } 
 // 社会化评论
 if (!function_exists('denglu_comments') && install_comments()) {
-	include_once(dirname(__FILE__) . '/comments-widgets.php'); // 最新评论
 	add_filter('comments_template', 'denglu_comments');
 	function denglu_comments($file) {
 		global $post;

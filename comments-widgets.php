@@ -22,9 +22,12 @@ if (!class_exists('WP_Connect_Comment_Widget')) {
 				echo $before_title . $title . $after_title;
 			if ($_COOKIE["denglu_recent_comments"]) {
 				$comments = array_slice(json_decode(stripslashes($_COOKIE["denglu_recent_comments"]), true), 0, $number , true);
+		    } elseif (is_array($_SESSION['denglu_recent_comments'])) {
+				$comments = array_slice($_SESSION['denglu_recent_comments'], 0, $number , true);
 			} else {
 				$comments = get_denglu_recent_comments($number);
-			} 
+				$_SESSION['denglu_recent_comments'] = $comments;
+			}
 			denglu_recent_comments($comments);
 			echo $after_widget;
 		} 
