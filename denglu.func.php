@@ -48,6 +48,9 @@ function open_appkey() {
 } 
 // 获取已选择平台供应商
 function get_media() {
+	if ($_SESSION['get_media']) {
+		return $_SESSION['get_media'];
+	}
 	global $wptm_basic;
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
@@ -57,8 +60,10 @@ function get_media() {
 	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
 		// wp_die($e->geterrorDescription()); //返回错误信息
 	} 
-	if (is_array($ret))
+	if (is_array($ret)) {
+		$_SESSION['get_media'] = $ret;
 		return $ret;
+	}
 } 
 // 获取到用户的所有平台账号绑定关系
 function get_bindInfo($muid, $uid = '') {
