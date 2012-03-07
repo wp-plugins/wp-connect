@@ -557,7 +557,7 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 		} 
 		// return var_dump($output);
 		// $output = array(array("id"=>"160", "url"=>"http://open.denglu.cc", "count"=>160),array("id"=>"144", "url"=>"http://open.denglu.cc", "count"=>144));
-		if ($output) {
+		if (is_array($output)) {
 			foreach($output as $vaule) {
 				$count[$vaule['id']] = $vaule['count'];
 			} 
