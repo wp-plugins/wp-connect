@@ -1,4 +1,23 @@
 <?php
+// 支持同步的平台名称
+function wp_sync_list() {
+	$weibo = array("twitter" => "Twitter",
+		"qq" => "腾讯微博",
+		"sina" => "新浪微博",
+		"netease" => "网易微博",
+		"sohu" => "搜狐微博",
+		"renren" => "人人网",
+		"kaixin001" => "开心网",
+		"digu" => "嘀咕",
+		"douban" => "豆瓣",
+		"tianya" => "天涯微博",
+		"fanfou" => "饭否",
+		"renjian" => "人间网",
+		"zuosa" => "做啥",
+		"wbto" => "微博通");
+	return $weibo;
+}
+// 自定义页面同步操作
 function wp_update_page() {
 	$account = wp_option_account();
 	$wptm_options = get_option('wptm_options');
@@ -72,7 +91,7 @@ add_action('wp_connect_action', 'wp_connect_script_page');
 function wp_connect_action() {
 	do_action('wp_connect_action');
 } 
-
+// 自定义页面 HTML
 function wp_to_microblog() {
 	global $plugin_url;
 	$wptm_options = get_option('wptm_options');

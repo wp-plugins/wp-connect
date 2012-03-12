@@ -29,6 +29,33 @@ function get_tid($id) {
 		);
 	return $name[$id];
 } 
+// 判断插件版本
+function this_version() {
+	global $wpdb;
+	$wptm_basic = get_option('wptm_basic');
+	$wptm_options = get_option('wptm_options');
+	$wptm_connect = get_option('wptm_connect');
+	if ($wptm_basic['denglu'] == 1) {
+		$version = 1; //已经安装了最新版
+	} elseif ($wptm_basic || $wptm_options || $wptm_connect) {
+		if ($wptm_basic['appid'] && $wptm_basic['appkey']) {
+			$version = 2;  //wordpress连接微博旧版,需要点击 数据升级
+		} else {
+			$version = 3;  //wordpress连接微博旧版,需要点击 升级插件
+		}
+	} elseif ($wpdb->get_var("show tables like 'ecms_denglu_bind_info'") == 'ecms_denglu_bind_info') {
+	    $version = 4; //denglu.cc旧版
+	} else {
+		$version = 5; //全新安装
+	}
+	return $version;
+}
+// 是否安装了灯鹭社会化评论
+function install_comments() {
+	global $wptm_basic, $wptm_comment;
+	if ($wptm_comment['enable_comment'] && $wptm_basic['appid'] && $wptm_basic['appkey'])
+		return true;
+} 
 // 开放平台KEY,重组
 function open_appkey() {
 	$keys = get_option('wptm_key');
@@ -45,7 +72,54 @@ function open_appkey() {
 		$out[] = array('mediaID' => $mediaID, 'apikey' => $key[0], 'appsecret' => $key[1]);
 	} 
 	return $out;
-} 
+}
+// 保存设置
+function wp_connect_update_denglu() {
+	$updated = '<div class="updated"><p><strong>' . __('Settings saved.') . '</strong></p></div>'; 
+	if (isset($_POST['basic_options'])) { // 站点设置
+		$basic_options = array('appid' => trim($_POST['appid']),
+			'appkey' => trim($_POST['appkey']),
+			'denglu' => $_POST['denglu']
+			);
+		update_option("wptm_basic", $basic_options);
+		echo $updated;
+	} 
+	if (isset($_POST['wptm_denglu'])) { // 删除返回的灯鹭帐号、密码
+		return delete_option("wptm_denglu");
+	} 
+	if (isset($_POST['connect_denglu'])) { // 连接denglu.cc，首次安装
+		return connect_denglu_first();
+	} 
+	if (isset($_POST['connect_denglu_update'])) { // 旧的wordpress连接微博插件，升级安装
+		return connect_denglu_first_update();
+	} 
+	if (isset($_POST['update_denglu'])) { // 旧的灯鹭插件升级
+		@require(ABSPATH . "denglu/lib/denglu_cache.php");
+		if ($denglu_cache) {
+			update_option("wptm_basic", array('appid' => $denglu_cache['denglu_appid'], 'appkey' => $denglu_cache['denglu_appkey'], 'denglu' => 1));
+		} 
+		return update_denglu_old();
+	} 
+	if (isset($_POST['wptm_data'])) { // 旧的wordpress连接微博插件，数据转换
+		return connect_denglu_update();
+	} 
+	if (isset($_POST['importComment'])) { // 评论导入到灯鹭
+		if (function_exists('denglu_importComment')) {
+			denglu_importComment();
+			echo '<div class="updated"><p><strong>评论导入成功！</strong></p></div>';
+		} else {
+			echo '<div class="updated"><p><strong>请先开启社会化评论，并填写APP ID和APP Key</strong></p></div>';
+		} 
+		return;
+	} 
+	// 评论
+	if (isset($_POST['comment_options'])) {
+		update_option("wptm_comment", array('enable_comment' => trim($_POST['enable_comment']), 'comments_open' => trim($_POST['comments_open']), 'comments_count' => trim($_POST['comments_count']), 'latest_comments' => trim($_POST['latest_comments'])));
+		echo $updated;
+	} 
+}
+add_action('save_connent_options', 'wp_connect_update_denglu',5);
+
 // 获取已选择平台供应商
 function get_media() {
 	if ($_SESSION['get_media']) {
@@ -65,6 +139,18 @@ function get_media() {
 		return $ret;
 	}
 } 
+// 灯鹭同步 v2.0
+function wp_update_share($mediaUserID, $content, $url) {
+	global $wptm_basic;
+	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+    $api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+	try {
+		return $api -> share( $mediaUserID, $content, $url, '' );
+	}
+	catch(DengluException $e) {
+		wp_die($e->geterrorDescription());
+	}
+}
 // 获取到用户的所有平台账号绑定关系
 function get_bindInfo($muid, $uid = '') {
 	$wptm_basic = get_option("wptm_basic");

