@@ -85,7 +85,7 @@ function sync_account($uid) {
 } 
 
 function wp_connect_button() {
-	global $login_loaded, $plugin_url, $wptm_connect;
+	global $login_loaded, $plugin_url, $wptm_basic, $wptm_connect;
 	$style = stripslashes($wptm_connect['custom_style']); // 自定义风格
 	if ($wptm_connect['style'] == 4 && $style) {
 		if (strpos($style, 'v=1.0.2&widget=5') !== false && strpos($style, 'style=popup') === false) {
