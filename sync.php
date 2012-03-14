@@ -30,13 +30,15 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布文章时同步
- * @since 1.9.17
+ * @since 1.9.18
  */
+$sync_loaded = 0; // wp bug
 function wp_connect_publish($post_ID) {
-	if (isset($_POST['publish_no_sync'])) {
+	global $sync_loaded, $wptm_options;
+	$sync_loaded += 1;
+	if (isset($_POST['publish_no_sync']) || $sync_loaded > 1) {
 		return;
-	} 
-	global $wptm_options;
+	}
 	@ini_set("max_execution_time", 120);
 	$time = time();
 	$post = get_post($post_ID);
@@ -187,29 +189,30 @@ function wp_connect_publish($post_ID) {
 
  /**
  * 同步列表
- * @since 1.9.17
+ * @since 1.9.18
  */
 function wp_update_list($text, $url, $pic, $account, $post_id = '') {
-	global $wptm_options; 
-	// 兼容旧版本
-	if ($pic[0] == 'image') {
-		$pic = array($pic[1], '', '');
-	} elseif ($pic[0] == 'video') {
-		$pic = array('', $pic[1], '');
-	} elseif ($pic[0] == 'music') {
-		$pic = array('', '', $pic[1]);
-	} 
-	// edit v2.2
-	if ($pic[0]) { // 图片
-		$picture = array('image', $pic[0]);
-	} 
-    if ($pic[1] && $pic[1] != $url) { // 视频
-		$vurl = $pic[1];
-	} elseif (is_array($pic[2])) { // 音乐
-		if ($pic[2][1] && $pic[2][2]) {
-			$vurl = '#' . $pic[2][0] . '#' . $pic[2][1] . ' ' . $pic[2][2]; // #歌手# 歌曲 url
-		} else {
-			$vurl = $pic[2][0]; // url
+	global $wptm_options;
+	if (is_array($pic)) {
+		// 兼容旧版本
+		if ($pic[0] == 'image') {
+			$pic = array($pic[1], '', '');
+		} elseif ($pic[0] == 'video') {
+			$pic = array('', $pic[1], '');
+		} elseif ($pic[0] == 'music') {
+			$pic = array('', '', $pic[1]);
+		} 
+		if ($pic[0]) { // 图片
+			$picture = array('image', $pic[0]);
+		} 
+		if ($pic[1] && $pic[1] != $url) { // 视频
+			$vurl = $pic[1];
+		} elseif (is_array($pic[2])) { // 音乐
+			if ($pic[2][1] && $pic[2][2]) {
+				$vurl = '#' . $pic[2][0] . '#' . $pic[2][1] . ' ' . $pic[2][2]; // #歌手# 歌曲 url
+			} else {
+				$vurl = $pic[2][0]; // url
+			} 
 		} 
 	} 
 	// 是否使用短网址
@@ -217,11 +220,11 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 		$url = get_url_short($url);
 	} 
 	// 处理完毕输出链接
-	$postlink = trim($vurl . ' ' . $url);
+	$postlink = trim($vurl . ' ' . $url); 
 	// 截取字数
 	$status1 = wp_status($text, $postlink, 140); //网易/人人/饭否/做啥
 	$status2 = wp_status($text, urlencode($postlink), 140, 1); //新浪/天涯
-	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心
+	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心  
 	// 开始同步
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$output = array();
@@ -230,16 +233,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 		$output['sina'] = $ms['mid'];
 	} 
 	if ($account['qq']) { // 腾讯微博 /140*
-		if ($wptm_options['first_pic'] && $picture) {
-			$richMedia = $picture;
-		} elseif ($pic[1]) {
-			$richMedia = array('video', $pic[1]);
-		} elseif ($picture) {
-			$richMedia = $picture;
-		} elseif (is_array($pic[2]) && $pic[2][0]) {
-			$richMedia = array('music', $pic[2][0], $pic[2][1], $pic[2][2]);
-		} 
-		$output['qq'] = wp_update_t_qq($account['qq'], $status3, $richMedia);
+		$output['qq'] = wp_update_t_qq($account['qq'], $status3, $pic);
 	} 
 	if ($account['wbto']) { // 微博通 /140+
 		wp_update_wbto($account['wbto'], wp_status($text, $postlink, 140, 1), $picture);

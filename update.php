@@ -110,7 +110,6 @@ function wp_connect_update() {
 			'enable_cats' => trim($_POST['enable_cats']),
 			'enable_tags' => trim($_POST['enable_tags']),
 			'disable_pic' => trim($_POST['disable_pic']),
-			'first_pic' => trim($_POST['first_pic']),
 			'new_prefix' => trim($_POST['new_prefix']),
 			'update_prefix' => trim($_POST['update_prefix']),
 			'update_days' => $update_days,

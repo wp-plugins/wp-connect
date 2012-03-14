@@ -10,8 +10,8 @@ $qq_app_key = ($qq['app_key'] && !$wptm_options['bind']) ? $qq['app_key'] : 'd05
 $qq_app_secret = ($qq['secret'] && !$wptm_options['bind']) ? $qq['secret'] : 'e049e5a4c656a76206e55c91b96805e8';
 $sina_app_key = ($sina['app_key'] && !$wptm_options['bind']) ? $sina['app_key'] : '1624795996';
 $sina_app_secret = ($sina['secret'] && !$wptm_options['bind']) ? $sina['secret'] : '7ecad0335a50c49a88939149e74ccf81';
-$sohu_app_key = ($key[5][0] && !$wptm_options['bind']) ? $key[5][0] : 'O9bieKU1lSKbUBI9O0Nf';
-$sohu_app_secret = ($key[5][1] && !$wptm_options['bind']) ? $key[5][1] : 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u';
+$sohu_app_key = ($key[5][0] && !$wptm_options['bind']) ? $key[5][0] : 'UfnmJanXwQZjD1TvZwTd';
+$sohu_app_secret = ($key[5][1] && !$wptm_options['bind']) ? $key[5][1] : 'Ur7MxoeTc7tegk11!1mTvHg-rp0yJdR5G8mZi7c2';
 $netease_app_key = ($key[6][0] && !$wptm_options['bind']) ? $key[6][0] : '9fPHd1CNVZAKGQJ3';
 $netease_app_secret = ($key[6][1] && !$wptm_options['bind']) ? $key[6][1] : 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO';
 $douban_app_key = '0502b2569b45aed90f081703d1d10c8b';

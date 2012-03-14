@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
-Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。( <a href="http://www.denglu.cc/" target="_blank">灯鹭网</a> 版权所有。)
-Version: 2.2
+Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。
+Version: 2.2.1
 */
 
-define('WP_CONNECT_VERSION', '2.2');
+define('WP_CONNECT_VERSION', '2.2.1');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
@@ -32,6 +32,9 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 		update_option('wptm_basic', $wptm_basic);
 		delete_2_0_bug(); // wp 3.3
 	} 
+	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key v1.9.18
+		$keybug = 1;
+	}
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
 
@@ -44,8 +47,9 @@ include_once(dirname(__FILE__) . '/sync.php');
 include_once(dirname(__FILE__) . '/connect.php');
 include_once(dirname(__FILE__) . '/page.php');
 
-if (!$wptm_key) { // v1.9.12
-	update_option('wptm_key', get_appkey());
+if (!$wptm_key || $keybug) { // v1.9.18
+	if (update_option('wptm_key', get_appkey()) && $wptm_version)
+		update_option('wptm_sohu', '');
 }
 
 if ($wptm_connect['enable_connect'] && $wptm_connect['widget']) {
@@ -229,7 +233,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <th>同步内容设置</th>
-            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label> <label><input name="first_pic" type="checkbox" value="1" <?php checked($wptm_options['first_pic']); ?>>图片优先级大于视频</label></td>
+            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label></td>
           </tr>
           <tr>
             <th>自定义消息</th>

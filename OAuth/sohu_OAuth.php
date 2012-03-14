@@ -48,9 +48,10 @@ class sohuClient
     function update( $text, $value = '' ) 
     {  
         $param = array(); 
-        $param['status'] = urlencode($text); 
+        $param['status'] = urlencode($text);
 
 		if ($value[0] == "image" && $value[1]) {
+			$param['status'] = urlencode($param['status']);
 			$param['pic'] = $value[1];
 			return $this->oauth->post( 'http://api.t.sohu.com/statuses/upload.json' , $param , true );
 		} else {

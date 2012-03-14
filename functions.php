@@ -313,6 +313,9 @@ if (!function_exists('ifabc')) {
 	function ifabc($a, $b, $c) {
 		return $a ? $a : ($b ? $b : $c);
 	} 
+	function ifold($str, $old, $new) { // 以旧换新
+		return (empty($str) || $str == $old) ? $new : $str;
+	}
 } 
 
 /**
@@ -370,7 +373,7 @@ function get_appkey() {
 	$sohu = get_option('wptm_opensohu');
 	$netease = get_option('wptm_opennetease');
 	return array('2' => array($wptm_connect['msn_api_key'], $wptm_connect['msn_secret']),
-		'5' => array(ifab($sohu['app_key'], 'O9bieKU1lSKbUBI9O0Nf'), ifab($sohu['secret'], 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u')),
+		'5' => array(ifold($sohu['app_key'], 'O9bieKU1lSKbUBI9O0Nf', 'UfnmJanXwQZjD1TvZwTd'), ifold($sohu['secret'], 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u', 'Ur7MxoeTc7tegk11!1mTvHg-rp0yJdR5G8mZi7c2')),
 		'6' => array(ifab($netease['app_key'], '9fPHd1CNVZAKGQJ3'), ifab($netease['secret'], 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO')),
 		'7' => array($wptm_connect['renren_api_key'], $wptm_connect['renren_secret']),
 		'8' => array($wptm_connect['kaixin001_api_key'], $wptm_connect['kaixin001_secret']),
@@ -455,10 +458,10 @@ if (default_values('chinese_username', 1, $wptm_connect)) {
 	} 
 	add_filter('sanitize_user', 'sanitize_user_chinese_username', 3, 3);
 }
-// 匹配视频,图片 优先级
+// 匹配视频,图片 优先级 v1.9.18
 function wp_multi_media_url($content, $post_ID = '') {
 	$richMedia = apply_filters('wp_multi_media_url', '', $content, $post_ID);
-	if (is_array($richMedia)) {
+	if (is_array($richMedia) && array_filter($richMedia)) {
 		return $richMedia;
 	} 
 	preg_match_all('/<embed[^>]+src=[\"\']{1}(([^\"\'\s]+)\.swf)[\"\']{1}[^>]+>/isU', $content, $video);
@@ -477,8 +480,9 @@ function wp_multi_media_url($content, $post_ID = '') {
 				$p = $image[1][0];
 			} 
 		} 
-	} 
-	return array($p, $v);
+	}
+	if ($p || $v)
+		return array($p, $v);
 }
 // 同步QQ空间 检测
 function verify_qzone() {
