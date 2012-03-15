@@ -11,7 +11,7 @@ Version: 1.9.18
 define('WP_CONNECT_VERSION', '1.9.18');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
-$plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
+$plugin_url = plugins_url('wp-connect');
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
 $wptm_advanced = get_option('wptm_advanced');

@@ -51,7 +51,7 @@ switch ($login) {
 } 
 
 if ($login) {
-	$callback = get_bloginfo('wpurl') . '/wp-content/plugins/wp-connect/login.php';
+	$callback = plugins_url('wp-connect/login.php');
 	$tok = $to -> getRequestToken($callback);
 	$_SESSION["oauth_token_secret"] = $tok['oauth_token_secret'];
 	$request_link = $to -> getAuthorizeURL($tok['oauth_token'], false, $callback);

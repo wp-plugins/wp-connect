@@ -3,7 +3,7 @@ include "../../../wp-config.php";
 session_start();
 $wptm_key = get_option('wptm_key');
 $config = new stdClass;
-$config -> CALLBACK = get_bloginfo('wpurl') . '/wp-content/plugins/wp-connect/renren.php';
+$config -> CALLBACK = plugins_url('wp-connect/renren.php');
 $config -> APIKey = $wptm_key[7][0];
 $config -> SecretKey = $wptm_key[7][1];
 class_exists('RenRenOauth') or require('OAuth/renren.class.php');

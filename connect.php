@@ -580,8 +580,7 @@ if (!function_exists('connect_login_form_login')) {
  * @since 1.9.10
  */
 function wp_connect_error($userinfo, $tmail, $wpuid = '', $user_email = '') {
-	global $wpurl;
-	$plugin_url = $wpurl . '/wp-content/plugins/wp-connect';
+	$plugin_url = plugins_url('wp-connect');
 	if ($_SESSION['wp_url_back']) {
 		$redirect_to = $_SESSION['wp_url_back'];
 	} else {

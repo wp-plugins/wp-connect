@@ -49,7 +49,7 @@ if (is_user_logged_in()) {
 		return false;
 	} 
 	if ($bind) {
-		$callback = get_bloginfo('wpurl') . '/wp-content/plugins/wp-connect/go.php?callback=' . $bind;
+		$callback = plugins_url('wp-connect/go.php?callback=' . $bind);
 
 		$keys = $a -> getRequestToken($callback);
 
