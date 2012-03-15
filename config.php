@@ -21,8 +21,8 @@ $tianya_app_secret = 'ea401fa98aba3a75f6e65e9a201031c9';
 $twitter_app_key = 'q5Hy9KIYnHX1fEfKZ8Vzog';
 $twitter_app_secret = '9y8GHzzHM77KDJTe79k2vgkMctRrMvtnCNFcuetOUM';
 define("WP_POST" , 'REQUEST');
-define("WP_CONNECT" , $wpurl . '/wp-admin/options-general.php?page=wp-connect');
-define("MY_PLUGIN_URL" , $wpurl . '/wp-content/plugins/wp-connect');
+define("WP_CONNECT" , admin_url('options-general.php?page=wp-connect'));
+define("MY_PLUGIN_URL" , plugins_url('wp-connect'));
 define("BJTIMESTAMP" , $time); //服务器时间校正
 // 腾讯微博
 define("QQ_APP_KEY" , $qq_app_key);

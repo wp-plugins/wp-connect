@@ -11,7 +11,7 @@ Version: 2.2.1
 define('WP_CONNECT_VERSION', '2.2.1');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
-$plugin_url = $wpurl.'/wp-content/plugins/wp-connect';
+$plugin_url = plugins_url('wp-connect');
 $wptm_basic = get_option('wptm_basic'); // denglu
 $wptm_options = get_option('wptm_options');
 $wptm_connect = get_option('wptm_connect');
