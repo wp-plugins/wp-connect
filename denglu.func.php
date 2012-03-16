@@ -29,6 +29,36 @@ function get_tid($id) {
 		);
 	return $name[$id];
 } 
+// 通过平台名称获取微博信息
+function get_theid($name, $nunber = '') {
+	$o = array('qzone' => array('qq', 'qqid', 13),
+		'qq' => array('qq', 'qqid', 13),
+		'sina' => array('s', 'stid', 3),
+		'tencent' => array('q', 'tqqid', 4),
+		'tqq' => array('q', 'tqqid', 4),
+		'renren' => array('r', 'renrenid', 7),
+		'taobao' => array('tb', 'taobaoid', 16),
+		'alipayquick' => array('ali', 'alipayid', 18),
+		'douban' => array('d', 'dtid', 9),
+		'baidu' => array('bd', 'baiduid', 19),
+		'kaixin001' => array('k', 'kaixinid', 8),
+		'kaixin' => array('k', 'kaixinid', 8),
+		'sohu' => array('sh', 'sohuid', 5),
+		'netease' => array('n', 'neteaseid', 6),
+		'netease163' => array('n', 'neteaseid', 21),
+		'tianya' => array('ty', 'tytid', 17),
+		'windowslive' => array('m', 'msnid', 2),
+		'msn' => array('m', 'msnid', 2),
+		'google' => array('g', 'googleid', 1),
+		'yahoo' => array('y', 'yahooid', 12),
+		'twitter' => array('t', 'twitterid')
+		);
+	if (!$nunber && $nunber !== 0) {
+		return $o[$name];
+	} else {
+		return $o[$name][$nunber];
+	} 
+}
 // 判断插件版本
 function this_version() {
 	global $wpdb;
@@ -55,6 +85,14 @@ function install_comments() {
 	global $wptm_basic, $wptm_comment;
 	if ($wptm_comment['enable_comment'] && $wptm_basic['appid'] && $wptm_basic['appkey'])
 		return true;
+} 
+// 是否使用灯鹭的帐号绑定
+function use_denglu_bind() {
+	global $wptm_connect;
+	if (empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments')) {
+		return false;
+	} 
+	return true;
 } 
 // 开放平台KEY,重组
 function open_appkey() {
@@ -427,22 +465,22 @@ function connect_denglu() {
  */
 // 获取已绑定帐号
 function denglu_bind_account($user) {
-	$account = array('qzone' => array(ifab($user -> qqid, $user -> qqmid), '腾讯QQ', 13),
-		'sina' => array(ifab($user -> stid, $user -> smid), '新浪微博', 3),
-		'tencent' => array(ifab($user -> tqqid, $user -> qmid), '腾讯微博', 4),
-		'renren' => array(ifab($user -> renrenid, $user -> rmid), '人人网', 7),
-		'taobao' => array($user -> tbmid, '淘宝网', 16),
-		'alipayquick' => array($user -> alimid, '支付宝', 18),
-		'douban' => array(ifab($user -> dtid, $user -> dmid), '豆瓣', 9),
-		'baidu' => array($user -> bdmid, '百度', 19),
-		'kaixin001' => array(ifab($user -> kaixinid , $user -> kmid), '开心网', 8),
-		'sohu' => array(ifab($user -> sohuid, $user -> shmid), '搜狐微博', 5),
-		'netease' => array(ifab($user -> neteaseid, $user -> nmid), '网易微博', 6),
-		'netease163' => array($user -> wymid, '网易通行证', 21),
-		'tianya' => array(ifab($user -> tytid, $user -> tymid), '天涯微博', 17),
-		'windowslive' => array($user -> mmid, 'MSN', 2),
-		'google' => array($user -> gmid, 'Google', 1),
-		'yahoo' => array($user -> ymid, 'Yahoo', 12)
+	$account = array('qzone' => array(ifab($user -> qqid, $user -> qqmid), '腾讯QQ'),
+		'sina' => array(ifab($user -> stid, $user -> smid), '新浪微博'),
+		'tencent' => array(ifab($user -> tqqid, $user -> qmid), '腾讯微博'),
+		'renren' => array(ifab($user -> renrenid, $user -> rmid), '人人网'),
+		'taobao' => array($user -> tbmid, '淘宝网'),
+		'alipayquick' => array($user -> alimid, '支付宝'),
+		'douban' => array(ifab($user -> dtid, $user -> dmid), '豆瓣'),
+		'baidu' => array($user -> bdmid, '百度'),
+		'kaixin001' => array(ifab($user -> kaixinid , $user -> kmid), '开心网'),
+		'sohu' => array(ifab($user -> sohuid, $user -> shmid), '搜狐微博'),
+		'netease' => array(ifab($user -> neteaseid, $user -> nmid), '网易微博'),
+		'netease163' => array($user -> wymid, '网易通行证'),
+		'tianya' => array(ifab($user -> tytid, $user -> tymid), '天涯微博'),
+		'windowslive' => array($user -> mmid, 'MSN'),
+		'google' => array($user -> gmid, 'Google'),
+		'yahoo' => array($user -> ymid, 'Yahoo')
 		);
 	return $account;
 } 
@@ -459,13 +497,28 @@ function denglu_bindInfo($user) {
 	echo "<tr><th>绑定帐号</th><td><span id=\"login_bind\">";
 	foreach($binds as $key => $vaule) {
 		if ($vaule[0]) {
-			echo "<a href=\"{$url}&meida_id={$vaule[2]}\" title=\"$vaule[1] (已绑定)\" class=\"btn_{$key} bind\" onclick=\"return confirm('Are you sure? ')\"><b></b></a>\r\n";
+			echo "<a href=\"{$url}&del={$key}\" title=\"$vaule[1] (已绑定)\" class=\"btn_{$key} bind\" onclick=\"return confirm('Are you sure? ')\"><b></b></a>\r\n";
 		} else {
 			echo "<a href=\"{$url}&bind={$key}\" title=\"$vaule[1]\" class=\"btn_{$key}\"></a>\r\n";
 		} 
 	} 
 	echo "</span><p>( 说明：绑定后，您可以使用用户名或者用合作网站帐号登录本站。)</p></td></tr>";
 } 
+// 删除用户绑定
+if (!use_denglu_bind()) {
+	function delete_denglu_user_bind($user_id, $name) {
+		if ($theid = get_theid($name)) {
+			$mid = $theid[0] . 'mid';
+			$mediaUID = get_user_meta($user_id, $mid, true);
+			if ($mediaUID) {
+				set_bind($mediaUID);
+				delete_usermeta($user_id, $mid);
+			} 
+		} 
+	} 
+	add_action('delete_user_bind', 'delete_denglu_user_bind', 3, 2);
+}
+
 /**
  * 评论导入 v2.1.2
  */

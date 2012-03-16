@@ -28,7 +28,7 @@ if (!function_exists('denglu_comments') && install_comments()) {
 function get_weibo($tid) {
 	$name = array('gtid' => array('google', 'google', 'Google', '', ''),
 		'mtid' => array('msn', 'msn', 'Windows Live', '', ''),
-		'stid' => array('sina', 'st', '新浪微博', 'http://weibo.com/', 't.sina.com.cn', 'http://tp3.sinaimg.cn/[head]/50/0/1'),
+		'stid' => array('sina', 'st', '新浪微博', 'http://weibo.com/', 'weibo.com', 'http://tp3.sinaimg.cn/[head]/50/0/1'),
 		'qtid' => array('qq', 'tqq', '腾讯微博', 'http://t.qq.com/', 't.qq.com', '[head]/40'),
 		'shtid' => array('sohu', 'sohu', '搜狐微博', 'http://t.sohu.com/u/', 't.sohu.com'),
 		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', ''),
@@ -65,14 +65,6 @@ function login_button_count() {
 	} else {
 		return 2;
 	} 
-} 
-
-function use_denglu_bind() {
-	global $wptm_connect;
-	if (empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments')) {
-		return false;
-	} 
-	return true;
 } 
 
 function sync_account($uid) {
@@ -208,7 +200,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 		$wpuid = '';
 	} 
 
-	if ($tmail != $user_email && ($is_login || !$user_login)) {
+	if ($tmail != $user_email && (!$user_login || ($is_login && in_array(strstr($user_email, '@'), array('@t.sina.com.cn','@weibo.com','@t.qq.com','@renren.com','@kaixin001.com','@douban.com','@t.sohu.com','@t.163.com','@baidu.com','@tianya.cn','@twitter.com','@denglu.cc'))))) {
 		if (!function_exists('wp_insert_user')) {
 			include_once(ABSPATH . WPINC . '/registration.php');
 		} 
@@ -420,6 +412,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} 
 	if ($uid) {
 		$tname = array('@t.sina.com.cn' => 'stid',
+			'@weibo.com' => 'stid',
 			'@t.qq.com' => 'qtid',
 			'@renren.com' => 'rtid',
 			'@kaixin001.com' => 'ktid',

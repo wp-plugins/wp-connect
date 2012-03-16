@@ -12,22 +12,27 @@ if (!is_user_logged_in()) {
 			if ($_SESSION['user_id'] != $user_id) {
 				header('Location:' . $_SERVER['HTTP_REFERER']);
 			} 
-			$mediaID = isset($_GET['meida_id']) ? $_GET['meida_id'] :'';
-			if ($mediaID) { // 解除绑定
-				if ($tid = get_tid($mediaID)) {
-					$weibo = get_weibo($tid);
-					$mid = str_replace('tid', 'mid', $tid);
+			$delete = isset($_GET['del']) ? strtolower($_GET['del']) :'';
+			if ($delete) { // 解除绑定
+				if ($theid = get_theid($delete)) {
+					$mid = $theid[0] . 'mid';
 					$mediaUID = get_user_meta($user_id, $mid, true);
-					set_bind($mediaUID);
-					update_usermeta($user_id, $mid, '');
-					update_usermeta($user_id, $weibo[1] . 'id', ''); //兼容旧版
+					if ($mediaUID) {
+						set_bind($mediaUID);
+						delete_usermeta($user_id, $mid);
+					} 
+					delete_usermeta($user_id, $theid[1]); //兼容旧版
 				} 
 				header('Location:' . $_SERVER['HTTP_REFERER']);
 			} else { // 绑定
-				$wptm_basic = get_option('wptm_basic');
 				$name = isset($_GET['bind']) ? strtolower($_GET['bind']) : '';
-				$open_url = "http://open.denglu.cc/transfer/" . $name . "?appid=" . $wptm_basic['appid'] . '&uid=' . $user_id;
-				header('Location:' . $open_url);
+				if ($name) {
+					$wptm_basic = get_option('wptm_basic');
+					$open_url = "http://open.denglu.cc/transfer/" . $name . "?appid=" . $wptm_basic['appid'] . '&uid=' . $user_id;
+					header('Location:' . $open_url);
+				} else {
+					header('Location:' . $_SERVER['HTTP_REFERER']);
+				} 
 			} 
 		} else {
 			header('Location:' . get_bloginfo('url'));
