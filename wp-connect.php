@@ -138,8 +138,8 @@ function wp_connect_do_page() {
   <div class="tabs">
     <ul class="nav">
       <li><a href="#basic" class="basic">基本设置</a></li>
-	  <?php if ($version == 1) { ?>
       <li><a href="#sync" class="sync">同步微博</a></li>
+	  <?php if ($version == 1) { ?>
       <li><a href="#connect" class="connect">登录设置</a></li>
 	  <li><a href="#comment" class="comment">评论设置</a></li>
 	  <li><a href="#open" class="open">开放平台</a></li>
@@ -216,11 +216,11 @@ function wp_connect_do_page() {
 	    <?php wp_nonce_field('wptm-delete');?>
 		<span class="submit"><input type="submit" name="wptm_delete" value="卸载 WordPress连接微博" onclick="return confirm('您确定要卸载WordPress连接微博？')" /></span>
 	  </form>
-	  <p><strong>友情提示：</strong></p>
-	  <p style="color:green"><strong>从灯鹭wordpressV1.0旧版升级的用户需要在灯鹭平台修改回调地址。<a href="http://www.denglu.cc/source/wordpress2.0.html#old_update" target="_blank">详细描述</a></strong></p>
-	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
-	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
 	<?php } ?>
+	  <h3>友情提示</h3>
+      <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
+	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
+	  <p>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
     </div>
     <div id="sync">
       <form method="post" action="options-general.php?page=wp-connect">
