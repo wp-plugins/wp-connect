@@ -10,9 +10,7 @@ Stable tag: 2.3
 
 == Description ==
 
-插件名称：WordPress连接微博
-
-新浪微博： [ @水脉烟香 ](http://weibo.com/smyx)  [帮助文档](http://www.denglu.cc/source/wordpress2.0.html)   [旧版文档](http://loginsns.com/wiki/)
+新浪微博： [ @水脉烟香](http://weibo.com/smyx)   （ [帮助文档](http://www.denglu.cc/source/wordpress2.0.html)   [旧版文档](http://loginsns.com/wiki/) ）
 
 
 一. 支持使用20家合作网站帐号登录WordPress。 （使用QQ空间、腾讯微博、新浪微博、搜狐微博、网易微博、人人网、开心网、豆瓣、淘宝网、支付宝、百度、天涯、MSN、Google、Yahoo、网易通行证、Twitter、Facebook、360、天翼189等帐号登录WordPress博客。）
