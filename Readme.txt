@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.3.1
 Stable tag: 2.3
 
-支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区，支持使用社会化评论。
+支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
 == Description ==
 
