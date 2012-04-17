@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。
-Version: 2.2.1
+Version: 2.3
 */
 
-define('WP_CONNECT_VERSION', '2.2.1');
+define('WP_CONNECT_VERSION', '2.3');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -20,7 +20,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.4";
+$wp_connect_advanced_version = "1.6.5";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.1', '<') && $wptm_basic) { // v2.0 bug
@@ -35,6 +35,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key v1.9.18
 		$keybug = 1;
 	}
+	update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
 
@@ -74,8 +75,16 @@ function is_donate() { // 2.0
 
 function wp_connect_warning() {
 	global $wp_version,$wp_connect_advanced_version,$wptm_basic, $wptm_options, $wptm_connect, $wptm_version;
-	if (version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || (!$wptm_connect && !$wptm_options))) {
-		echo '<div class="updated">';
+	if (isset($_POST['closeTips'])) {
+		update_option("wptm_tips", '');
+	} 
+	$wptm_tips = get_option("wptm_tips");
+	if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || (!$wptm_connect && !$wptm_options))) {
+		echo '<div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">';
+		if ($wptm_tips) {
+			echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.3 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+			wp_connect_tips();
+	    }
 		if (version_compare($wp_version, '3.0', '<')) {
 			echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
 		} 
@@ -94,6 +103,25 @@ function wp_connect_warning() {
 	}
 }
 add_action('admin_notices', 'wp_connect_warning'); 
+
+function wp_connect_tips() { ?>
+	<p><strong>最新产品——社会化评论：</strong>（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）</p>
+    <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
+	<p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u>（非实时同步，5分钟一次）</p>
+	<p>3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。（非实时同步，5分钟一次）</p>
+	<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单的说，假设您在<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>“评论管理”页面，把一条评论删除了，您网站本地数据库那条评论也一并删除。</p>
+	<p>4、评论支持SE0。</p>
+	<p>5、评论时，可以把文章的图片和视频跟评论一起同步到微博/SNS，当这条微博被评论时还能被抓回您的网站。</p>
+	<p>6、<u>加入灯鹭同步接口，勾选他后，重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来。</u>（在同步微博勾选）</p>
+	<p>7、支持自定义评论模板，方便您根据自身的网站风格设计漂亮的评论界面。（<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>）</p>
+	<p><strong>其他更新</strong></p>
+	<p>1、在个人资料页面，支持将WP用户名与16家合作网站帐号绑定，根据您选择的平台显示。</p>
+	<p>2、同步微博增加 自定义标题格式，默认为 “标题 | ”。</p>
+	<p>3、可以让首次登录的用户强制填写注册信息（在登录设置勾选）</p>
+	<p>4、支持中文用户名。（在登录设置勾选）</p>
+	<p>5、支持优先同步特色图像。（在同步微博勾选）</p>
+<?php
+} 
 
 // 设置
 function wp_connect_do_page() {
@@ -116,17 +144,17 @@ function wp_connect_do_page() {
 		$wptm_share = get_option('wptm_share');
 		$wptm_advanced = get_option('wptm_advanced');
 		if (WP_CONNECT_ADVANCED != "true") {
-			$error = '<p><span style="color:#D54E21;"><strong>请先在高级设置项填写正确授权码！</strong></span></p>';
+			$error = '<div id="tml-tips" class="updated"><p>请先在高级设置项填写正确授权码！</p></div>';
 			if (donate_version('1.5', '>')) {
-				$update_tips = '<p style="color:green;"><strong>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</strong></p>';
+				$update_tips = '<div id="tml-tips" class="updated"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
 			}
 		} else {
 			if (donate_version('1.5.2')) {
-				$donate_152 = '<p><span style="color:#D54E21;"><strong>该捐赠版本不能使用该功能！</strong></span></p>';
+				$donate_152 = '<div id="tml-tips" class="updated"><p>该捐赠版本不能使用该功能！</p></div>';
 			}
 		}
 	} else {
-		$error = '<p><strong><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/" target="_blank">捐赠版本</a>的独有功能。</strong></p>';
+		$error = '<div id="tml-tips" class="updated"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -134,7 +162,7 @@ function wp_connect_do_page() {
 	$_SESSION['wp_url_bind'] = WP_CONNECT;
 ?>
 <div class="wrap">
-  <h2>WordPress连接微博</h2>
+  <div id="icon-themes" class="icon32"><br /></div><h2>WordPress连接微博</h2><div style="float:right;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank" title="PayPal"><img src="<?php echo $plugin_url;?>/images/donate_paypal.gif" /></a>/ <a href="https://me.alipay.com/smyx" target="_blank">支付宝</a></div>
   <div class="tabs">
     <ul class="nav">
       <li><a href="#basic" class="basic">基本设置</a></li>
@@ -149,7 +177,7 @@ function wp_connect_do_page() {
       <li><a href="#advanced" class="advanced">高级设置</a></li>
 	  <?php }} ?>
       <li><a href="#check" class="check">环境检查</a></li>
-      <li><a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">帮助文档</a></li>
+	  <li><a href="#help" class="help">帮助文档</a></li>
     </ul>
     <div id="basic">
       <h3>设置向导</h3>
@@ -217,10 +245,12 @@ function wp_connect_do_page() {
 		<span class="submit"><input type="submit" name="wptm_delete" value="卸载 WordPress连接微博" onclick="return confirm('您确定要卸载WordPress连接微博？')" /></span>
 	  </form>
 	<?php } ?>
-	  <h3>友情提示</h3>
-      <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
-	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
-	  <p>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
+      <div id="tml-tips" class="updated">
+	    <p><strong>友情提示</strong></p>
+        <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
+	    <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
+	    <p>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
+	  </div>
     </div>
     <div id="sync">
       <form method="post" action="options-general.php?page=wp-connect">
@@ -233,7 +263,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <th>同步内容设置</th>
-            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 前缀+标题+链接 2. 前缀+标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 <br /> 把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label></td>
+            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 标题+链接 2. 标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 5. 标题 + 内容 <br /> 自定义标题格式：<input name="format" type="text" size="25" value="<?php echo $wptm_options['format']; ?>" /> ( 标题: <code>%title%</code>，会继承上面的设置，可留空。 )<br />把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label> <label><input name="thumbnail" type="checkbox" value="1" <?php checked($wptm_options['thumbnail']); ?>/>优先同步特色图像</label></td>
           </tr>
           <tr>
             <th>自定义消息</th>
@@ -260,6 +290,10 @@ function wp_connect_do_page() {
             <td width="25%" valign="top">Twitter是否使用代理？</td>
             <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
+		  <tr>
+			<td width="25%" valign="top">选择同步接口</td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_options['denglu_bind']) echo "checked "; ?>/>使用灯鹭开放平台提供的的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
+		  </tr>
           <tr>
             <td width="25%" valign="top">我不能绑定帐号</td>
             <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>(选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
@@ -284,9 +318,38 @@ function wp_connect_do_page() {
             <td width="25%" valign="top">是否开启“社会化登录”功能</td>
             <td><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>> (<a href="http://www.denglu.cc/source/wordpress2.0.html#oprovider" target="_blank">选择合作网站按钮及设置App key</a>)</td>
           </tr>
+		  <tr>
+			<td width="25%" valign="top">注册信息</td>
+			<td><label><input type="checkbox" name="reg" value="1" <?php if($wptm_connect['reg']) echo "checked "; ?>/>用户首次登录时，强制要求用户填写个人信息</label></td>
+		  </tr>
           <tr>
             <td width="25%" valign="top">显示设置</td>
             <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> ) [ <a href="http://www.denglu.cc/source/wordpress_faqs.html#connect-manual" target="_blank">详细说明</a> ]</td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">添加按钮</td>
+            <td><label><input name="qqlogin" type="checkbox" value="qzone" <?php if($wptm_connect['qqlogin']) echo "checked ";?>/>QQ空间</label>
+			  <label><input name="sina" type="checkbox" value="sina" <?php if($wptm_connect['sina']) echo "checked ";?>/>新浪微博</label>
+              <label><input name="qq" type="checkbox" value="tencent" <?php if($wptm_connect['qq']) echo "checked ";?> />腾讯微博</label>
+              <label><input name="renren" type="checkbox" value="renren" <?php if($wptm_connect['renren']) echo "checked ";?> />人人网</label>
+              <label><input name="kaixin001" type="checkbox" value="kaixin001" <?php if($wptm_connect['kaixin001']) echo "checked ";?>/>开心网</label>
+              <label><input name="douban" type="checkbox" value="douban" <?php if($wptm_connect['douban']) echo "checked ";?> />豆瓣</label><br />
+			  <label><input name="taobao" type="checkbox" value="taobao" <?php if($wptm_connect['taobao']) echo "checked ";?> />淘宝网</label>
+			  <label><input name="alipay" type="checkbox" value="alipayquick" <?php if($wptm_connect['alipay']) echo "checked ";?>/>支付宝</label>
+			  <label><input name="baidu" type="checkbox" value="baidu" <?php if($wptm_connect['baidu']) echo "checked ";?>/>百度</label>
+              <label><input name="sohu" type="checkbox" value="sohu" <?php if($wptm_connect['sohu']) echo "checked ";?> />搜狐微博</label>
+              <label><input name="netease" type="checkbox" value="netease" <?php if($wptm_connect['netease']) echo "checked ";?> />网易微博</label>
+              <label><input name="tianya" type="checkbox" value="tianya" <?php if($wptm_connect['tianya']) echo "checked "; ?>/>天涯</label>
+			  <label><input name="guard360" type="checkbox" value="guard360" <?php if($wptm_connect['guard360']) echo "checked ";?>/>360</label>
+			  <label><input name="tianyi" type="checkbox" value="tianyi" <?php if($wptm_connect['tianyi']) echo "checked ";?>/>天翼</label><br />
+			  <label><input name="msn" type="checkbox" value="windowslive" <?php if($wptm_connect['msn']) echo "checked ";?>/>MSN</label>
+			  <label><input name="google" type="checkbox" value="google" <?php if($wptm_connect['google']) echo "checked ";?>/>谷歌</label>
+			  <label><input name="yahoo" type="checkbox" value="yahoo" <?php if($wptm_connect['yahoo']) echo "checked ";?>/>雅虎</label>
+			  <label><input name="twitter" type="checkbox" value="twitter" <?php if($wptm_connect['twitter']) echo "checked ";?>/>Twitter</label>
+			  <label><input name="facebook" type="checkbox" value="facebook" <?php if($wptm_connect['facebook']) echo "checked ";?>/>Facebook</label>
+			  <label><input name="netease163" type="checkbox" value="netease163" <?php if($wptm_connect['netease163']) echo "checked ";?>/>网易通行证</label>
+			  <br /><span style="color:green;">假如要排序，请到<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>设置，设置后请在这个页面点击“保存更改”按钮，仅对选择默认风格(本地化) 有效。</span>
+            </td>
           </tr>
           <tr>
             <td width="25%" valign="top">登录样式</td>
@@ -324,10 +387,12 @@ function wp_connect_do_page() {
           <input type="submit" name="wptm_connect" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-	  <p><strong>友情提示：</strong></p>
-	  <p style="color:green"><strong>从灯鹭wordpressV1.0旧版升级的用户需要在灯鹭平台修改回调地址。<a href="http://www.denglu.cc/source/wordpress2.0.html#old_update" target="_blank">详细描述</a></strong></p>
-	  <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
-	  <p><strong>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></strong></p>
+      <div id="tml-tips" class="updated">
+	    <p><strong>友情提示</strong></p>
+        <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
+	    <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
+	    <p>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
+	  </div>
     </div>
     <div id="comment">
       <form method="post" action="options-general.php?page=wp-connect#comment">
@@ -343,12 +408,16 @@ function wp_connect_do_page() {
 			    <td><label><input name="comments_open" type="checkbox" value="1" <?php if(default_values('comments_open', 1, $wptm_comment)) echo "checked ";?> />继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能。</label></td>
 		    </tr>
 		    <tr>
-			    <td width="25%" valign="top">评论数</td>
-			    <td><label><input name="comments_count" type="checkbox" value="1" <?php if(default_values('comments_count', 1, $wptm_comment)) echo "checked ";?> />使用灯鹭社会化评论统计的文章评论数</label></td>
+			    <td width="25%" valign="top">同步评论到本地</td>
+			    <td><label><input name="dcToLocal" type="checkbox" value="1" <?php if(default_values('dcToLocal', 1, $wptm_comment)) echo "checked ";?> />灯鹭评论内容保存一份在WordPress本地评论数据库（非实时同步，5分钟一次）</label></td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">最新评论</td>
 			    <td><label><input name="latest_comments" type="checkbox" value="1" <?php if($wptm_comment['latest_comments']) echo "checked "; ?> />是否开启侧边栏“最新评论”功能 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
+		    </tr>
+		    <tr>
+			    <td width="25%" valign="top">SEO支持</td>
+			    <td><label><input name="enable_seo" type="checkbox" value="1" <?php if($wptm_comment['enable_seo']) echo "checked "; ?> />评论支持SEO，让搜索引擎能爬到评论数据</label></td>
 		    </tr>
         </table>
         <p class="submit">
@@ -358,7 +427,12 @@ function wp_connect_do_page() {
 	  <h3>导入导出</h3>
 	  <p>导入数据到灯鹭平台。导入后，您原有的网站评论将在“灯鹭社会化评论”的评论框内显示。</p>
 	  <p><form method="post" action="options-general.php?page=wp-connect#comment"><span class="submit"><input type="submit" name="importComment" value="评论导入" /> (可能需要一些时间，请耐心等待！)</span></form></p>
-	  <span style="color:green"><p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p><strong><p>评论的相关设置及管理，请在灯鹭平台操作。</p><p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu-comments/" target="_blank">社会化评论</a> 插件</p></strong></span>
+      <div id="tml-tips" class="updated">
+	    <p><strong>使用说明</strong></p>
+        <p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p>
+		<p><strong>评论的相关设置及管理，请在灯鹭平台操作。</strong></p>
+		<p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu-comments/" target="_blank">社会化评论</a> 插件</p>
+	  </div>
     </div>
     <div id="open">
       <form method="post" action="options-general.php?page=wp-connect#open">
@@ -427,7 +501,10 @@ function wp_connect_do_page() {
         <p><?php if (isset($_POST['verify_qzone'])) verify_qzone();?></p>
 		<p class="submit"><input type="submit" name="verify_qzone" value="检查是否支持同步到QQ空间(邮箱接口)" /></p>
 	  </form>
-	  <p style="color:green;font-size:13px">注意事项：<br />1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
+      <div id="tml-tips" class="updated">
+	    <p><strong>注意事项</strong></p>
+        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
+	  </div>
     </div>
     <div id="share">
       <form method="post" id="formdrag" action="options-general.php?page=wp-connect#share">
@@ -521,11 +598,17 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php echo $update_tips; ?>
-		<p style="color:green"><strong>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/#more" target="_blank">详细说明</a> ]</strong></p>
+		<div id="tml-tips" class="updated"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
     </div>
     <div id="check">
 	<p><iframe width="100%" height="660" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
+    </div>
+    <div id="help">
+	  <div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">
+	  <p><strong>WordPress连接微博 V2.3 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
+	  <?php wp_connect_tips();?>
+	  </div>
     </div>
   </div>
 </div>

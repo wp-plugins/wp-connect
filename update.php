@@ -4,34 +4,55 @@
  */
 add_action('admin_init', 'wp_connect_header');
 function wp_connect_header() {
-	global $plugin_url;
-	if (isset($_POST['add_twitter'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=twitter');
-	}
-	if (isset($_POST['add_qq'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=qq');
-	}
-	if (isset($_POST['add_sina'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=sina');
-	}
-	if (isset($_POST['add_sohu'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=sohu');
-	}
-	if (isset($_POST['add_netease'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=netease');
-	}
-	if (isset($_POST['add_douban'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=douban');
-	}
-	if (isset($_POST['add_tianya'])) {
-		header('Location:' . $plugin_url. '/go.php?bind=tianya');
-	}
-	if (isset($_POST['add_renren'])) {
-		header('Location:' . $plugin_url. '-advanced/blogbind.php?bind=renren');
-	}
+	global $plugin_url, $wptm_options;
+	if ($wptm_options['denglu_bind']) {
+		if (isset($_POST['add_qq'])) { //使用灯鹭的同步接口
+			header('Location:' . $plugin_url . '/login.php?go=tencent');
+		} 
+		if (isset($_POST['add_sina'])) {
+			header('Location:' . $plugin_url . '/login.php?go=sina');
+		} 
+		if (isset($_POST['add_sohu'])) {
+			header('Location:' . $plugin_url . '/login.php?go=sohu');
+		} 
+		if (isset($_POST['add_netease'])) {
+			header('Location:' . $plugin_url . '/login.php?go=netease');
+		} 
+		if (isset($_POST['add_tianya'])) {
+			header('Location:' . $plugin_url . '/login.php?go=tianya');
+		} 
+		if (isset($_POST['add_renren'])) {
+			header('Location:' . $plugin_url . '/login.php?go=renren');
+		} 
+	} else {
+		if (isset($_POST['add_qq'])) {
+			header('Location:' . $plugin_url . '/go.php?bind=qq');
+		} 
+		if (isset($_POST['add_sina'])) {
+			header('Location:' . $plugin_url . '/go.php?bind=sina');
+		} 
+		if (isset($_POST['add_sohu'])) {
+			header('Location:' . $plugin_url . '/go.php?bind=sohu');
+		} 
+		if (isset($_POST['add_netease'])) {
+			header('Location:' . $plugin_url . '/go.php?bind=netease');
+		} 
+		if (isset($_POST['add_tianya'])) {
+			header('Location:' . $plugin_url . '/go.php?bind=tianya');
+		} 
+		if (isset($_POST['add_renren'])) {
+			header('Location:' . $plugin_url . '-advanced/blogbind.php?bind=renren');
+		} 
+	} 
 	if (isset($_POST['add_kaixin'])) {
-		header('Location:' . $plugin_url. '-advanced/blogbind.php?bind=kaixin');
-	}
+		header('Location:' . $plugin_url . '-advanced/blogbind.php?bind=kaixin');
+	} 
+	if (isset($_POST['add_douban'])) {
+		header('Location:' . $plugin_url . '/go.php?bind=douban');
+	} 
+	if (isset($_POST['add_twitter'])) {
+		header('Location:' . $plugin_url . '/go.php?bind=twitter');
+	} 
 	// 删除数据库+停用插件
 	if (isset($_POST['wptm_delete'])) {
 		delete_option("wptm_basic"); // denglu
@@ -71,10 +92,10 @@ function wp_connect_header() {
 		if (function_exists('wp_nonce_url')) {
 			$deactivate_url = 'plugins.php?action=deactivate&plugin=wp-connect/wp-connect.php';
 			$deactivate_url = str_replace('&amp;', '&', wp_nonce_url($deactivate_url, 'deactivate-plugin_wp-connect/wp-connect.php'));
-		    header('Location:' . $deactivate_url);
-		}
-	}
-}
+			header('Location:' . $deactivate_url);
+		} 
+	} 
+} 
 
 /**
  * 插件页面
@@ -96,7 +117,7 @@ function wp_option_account() {
 		'zuosa' => get_option('wptm_zuosa'),
 		'wbto' => get_option('wptm_wbto'));
 	return array_filter($account);
-} 
+}
 // 保存设置
 function wp_connect_update() {
 	$updated = '<div class="updated"><p><strong>' . __('Settings saved.') . '</strong></p></div>'; 
@@ -106,10 +127,13 @@ function wp_connect_update() {
 		$update_options = array('enable_wptm' => trim($_POST['enable_wptm']),
 			'enable_proxy' => trim($_POST['enable_proxy']),
 			'bind' => trim($_POST['bind']),
+			'denglu_bind' => trim($_POST['denglu_bind']),
 			'sync_option' => trim($_POST['sync_option']),
+			'format' => $_POST['format'],
 			'enable_cats' => trim($_POST['enable_cats']),
 			'enable_tags' => trim($_POST['enable_tags']),
 			'disable_pic' => trim($_POST['disable_pic']),
+            'thumbnail' => trim($_POST['thumbnail']),
 			'new_prefix' => trim($_POST['new_prefix']),
 			'update_prefix' => trim($_POST['update_prefix']),
 			'update_days' => $update_days,
@@ -131,6 +155,27 @@ function wp_connect_update() {
 		$disable_username = (trim($_POST['disable_username'])) ? trim($_POST['disable_username']) : 'admin';
 		$wptm_connect = array('enable_connect' => trim($_POST['enable_connect']),
 			'manual' => trim($_POST['manual']),
+			'reg' => trim($_POST['reg']),
+			'qqlogin' => trim($_POST['qqlogin']),
+			'sina' => trim($_POST['sina']),
+			'qq' => trim($_POST['qq']),
+			'sohu' => trim($_POST['sohu']),
+			'netease' => trim($_POST['netease']),
+			'renren' => trim($_POST['renren']),
+			'kaixin001' => trim($_POST['kaixin001']),
+			'douban' => trim($_POST['douban']),
+			'taobao' => trim($_POST['taobao']),
+			'baidu' => trim($_POST['baidu']),
+			'tianya' => trim($_POST['tianya']),
+			'msn' => trim($_POST['msn']),
+			'google' => trim($_POST['google']),
+			'yahoo' => trim($_POST['yahoo']),
+			'alipay' => trim($_POST['alipay']),
+			'twitter' => trim($_POST['twitter']),
+			'facebook' => trim($_POST['facebook']),
+			'guard360' => trim($_POST['guard360']),
+			'tianyi' => trim($_POST['tianyi']),
+			'netease163' => trim($_POST['netease163']),
 			'style' => trim($_POST['style']),
 			'custom_style' => trim($_POST['custom_style']),
 			'denglu_bind' => trim($_POST['denglu_bind']),
@@ -145,6 +190,7 @@ function wp_connect_update() {
 			);
 		update_option("wptm_connect", $wptm_connect);
 		update_option('wptm_version', WP_CONNECT_VERSION);
+		save_user_denglu_platform();
 		echo $updated;
 	}
 	// 开放平台

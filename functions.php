@@ -18,7 +18,62 @@ if (!function_exists('mb_strlen')) {
 	function mb_strlen($str, $encode = 'utf-8') {
 		return ($encode == 'utf-8') ? strlen(utf8_decode($str)) : strlen($str);
 	} 
+}
+// 使用键名比较计算数组的差集 array_diff_key  < 5.1.0
+if (!function_exists('array_diff_key')) {
+	function array_diff_key() {
+		$arrs = func_get_args();
+		$result = array_shift($arrs);
+		foreach ($arrs as $array) {
+			foreach ($result as $key => $v) {
+				if (array_key_exists($key, $array)) {
+					unset($result[$key]);
+				} 
+			} 
+		} 
+		return $result;
+	} 
+}
+// 根据键名、键值对比,得到数组的差集 array_diff_assoc  < 4.3.0
+if (!function_exists('array_diff_assoc')) {
+	function array_diff_assoc($a1, $a2) {
+		foreach($a1 as $key => $value) {
+			if (isset($a2[$key])) {
+				if ((string) $value !== (string) $a2[$key]) {
+					$r[$key] = $value;
+				} 
+			} else {
+				$r[$key] = $value;
+			} 
+		} 
+		return $r;
+	} 
 } 
+// 使用键名比较计算数组的交集 array_intersect_key  < 5.1.0
+if (!function_exists('array_intersect_key')) {
+	function array_intersect_key($isec, $keys) {
+		$argc = func_num_args();
+		if ($argc > 2) {
+			for ($i = 1; !empty($isec) && $i < $argc; $i++) {
+				$arr = func_get_arg($i);
+				foreach (array_keys($isec) as $key) {
+					if (!isset($arr[$key])) {
+						unset($isec[$key]);
+					} 
+				} 
+			} 
+			return $isec;
+		} else {
+			$res = array();
+			foreach (array_keys($isec) as $key) {
+				if (isset($keys[$key])) {
+					$res[$key] = $isec[$key];
+				} 
+			} 
+			return $res;
+		} 
+	} 
+}
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 if (!function_exists('wp_strlen')) {
 	function wp_strlen($text) {
@@ -130,9 +185,9 @@ if (!function_exists('class_http')) {
 			$error = $errors['http_request_failed'][0];
 			if (!$error)
 				$error = $errors['http_failure'][0];
-			if ($error == "couldn't connect to host") {
+			if ($error == "couldn't connect to host" || strpos($error, 'timed out') !== false) {
 				return;
-			} 
+			}
 			wp_die('出错了: ' . $error . '<br /><br />可能是您的主机不支持，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
 		} 
 		return $response['body'];
@@ -270,15 +325,14 @@ if (!function_exists('filter_value')) {
 
 if (!function_exists('wp_in_array')) {
 	function wp_in_array($a, $b) {
-		$arrayA = explode(',', $a);
-		$arrayB = explode(',', $b);
-		foreach($arrayB as $val) {
-			if (in_array($val, $arrayA))
-				return true;
+		$arrayA = explode(',', rtrim($a, ','));
+		$arrayB = explode(',', rtrim($b, ','));
+		if (array_intersect($arrayA, $arrayB)) {
+			return true;
 		} 
 		return false;
 	} 
-} 
+}
 
 if (!function_exists('post_user')) {
 	function post_user($username, $password, $pwd) { // $pwd为旧密码
@@ -317,6 +371,10 @@ if (!function_exists('ifabc')) {
 		return (empty($str) || $str == $old) ? $new : $str;
 	}
 } 
+// 检测用户名，如果重复前面加u
+function ifuser($username) {
+	return username_exists($username) ? ifuser('u' . $username) : $username;
+} 
 
 /**
  * 接口函数
@@ -346,7 +404,6 @@ function url_short_t_cn($long_url) {
 } 
 // 兼容旧版
 if (!function_exists('get_t_cn')) {
-	// 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {
 		return url_short_t_cn(urldecode($long_url));
 	} 
@@ -389,6 +446,13 @@ function get_user_by_meta_value($meta_key, $meta_value) { // 获得user_id
 	global $wpdb;
 	$sql = "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '%s' AND meta_value = '%s'";
 	return $wpdb -> get_var($wpdb -> prepare($sql, $meta_key, $meta_value));
+}
+
+function wp_update_comment_key($comment_ID, $comment_key, $vaule) { // 保存wp_comments表某个字段
+	global $wpdb;
+	$$comment_key = $vaule;
+	$result = $wpdb -> update($wpdb -> comments, compact($comment_key), compact('comment_ID'));
+	return $result;
 }
 
 if (!function_exists('get_current_user_id')) { // 获得登录者ID
@@ -458,8 +522,9 @@ if (default_values('chinese_username', 1, $wptm_connect)) {
 	} 
 	add_filter('sanitize_user', 'sanitize_user_chinese_username', 3, 3);
 }
-// 匹配视频,图片 优先级 v1.9.18
+// 匹配视频,图片 v1.9.19
 function wp_multi_media_url($content, $post_ID = '') {
+	global $wptm_options;
 	$richMedia = apply_filters('wp_multi_media_url', '', $content, $post_ID);
 	if (is_array($richMedia) && array_filter($richMedia)) {
 		return $richMedia;
@@ -470,7 +535,7 @@ function wp_multi_media_url($content, $post_ID = '') {
 		$v = $video[1][0];
 	} 
 	if (empty($wptm_options['disable_pic'])) {
-		if (is_numeric($post_ID) && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
+		if ($wptm_options['thumbnail'] && is_numeric($post_ID) && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
 			$image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post_ID), 'full');
 			$p = $image_url[0];
 		} else {

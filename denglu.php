@@ -5,4 +5,5 @@ if (!$callback) {
 	$callback = get_bloginfo('url');
 } 
 header('Location:' . $callback);
+
 ?>

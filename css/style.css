@@ -1,12 +1,13 @@
 .wrap a{text-decoration:none}
 .wrap h3{padding-left:8px}
 .clear{clear:both}
+#tml-tips {background:#f0f8ff; border:1px solid #addae6;}
 /*tabs*/
 .tabs{padding-top:20px}
 ul.nav li{list-style:none; display:inline}
 ul.nav li a{background-color:#ebebeb; color:#464646; padding:8px 14px; text-decoration:none}
 ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
-.tabs #sync, .tabs #open, .tabs #blog, .tabs #connect, .tabs #comment, .tabs #share, .tabs #advanced, .tabs #check{display:none}
+.tabs #sync, .tabs #open, .tabs #blog, .tabs #connect, .tabs #comment, .tabs #share, .tabs #advanced, .tabs #check, .tabs #help{display:none}
 /*sync*/
 #tlist a{display:inline-block; margin-right:7px; overflow:hidden; position:relative; vertical-align:middle; height:32px; width:32px; background-position:0px 0px}
 #tlist .twitter{background:url(../images/twitter.png) no-repeat}
@@ -43,6 +44,9 @@ ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
 #login_bind .btn_yahoo{background:url(../images/btn_yahoo.png) no-repeat}
 #login_bind .btn_netease163{background:url(../images/btn_netease163.png) no-repeat}
 #login_bind .btn_twitter{background:url(../images/btn_twitter.png) no-repeat}
+#login_bind .btn_facebook{background:url(../images/btn_facebook.png) no-repeat}
+#login_bind .btn_tianyi{background:url(../images/btn_tianyi.png) no-repeat}
+#login_bind .btn_guard360{background:url(../images/btn_guard360.png) no-repeat}
 /*binded*/
 .bind b, #bind_twitter b, #bind_qq b, #bind_sina b, #bind_sohu b, #bind_netease b, #bind_douban b, #bind_tianya b, #bind_renren b, #bind_kaixin b{bottom:0px; right:0px; display:block; overflow:hidden; position:absolute; width:15px; height:14px; background:url(../images/bind.gif) no-repeat 0 0}
 /*dialog*/

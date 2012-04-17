@@ -2,8 +2,8 @@
 /**
  * 目的：把基础方法用protected的形式封装在base里，不直接展现给最终用户
  * @author hyperion_cc, smyx
- * @version 1.0.5
- * @created 2012-2-23 11:45:00
+ * @version 1.0.6
+ * @created 2012-4-7 13:42:00
  */
 class Denglu
 {
@@ -24,7 +24,7 @@ class Denglu
 		'unbind' => '/api/v3/unbind',
 		'login' => '/api/v3/send_login_feed',
 		'getUserInfo' => '/api/v3/user_info',
-		'share' => '/api/v3/share',
+		'share' => '/api/v4/share',
 		'getMedia' => '/api/v3/get_media',
 		'unbindAll' => '/api/v3/all_unbind',
 		'getBind' => '/api/v3/bind_info',
@@ -35,7 +35,9 @@ class Denglu
 		'importUser' => '/api/v4/import_user',
 	    'importComment' => '/api/v4/import_comment',
 		'commentCount' => '/api/v4/get_comment_count',
-	    'latestComment' => '/api/v4/latest_comment'
+	    'latestComment' => '/api/v4/latest_comment',
+		'getComments' => '/api/v4/get_comment_list',
+		'getCommentState' => '/api/v4/get_change_comment_ids'
 	);
 
 	/*
@@ -122,27 +124,37 @@ class Denglu
 
 	function register($content)
 	{
-		return $this->callApi('register',array('data'=>$content) );
+		return $this->callApi('register',array('data'=>$content));
 	}
 
 	function importUser($content)
 	{
-		return $this->callApi('importUser',array('appid'=>$this->appID, 'data'=>$content) );
+		return $this->callApi('importUser',array('appid'=>$this->appID, 'data'=>$content));
 	}
 
 	function importComment($content)
 	{
-		return $this->callApi('importComment',array('appid'=>$this->appID, 'data'=>$content) );
+		return $this->callApi('importComment',array('appid'=>$this->appID, 'data'=>$content));
 	}
 
 	function commentCount($postid = '', $url = '') // $postid,$url传一个
 	{
-		return $this->callApi('commentCount',array('appid'=>$this->appID, 'postid'=>$postid, 'url'=>$url) );
+		return $this->callApi('commentCount',array('appid'=>$this->appID, 'postid'=>$postid, 'url'=>$url),12);
 	}
 
 	function latestComment($count)
 	{
-		return $this->callApi('latestComment',array('appid'=>$this->appID, 'count'=>$count) );
+		return $this->callApi('latestComment',array('appid'=>$this->appID, 'count'=>$count),12);
+	}
+
+	function getComments($commentid, $count = 50)
+	{
+		return $this->callApi('getComments',array('appid'=>$this->appID, 'commentid'=>$commentid, 'count'=>$count),12);
+	}
+
+	function getCommentState($time)
+	{
+		return $this->callApi('getCommentState',array('appid'=>$this->appID, 'time'=>$time),12);
 	}
 
 	/**
@@ -201,7 +213,7 @@ class Denglu
 	 */
 	function getMedia()
 	{
-		return $this->callApi('getMedia',array('appid'=>$this->appID));
+		return $this->callApi('getMedia',array('appid'=>$this->appID),12);
 	}
 	/**
 	 *
@@ -320,7 +332,7 @@ class Denglu
 	 */
 	function bind( $mediaUID, $uid, $uname, $uemail)
 	{
-		return $this->callApi('bind',array('appid'=>$this->appID,'muid'=>$mediaUID,'uid'=>$uid,'uname'=>$uname,'uemail'=>$uemail));
+		return $this->callApi('bind',array('appid'=>$this->appID,'muid'=>$mediaUID,'uid'=>$uid,'uname'=>$uname,'uemail'=>$uemail),12);
 	}
 
 	/**
@@ -332,7 +344,7 @@ class Denglu
 	 */
 	function unbind( $mediaUID)
 	{
-		return $this->callApi('unbind',array('appid'=>$this->appID,'muid'=>$mediaUID));
+		return $this->callApi('unbind',array('appid'=>$this->appID,'muid'=>$mediaUID),12);
 	}
 
 	/**
@@ -358,9 +370,9 @@ class Denglu
 	 *
 	 * 返回值 eg: {"result": "1"}
 	 */
-	function share( $mediaUserID, $content, $url, $uid)
+	function share( $mediaUserID, $content, $url, $uid, $imageurl, $videourl, $param1, $param2)
 	{
-		return $this->callApi('share',array('appid'=>$this->appID,'muid'=>$mediaUserID,'uid'=>$uid,'content'=>$content,'url'=>$url) );
+		return $this->callApi('share',array('appid'=>$this->appID,'muid'=>$mediaUserID,'uid'=>$uid,'content'=>$content,'imageurl'=>$imageurl,'videourl'=>$videourl,'param1'=>$param1,'param2'=>$param2,'url'=>$url));
 	}
 	
 	/**
@@ -371,7 +383,7 @@ class Denglu
 	 */
 	function unbindAll($uid)
 	{
-		return $this->callApi('unbindAll',array('uid'=>$uid,'appid'=>$this->appID) );
+		return $this->callApi('unbindAll',array('uid'=>$uid,'appid'=>$this->appID),12);
 	}
 
 	/**
@@ -421,10 +433,10 @@ class Denglu
 	 * @param request 该请求所发送的参数
 	 * @param return 本请求是否有返回值 
 	 */
-	protected function callApi($method,$request=array()){
+	protected function callApi($method,$request=array(),$timeout = ''){
 		$apiPath = $this->getapiPath($method);
 		$post = $this->createPostBody($request);
-		$result = $this->makeRequest($apiPath,$post);
+		$result = $this->makeRequest($apiPath,$post,$timeout);
 		
 		$result = $this->parseJson($result);
 		if(strtolower($this->charset)=='gbk'){
@@ -493,9 +505,9 @@ class Denglu
 	 * @param request 发送的http参数
 	 */
 	///////function makeRequest($request)
-	protected function makeRequest($url, $post = '', $method='' ) {
+	protected function makeRequest($url, $post = '', $timeout = 30) {
 		$params = array(
-			"timeout" => 60,
+			"timeout" => $timeout,
 			"user-agent" => $_SERVER[HTTP_USER_AGENT],
 			"sslverify" => false,
 		);
@@ -505,74 +517,8 @@ class Denglu
 		} else {
 		    $params['method'] = 'GET';
 		}
+		//return var_dump($url .= '?'.$post);
 		return class_http($url, $params); //new
-		$return = '';
-		$matches = parse_url($url);
-		$host = $matches['host'];
-		if(empty($matches['query'])) $matches['query']='';
-		$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
-		$port = 80;
-
-		if($this->enableSSL){
-			$url .= '?'.$post;
-			$url = str_replace('http://','https://',$url);
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL,$url);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_POST, 0);
-			curl_setopt($ch, CURLOPT_USERAGENT, 'denglu');
-			$return = curl_exec($ch);
-			return $return;
-		}
-		if(!$method){
-			$url .= '?'.$post;
-			$matches = parse_url($url);
-			$host = $matches['host'];
-			if(empty($matches['query'])) $matches['query']='';
-			$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
-
-			$out = "GET $path HTTP/1.0\r\n";
-			$out .= "Accept: */*\r\n";
-			$out .= "Accept-Language: zh-cn\r\n";
-			$out .= "User-Agent: denglu\r\n";
-			$out .= "Host: $host\r\n";
-			$out .= "Connection: Close\r\n";
-			$out .= "Cookie: \r\n\r\n";
-		}
-	
-		if(function_exists('fsockopen')) {
-			$fp = @fsockopen($host, $port, $errno, $errstr, 30);
-		} elseif(function_exists('pfsockopen')) {
-			$fp = @pfsockopen($host, $port, $errno, $errstr, 30);
-		} else {
-			return array('errorCode'=>1,'errorDescription'=>'Functions "fsockopen" and "pfsockopen" are not exists!');
-		}
-	
-		if(!$fp) {
-			return array('errorCode'=>1,'errorDescription'=>"Your website can't connect to denglu server!");
-		} else {
-			stream_set_blocking($fp, true);
-			stream_set_timeout($fp, 30);
-			@fwrite($fp, $out);
-			$status = stream_get_meta_data($fp);
-			if(!$status['timed_out']) {
-				while (!feof($fp)) {
-					if(($header = @fgets($fp)) && ($header == "\r\n" ||  $header == "\n")) {
-						break;
-					}
-				}
-	
-				$stop = false;
-				while(!feof($fp) && !$stop) {
-					$data = fread($fp,  8192);
-					$return .= $data;
-				}
-			}
-			@fclose($fp);
-			return $return;
-		}
 	}
 
 	/**

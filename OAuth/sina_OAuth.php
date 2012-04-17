@@ -115,6 +115,17 @@ class sinaClient
         return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/comment.json' , $param  ); 
     }
 
+    // 根据微博ID返回某条微博的评论列表
+    function get_comments( $sid , $page = 1 , $count = 20 ) 
+    { 
+        $param = array();
+        $param['id'] = $sid;
+		if( $page ) $param['page'] = $page;
+		if( $count ) $param['count'] = $count;
+
+        return $this->oauth->post( 'http://api.t.sina.com.cn/statuses/comments.json' , $param  );
+    }
+
     // 转发一条微博消息
     function repost( $sid , $text ) 
     { 

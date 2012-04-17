@@ -25,7 +25,11 @@ function get_tid($id) {
 		'19' => 'bdtid',
 		'20' => 'ktid',
 		'21' => 'wytid',
-		'22' => 'qqtid'
+		'22' => 'qqtid',
+		'23' => 'guard360tid',
+		'26' => 'tyitid',
+		'27' => 'fbtid',
+		'28' => 'ttid'
 		);
 	return $name[$id];
 } 
@@ -51,7 +55,10 @@ function get_theid($name, $nunber = '') {
 		'msn' => array('m', 'msnid', 2),
 		'google' => array('g', 'googleid', 1),
 		'yahoo' => array('y', 'yahooid', 12),
-		'twitter' => array('t', 'twitterid')
+		'guard360' => array('guard360', 'guard360id', 23),
+		'tianyi' => array('tyi', 'tianyiid', 26),
+		'facebook' => array('fb', 'facebookid', 27),
+		'twitter' => array('t', 'twitterid', 28)
 		);
 	if (!$nunber && $nunber !== 0) {
 		return $o[$name];
@@ -152,7 +159,7 @@ function wp_connect_update_denglu() {
 	} 
 	// 评论
 	if (isset($_POST['comment_options'])) {
-		update_option("wptm_comment", array('enable_comment' => trim($_POST['enable_comment']), 'comments_open' => trim($_POST['comments_open']), 'comments_count' => trim($_POST['comments_count']), 'latest_comments' => trim($_POST['latest_comments'])));
+		update_option("wptm_comment", array('enable_comment' => trim($_POST['enable_comment']), 'comments_open' => trim($_POST['comments_open']), 'dcToLocal' => trim($_POST['dcToLocal']), 'latest_comments' => trim($_POST['latest_comments']), 'enable_seo' => trim($_POST['enable_seo'])));
 		echo $updated;
 	} 
 }
@@ -160,9 +167,6 @@ add_action('save_connent_options', 'wp_connect_update_denglu',5);
 
 // 获取已选择平台供应商
 function get_media() {
-	if ($_SESSION['get_media']) {
-		return $_SESSION['get_media'];
-	}
 	global $wptm_basic;
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
@@ -173,17 +177,65 @@ function get_media() {
 		// wp_die($e->geterrorDescription()); //返回错误信息
 	} 
 	if (is_array($ret)) {
-		$_SESSION['get_media'] = $ret;
 		return $ret;
 	}
+}
+// 保存已选择登录按钮及顺序
+function save_user_denglu_platform() {
+	$selected = array_flip(array_filter(array($_POST['qqlogin'], $_POST['sina'], $_POST['qq'], $_POST['renren'], $_POST['taobao'], $_POST['alipay'], $_POST['douban'], $_POST['baidu'], $_POST['kaixin001'], $_POST['sohu'], $_POST['netease'], $_POST['netease163'], $_POST['tianya'], $_POST['guard360'], $_POST['tianyi'], $_POST['msn'], $_POST['google'], $_POST['yahoo'], $_POST['twitter'], $_POST['facebook'])));
+	if ($get_media = get_media()) {
+		$platform = array();
+		foreach($get_media as $media) {
+			$platform[$media['mediaNameEn']] = $media['mediaName'];
+		} 
+	} 
+	if (!$platform) {
+		$platform = array('qzone' => 'QQ空间',
+			'sina' => '新浪微博',
+			'tencent' => '腾讯微博',
+			'renren' => '人人网',
+			'douban' => '豆瓣',
+			'taobao' => '淘宝网',
+			'alipayquick' => '支付宝',
+			'baidu' => '百度',
+			'kaixin001' => '开心网',
+			'sohu' => '搜狐微博',
+			'netease' => '网易微博',
+			'netease163' => '网易通行证',
+			'tianya' => '天涯微博',
+			'guard360' => '360',
+			'tianyi' => '天翼189',
+			'windowslive' => 'MSN',
+			'google' => 'Google',
+			'yahoo' => 'Yahoo', 
+			'twitter' => 'Twitter',
+		    'facebook' => 'Facebook'
+			);
+	} 
+	$denglu_btn = array_intersect_key($platform, $selected);
+	update_option("denglu_btn", $denglu_btn);
+	return $denglu_btn;
 } 
-// 灯鹭同步 v2.0
-function wp_update_share($mediaUserID, $content, $url) {
+// 获取已选择登录按钮及顺序
+function get_user_denglu_platform() {
+	$platform = get_option("denglu_btn");
+	if (!$platform) {
+		if ($get_media = get_media()) {
+			foreach($get_media as $media) {
+				$platform[$media['mediaNameEn']] = $media['mediaName'];
+			}
+		    update_option("denglu_btn", $platform);
+		}
+	} 
+	return $platform;
+}
+// 灯鹭同步 v2.3
+function wp_update_share($mediaUserID, $content, $url, $uid = '', $imageurl = '', $videourl = '', $param1 = '', $param2 = '') {
 	global $wptm_basic;
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
     $api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
 	try {
-		return $api -> share( $mediaUserID, $content, $url, '' );
+		return $api -> share( $mediaUserID, $content, $url, $uid, $imageurl, $videourl, $param1, $param2 );
 	}
 	catch(DengluException $e) {
 		wp_die($e->geterrorDescription());
@@ -374,6 +426,7 @@ function connect_denglu_update() {
 		} 
 	} 
 } 
+
 /**
  * 登录整合 v2.0
  */
@@ -397,69 +450,93 @@ function denglu_userInfo() {
 } 
 // 登录初始化
 function connect_denglu() {
-	$user = denglu_userInfo();
-	$username = $user['mediaUserID'];
-	$homepage = $user['homepage'];
-	$mediaID = $user['mediaID'];
-	$tid = get_tid($mediaID);
-	$weibo = get_weibo($tid);
-	$mid = str_replace('tid', 'mid', $tid);
-	if ($homepage) {
-		$id = $weibo[1] . 'id';
-		$userid = str_replace($weibo[3], '', $homepage);
-	} elseif ($tid == 'qqtid') {
-		$id = $weibo[1] . 'id';
-		$path = explode('/', $user['profileImageUrl']);
-		$userid = $path[5];
-	} else {
-		$id = $mid;
-		$userid = $username;
-	} 
-	if ($user['email']) {
-		$email = $user['email'];
-		if ($id == $mid) {
-			$uid = ifab(email_exists($email), get_user_by_meta_value($id, $userid));
-		} else { // netease
-			$uid = ifabc(email_exists($email), get_user_by_meta_value($id, $userid), get_user_by_meta_value($mid, $username));
-		} 
-	} else {
-		$domain = ifab($weibo[4], 'denglu.cc');
-		if ($homepage) {
-			$email = $userid . '@' . $domain;
-		} else {
-			$email = $username . '@' . $domain;
-		} 
-		if ($id == $mid) {
-			$uid = get_user_by_meta_value($id, $userid);
-		} else {
-			$uid = ifab(get_user_by_meta_value($id, $userid), get_user_by_meta_value($mid, $username));
-		} 
-	} 
-	if (is_user_logged_in()) { // v2.1
-		if (($wpuid = $_SESSION['user_id']) && ($url_back = $_SESSION['wp_url_bind'])) {
-			if ($uid) {
-				$userinfo = wp_get_user_info($uid);
-				$user_login = $userinfo['user_login'];
-				wp_die("很遗憾！该帐号已被用户名 $user_login 绑定，您可以用该 <a href=\"" . wp_logout_url() . "\">用户名</a> 登录，并到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面解除绑定，再进行绑定该帐号！<strong>如果不能成功，请删除那个WP帐号，再进行绑定！</strong> <a href='$url_back'>返回</a>");
+	$user = denglu_userInfo(); 
+	// return var_dump($user);
+	if ($username = $user['mediaUserID']) {
+		if (is_user_logged_in() && in_array($_SESSION['wp_url_login'], array('sina', 'tencent', 'sohu', 'netease', 'renren', 'tianya')) && ($redirect_to = $_SESSION['wp_url_bind'])) { // V2.3，同步帐号绑定
+			if ($_SESSION['wp_url_login'] == 'tencent') {
+				$tok = 'wptm_qq';
 			} else {
-				update_usermeta($wpuid, $mid, $username);
-				if ($homepage || $tid == 'qqtid') { // sina,tqq,sohu,netease,renren,kaixin,douban,qq,tianya
-					update_usermeta($wpuid, $weibo[1] . 'id', $userid);
-					if ($tid == 'qqtid')
-						update_usermeta($wpuid, $tid, $user['profileImageUrl']);
-				} 
+				$tok = 'wptm_' . $_SESSION['wp_url_login'];
+			} 
+			if ($redirect_to == WP_CONNECT) {
+				update_option($tok, array('mediaUserID' => $username));
+			} elseif ($_SESSION['user_id']) {
+				update_usermeta($_SESSION['user_id'], $tok, array('mediaUserID' => $username));
+			} 
+			$_SESSION['wp_url_login'] = '';
+			header('Location:' . $redirect_to);
+			return;
+		} 
+		$homepage = $user['homepage'];
+		$mediaID = $user['mediaID'];
+		$tid = get_tid($mediaID);
+		$weibo = get_weibo($tid);
+		$mid = str_replace('tid', 'mid', $tid);
+		if ($homepage) {
+			$id = $weibo[1] . 'id';
+			$userid = str_replace($weibo[3], '', $homepage);
+		} elseif ($tid == 'qqtid') {
+			$id = $weibo[1] . 'id';
+			$path = explode('/', $user['profileImageUrl']);
+			$userid = $path[5];
+		} else {
+			$id = $mid;
+			$userid = $username;
+		} 
+		if ($user['email']) {
+			$email = $user['email'];
+			if ($id == $mid) { // taobao, MSN
+				$uid = ifab(email_exists($email), get_user_by_meta_value($id, $userid));
+			} else { // netease
+				$uid = ifabc(email_exists($email), get_user_by_meta_value($id, $userid), get_user_by_meta_value($mid, $username));
+			} 
+		} else {
+			$domain = ifab($weibo[4], 'denglu.cc');
+			if ($homepage) {
+				$email = $userid . '@' . $domain;
+			} else {
+				$email = $username . '@' . $domain;
+			} 
+			if ($id == $mid) {
+				$uid = get_user_by_meta_value($id, $userid);
+			} else {
+				$uid = ifabc(get_user_by_meta_value($id, $userid), email_exists($email), get_user_by_meta_value($mid, $username));
 			} 
 		} 
-	} else {
-		$url = ifab($user['url'], $homepage);
-		$userinfo = array($tid, $username, $user['screenName'], $user['profileImageUrl'], $url, $userid, $username); //tid,username,nick,head,url,userid,mediaUserID
-		if ($uid) {
-			wp_connect_login($userinfo, $email, $uid);
+		if (is_user_logged_in()) { // V2.1，登录绑定
+			if (($wpuid = $_SESSION['user_id']) && ($redirect_to = $_SESSION['wp_url_bind'])) {
+				if ($uid) {
+					$userinfo = wp_get_user_info($uid);
+					$user_login = $userinfo['user_login'];
+					wp_die("很遗憾！该帐号已被用户名 $user_login 绑定，您可以用该 <a href=\"" . wp_logout_url() . "\">用户名</a> 登录，并到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面解除绑定，再进行绑定该帐号！<strong>如果不能成功，请删除那个WP帐号，再进行绑定！</strong> <a href='$redirect_to'>返回</a>");
+				} else {
+					update_usermeta($wpuid, $mid, $username);
+					if ($homepage || $tid == 'qqtid') { // sina,tqq,sohu,netease,renren,kaixin,douban,qq,tianya
+						update_usermeta($wpuid, $weibo[1] . 'id', $userid);
+						if ($tid == 'qqtid') {
+							update_usermeta($wpuid, $tid, $user['profileImageUrl']);
+						} 
+						if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid'))) { //  微博帐号
+							$nickname = get_user_meta($wpuid, 'login_name', true);
+							$nickname[$weibo[0]] = ($tid == 'qtid') ? $userid : $user['screenName'];
+							update_usermeta($wpuid, 'login_name', $nickname);
+						} 
+					} 
+				} 
+			} 
 		} else {
-			wp_connect_login($userinfo, $email);
+			$url = ifab($user['url'], $homepage);
+			$userinfo = array($tid, $username, $user['screenName'], $user['profileImageUrl'], $url, $userid, $username); //tid,username,nick,head,url,userid,mediaUserID
+			if ($uid) {
+				wp_connect_login($userinfo, $email, $uid);
+			} else {
+				wp_connect_login($userinfo, $email);
+			} 
 		} 
 	} 
 } 
+
 /**
  * 绑定登录帐号 v2.1
  */
@@ -478,10 +555,17 @@ function denglu_bind_account($user) {
 		'netease' => array(ifab($user -> neteaseid, $user -> nmid), '网易微博'),
 		'netease163' => array($user -> wymid, '网易通行证'),
 		'tianya' => array(ifab($user -> tytid, $user -> tymid), '天涯微博'),
+		'guard360' => array($user -> guard360mid, '360'),
+		'tianyi' => array($user -> tyimid, '天翼189'),
 		'windowslive' => array($user -> mmid, 'MSN'),
 		'google' => array($user -> gmid, 'Google'),
-		'yahoo' => array($user -> ymid, 'Yahoo')
+		'yahoo' => array($user -> ymid, 'Yahoo'),
+		'twitter' => array(ifab($user -> twitterid, $user -> twittermid), 'Twitter'),
+		'facebook' => array($user -> facebookmid, 'Facebook')
 		);
+	if ($platform = get_user_denglu_platform()) { // V2.3
+		return array_intersect_key($account, $platform);
+	} 
 	return $account;
 } 
 // 绑定UI
@@ -547,11 +631,13 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 			return 'tytid';
 		} elseif ($mail == '@baidu.com') {
 			return 'bdtid';
+		} elseif ($mail == '@twitter.com') {
+			return 'ttid';
 		} elseif (get_user_meta($user_id, 'qqtid', true)) {
 			return 'qqtid';
 		} elseif (get_user_meta($user_id, 'tbtid', true)) {
 			return 'tbtid';
-		} 
+		}
 	} 
 
 	function get_row_userinfo($uid, $tid) {
@@ -588,6 +674,14 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 			return ($user -> bdmid) ? array('mediaUserID' => $user -> bdmid) : (($user -> bdtid) ? array('mediaID' => '19', 'mediaUID' => ifab($user -> baiduid , $user -> user_login), 'profileImageUrl' => 'http://himg.bdimg.com/sys/portraitn/item/' . $user -> bdtid . '.jpg'):'');
 		} elseif ($tid == 'wytid') { // 网易通行证
 			return ($user -> wymid) ? array('mediaUserID' => $user -> wymid) : '';
+		} elseif ($tid == 'guard360tid') { // 360
+			return ($user -> guard360mid) ? array('mediaUserID' => $user -> guard360mid) : '';
+		} elseif ($tid == 'tyitid') { // 天翼
+			return ($user -> tyimid) ? array('mediaUserID' => $user -> tyimid) : '';
+		} elseif ($tid == 'fbtid') { // Facebook
+			return ($user -> fbmid) ? array('mediaUserID' => $user -> fbmid) : '';
+		} elseif ($tid == 'ttid') { // twitter
+			return ($user -> tmid) ? array('mediaUserID' => $user -> tmid) : '';
 		} 
 	} 
 	// 回复
@@ -642,15 +736,14 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 		global $wpdb;
 		$comments = $wpdb -> get_row("SELECT comment_agent FROM $wpdb->comments WHERE comment_ID = {$comment_ID} AND comment_agent not like '%Denglu%'", ARRAY_A);
 		if ($comments) {
-			$comment_agent = trim($comments['comment_agent'] . ' Denglu');
-			$result = $wpdb -> update($wpdb -> comments, compact('comment_agent'), compact('comment_ID'));
+			$result = wp_update_comment_key($comment_ID, 'comment_agent', trim($comments['comment_agent'] . ' Denglu'));
 			return $result;
 		} 
 	} 
 	// 导入评论
 	function denglu_importComment() {
 		@ini_set("max_execution_time", 300);
-		$data = import_comments_to_denglu(); 
+		$data = import_comments_to_denglu();
 		// return var_dump($data);
 		if ($data) {
 			$wptm_basic = get_option('wptm_basic');
@@ -679,45 +772,17 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 		} 
 	} 
 } 
-/**
- * 评论数 + 最新评论 v2.1.6
- */
-if (!function_exists('denglu_comments_number') && install_comments()) {
-	// 获取评论数
-	function get_denglu_comment_counts($postid = '') {
-		global $wptm_basic;
-		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
-		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
-		try {
-			$output = $api -> commentCount($postid);
-		} 
-		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
-			// wp_die($e -> geterrorDescription()); //返回错误信息
-		} 
-		// return var_dump($output);
-		// $output = array(array("id"=>"160", "url"=>"http://open.denglu.cc", "count"=>160),array("id"=>"144", "url"=>"http://open.denglu.cc", "count"=>144));
-		if (is_array($output)) {
-			foreach($output as $vaule) {
-				$count[$vaule['id']] = $vaule['count'];
-			} 
-			return $count;
-		} 
-	} 
 
-	function get_denglu_comments_number($postid = '') {
-		if (!$postid) $postid = get_the_ID();
-		if ($_COOKIE["denglu_comment_counts"]) {
-			$count = json_decode(stripslashes($_COOKIE["denglu_comment_counts"]), true);
-		} elseif ($_SESSION['denglu_comment_counts']) {
-			$count = $_SESSION['denglu_comment_counts'];
-		} else {
-			$count = get_denglu_comment_counts();
-			$_SESSION['denglu_comment_counts'] = $count;
-		} 
-		return $count[$postid] ? $count[$postid] : 0;
-	} 
+/**
+ * 最新评论 v2.3
+ */
+if (!function_exists('denglu_recent_comments') && install_comments()) {
 	// 获取最新评论
 	function get_denglu_recent_comments($count = '') {
+		$recentComments = get_option('denglu_recentComments');
+		if ($recentComments['comments'] && time() - $recentComments['time'] > 300) {
+			return $recentComments;
+		} 
 		global $wptm_basic;
 		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
@@ -727,26 +792,27 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
 			// wp_die($e -> geterrorDescription()); //返回错误信息
 		} 
-		return $output;
+		if ($output && is_array($output)) {
+			update_option('denglu_recentComments', array('comments' => $output, 'time' => time()));
+			return array('comments' => $output);
+		} elseif ($recentComments['comments']) {
+			$recentComments['time'] = time() + 200;
+			update_option('denglu_recentComments', $recentComments);
+			return $recentComments;
+		} 
 	} 
 	// 设置cookies
-	function denglu_comment_counts_cookie() {
+	function denglu_recent_comments_cookie() {
 		global $wptm_comment;
 		if (!is_admin()) {
-			if (default_values('comments_count', 1, $wptm_comment) && !$_COOKIE["denglu_comment_counts"]) {
-				if ($count = get_denglu_comment_counts()) {
-					setcookie("denglu_comment_counts", json_encode($count), time() + 1800); //缓存30分钟
-				} 
-			} 
 			if ($wptm_comment['latest_comments'] && used_widget('wp-connect-comment-widget') && !$_COOKIE["denglu_recent_comments"]) {
 				if ($comments = get_denglu_recent_comments()) {
-					setcookie("denglu_recent_comments", json_encode($comments), time() + 300); //缓存5分钟
+					setcookie("denglu_recent_comments", json_encode($comments['comments']), time() + 300); //缓存5分钟
 				} 
 			} 
 		} 
 	} 
-	add_action('init', 'denglu_comment_counts_cookie', 0);
-
+	add_action('init', 'denglu_recent_comments_cookie', 0);
 	function denglu_recent_comments($comments) {
 		if (is_array($comments)) {
 			echo '<ul id="denglu_recentcomments">';
@@ -755,19 +821,6 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 			} 
 			echo '</ul>';
 		} 
-	} 
-	// 替换自带的评论数函数
-	function denglu_comments_number($zero = false, $one = false, $more = false, $deprecated = '') {
-		global $id;
-		$number = get_denglu_comments_number($id);
-		if ($number > 1)
-			$output = str_replace('%', number_format_i18n($number), (false === $more) ? __('% Comments') : $more);
-		elseif ($number == 0)
-			$output = (false === $zero) ? __('No Comments') : $zero;
-		else // must be one
-			$output = (false === $one) ? __('1 Comment') : $one;
-
-		echo apply_filters('denglu_comments_number', $output, $number);
 	} 
 
 	if (!function_exists('used_widget')) {
@@ -782,10 +835,190 @@ if (!function_exists('denglu_comments_number') && install_comments()) {
 	if ($wptm_comment['latest_comments']) {
 		include_once(dirname(__FILE__) . '/comments-widgets.php'); // 最新评论 小工具
 	} 
+} 
 
-	if (default_values('comments_count', 1, $wptm_comment)) {
-		add_filter('comments_number', 'denglu_comments_number');
-		add_filter('get_comments_number', 'get_denglu_comments_number', 0);
+/**
+ * 1.评论保存到本地服务器
+ * 2.评论状态同步到本地服务器。
+ * V2.3
+ */
+if (!function_exists('dcToLocal') && install_comments()) {
+	function get_weiboInfo($name) {
+		$o = array('1' => array('g'),
+			'2' => array('m'),
+			'3' => array('s', 'stid', '@weibo.com', 'http://weibo.com/'),
+			'4' => array('q', 'tqqid', '@t.qq.com', 'http://t.qq.com/'),
+			'5' => array('sh', 'sohuid', '@t.sohu.com', 'http://t.sohu.com/u/'),
+			'6' => array('n', 'neteaseid', '@t.163.com', 'http://t.163.com/'),
+			'7' => array('r', 'renrenid', '@renren.com', 'http://www.renren.com/profile.do?id='),
+			'8' => array('k', 'kaixinid', '@kaixin001.com', 'http://www.kaixin001.com/home/?uid='),
+			'9' => array('d', 'dtid', '@douban.com', 'http://www.douban.com/people/'),
+			'12' => array('y'),
+			'13' => array('qq'),
+			'15' => array('ali'),
+			'16' => array('tb'),
+			'17' => array('ty', 'tytid', '@tianya.cn', 'http://my.tianya.cn/'),
+			'19' => array('bd'),
+			'21' => array('wy'),
+			'23' => array('guard360'),
+			'26' => array('tyi'),
+			'27' => array('fb'),
+			'28' => array('t', 'ttid', '@twitter.com', 'http://twitter.com/'),
+			);
+		return $o[$name];
+	} 
+	// 获取评论列表
+	function get_comments_by_denglu($cid) {
+		global $wptm_basic;
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+		try {
+			$ret = $api -> getComments($cid);
+		} 
+		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+			// wp_die($e->geterrorDescription()); //返回错误信息
+		} 
+		if (is_array($ret)) {
+			return $ret;
+		} 
+	} 
+	// 评论状态
+	function dcState($state) {
+		$s = array('1', '0', 'spam', 'trash');
+		return $s[$state];
+	} 
+	// 保存单条评论
+	function save_dengluComment($comment, $parent = 0) {
+		global $wpdb;
+		$cid = $comment['cid'];
+		$ret = $wpdb -> get_row("SELECT comment_ID FROM $wpdb->comments WHERE comment_agent = 'Denglu_{$cid}' LIMIT 1", ARRAY_A);
+		if ($ret['comment_ID']) {
+			return $ret['comment_ID'];
+		} 
+		$weiboinfo = get_weiboInfo($comment['mediaID']);
+		$mid = $weiboinfo[0] . 'mid';
+		$id = $weiboinfo[1];
+		if (empty($comment['email'])) {
+			if (in_array($comment['mediaID'], array(3, 4, 5, 6, 7, 8, 9, 17)) && $comment['url']) {
+				$weibo_uid = str_replace($weiboinfo[3], '', $comment['url']);
+			} 
+			$email = ($weiboinfo[2]) ? $weibo_uid . $weiboinfo[2] : $comment['uid'] . '@denglu.cc';
+		} else {
+			$email = $comment['email'];
+		} 
+		$user_id = get_user_by_meta_value($mid, $comment['uid']);
+		$data = array('comment_post_ID' => $comment['postid'],
+			'comment_author' => $comment['nick'],
+			'comment_author_email' => $email,
+			'comment_author_url' => $comment['url'],
+			'comment_content' => $comment['content'],
+			'comment_type' => '',
+			'comment_parent' => $parent,
+			'user_id' => ($user_id) ? $user_id : 0,
+			'comment_author_IP' => $comment['ip'],
+			'comment_agent' => 'Denglu_' . $comment['cid'],
+			'comment_date' => $comment['date'],
+			'comment_approved' => dcState($comment['state']),
+			);
+		$commentID = wp_insert_comment($data);
+		return $commentID;
+	} 
+	// 保存评论，包括父级评论
+	function save_dengluComments($children, $comment) {
+		if ($comment) {
+			$comment_ID = save_dengluComment($comment); //父级
+		} 
+		$children_ID = save_dengluComment($children, $comment_ID);
+	} 
+	// 保存所有评论
+	function save_dcToLocal($denglu_last_id) {
+		$cid = $denglu_last_id['cid'];
+		$comments = get_comments_by_denglu($cid);
+		if ($comments) {
+			$number = count($comments) - 1;
+			$last_cid = $comments[$number]['commentID'];
+			update_option('denglu_last_id', array('cid' => $last_cid, 'time' => time()));
+			$state = array();
+			foreach ($comments as $comment) {
+				save_dengluComments(array('postid' => $comment['postid'], 'mediaID' => $comment['mediaID'], 'uid' => $comment['mediaUserID'], 'nick' => $comment['userName'], 'email' => $comment['userEmail'], 'url' => $comment['homepage'], 'cid' => $comment['commentID'], 'content' => $comment['content'], 'state' => $comment['state'], 'ip' => $comment['ip'], 'date' => $comment['createTime']), ($c = $comment['parent']) ? array('postid' => $c['postid'], 'mediaID' => $c['mediaID'], 'uid' => $c['mediaUserID'], 'nick' => $c['userName'], 'email' => $c['userEmail'], 'url' => $c['homepage'], 'cid' => $c['commentID'], 'content' => $c['content'], 'state' => $c['state'], 'ip' => $c['ip'], 'date' => $c['createTime']):'');
+			} 
+			save_dcToLocal(array('cid' => $last_cid));
+		} else {
+			$denglu_last_id['time'] = time();
+			update_option('denglu_last_id', $denglu_last_id);
+		} 
+	} 
+	// 评论状态与本地对接
+	function dc_setCommentsStatus($cid, $status) {
+		switch ($status) {
+			case "0":
+				wp_set_comment_status($cid, 'approve'); //以获准
+				break;
+			case "1":
+				wp_set_comment_status($cid, 'hold'); //待审
+				break;
+			case "2":
+				wp_set_comment_status($cid, 'spam'); //垃圾评论
+				break;
+			case "3":
+				wp_set_comment_status($cid, 'trash'); //回收站
+				break;
+			case "4":
+				wp_delete_comment($cid); //永久删除
+				break;
+			default:
+		} 
+	} 
+	// 获取评论状态
+	function get_commentState_by_denglu($time) {
+		global $wptm_basic;
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+		try {
+			$ret = $api -> getCommentState($time);
+		} 
+		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+			// wp_die($e->geterrorDescription()); //返回错误信息
+		} 
+		if (is_array($ret)) {
+			return $ret;
+		} 
+	} 
+	// 保存评论状态
+	function save_dcStateToLocal($comments = '', $time = '') {
+		global $wpdb;
+		if ($time) {
+			$time = (int) ($time / 3600 + 1); // 转为小时，并延长一小时
+		} 
+		$commentState = array();
+		$commentState = get_commentState_by_denglu($time);
+		if ($commentState) {
+			if ($comments) { // 首次不必更新状态
+				$comment_diff = array_diff_assoc($commentState, $comments);
+				if ($comment_diff) {
+					foreach ($comment_diff as $cid => $state) {
+						$ret = $wpdb -> get_row("SELECT comment_ID FROM $wpdb->comments WHERE comment_agent = 'Denglu_{$cid}' LIMIT 1", ARRAY_A);
+						if ($ret['comment_ID']) {
+							dc_setCommentsStatus($ret['comment_ID'], $state);
+						} 
+					} 
+				} 
+			} 
+			update_option('denglu_commentState', $commentState);
+		} 
+	} 
+	// 触发动作
+	function dcToLocal() {
+		global $wptm_comment;
+		$denglu_last_id = get_option('denglu_last_id'); //读取数据库
+		$denglu_commentState = get_option('denglu_commentState'); //读取数据库
+		if (!$denglu_last_id['time'] || time() - $denglu_last_id['time'] > 300) { // 5min
+			save_dcToLocal($denglu_last_id); // 同步评论到本地服务器
+			save_dcStateToLocal($denglu_commentState, $denglu_last_id['time']); // 同步评论状态到本地服务器
+		} 
+	} 
+	if (default_values('dcToLocal', 1, $wptm_comment)) {
+		add_action('init', 'dcToLocal');
 	} 
 } 
 

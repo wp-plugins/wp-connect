@@ -97,6 +97,19 @@ class qqClient
 		$params['clientip'] = $this -> get_ip();
 		return $this -> oauth -> post('http://open.t.qq.com/api/t/comment' , $params);
     }
+    // 根据微博ID返回某条微博的评论列表
+    function get_comments( $rootid, $flag = 2, $page = 0, $count = 20, $twitterid = 0, $pagetime = 0) 
+    { 
+        $params = array();
+        $params['rootid'] = $rootid; // 转发或回复的微博根结点id（源微博id）
+		$params['flag'] = $flag; // 0－转播列表 1－点评列表 2－点评与转播列表
+		$params['pageflag'] = $page;
+		$params['pagetime'] = $pagetime;
+		$params['twitterid'] = $twitterid;
+		$params['reqnum'] = $count;
+		$params['clientip'] = $this -> get_ip();
+        return $this->oauth->post('http://open.t.qq.com/api/t/re_list', $params);
+    }
     // 获取视频信息
 	function getvideoinfo( $url )
 	{

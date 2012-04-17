@@ -24,8 +24,9 @@ if (!class_exists('WP_Connect_Comment_Widget')) {
 				$comments = array_slice(json_decode(stripslashes($_COOKIE["denglu_recent_comments"]), true), 0, $number , true);
 		    } elseif (is_array($_SESSION['denglu_recent_comments'])) {
 				$comments = array_slice($_SESSION['denglu_recent_comments'], 0, $number , true);
-			} else {
-				$comments = get_denglu_recent_comments($number);
+			} else { // V2.3
+				$recentComments = get_denglu_recent_comments($number);
+				$comments = $recentComments['comments'];
 				$_SESSION['denglu_recent_comments'] = $comments;
 			}
 			denglu_recent_comments($comments);

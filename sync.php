@@ -30,15 +30,15 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布文章时同步
- * @since 1.9.18
+ * @since 1.9.19
  */
 $sync_loaded = 0; // wp bug
 function wp_connect_publish($post_ID) {
 	global $sync_loaded, $wptm_options;
 	$sync_loaded += 1;
-	if (isset($_POST['publish_no_sync']) || $sync_loaded > 1) {
+	if (isset($_POST['publish_no_sync']) || $sync_loaded > 1 || $_POST['post_password']) {
 		return;
-	}
+	} 
 	@ini_set("max_execution_time", 120);
 	$time = time();
 	$post = get_post($post_ID);
@@ -53,7 +53,7 @@ function wp_connect_publish($post_ID) {
 		$wptm_profile = get_user_meta($post_author_ID, 'wptm_profile', true);
 		if ($wptm_profile['sync_option']) {
 			$account = wp_usermeta_account($post_author_ID);
-		}
+		} 
 	} 
 	// 是否开启了多作者博客
 	if ($account) {
@@ -86,8 +86,9 @@ function wp_connect_publish($post_ID) {
 			if ($update_days == 0 || ($time - $post_date < $update_days)) { // 判断当前时间与文章发布时间差
 				return;
 			} 
+		} else {
+			$prefix = $update_prefix;
 		} 
-		$prefix = $update_prefix;
 	} elseif (isset($_POST['_inline_edit'])) { // 是否是快速编辑
 		$quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' . $_POST['jj'] . ' ' . $_POST['hh'] . ':' . $_POST['mn'] . ':00';
 		$post_date = strtotime($quicktime);
@@ -153,23 +154,30 @@ function wp_connect_publish($post_ID) {
 		$postlink = get_permalink($post_ID);
 	} 
 	$url = $postlink;
-	$title2 = $prefix . '【' . $title . '】';
 	if ($excerpt) { // 是否有摘要
 		$post_content = wp_replace($excerpt);
-	}
+	} 
+	$format = $wptm_options['format'];
+	if ($format && strpos($format, '%title%') !== false) {
+		$format_title = true;
+		$title2 = str_replace('%title%', $title, $format);
+	} else {
+		$title2 = $title . ' | ';
+	} 
 	if ($sync_option == '2') { // 同步 前缀+标题+摘要/内容+链接
-		$text = $tags . $title2 . $post_content;
+		$text = $tags . $prefix . $title2 . $post_content;
 	} elseif ($sync_option == '3') { // 同步 文章摘要/内容
-		$text = $tags . $post_content;
+		$text = $tags . $prefix . $post_content;
 		$url = "";
 	} elseif ($sync_option == '4') { // 同步 文章摘要/内容+链接
-		$text = $tags . $post_content;
+		$text = $tags . $prefix . $post_content;
 	} elseif ($sync_option == '5') { // 同步 标题 + 内容
-		$text = $tags . $title2 . $post_content;
+		$text = $tags . $prefix . $title2 . $post_content;
 		$url = "";
 	} else {
-		$text = $tags . $title2;
-	}
+		$title2 = ($format_title) ? $title2 : $title;
+		$text = $tags . $prefix . $title2;
+	} 
 	$list = array('title' => $title, // 标题
 		'content' => $content, // 内容
 		'excerpt' => $excerpt, // 摘要
@@ -180,7 +188,7 @@ function wp_connect_publish($post_ID) {
 		'richMedia' => wp_multi_media_url($content, $post_ID), // 匹配视频、图片
 		'is_author' => $is_author // 用户类型（站长 or 作者）
 		);
-	$list = apply_filters('post_sync_weibo', $list, $post_ID, $post_author_ID);
+	$list = apply_filters('post_sync_weibo', $list, $post_ID, $post_author_ID); 
 	// return var_dump($list);
 	if (is_array($list)) {
 		wp_update_list($list['text'], $list['url'], $list['richMedia'], $account, $post_ID);
@@ -189,7 +197,7 @@ function wp_connect_publish($post_ID) {
 
  /**
  * 同步列表
- * @since 1.9.18
+ * @since 2.3
  */
 function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	global $wptm_options;
@@ -222,18 +230,47 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	// 处理完毕输出链接
 	$postlink = trim($vurl . ' ' . $url); 
 	// 截取字数
+	$status = wp_status($text, '', 140, 1); //灯鹭
 	$status1 = wp_status($text, $postlink, 140); //网易/人人/饭否/做啥
 	$status2 = wp_status($text, urlencode($postlink), 140, 1); //新浪/天涯
-	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心  
+	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心
 	// 开始同步
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$output = array();
-	if ($account['sina']) { // 新浪微博 /140*
+	if ($account['sina']['oauth_token']) { // 新浪微博 /140*
 		$ms = wp_update_t_sina($account['sina'], $status2, $picture);
 		$output['sina'] = $ms['mid'];
+	} elseif ($account['sina']['mediaUserID']) {
+		wp_update_share($account['sina']['mediaUserID'], $status, $url, '', $pic[0], $pic[1], $post_id);
 	} 
-	if ($account['qq']) { // 腾讯微博 /140*
+	$mediaUserID = '';
+	if ($account['qq']['oauth_token']) { // 腾讯微博 /140*
 		$output['qq'] = wp_update_t_qq($account['qq'], $status3, $pic);
+	} elseif ($account['qq']['mediaUserID']) {
+		$mediaUserID .= $account['qq']['mediaUserID'] . ',';
+	} 
+	if ($account['sohu']['oauth_token']) { // 搜狐微博 /+
+		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);
+	} elseif ($account['sohu']['mediaUserID']) {
+		$mediaUserID .= $account['sohu']['mediaUserID'] . ',';
+	} 
+	if ($account['netease']['oauth_token']) { // 网易微博 /163
+		wp_update_t_163($account['netease'], $status1, $picture);
+	} elseif ($account['netease']['mediaUserID']) {
+		$mediaUserID .= $account['netease']['mediaUserID'] . ',';
+	} 
+	if ($account['renren']['mediaUserID']) {
+		$mediaUserID .= $account['renren']['mediaUserID'] . ',';
+	} elseif ($account['renren']) { // 人人网 /140
+		wp_update_renren($account['renren'], $status1);
+	} 
+	if ($account['tianya']['oauth_token']) { // 天涯 /140*
+		wp_update_tianya($account['tianya'], $status2, $picture);
+	} elseif ($account['tianya']['mediaUserID']) {
+		$mediaUserID .= $account['tianya']['mediaUserID'];
+	} 
+	if ($mediaUserID) {
+		wp_update_share(rtrim($mediaUserID, ','), $status, $url, '', $pic[0], $pic[1], $post_id);
 	} 
 	if ($account['wbto']) { // 微博通 /140+
 		wp_update_wbto($account['wbto'], wp_status($text, $postlink, 140, 1), $picture);
@@ -241,17 +278,11 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	if ($account['douban']) { // 豆瓣 /128
 		wp_update_douban($account['douban'], wp_status($text, $postlink, 128));
 	} 
-	if ($account['renren']) { // 人人网 /140
-		wp_update_renren($account['renren'], $status1);
+	if ($account['twitter']) { // twitter /140
+		wp_update_twitter($account['twitter'], wp_status($text, wp_urlencode($postlink), 140));
 	} 
 	if ($account['kaixin001']) { // 开心网 /140+
 		wp_update_kaixin001($account['kaixin001'], $status3, $picture);
-	} 
-	if ($account['netease']) { // 网易微博 /163
-		wp_update_t_163($account['netease'], $status1, $picture);
-	} 
-	if ($account['sohu']) { // 搜狐微博 /+
-		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);
 	} 
 	if ($account['digu']) { // 嘀咕 /140
 		wp_update_digu($account['digu'], wp_status($text, urlencode($postlink), 140));
@@ -264,12 +295,6 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	} 
 	if ($account['zuosa']) { // 做啥 /140
 		wp_update_zuosa($account['zuosa'], $status1);
-	} 
-	if ($account['tianya']) { // 天涯 /140*
-		wp_update_tianya($account['tianya'], $status2, $picture);
-	} 
-	if ($account['twitter']) { // twitter /140
-		wp_update_twitter($account['twitter'], wp_status($text, wp_urlencode($postlink), 140));
 	} 
 	// 钩子，方便自定义插件
 	do_action('wp_update_list_update', $output, $ms, $post_id);

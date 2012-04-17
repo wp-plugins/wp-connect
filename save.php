@@ -22,7 +22,9 @@ if ($_GET['do'] == "page") {
 	if (isset($_POST['message'])) {
 		if (($wptm_options['page_password'] && $password == $wptm_options['page_password']) || (is_user_logged_in() && function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
 			wp_update_page();
-		} else { echo 'pwderror'; }
+		} else {
+			echo 'pwderror';
+		} 
 	} 
 } 
 
@@ -31,13 +33,14 @@ if ($_GET['do'] == "login") {
 		$redirect_to = $_SESSION['wp_url_back'];
 	} else {
 		$redirect_to = get_bloginfo('url');
-	}
-    
+	} 
+
 	$login_userinfo = $_SESSION['wp_login_userinfo'];
 	if ($login_userinfo) {
-		wp_connect_login($login_userinfo[0], $login_userinfo[1]);
+		$login_userinfo[0][1] = ifuser($login_userinfo[0][1]);
+		wp_connect_login($login_userinfo[0], $login_userinfo[1], '', true);
 		header('Location:' . $redirect_to);
-	}
-}
+	} 
+} 
 
 ?>
