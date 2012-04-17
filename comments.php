@@ -1,4 +1,6 @@
 <?php
+$_SESSION['wp_url_bind'] = '';
+$_SESSION['wp_url_back'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 $wptm_basic = get_option('wptm_basic');
 $wptm_comment = get_option('wptm_comment');
 if (empty($wptm_comment['comments_open']) || (!empty($wptm_comment['comments_open']) && comments_open())) {

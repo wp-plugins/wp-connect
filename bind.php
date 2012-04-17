@@ -141,12 +141,23 @@ $("<?php if($wptm_options['bind']) {echo '#twitter, #qq, #sina, #sohu, #netease,
 $(".bind").click(function () {
   $("#delete").show();
 });
-$("<?php if(!$wptm_options['bind']) {echo '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,';}?><?php if(is_donate()) echo '#renren, #kaixin';?>").click(function () {
+<?php
+$t_btn = '';
+if (!$wptm_options['bind']) {
+	$t_btn = '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,';
+} 
+if (is_donate()) {
+	$t_btn .= '#renren, #kaixin';
+}
+if ($t_btn) {
+?>
+$("<?php echo $t_btn;?>").click(function () {
   var id = $(this).attr("id");
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $(".dialog_add").attr("id", "dialog_" + id);
   $(".add").attr("name", "add_" + id);
 });
+<?php }?>
 $("#bind_twitter, #bind_qq, #bind_sina, #bind_sohu, #bind_netease, #bind_douban, #bind_tianya, #bind_renren, #bind_kaixin").click(function () {
   var id = $(this).attr("id").replace('bind_', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
