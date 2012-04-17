@@ -19,6 +19,31 @@ if (!function_exists('mb_strlen')) {
 		return ($encode == 'utf-8') ? strlen(utf8_decode($str)) : strlen($str);
 	} 
 } 
+// 使用键名比较计算数组的交集
+if (!function_exists('array_intersect_key')) {
+	function array_intersect_key($isec, $keys) {
+		$argc = func_num_args();
+		if ($argc > 2) {
+			for ($i = 1; !empty($isec) && $i < $argc; $i++) {
+				$arr = func_get_arg($i);
+				foreach (array_keys($isec) as $key) {
+					if (!isset($arr[$key])) {
+						unset($isec[$key]);
+					} 
+				} 
+			} 
+			return $isec;
+		} else {
+			$res = array();
+			foreach (array_keys($isec) as $key) {
+				if (isset($keys[$key])) {
+					$res[$key] = $isec[$key];
+				} 
+			} 
+			return $res;
+		} 
+	} 
+}
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 if (!function_exists('wp_strlen')) {
 	function wp_strlen($text) {
@@ -346,7 +371,6 @@ function url_short_t_cn($long_url) {
 } 
 // 兼容旧版
 if (!function_exists('get_t_cn')) {
-	// 以下代码来自 t.cn 短域名WordPress 插件
 	function get_t_cn($long_url) {
 		return url_short_t_cn(urldecode($long_url));
 	} 
@@ -460,6 +484,7 @@ if (default_values('chinese_username', 1, $wptm_connect)) {
 }
 // 匹配视频,图片 优先级 v1.9.18
 function wp_multi_media_url($content, $post_ID = '') {
+	global $wptm_options;
 	$richMedia = apply_filters('wp_multi_media_url', '', $content, $post_ID);
 	if (is_array($richMedia) && array_filter($richMedia)) {
 		return $richMedia;
@@ -470,7 +495,7 @@ function wp_multi_media_url($content, $post_ID = '') {
 		$v = $video[1][0];
 	} 
 	if (empty($wptm_options['disable_pic'])) {
-		if (is_numeric($post_ID) && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
+		if ($wptm_options['thumbnail'] && is_numeric($post_ID) && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
 			$image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post_ID), 'full');
 			$p = $image_url[0];
 		} else {

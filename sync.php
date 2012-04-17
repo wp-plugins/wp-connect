@@ -36,7 +36,7 @@ $sync_loaded = 0; // wp bug
 function wp_connect_publish($post_ID) {
 	global $sync_loaded, $wptm_options;
 	$sync_loaded += 1;
-	if (isset($_POST['publish_no_sync']) || $sync_loaded > 1) {
+	if (isset($_POST['publish_no_sync']) || $sync_loaded > 1 || $_POST['post_password']) {
 		return;
 	}
 	@ini_set("max_execution_time", 120);
@@ -86,8 +86,9 @@ function wp_connect_publish($post_ID) {
 			if ($update_days == 0 || ($time - $post_date < $update_days)) { // 判断当前时间与文章发布时间差
 				return;
 			} 
-		} 
-		$prefix = $update_prefix;
+		} else {
+			$prefix = $update_prefix;
+		}
 	} elseif (isset($_POST['_inline_edit'])) { // 是否是快速编辑
 		$quicktime = $_POST['aa'] . '-' . $_POST['mm'] . '-' . $_POST['jj'] . ' ' . $_POST['hh'] . ':' . $_POST['mn'] . ':00';
 		$post_date = strtotime($quicktime);
@@ -224,7 +225,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	// 截取字数
 	$status1 = wp_status($text, $postlink, 140); //网易/人人/饭否/做啥
 	$status2 = wp_status($text, urlencode($postlink), 140, 1); //新浪/天涯
-	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心  
+	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心
 	// 开始同步
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$output = array();
@@ -235,23 +236,29 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	if ($account['qq']) { // 腾讯微博 /140*
 		$output['qq'] = wp_update_t_qq($account['qq'], $status3, $pic);
 	} 
+	if ($account['sohu']) { // 搜狐微博 /+
+		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);
+	} 
+	if ($account['netease']) { // 网易微博 /163
+		wp_update_t_163($account['netease'], $status1, $picture);
+	} 
+	if ($account['renren']) { // 人人网 /140
+		wp_update_renren($account['renren'], $status1);
+	} 
+	if ($account['tianya']) { // 天涯 /140*
+		wp_update_tianya($account['tianya'], $status2, $picture);
+	} 
 	if ($account['wbto']) { // 微博通 /140+
 		wp_update_wbto($account['wbto'], wp_status($text, $postlink, 140, 1), $picture);
 	} 
 	if ($account['douban']) { // 豆瓣 /128
 		wp_update_douban($account['douban'], wp_status($text, $postlink, 128));
 	} 
-	if ($account['renren']) { // 人人网 /140
-		wp_update_renren($account['renren'], $status1);
+	if ($account['twitter']) { // twitter /140
+		wp_update_twitter($account['twitter'], wp_status($text, wp_urlencode($postlink), 140));
 	} 
 	if ($account['kaixin001']) { // 开心网 /140+
 		wp_update_kaixin001($account['kaixin001'], $status3, $picture);
-	} 
-	if ($account['netease']) { // 网易微博 /163
-		wp_update_t_163($account['netease'], $status1, $picture);
-	} 
-	if ($account['sohu']) { // 搜狐微博 /+
-		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);
 	} 
 	if ($account['digu']) { // 嘀咕 /140
 		wp_update_digu($account['digu'], wp_status($text, urlencode($postlink), 140));
@@ -265,16 +272,10 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	if ($account['zuosa']) { // 做啥 /140
 		wp_update_zuosa($account['zuosa'], $status1);
 	} 
-	if ($account['tianya']) { // 天涯 /140*
-		wp_update_tianya($account['tianya'], $status2, $picture);
-	} 
-	if ($account['twitter']) { // twitter /140
-		wp_update_twitter($account['twitter'], wp_status($text, wp_urlencode($postlink), 140));
-	} 
 	// 钩子，方便自定义插件
 	do_action('wp_update_list_update', $output, $ms, $post_id);
 	return $output;
-}
+} 
 // 腾讯微博
 function wp_update_t_qq($tok, $status, $value) {
 	if (!class_exists('qqOAuth')) {

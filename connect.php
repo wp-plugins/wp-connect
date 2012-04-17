@@ -39,11 +39,29 @@ function get_weibo($tid) {
 } 
 
 /**
- * 登录 按钮显示
+ * 登录 按钮显示 V1.9.18
  */
-function login_button_count() {
+function user_denglu_platform() {
 	global $wptm_connect;
-	$count = $wptm_connect['qqlogin'] . $wptm_connect['sina'] . $wptm_connect['qq'] . $wptm_connect['renren'] . $wptm_connect['kaixin001'] . $wptm_connect['taobao'] . $wptm_connect['baidu'] . $wptm_connect['douban'] . $wptm_connect['sohu'] . $wptm_connect['netease'] . $wptm_connect['tianya'] . $wptm_connect['msn'] . $wptm_connect['google'] . $wptm_connect['yahoo'] . $wptm_connect['twitter'];
+	$account = array('qq' => $wptm_connect['qqlogin'],
+		'sina' => $wptm_connect['sina'],
+		'tqq' => $wptm_connect['qq'],
+		'renren' => $wptm_connect['renren'],
+		'taobao' => $wptm_connect['taobao'],
+		'douban' => $wptm_connect['douban'],
+		'baidu' => $wptm_connect['baidu'],
+		'kaixin' => $wptm_connect['kaixin001'],
+		'sohu' => $wptm_connect['sohu'],
+		'netease' => $wptm_connect['netease'],
+		'tianya' => $wptm_connect['tianya'],
+		'msn' => $wptm_connect['msn'],
+		'twitter' => $wptm_connect['twitter']
+		);
+	return array_filter($account);
+}
+
+function login_button_count() {
+	$count = count(user_denglu_platform());
 	if (!$count) {
 		return;
 	} elseif ($count == 1) {
@@ -51,7 +69,7 @@ function login_button_count() {
 	} else {
 		return 2;
 	} 
-} 
+}
 
 function sync_account($uid) {
 	$user = get_userdata($uid);
@@ -413,7 +431,7 @@ function wp_connect_tianya(){
 /**
  * 登录 写入用户数据
  *
- * @since 2.0
+ * @since 1.9.18
  */
 function wp_connect_init() {
 	if (session_id() == "") {
@@ -534,6 +552,8 @@ function wp_connect_login($userinfo, $tmail, $uid = '') {
 		update_usermeta($wpuid, 'last_login', $tid);
 		if ($oauth_token && $oauth_token_secret) { // 保存授权信息
 			update_usermeta($wpuid, 'login_' . $t, array($oauth_token, $oauth_token_secret));
+			if (!$user_login && $wptm_connect['sync']) // 用户首次登录的时候也绑定同步帐号
+				update_usermeta($wpuid, ($t == 'twitter') ? 'wptm_twitter_oauth' : 'wptm_' . $t, array('oauth_token' => $oauth_token, 'oauth_token_secret' => $oauth_token_secret));
 			if (in_array($t, array('qq', 'sina', 'netease', 'sohu'))) {
 				$nickname = get_user_meta($wpuid, 'login_name', true);
 				$nickname[$t] = ($t == 'qq') ? $user_name : $user_screenname;
@@ -749,12 +769,17 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} 
 	return $avatar;
 } 
-// 头像尺寸
+// admin bar头像尺寸
+if (version_compare($wp_version, '3.2.1', '>')) { // WordPress V3.3
+	function wp_admin_bar_header_3_3() {
+		echo "<style type=\"text/css\" media=\"screen\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n";
+	} 
+	add_action('wp_head', 'wp_admin_bar_header_3_3');
+	add_action('admin_head', 'wp_admin_bar_header_3_3');
+}
+
 function set_admin_footer_define() {
-	global $wp_version;
 	define('IS_ADMIN_FOOTER', true);
-	if (version_compare($wp_version, '3.2.1', '>')) // WordPress V3.3
-		echo "<style type=\"text/css\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n";
 } 
 
 function is_admin_footer() {
