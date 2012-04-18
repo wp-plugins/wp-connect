@@ -90,7 +90,7 @@ Stable tag: 2.3.1
 
 = WordPress连接微博 V2.3 更新说明 =
 
-最新产品——社会化评论：（[查看演示](http://www.denglu.cc/demo.html) ）
+最新产品——denglu评论：（[查看演示](http://www.denglu.cc/demo.html) ）
 
 1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。
 
