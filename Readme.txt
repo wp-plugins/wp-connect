@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人,评论,社会化评论,comment
 Requires at least: 3.0
 Tested up to: 3.3.1
-Stable tag: 2.3
+Stable tag: 2.3.1
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
@@ -17,7 +17,7 @@ Stable tag: 2.3
 
 二. 同步文章、评论到微博/SNS。 （同步到腾讯微博、新浪微博、网易微博、搜狐微博、人人网，开心网、嘀咕、豆瓣、天涯微博、Twitter、饭否、人间网、做啥、享拍微博通等。）
 
-三. 支持使用灯鹭的最新产品：社会化评论 (评论设置中开启) （[查看演示](http://www.denglu.cc/demo.html) ）
+三. 支持使用灯鹭的最新产品：denglu评论 (评论设置中开启) （[查看演示](http://www.denglu.cc/demo.html) ）
 
 >1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。
 
