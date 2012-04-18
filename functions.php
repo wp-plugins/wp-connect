@@ -74,6 +74,22 @@ if (!function_exists('array_intersect_key')) {
 		} 
 	} 
 }
+// 从数组中取出一段，保留键值 array_slice  < 5.0.2
+function php_array_slice($array, $offset, $length = null, $preserve_keys = false) {
+	if (!$preserve_keys || version_compare(PHP_VERSION, '5.0.1', '>')) {
+		return array_slice($array, $offset, $length, $preserve_keys);
+	} 
+	if (!is_array($array)) {
+		user_error('The first argument should be an array', E_USER_WARNING);
+		return;
+	} 
+	$keys = array_slice(array_keys($array), $offset, $length);
+	$ret = array();
+	foreach ($keys as $key) {
+		$ret[$key] = $array[$key];
+	} 
+	return $ret;
+}
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 if (!function_exists('wp_strlen')) {
 	function wp_strlen($text) {
