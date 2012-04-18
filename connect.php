@@ -10,10 +10,12 @@ if ($wptm_connect['enable_connect']) {
 }
 // 社会化评论
 if (!function_exists('denglu_comments') && install_comments()) {
-	add_filter('comments_template', 'denglu_comments');
-	function denglu_comments($file) {
-		global $post;
-		return dirname(__FILE__) . '/comments.php';
+	if (!$wptm_comment['manual']) {
+		add_filter('comments_template', 'denglu_comments');
+		function denglu_comments($file) {
+			global $post;
+			return dirname(__FILE__) . '/comments.php';
+		} 
 	} 
 } elseif ($wptm_connect['enable_connect']) {
 	if (!$wptm_connect['manual'] || $wptm_connect['manual'] == 2)
@@ -23,7 +25,7 @@ if (!function_exists('denglu_comments') && install_comments()) {
 	} else {
 		add_action('comment_post', 'wp_connect_comment', 100);
 	} 
-} 
+}  
 // 通过tid获取微博信息
 function get_weibo($tid) {
 	$name = array('gtid' => array('google', 'google', 'Google', '', ''),

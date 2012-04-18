@@ -404,6 +404,10 @@ function wp_connect_do_page() {
                 <td><input name="enable_comment" type="checkbox" value="1" <?php if($wptm_comment['enable_comment']) echo "checked "; ?> /> <a href="http://www.denglu.cc/comment.html" target="_blank">查看官方网站</a></td>
             </tr>
 		    <tr>
+			    <td width="25%" valign="top">自定义函数</td>
+			    <td><label><input name="manual" type="checkbox" value="1" <?php if($wptm_comment['manual']) echo "checked "; ?> />自己在主题添加函数（不推荐使用）</label><code>&lt;?php dengluComments();?&gt;</code></td>
+		    </tr>
+		    <tr>
 			    <td width="25%" valign="top">单篇文章评论开关</td>
 			    <td><label><input name="comments_open" type="checkbox" value="1" <?php if(default_values('comments_open', 1, $wptm_comment)) echo "checked ";?> />继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能。</label></td>
 		    </tr>
