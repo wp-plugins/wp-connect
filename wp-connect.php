@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。
-Version: 2.3
+Version: 2.3.1
 */
 
-define('WP_CONNECT_VERSION', '2.3');
+define('WP_CONNECT_VERSION', '2.3.1');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -105,7 +105,7 @@ function wp_connect_warning() {
 add_action('admin_notices', 'wp_connect_warning'); 
 
 function wp_connect_tips() { ?>
-	<p><strong>最新产品——社会化评论：</strong>（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）</p>
+	<p><strong>最新产品 —— denglu评论：</strong>（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）</p>
     <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
 	<p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u>（非实时同步，5分钟一次）</p>
 	<p>3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。（非实时同步，5分钟一次）</p>
