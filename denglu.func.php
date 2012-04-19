@@ -938,14 +938,17 @@ if (!function_exists('dcToLocal') && install_comments()) {
 		$s = array('1', '0', 'spam', 'trash');
 		return $s[$state];
 	} 
+	// 通过灯鹭cid得到WordPress评论ID
+	function get_commentID($cid) {
+		global $wpdb;
+		return $wpdb -> get_var("SELECT comment_ID FROM $wpdb->comments WHERE comment_agent = 'Denglu_{$cid}' LIMIT 1");
+	} 
 	// 保存单条评论
 	function save_dengluComment($comment, $parent = 0) {
 		global $wpdb;
 		$cid = $comment['cid'];
-		$ret = $wpdb -> get_row("SELECT comment_ID FROM $wpdb->comments WHERE comment_agent = 'Denglu_{$cid}' LIMIT 1", ARRAY_A);
-		if ($ret['comment_ID']) {
-			return $ret['comment_ID'];
-		} 
+		if ($ret = get_commentID($cid))
+			return $ret;
 		$weiboinfo = get_weiboInfo($comment['mediaID']);
 		$mid = $weiboinfo[0] . 'mid';
 		$id = $weiboinfo[1];
@@ -961,7 +964,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 		if (!$user_id) {
 			$user_id = get_user_by_meta_value($mid, $comment['uid']);
 		}
-		$data = array('comment_post_ID' => $comment['postid'],
+		$commentdata = array('comment_post_ID' => $comment['postid'],
 			'comment_author' => $comment['nick'],
 			'comment_author_email' => $email,
 			'comment_author_url' => $comment['url'],
@@ -970,11 +973,14 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			'comment_parent' => $parent,
 			'user_id' => ($user_id) ? $user_id : 0,
 			'comment_author_IP' => $comment['ip'],
-			'comment_agent' => 'Denglu_' . $comment['cid'],
+			'comment_agent' => 'Denglu_' . $cid,
 			'comment_date' => $comment['date'],
 			'comment_approved' => dcState($comment['state']),
 			);
-		$commentID = wp_insert_comment($data);
+		$commentID = get_commentID($cid);
+		if (!$commentID) {
+			$commentID = wp_insert_comment($commentdata);
+		}
 		return $commentID;
 	} 
 	// 保存评论，包括父级评论
