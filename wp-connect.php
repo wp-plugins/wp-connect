@@ -4,11 +4,11 @@ Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
-Description: 支持使用16家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。支持社会化评论功能。
-Version: 2.3.1
+Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
+Version: 2.3.2
 */
 
-define('WP_CONNECT_VERSION', '2.3.1');
+define('WP_CONNECT_VERSION', '2.3.2');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -35,7 +35,8 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key v1.9.18
 		$keybug = 1;
 	}
-	update_option("wptm_tips", 1);
+	if (version_compare($wptm_version, '2.3', '<'))
+		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
 

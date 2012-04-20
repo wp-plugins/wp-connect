@@ -891,7 +891,7 @@ if (!function_exists('denglu_recent_comments') && install_comments()) {
 /**
  * 1.评论保存到本地服务器
  * 2.评论状态同步到本地服务器。
- * V2.3
+ * V2.3.2
  */
 if (!function_exists('dcToLocal') && install_comments()) {
 	function get_weiboInfo($name) {
@@ -963,7 +963,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 		} 
 		if (!$user_id) {
 			$user_id = get_user_by_meta_value($mid, $comment['uid']);
-		}
+		} 
 		$commentdata = array('comment_post_ID' => $comment['postid'],
 			'comment_author' => $comment['nick'],
 			'comment_author_email' => $email,
@@ -980,7 +980,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 		$commentID = get_commentID($cid);
 		if (!$commentID) {
 			$commentID = wp_insert_comment($commentdata);
-		}
+		} 
 		return $commentID;
 	} 
 	// 保存评论，包括父级评论
@@ -998,7 +998,6 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			$number = count($comments) - 1;
 			$last_cid = $comments[$number]['commentID'];
 			update_option('denglu_last_id', array('cid' => $last_cid, 'time' => time()));
-			$state = array();
 			foreach ($comments as $comment) {
 				save_dengluComments(array('postid' => $comment['postid'], 'mediaID' => $comment['mediaID'], 'uid' => $comment['mediaUserID'], 'nick' => $comment['userName'], 'email' => $comment['userEmail'], 'url' => $comment['homepage'], 'cid' => $comment['commentID'], 'content' => $comment['content'], 'state' => $comment['state'], 'ip' => $comment['ip'], 'date' => $comment['createTime']), ($c = $comment['parent']) ? array('postid' => $c['postid'], 'mediaID' => $c['mediaID'], 'uid' => $c['mediaUserID'], 'nick' => $c['userName'], 'email' => $c['userEmail'], 'url' => $c['homepage'], 'cid' => $c['commentID'], 'content' => $c['content'], 'state' => $c['state'], 'ip' => $c['ip'], 'date' => $c['createTime']):'');
 			} 
@@ -1024,7 +1023,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 				wp_set_comment_status($cid, 'trash'); //回收站
 				break;
 			case "4":
-				wp_delete_comment($cid); //永久删除
+				wp_delete_comment($cid, true); //永久删除
 				break;
 			default:
 		} 
@@ -1067,14 +1066,25 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			update_option('denglu_commentState', $commentState);
 		} 
 	} 
+	// 删除3天内重复的评论，保留comment_ID最小的一条
+	function delete_same_comments() {
+		global $wpdb;
+		$comments = $wpdb -> get_results("SELECT comment_ID FROM $wpdb->comments b WHERE NOT EXISTS(SELECT a.comment_ID FROM (SELECT min(comment_ID) comment_ID FROM $wpdb->comments WHERE TO_DAYS(NOW()) - TO_DAYS(comment_date_gmt) < 3 group by comment_content,comment_agent,comment_author_email) a WHERE a.comment_ID = b.comment_ID) AND TO_DAYS(NOW()) - TO_DAYS(comment_date_gmt) < 3", "ARRAY_A");
+		if ($comments) {
+			foreach($comments as $comment) {
+				wp_delete_comment($comment['comment_ID'], true);
+			} 
+		} 
+	} 
 	// 触发动作
 	function dcToLocal() {
 		global $wptm_comment;
 		$denglu_last_id = get_option('denglu_last_id'); //读取数据库
-		$denglu_commentState = get_option('denglu_commentState'); //读取数据库
+		$denglu_commentState = get_option('denglu_commentState'); //读取数据库 
 		if (!$denglu_last_id['time'] || time() - $denglu_last_id['time'] > 300) { // 5min
 			save_dcToLocal($denglu_last_id); // 同步评论到本地服务器
 			save_dcStateToLocal($denglu_commentState, $denglu_last_id['time']); // 同步评论状态到本地服务器
+			delete_same_comments();
 		} 
 	} 
 	if (default_values('dcToLocal', 1, $wptm_comment)) {
