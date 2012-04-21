@@ -241,7 +241,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 		$ms = wp_update_t_sina($account['sina'], $status2, $picture);
 		$output['sina'] = $ms['mid'];
 	} elseif ($account['sina']['mediaUserID']) {
-		wp_update_share($account['sina']['mediaUserID'], $status, $url, '', $pic[0], $pic[1]);
+		wp_update_share($account['sina']['mediaUserID'], $status, $url, '', $pic[0], $pic[1], $post_id);
 	} 
 	$mediaUserID = '';
 	if ($account['qq']['oauth_token']) { // 腾讯微博 /140*
@@ -270,7 +270,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 		$mediaUserID .= $account['tianya']['mediaUserID'];
 	} 
 	if ($mediaUserID) {
-		wp_update_share(rtrim($mediaUserID, ','), $status, $url, '', $pic[0], $pic[1]);
+		wp_update_share(rtrim($mediaUserID, ','), $status, $url, '', $pic[0], $pic[1], $post_id);
 	} 
 	if ($account['wbto']) { // 微博通 /140+
 		wp_update_wbto($account['wbto'], wp_status($text, $postlink, 140, 1), $picture);
