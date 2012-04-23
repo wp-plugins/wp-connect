@@ -420,7 +420,10 @@ function connect_denglu_update() {
 		        update_option("wptm_basic", $wptm_basic);
 			}
 		} 
-	} 
+	} else {
+		$wptm_basic['denglu'] = 1;
+		update_option("wptm_basic", $wptm_basic);
+	}
 } 
 
 /**
@@ -526,6 +529,9 @@ function connect_denglu() {
 			$userinfo = array($tid, $username, $user['screenName'], $user['profileImageUrl'], $url, $userid, $username); //tid,username,nick,head,url,userid,mediaUserID
 			if ($uid) {
 				wp_connect_login($userinfo, $email, $uid);
+			} elseif ($_GET['dl_type'] == 'comment') { // 从评论框登录，跳过强制填写注册信息。V2.3.3
+				$userinfo[1] = ifuser($userinfo[1]);
+				wp_connect_login($userinfo, $email, '', true);
 			} else {
 				wp_connect_login($userinfo, $email);
 			} 
