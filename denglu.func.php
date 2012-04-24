@@ -96,7 +96,7 @@ function install_comments() {
 // 是否使用灯鹭的帐号绑定
 function use_denglu_bind() {
 	global $wptm_connect;
-	if (empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments')) {
+	if (empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments') && !install_comments()) {
 		return false;
 	} 
 	return true;
@@ -449,7 +449,7 @@ function denglu_userInfo() {
 } 
 // 登录初始化
 function connect_denglu() {
-	$user = denglu_userInfo(); 
+	$user = denglu_userInfo();
 	// return var_dump($user);
 	if ($username = $user['mediaUserID']) {
 		if (is_user_logged_in() && in_array($_SESSION['wp_url_login'], array('sina', 'tencent', 'sohu', 'netease', 'renren', 'tianya')) && ($redirect_to = $_SESSION['wp_url_bind'])) { // V2.3，同步帐号绑定
@@ -789,12 +789,11 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 		return $result;
 	} 
 
-	function wp_update_comment_agent($comment_ID) {
+	function wp_update_comment_agent($comment_ID, $cid = '') {
 		global $wpdb;
-		$comments = $wpdb -> get_row("SELECT comment_agent FROM $wpdb->comments WHERE comment_ID = {$comment_ID} AND comment_agent not like '%Denglu%'", ARRAY_A);
-		if ($comments) {
-			$result = wp_update_comment_key($comment_ID, 'comment_agent', trim($comments['comment_agent'] . ' Denglu'));
-			return $result;
+		$comment_agent = $wpdb -> get_var("SELECT comment_agent FROM $wpdb->comments WHERE comment_ID = {$comment_ID} AND comment_agent not like '%Denglu%'");
+		if ($comment_agent) {
+			return wp_update_comment_key($comment_ID, 'comment_agent', trim($comment_agent . ' Denglu_' . $cid));
 		} 
 	} 
 	// 导入评论
@@ -817,10 +816,10 @@ if (!function_exists('denglu_importComment') && install_comments()) {
 			// return var_dump($comments);
 			if (is_array($comments)) {
 				foreach ($comments as $comment) {
-					if ($comment['id']) wp_update_comment_agent($comment['comment_ID']);
+					if ($comment['id']) wp_update_comment_agent($comment['comment_ID'], $comment['id']);
 					if (is_array($comment['children'])) {
 						foreach ($comment['children'] as $children) {
-							if ($children['id']) wp_update_comment_agent($children['comment_ID']);
+							if ($children['id']) wp_update_comment_agent($children['comment_ID'], $children['id']);
 						} 
 					} 
 				} 
@@ -897,7 +896,8 @@ if (!function_exists('denglu_recent_comments') && install_comments()) {
 /**
  * 1.评论保存到本地服务器
  * 2.评论状态同步到本地服务器。
- * V2.3.2
+ * 3.从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器 V2.3.3
+ * add_V2.3, edit_V2.3.3
  */
 if (!function_exists('dcToLocal') && install_comments()) {
 	function get_weiboInfo($name) {
@@ -952,6 +952,8 @@ if (!function_exists('dcToLocal') && install_comments()) {
 	// 保存单条评论
 	function save_dengluComment($comment, $parent = 0) {
 		global $wpdb;
+		if ($commentID = $comment['sourceID']) // 以前导入到灯鹭服务器记录的本地评论ID
+			return $commentID;
 		$cid = $comment['cid'];
 		if ($ret = get_commentID($cid))
 			return $ret;
@@ -1005,7 +1007,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			$last_cid = $comments[$number]['commentID'];
 			update_option('denglu_last_id', array('cid' => $last_cid, 'time' => time()));
 			foreach ($comments as $comment) {
-				save_dengluComments(array('postid' => $comment['postid'], 'mediaID' => $comment['mediaID'], 'uid' => $comment['mediaUserID'], 'nick' => $comment['userName'], 'email' => $comment['userEmail'], 'url' => $comment['homepage'], 'cid' => $comment['commentID'], 'content' => $comment['content'], 'state' => $comment['state'], 'ip' => $comment['ip'], 'date' => $comment['createTime']), ($c = $comment['parent']) ? array('postid' => $c['postid'], 'mediaID' => $c['mediaID'], 'uid' => $c['mediaUserID'], 'nick' => $c['userName'], 'email' => $c['userEmail'], 'url' => $c['homepage'], 'cid' => $c['commentID'], 'content' => $c['content'], 'state' => $c['state'], 'ip' => $c['ip'], 'date' => $c['createTime']):'');
+				save_dengluComments(array('postid' => $comment['postid'], 'mediaID' => $comment['mediaID'], 'uid' => $comment['mediaUserID'], 'nick' => $comment['userName'], 'email' => $comment['userEmail'], 'url' => $comment['homepage'], 'cid' => $comment['commentID'], 'sourceID' => $comment['sourceID'], 'content' => $comment['content'], 'state' => $comment['state'], 'ip' => $comment['ip'], 'date' => $comment['createTime']), ($c = $comment['parent']) ? array('postid' => $c['postid'], 'mediaID' => $c['mediaID'], 'uid' => $c['mediaUserID'], 'nick' => $c['userName'], 'email' => $c['userEmail'], 'url' => $c['homepage'], 'cid' => $c['commentID'], 'commentID' => $c['cid'], 'content' => $c['content'], 'state' => $c['state'], 'ip' => $c['ip'], 'date' => $c['createTime']):'');
 			} 
 			save_dcToLocal(array('cid' => $last_cid));
 		} else {
@@ -1062,9 +1064,9 @@ if (!function_exists('dcToLocal') && install_comments()) {
 				$comment_diff = array_diff_assoc($commentState, $comments);
 				if ($comment_diff) {
 					foreach ($comment_diff as $cid => $state) {
-						$ret = $wpdb -> get_row("SELECT comment_ID FROM $wpdb->comments WHERE comment_agent = 'Denglu_{$cid}' LIMIT 1", ARRAY_A);
-						if ($ret['comment_ID']) {
-							dc_setCommentsStatus($ret['comment_ID'], $state);
+						$ret = get_commentID($cid);
+						if ($ret) {
+							dc_setCommentsStatus($ret, $state);
 						} 
 					} 
 				} 
@@ -1082,6 +1084,67 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			} 
 		} 
 	} 
+	// 通过WordPress评论ID获取灯鹭评论ID
+	function get_dengluCommentID($comment_ID) {
+		global $wpdb;
+		$ret = $wpdb -> get_var("SELECT comment_agent FROM $wpdb->comments WHERE comment_ID = {$comment_ID} AND comment_agent like '%Denglu_%' LIMIT 1");
+		if ($ret) {
+			return ltrim(strstr($ret, 'Denglu_'), 'Denglu_');
+		} 
+	} 
+	// 在WP后台评论处回复，并且父级为灯鹭评论ID
+	function get_replyComments() {
+		global $wpdb;
+		$comments = $wpdb -> get_results("SELECT comment_ID, comment_post_ID, comment_author, comment_author_email, comment_author_url, comment_author_IP, comment_date, comment_content, comment_parent, user_id FROM $wpdb->comments WHERE TO_DAYS(NOW()) - TO_DAYS(comment_date_gmt) < 3 AND comment_parent > 0 AND comment_approved=1 AND comment_agent not like '%Denglu%' LIMIT 20", "ARRAY_A");
+		$ret = array();
+		if ($comments) {
+			foreach($comments as $comment) {
+				$get_dlCommentID = get_dengluCommentID($comment['comment_parent']);
+				if ($get_dlCommentID) {
+					if ($comment['user_id']) {
+						if ($tid = get_usertid($comment['comment_author_email'], $comment['user_id'])) {
+							$user = get_row_userinfo($comment['user_id'], $tid);
+							if (is_array($user)) {
+								$comment = array_merge($user, $comment);
+							} 
+						} 
+					} 
+					$result[] = array('cid' => $get_dlCommentID, 'children' => array($comment));
+				} 
+			} 
+			return $result;
+		} 
+	} 
+	// 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器 V2.3.3
+	function denglu_importReplyComment() {
+		@ini_set("max_execution_time", 300);
+		$data = get_replyComments();
+		// return var_dump($data);
+		if ($data) {
+			$wptm_basic = get_option('wptm_basic');
+			$data = json_encode($data);
+			class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+			$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+			try {
+				$comments = $api -> importComment($data);
+			} 
+			catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+				// return false;
+				wp_die($e -> geterrorDescription()); //返回错误信息
+			} 
+			// return var_dump($comments);
+			if (is_array($comments)) {
+				foreach ($comments as $comment) {
+					if (is_array($comment['children'])) {
+						foreach ($comment['children'] as $children) {
+							if ($children['id']) wp_update_comment_agent($children['comment_ID'], $children['id']);
+						} 
+					} 
+				} 
+				denglu_importReplyComment();
+			}
+		} 
+	} 
 	// 触发动作
 	function dcToLocal() {
 		global $wptm_comment;
@@ -1090,7 +1153,8 @@ if (!function_exists('dcToLocal') && install_comments()) {
 		if (!$denglu_last_id['time'] || time() - $denglu_last_id['time'] > 300) { // 5min
 			save_dcToLocal($denglu_last_id); // 同步评论到本地服务器
 			save_dcStateToLocal($denglu_commentState, $denglu_last_id['time']); // 同步评论状态到本地服务器
-			delete_same_comments();
+			delete_same_comments(); // 删除相同评论
+		    denglu_importReplyComment(); // 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器
 		} 
 	} 
 	if (default_values('dcToLocal', 1, $wptm_comment)) {
