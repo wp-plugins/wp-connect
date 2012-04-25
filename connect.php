@@ -100,7 +100,7 @@ function wp_connect_button() {
 		echo $style;
 		echo '</div>';
 	} else {
-		if ($wptm_connect['style'] != 3 && ($platform = get_user_denglu_platform())) { // 登录按钮本地化，读取失败时用默认js代码暂时代替
+		if ($platform = get_user_denglu_platform()) { // 登录按钮本地化，读取失败时用默认js代码暂时代替
 			echo '<!-- 使用合作网站登录 来自 WordPress连接微博 插件 -->';
 			echo '<style type="text/css">';
 			echo '.t_login_text {margin:0; padding:0;}';
