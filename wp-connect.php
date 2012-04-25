@@ -186,32 +186,32 @@ function wp_connect_do_page() {
 	  if ($version == 1) {
 		  echo '<p>您已经成功安装了插件。';
 		  if (!$wptm_basic['appid'] || !$wptm_basic['appkey']) {
-			  echo '<span style="color:green;">请在 站点设置 中填写必需的 APP ID 和 APP Key</span>，您需要到 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a> 获取并填写。';
+			  echo '<span style="color:green;">请在 站点设置 中填写必需的 APP ID 和 APP Key</span>，您需要到 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a> 获取并填写。';
 		  } else {
-			  echo '<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>';
+			  echo '<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>';
 		  }
 		  if ($wptm_denglu[0]) {
 			  echo '<form method="post" action="options-general.php?page=wp-connect#basic">您可以用 用户名: '.$wptm_denglu[0]; 
 			  echo ($wptm_denglu[1]) ? '，密码: '.$wptm_denglu[1]: ' 和您的密码';
-			  echo ' 登录 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>，请尽快去平台修改密码。感谢您对插件的支持！<span class="submit"><input type="submit" name="wptm_denglu" value="删除该条信息" /></span></form>';
+			  echo ' 登录 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>，请尽快去平台修改密码。感谢您对插件的支持！<span class="submit"><input type="submit" name="wptm_denglu" value="删除该条信息" /></span></form>';
 		  }
 		  echo '</p>';
 	  } elseif ($version == 2) {
 		  if ($wptm_denglu[0]) {
 			  echo '<form method="post" action="options-general.php?page=wp-connect#basic">您可以用 用户名: '.$wptm_denglu[0]; 
 			  echo ($wptm_denglu[1]) ? '，密码: '.$wptm_denglu[1]: ' 和您的密码';
-			  echo ' 登录 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>，请尽快去平台修改密码。感谢您对插件的支持！<span class="submit"><input type="submit" name="wptm_denglu" value="删除该条信息" /></span></form>';
+			  echo ' 登录 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>，请尽快去平台修改密码。感谢您对插件的支持！<span class="submit"><input type="submit" name="wptm_denglu" value="删除该条信息" /></span></form>';
 		  }
 		  echo '<p>您需要升级数据才能继续使用 WordPress连接微博 插件，请先点击下面的“数据升级”按钮。</p>';
 		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="wptm_data" value="数据升级" /> (可能需要一些时间，请耐心等待！)</span></form></p>';
 	  } elseif ($version == 3) {
-		  echo '<p>您需要升级才能继续使用 WordPress连接微博 插件，请先点击下面的“升级插件”按钮，将完成与 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a> 的连接。</p>';
+		  echo '<p>您需要升级才能继续使用 WordPress连接微博 插件，请先点击下面的“升级插件”按钮，将完成与 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a> 的连接。</p>';
 		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="connect_denglu_update" value="升级插件" /></span></form></p>';
 	  } elseif ($version == 4) {
 		  echo '<p>您以前安装过 灯鹭 插件旧版，需要升级才能使用，请先点击下面的“升级插件”按钮。</p>';
 		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="update_denglu" value="升级插件" /></span></form></p>';
 	  } elseif ($version == 5) {
-		  echo '<p>这是您第一次使用，请先点击下面的“初始化插件”按钮，将完成与 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a> 的连接。</p>';
+		  echo '<p>这是您第一次使用，请先点击下面的“初始化插件”按钮，将完成与 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a> 的连接。</p>';
 		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="connect_denglu" value="初始化插件" /></span></form></p>';
 	  }
       if($version == 1) { 
@@ -259,12 +259,26 @@ function wp_connect_do_page() {
         <h3>同步微博</h3>
         <table class="form-table">
           <tr>
+            <td width="25%" valign="top"><strong>基础设置</strong></td>
+          </tr>
+          <tr>
             <td width="25%" valign="top">是否开启“微博同步”功能</td>
             <td><input name="enable_wptm" type="checkbox" value="1" <?php if($wptm_options['enable_wptm']) echo "checked "; ?>></td>
           </tr>
           <tr>
             <th>同步内容设置</th>
             <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 标题+链接 2. 标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 5. 标题 + 内容 <br /> 自定义标题格式：<input name="format" type="text" size="25" value="<?php echo $wptm_options['format']; ?>" /> ( 标题: <code>%title%</code>，会继承上面的设置，可留空。 )<br />把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label> <label><input name="thumbnail" type="checkbox" value="1" <?php checked($wptm_options['thumbnail']); ?>/>优先同步特色图像</label></td>
+          </tr>
+		  <tr>
+			<td width="25%" valign="top">选择同步接口</td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php checked(!$wptm_options || $wptm_options['denglu_bind']); ?>/>使用灯鹭开放平台提供的的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
+		  </tr>
+          <tr>
+            <td width="25%" valign="top"><strong>可选设置</strong></td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">多作者博客</td>
+            <td><label><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>>是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。</label></td>
           </tr>
           <tr>
             <th>自定义消息</th>
@@ -280,24 +294,12 @@ function wp_connect_do_page() {
                [ <a href="http://www.denglu.cc/source/wordpress_faqs.html#page" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
-            <td width="25%" valign="top">多作者博客</td>
-            <td><label><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>>是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。</label></td>
-          </tr>
-          <tr>
             <td width="25%" valign="top">自定义短网址</td>
             <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><strong>短网址</strong> <select name="t_cn"><option value="">选择</option><option value="1"<?php selected($wptm_options['t_cn'] == "1");?>>t.cn (新浪)</option><option value="2"<?php selected($wptm_options['t_cn'] == "2");?>>dwz.cn (百度)</option></select></label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
             <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
-          </tr>
-		  <tr>
-			<td width="25%" valign="top">选择同步接口</td>
-			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_options['denglu_bind']) echo "checked "; ?>/>使用灯鹭开放平台提供的的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
-		  </tr>
-          <tr>
-            <td width="25%" valign="top">我不能绑定帐号</td>
-            <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>(选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">服务器时间校正</td>
@@ -316,13 +318,12 @@ function wp_connect_do_page() {
         <h3>登录设置</h3>
         <table class="form-table">
           <tr>
+            <td width="25%" valign="top"><strong>基础设置</strong></td>
+          </tr>
+          <tr>
             <td width="25%" valign="top">是否开启“社会化登录”功能</td>
             <td><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>> (<a href="http://www.denglu.cc/source/wordpress2.0.html#oprovider" target="_blank">选择合作网站按钮及设置App key</a>)</td>
           </tr>
-		  <tr>
-			<td width="25%" valign="top">注册信息</td>
-			<td><label><input type="checkbox" name="reg" value="1" <?php if($wptm_connect['reg']) echo "checked "; ?>/>用户首次登录时，强制要求用户填写个人信息</label></td>
-		  </tr>
           <tr>
             <td width="25%" valign="top">显示设置</td>
             <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> ) [ <a href="http://www.denglu.cc/source/wordpress_faqs.html#connect-manual" target="_blank">详细说明</a> ]</td>
@@ -353,13 +354,16 @@ function wp_connect_do_page() {
             </td>
           </tr>
           <tr>
-            <td width="25%" valign="top">登录样式</td>
-            <td><label><input name="style" type="radio" value="1" <?php checked(!$wptm_connect['style'] || $wptm_connect['style'] == 1 || $wptm_connect['style'] == 2);?> />默认风格(本地化) </label><label><input name="style" type="radio" value="3" <?php checked($wptm_connect['style'] == 3);?> />通用风格</label><br /><label><input name="style" type="radio" value="4" <?php checked($wptm_connect['style'] == 4);?> />自定义样式 (请在下面粘帖从 <a href="http://open.denglu.cc" target="_blank">灯鹭平台</a> 获取的js代码)</label><br /><textarea name="custom_style" cols="80" rows="4"><?php echo stripslashes($wptm_connect['custom_style']);?></textarea>
-            </td>
+            <td width="25%" valign="top"><strong>可选设置</strong></td>
           </tr>
+		  <tr>
+			<td width="25%" valign="top">注册信息</td>
+			<td><label><input type="checkbox" name="reg" value="1" <?php if($wptm_connect['reg']) echo "checked "; ?>/>用户首次登录时，强制要求用户填写个人信息</label></td>
+		  </tr>
           <tr>
-            <td width="25%" valign="top">@微博帐号</td>
-            <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
+            <td width="25%" valign="top">登录样式</td>
+            <td><label><input name="style" type="radio" value="1" <?php checked(!$wptm_connect['style'] || $wptm_connect['style'] == 1 || $wptm_connect['style'] == 2);?> />默认风格(本地化) </label><br /><label><input name="style" type="radio" value="4" <?php checked($wptm_connect['style'] == 4);?> />自定义样式 (请在下面粘帖从 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a> 获取的js代码)</label><br /><textarea name="custom_style" cols="80" rows="4"><?php echo stripslashes($wptm_connect['custom_style']);?></textarea>
+            </td>
           </tr>
 		  <tr>
 			<td width="25%" valign="top">小工具</td>
@@ -375,6 +379,10 @@ function wp_connect_do_page() {
 			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/>在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
 		  </tr>
 		  <?php } ?>
+          <tr>
+            <td width="25%" valign="top">@微博帐号</td>
+            <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
+          </tr>
 		  <tr>
 			<td width="25%" valign="top">中文用户名</td>
 			<td><label><input type="checkbox" name="chinese_username" value="1" <?php if(default_values('chinese_username', 1, $wptm_connect)) echo "checked "; ?>/>支持中文用户名</label></td>
@@ -430,12 +438,12 @@ function wp_connect_do_page() {
         </p>
       </form>
 	  <h3>导入导出</h3>
-	  <p>导入数据到灯鹭平台。导入后，您原有的网站评论将在“灯鹭社会化评论”的评论框内显示。</p>
+	  <p>导入数据到灯鹭控制台。导入后，您原有的网站评论将在“灯鹭社会化评论”的评论框内显示。</p>
 	  <p><form method="post" action="options-general.php?page=wp-connect#comment"><span class="submit"><input type="submit" name="importComment" value="评论导入" /> (可能需要一些时间，请耐心等待！)</span></form></p>
       <div id="tml-tips" class="updated">
 	    <p><strong>使用说明</strong></p>
-        <p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭平台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p>
-		<p><strong>评论的相关设置及管理，请在灯鹭平台操作。</strong></p>
+        <p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p>
+		<p><strong>评论的相关设置及管理，请在灯鹭控制台操作。</strong></p>
 		<p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu/" target="_blank">Denglu评论</a> 插件 （直接在后台搜索插件 denglu 安装即可。）</p>
 	  </div>
     </div>
