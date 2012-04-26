@@ -61,7 +61,7 @@ class qqClient
 		$params['reqnum'] = $count;
 		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist' , $params );
 	}
-    // 发表微博(文本、图片、视频、音乐)
+	// 发表微博(文本、图片、视频、音乐)
 	function update($text, $value = '') {
 		$params = array();
 		$params['format'] = 'json';
@@ -76,17 +76,27 @@ class qqClient
 			} elseif ($value[0] == 'music') {
 				$value = array('', '', $value[1]);
 			} 
-			$params['pic_url'] = $value[0];
-			$params['video_url'] = $value[1];
-			if (is_array($value[2])) {
-				$params['music_url'] = $value[2][2];
-				$params['music_title'] = $value[2][1];
-				$params['music_author'] = $value[2][0];
+			if ($value[0] && !$value[1]) { // 图片
+				//$params['pic'] = $value[0];
+				//return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic', $params, true);
+				$params['pic_url'] = $value[0];
+				return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic_url', $params);
+			} elseif ($value[1] && !$value[0]) { // 视频
+				$params['url'] = $value[1];
+				return $this -> oauth -> post('http://open.t.qq.com/api/t/add_video', $params);
+			} else { // 图片、视频、音乐
+				$params['pic_url'] = $value[0];
+				$params['video_url'] = $value[1];
+				if (is_array($value[2])) {
+					$params['music_url'] = $value[2][2];
+					$params['music_title'] = $value[2][1];
+					$params['music_author'] = $value[2][0];
+				} 
+				return $this -> oauth -> post('http://open.t.qq.com/api/t/add_multi', $params);
 			} 
-			return $this -> oauth -> post('http://open.t.qq.com/api/t/add_multi', $params);
 		} 
 		return $this -> oauth -> post('http://open.t.qq.com/api/t/add' , $params);
-	} 
+	}
     // 对一条微博信息进行评论
     function comment( $sid , $text ) 
     { 
