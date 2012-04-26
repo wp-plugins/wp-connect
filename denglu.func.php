@@ -276,26 +276,30 @@ function set_bind($mediaUID, $uid = '', $uname = '', $uemail = '') {
 } 
 // 连接denglu.cc，首次安装
 function connect_denglu_first() {
-	$wptm_basic = get_option("wptm_basic");
-	if ($wptm_basic) return;
-	$content = array('sitename' => get_bloginfo('name'),
-		'siteurl' => get_bloginfo('wpurl') . '/',
-		'email' => get_option('admin_email')
-		);
-	$content = json_encode($content); 
-	// return var_dump($content);
-	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
-	$api = new Denglu('', '', 'utf-8');
-	try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
-		$ret = $api -> register($content);
-	} 
-	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
-		// return false;
-		wp_die($e -> geterrorDescription()); //返回错误信息
-	} 
-	if ($ret['appid']) {
-		update_option("wptm_denglu", array($ret['username'], $ret['password']));
-		update_option("wptm_basic", array('appid' => $ret['appid'], 'appkey' => $ret['apikey'], 'denglu' => 1));
+	global $wptm_basic;
+	if (!$wptm_basic) {
+		$content = array('sitename' => get_bloginfo('name'),
+			'siteurl' => get_bloginfo('wpurl') . '/',
+			'email' => get_option('admin_email')
+			);
+		$content = json_encode($content); 
+		// return var_dump($content);
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+		$api = new Denglu('', '', 'utf-8');
+		try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
+			$ret = $api -> register($content);
+		} 
+		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+			// return false;
+			wp_die($e -> geterrorDescription()); //返回错误信息
+		} 
+		if ($ret['appid']) {
+			update_option("wptm_denglu", array($ret['username'], $ret['password']));
+			update_option("wptm_basic", array('appid' => $ret['appid'], 'appkey' => $ret['apikey'], 'denglu' => 1));
+		} 
+	} else {
+		$wptm_basic['denglu'] = '1';
+		update_option('wptm_basic', $wptm_basic);
 	} 
 } 
 // 旧的灯鹭插件升级
@@ -311,28 +315,32 @@ function update_denglu_old() {
 } 
 // 旧的wordpress连接微博插件，升级安装
 function connect_denglu_first_update() {
-	$wptm_basic = get_option("wptm_basic");
-	if ($wptm_basic) return;
-	$content = array('sitename' => get_bloginfo('name'),
-		'siteurl' => get_bloginfo('wpurl') . '/',
-		'email' => get_option('admin_email'),
-		'keys' => open_appkey()
-		);
-	$content = json_encode($content);
-	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
-	$api = new Denglu('', '', 'utf-8');
-	try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
-		$ret = $api -> register($content);
+	global $wptm_basic;
+	if (!$wptm_basic) {
+		$content = array('sitename' => get_bloginfo('name'),
+			'siteurl' => get_bloginfo('wpurl') . '/',
+			'email' => get_option('admin_email'),
+			'keys' => open_appkey()
+			);
+		$content = json_encode($content);
+		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
+		$api = new Denglu('', '', 'utf-8');
+		try { // 写到denglu.cc服务器(网站名称、网站网址、管理员邮箱)，并返回数据，包括app id、 app key、username、password
+			$ret = $api -> register($content);
+		} 
+		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
+			wp_die($e -> geterrorDescription()); //返回错误信息
+		} 
+		if ($ret['appid']) {
+			update_option("wptm_denglu", array($ret['username'], $ret['password']));
+			update_option("wptm_basic", array('appid' => $ret['appid'], 'appkey' => $ret['apikey']));
+			update_option("wptm_key", get_appkey());
+		} 
+	} else {
+		$wptm_basic['denglu'] = '1';
+		update_option('wptm_basic', $wptm_basic);
 	} 
-	catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
-		wp_die($e -> geterrorDescription()); //返回错误信息
-	} 
-	if ($ret['appid']) {
-		update_option("wptm_denglu", array($ret['username'], $ret['password']));
-		update_option("wptm_basic", array('appid' => $ret['appid'], 'appkey' => $ret['apikey']));
-		update_option("wptm_key", get_appkey());
-	} 
-} 
+}
 // 旧的wordpress连接微博插件用户数据,只检查新浪微博、腾讯微博、QQ空间、人人网
 function connect_olduser() {
 	global $wpdb;
@@ -348,8 +356,6 @@ function connect_olduser() {
 // 旧的wordpress连接微博插件数据
 function connect_denglu_update_data() {
 	global $wpdb;
-	$wptm_basic = get_option("wptm_basic");
-	if ($wptm_basic['denglu']) return;
 	@ini_set("max_execution_time", 300);
 	if ($userids = connect_olduser()) {
 		foreach ($userids as $uid) {
