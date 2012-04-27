@@ -457,8 +457,8 @@ function get_appkey() {
 		'19' => array($wptm_connect['baidu_api_key'], $wptm_connect['baidu_secret'])
 		);
 }
-
-function get_user_by_meta_value($meta_key, $meta_value) { // 获得user_id
+// 获得user_id
+function get_user_by_meta_value($meta_key, $meta_value) {
 	global $wpdb;
 	$sql = "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '%s' AND meta_value = '%s'";
 	return $wpdb -> get_var($wpdb -> prepare($sql, $meta_key, $meta_value));
@@ -472,8 +472,8 @@ if (!function_exists('wp_update_comment_key')) {
 		return $result;
 	} 
 }
-
-if (!function_exists('get_current_user_id')) { // 获得登录者ID
+// 获得登录者ID
+if (!function_exists('get_current_user_id')) {
 	function get_current_user_id() {
 		$user = wp_get_current_user();
         return ( isset( $user->ID ) ? (int) $user->ID : 0 );
