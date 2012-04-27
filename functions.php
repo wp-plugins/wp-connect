@@ -74,6 +74,22 @@ if (!function_exists('array_intersect_key')) {
 		} 
 	} 
 }
+// 从数组中取出一段，保留键值 array_slice  < 5.0.2
+function php_array_slice($array, $offset, $length = null, $preserve_keys = false) {
+	if (!$preserve_keys || version_compare(PHP_VERSION, '5.0.1', '>')) {
+		return array_slice($array, $offset, $length, $preserve_keys);
+	} 
+	if (!is_array($array)) {
+		user_error('The first argument should be an array', E_USER_WARNING);
+		return;
+	} 
+	$keys = array_slice(array_keys($array), $offset, $length);
+	$ret = array();
+	foreach ($keys as $key) {
+		$ret[$key] = $array[$key];
+	} 
+	return $ret;
+}
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 if (!function_exists('wp_strlen')) {
 	function wp_strlen($text) {
@@ -441,21 +457,23 @@ function get_appkey() {
 		'19' => array($wptm_connect['baidu_api_key'], $wptm_connect['baidu_secret'])
 		);
 }
-
-function get_user_by_meta_value($meta_key, $meta_value) { // 获得user_id
+// 获得user_id
+function get_user_by_meta_value($meta_key, $meta_value) {
 	global $wpdb;
 	$sql = "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '%s' AND meta_value = '%s'";
 	return $wpdb -> get_var($wpdb -> prepare($sql, $meta_key, $meta_value));
 }
-
-function wp_update_comment_key($comment_ID, $comment_key, $vaule) { // 保存wp_comments表某个字段
-	global $wpdb;
-	$$comment_key = $vaule;
-	$result = $wpdb -> update($wpdb -> comments, compact($comment_key), compact('comment_ID'));
-	return $result;
+// 保存wp_comments表某个字段
+if (!function_exists('wp_update_comment_key')) {
+	function wp_update_comment_key($comment_ID, $comment_key, $vaule) {
+		global $wpdb;
+		$$comment_key = $vaule;
+		$result = $wpdb -> update($wpdb -> comments, compact($comment_key), compact('comment_ID'));
+		return $result;
+	} 
 }
-
-if (!function_exists('get_current_user_id')) { // 获得登录者ID
+// 获得登录者ID
+if (!function_exists('get_current_user_id')) {
 	function get_current_user_id() {
 		$user = wp_get_current_user();
         return ( isset( $user->ID ) ? (int) $user->ID : 0 );
