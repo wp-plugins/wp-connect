@@ -667,6 +667,12 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} elseif (is_object($comment)) {
 		$uid = $comment -> user_id;
 		$email = $comment -> comment_author_email;
+		$author_url = $comment -> comment_author_url;
+		if ($author_url && strpos($author_url, 'http://weibo.com/') === 0) {
+			$weibo_uid = ltrim($author_url, 'http://weibo.com/');
+			$out = 'http://tp' . rand(1, 4) . '.sinaimg.cn/' . $weibo_uid . '/50/0/1';
+			return "<a href='{$author_url}' target='_blank'><img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' /></a>";
+		} 
 		if ($uid) $user = get_userdata($uid);
 	} elseif (is_object($id_or_email)) {
 		$user = $id_or_email;
