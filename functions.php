@@ -463,12 +463,14 @@ function get_user_by_meta_value($meta_key, $meta_value) { // 获得user_id
 	$sql = "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '%s' AND meta_value = '%s'";
 	return $wpdb -> get_var($wpdb -> prepare($sql, $meta_key, $meta_value));
 }
-
-function wp_update_comment_key($comment_ID, $comment_key, $vaule) { // 保存wp_comments表某个字段
-	global $wpdb;
-	$$comment_key = $vaule;
-	$result = $wpdb -> update($wpdb -> comments, compact($comment_key), compact('comment_ID'));
-	return $result;
+// 保存wp_comments表某个字段
+if (!function_exists('wp_update_comment_key')) {
+	function wp_update_comment_key($comment_ID, $comment_key, $vaule) {
+		global $wpdb;
+		$$comment_key = $vaule;
+		$result = $wpdb -> update($wpdb -> comments, compact($comment_key), compact('comment_ID'));
+		return $result;
+	} 
 }
 
 if (!function_exists('get_current_user_id')) { // 获得登录者ID
