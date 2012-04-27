@@ -369,6 +369,12 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} elseif (is_object($comment)) {
 		$uid = $comment -> user_id;
 		$email = $comment -> comment_author_email;
+		$author_url = $comment -> comment_author_url;
+		if ($author_url && strpos($author_url, 'http://weibo.com/') === 0) {
+			$weibo_uid = ltrim($author_url, 'http://weibo.com/');
+			$out = 'http://tp' . rand(1, 4) . '.sinaimg.cn/' . $weibo_uid . '/50/0/1';
+			return "<a href='{$author_url}' target='_blank'><img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' /></a>";
+		} 
 		if ($uid) $user = get_userdata($uid);
 	} elseif (is_object($id_or_email)) {
 		$user = $id_or_email;
@@ -389,19 +395,19 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		if (!$tid) {
 			$tname = array('@t.sina.com.cn' => 'stid',
 				'@weibo.com' => 'stid',
-			    '@t.qq.com' => 'qtid',
-			    '@renren.com' => 'rtid',
-			    '@kaixin001.com' => 'ktid',
-			    '@douban.com' => 'dtid',
-			    '@t.sohu.com' => 'shtid',
-			    '@t.163.com' => 'ntid',
-			    '@baidu.com' => 'bdtid',
-			    '@tianya.cn' => 'tytid',
-			    '@twitter.com' => 'ttid'
-			);
+				'@t.qq.com' => 'qtid',
+				'@renren.com' => 'rtid',
+				'@kaixin001.com' => 'ktid',
+				'@douban.com' => 'dtid',
+				'@t.sohu.com' => 'shtid',
+				'@t.163.com' => 'ntid',
+				'@baidu.com' => 'bdtid',
+				'@tianya.cn' => 'tytid',
+				'@twitter.com' => 'ttid'
+				);
 			$tmail = strstr($email, '@');
 			$tid = $tname[$tmail];
-		}
+		} 
 		if ($tid) {
 			if (($tid == 'qqtid' && !$user -> qqid) || ($tid == 'tbtid' && !$user -> taobaoid))
 				return $avatar;
@@ -429,7 +435,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		} 
 	} 
 	return $avatar;
-} 
+}
 // admin bar头像尺寸
 if (version_compare($wp_version, '3.2.1', '>')) { // WordPress V3.3
 	function wp_admin_bar_header_3_3() {
