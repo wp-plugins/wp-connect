@@ -32,7 +32,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 		update_option('wptm_basic', $wptm_basic);
 		delete_2_0_bug(); // wp 3.3
 	} 
-	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key v1.9.18
+	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key
 		$keybug = 1;
 	}
 	if (version_compare($wptm_version, '2.3', '<'))
@@ -49,9 +49,14 @@ include_once(dirname(__FILE__) . '/sync.php');
 include_once(dirname(__FILE__) . '/connect.php');
 include_once(dirname(__FILE__) . '/page.php');
 
-if (!$wptm_key || $keybug) { // v1.9.18
-	if (update_option('wptm_key', get_appkey()) && $wptm_version)
-		update_option('wptm_sohu', '');
+if (!$wptm_key) {
+	update_option('wptm_key', get_appkey());
+} elseif ($keybug) { // 1.9.18
+	if ($wptm_key[5][0]) {
+		$wptm_key[5] = array(ifold($wptm_key[5][0], 'O9bieKU1lSKbUBI9O0Nf', 'UfnmJanXwQZjD1TvZwTd'), ifold($wptm_key[5][1], 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u', 'Ur7MxoeTc7tegk11!1mTvHg-rp0yJdR5G8mZi7c2'));
+		if (update_option('wptm_key', $wptm_key))
+			update_option('wptm_sohu', '');
+	} 
 }
 
 if ($wptm_connect['enable_connect'] && $wptm_connect['widget']) {
