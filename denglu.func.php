@@ -903,7 +903,7 @@ if (!function_exists('denglu_recent_comments') && install_comments()) {
  * 1.评论保存到本地服务器
  * 2.评论状态同步到本地服务器。
  * 3.从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器 V2.3.3
- * add_V2.3, edit_V2.3.3
+ * add_V2.3, edit_V2.3.4
  */
 if (!function_exists('dcToLocal') && install_comments()) {
 	function get_weiboInfo($name) {
