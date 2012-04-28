@@ -10,8 +10,7 @@ Stable tag: 2.3.4
 
 == Description ==
 
-新浪微博： [ @水脉烟香](http://weibo.com/smyx)   （ [帮助文档](http://www.denglu.cc/source/wordpress2.0.html)   [旧版文档](http://loginsns.com/wiki/) ）
-
+= 详细描述 =
 
 一. 支持使用20家合作网站帐号登录WordPress。 （使用QQ空间、腾讯微博、新浪微博、搜狐微博、网易微博、人人网、开心网、豆瓣、淘宝网、支付宝、百度、天涯、MSN、Google、Yahoo、网易通行证、Twitter、Facebook、360、天翼189等帐号登录WordPress博客。）
 
@@ -68,6 +67,16 @@ Stable tag: 2.3.4
 1、除了那些采用OAuth授权的外，其他的请自己输入账号和密码，不会去官方验证密码的准确性！
 
 2、嘀咕、享拍微博通 支持同步到其他微博和社区，请不要在这些网站重复绑定帐号，以免造成循环同步或者同步多条相同信息！
+
+>**技术支持**
+
+>客服QQ：2499106838、1130488327、1390654016
+
+>QQ交流群：77434617  联系电话：15110089672
+
+>新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
+
+>技术论坛：[ http://bbs.denglu.cc/forum-27-1.html ](http://bbs.denglu.cc/forum-27-1.html) 官方网站：[ http://www.denglu.cc ](http://www.denglu.cc)
 
 == Installation ==
 
