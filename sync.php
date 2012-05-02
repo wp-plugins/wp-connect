@@ -6,11 +6,21 @@ include_once(dirname(__FILE__) . '/config.php');
 
 // 是否开启微博同步功能
 if ($wptm_options['enable_wptm']) {
-    add_action('admin_menu', 'wp_connect_add_sidebox');
+	add_action('admin_menu', 'wp_connect_add_sidebox');
 	add_action('publish_post', 'wp_connect_publish');
 	add_action('publish_page', 'wp_connect_publish');
-}
-//文章发布页面 面板
+	add_action('admin_init', 'publish_custom_post_types', 100);
+	function publish_custom_post_types() { // 自定义文章类型
+		if (function_exists('get_post_types')) {
+			$post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'and');
+			foreach($post_types as $type => $object) {
+				add_action('publish_' . $type, 'wp_connect_publish');
+			} 
+		} 
+	} 
+}  
+ 
+// 文章发布页面 面板
 function wp_connect_sidebox() {
 	global $post;
 	if ($post -> post_status != 'publish') {
@@ -18,15 +28,21 @@ function wp_connect_sidebox() {
 	} else {
 		echo '<p><label><input type="checkbox" name="publish_update_sync" value="1" />同步 (不勾选则以文章更新间隔判断)</label></p>';
 		echo '<p><label><input type="checkbox" name="publish_new_sync" value="1" />当作新文章同步</label></p>';
-	}
+	} 
 } 
 
 function wp_connect_add_sidebox() {
 	if (function_exists('add_meta_box')) {
 		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'post', 'side', 'high');
 		add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', 'page', 'side', 'high');
+		if (function_exists('get_post_types')) { // 自定义文章类型
+			$post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'and');
+			foreach($post_types as $type => $object) {
+				add_meta_box('wp-connect-sidebox', '微博同步设置 [只对本页面有效]', 'wp_connect_sidebox', $type, 'side', 'high');
+			} 
+		} 
 	} 
-}
+} 
 
 /**
  * 发布文章时同步
