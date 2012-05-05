@@ -85,7 +85,7 @@ function wp_connect_warning() {
 		update_option("wptm_tips", '');
 	} 
 	$wptm_tips = get_option("wptm_tips");
-	if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || (!$wptm_connect && !$wptm_options))) {
+	if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
 		echo '<div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">';
 		if ($wptm_tips) {
 			echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.3 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
@@ -100,7 +100,7 @@ function wp_connect_warning() {
 		if (($wptm_options || $wptm_connect) && !$wptm_version) {
 			echo '<p><strong>重要更新：从1.7.3版本开始，加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！然后请点击一次“同步设置”下面的“保存更改”按钮关闭提示。<a href="options-general.php?page=wp-connect">现在去更改</a></strong></p>';
 		}
-		if (!$wptm_options && !$wptm_connect) {
+		if (!$wptm_basic) {
 			echo '<p><strong>您还没有对“WordPress连接微博”进行设置，<a href="options-general.php?page=wp-connect">现在去设置</a></strong></p>';
 		} elseif (!$wptm_basic['denglu']) {
             echo '<p><strong>您需要到 WordPress连接微博 插件页面更新设置才能继续使用该插件，<a href="options-general.php?page=wp-connect">现在去更新</a></strong></p>';
