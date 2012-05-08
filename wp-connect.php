@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.3.4
+Version: 2.3.5
 */
 
-define('WP_CONNECT_VERSION', '2.3.4');
+define('WP_CONNECT_VERSION', '2.3.5');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -35,7 +35,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key
 		$keybug = 1;
 	}
-	if (version_compare($wptm_version, '2.3', '<'))
+	if (version_compare($wptm_version, '2.3.5', '<'))
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
@@ -88,7 +88,7 @@ function wp_connect_warning() {
 	if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
 		echo '<div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">';
 		if ($wptm_tips) {
-			echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.3 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+			echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.3.5 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
 			wp_connect_tips();
 	    }
 		if (version_compare($wp_version, '3.0', '<')) {
@@ -111,21 +111,10 @@ function wp_connect_warning() {
 add_action('admin_notices', 'wp_connect_warning'); 
 
 function wp_connect_tips() { ?>
-	<p><strong>最新产品 —— denglu评论：</strong>（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）</p>
-    <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
-	<p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u>（非实时同步，5分钟一次）</p>
-	<p>3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。（非实时同步，5分钟一次）</p>
-	<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单的说，假设您在<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>“评论管理”页面，把一条评论删除了，您网站本地数据库那条评论也一并删除。</p>
-	<p>4、评论支持SE0。</p>
-	<p>5、评论时，可以把文章的图片和视频跟评论一起同步到微博/SNS，当这条微博被评论时还能被抓回您的网站。</p>
-	<p>6、<u>加入灯鹭同步接口，勾选他后，重新绑定帐号，您发布的文章同步后在微博有评论时会被抓回来。</u>（在同步微博勾选）</p>
-	<p>7、支持自定义评论模板，方便您根据自身的网站风格设计漂亮的评论界面。（<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>）</p>
-	<p><strong>其他更新</strong></p>
-	<p>1、在个人资料页面，支持将WP用户名与16家合作网站帐号绑定，根据您选择的平台显示。</p>
-	<p>2、同步微博增加 自定义标题格式，默认为 “标题 | ”。</p>
-	<p>3、可以让首次登录的用户强制填写注册信息（在登录设置勾选）</p>
-	<p>4、支持中文用户名。（在登录设置勾选）</p>
-	<p>5、支持优先同步特色图像。（在同步微博勾选）</p>
+	<p>新增：灯鹭评论内容保存一份在WordPress本地评论数据库，新增更新时间控制，最少1分钟。（评论设置）</p>
+	<p>新增：从新浪微博抓取回来的评论同步到本地时，评论者可以使用新浪微博头像。点击头像链接还能进入TA的微博主页。</p>
+	<p>修改：继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能，但是会显示以前的网站评论。</p>
+	<p>修正：网站原有评论导入到灯鹭评论框时会出现的bug。</p>
 <?php
 } 
 
@@ -427,7 +416,7 @@ function wp_connect_do_page() {
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">同步评论到本地</td>
-			    <td><label><input name="dcToLocal" type="checkbox" value="1" <?php if(default_values('dcToLocal', 1, $wptm_comment)) echo "checked ";?> />灯鹭评论内容保存一份在WordPress本地评论数据库（非实时同步，5分钟一次）</label></td>
+			    <td><label><input name="dcToLocal" type="checkbox" value="1" <?php if(default_values('dcToLocal', 1, $wptm_comment)) echo "checked ";?> />灯鹭评论内容保存一份在WordPress本地评论数据库</label> <label>(每 <input name="time" type="text" size="1" maxlength="3" value="<?php echo ($wptm_comment['time']) ? $wptm_comment['time'] : '5'; ?>" onkeyup="value=value.replace(/[^0-9]/g,'')" /> 分钟更新一次)</label></td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">最新评论</td>
@@ -624,8 +613,19 @@ function wp_connect_do_page() {
     </div>
     <div id="help">
 	  <div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">
-	  <p><strong>WordPress连接微博 V2.3 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
+	  <p><strong>WordPress连接微博 V2.3.5 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
 	  <?php wp_connect_tips();?>
+	  </div>
+	  <div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">
+	  <p><strong>最新产品 —— Denglu评论：</strong> [<a href="#comment" class="comment">评论设置</a>]（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）V2.3</p>
+      <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
+	  <p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u></p>
+	  <p>3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。</p>
+	  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单的说，假设您在<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>“评论管理”页面，把一条评论删除了，您网站本地数据库那条评论也一并删除。</p>
+	  <p>4、评论支持SE0。</p>
+	  <p>5、评论时，可以把文章的图片和视频跟评论一起同步到微博/SNS，当这条微博被评论时还能被抓回您的网站。</p>
+	  <p>6、<u>加入灯鹭同步接口，勾选他后，重新绑定帐号，您发布的文章同步后在微博有评论时会被抓回来。</u>（在同步微博勾选）</p>
+	  <p>7、支持自定义评论模板，方便您根据自身的网站风格设计漂亮的评论界面。（<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>）</p>
 	  </div>
     </div>
   </div>

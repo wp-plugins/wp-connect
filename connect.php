@@ -14,7 +14,9 @@ if (!function_exists('denglu_comments') && install_comments()) {
 		add_filter('comments_template', 'denglu_comments');
 		function denglu_comments($file) {
 			global $post;
-			return dirname(__FILE__) . '/comments.php';
+			if (comments_open()) {
+				return dirname(__FILE__) . '/comments.php';
+			} 
 		} 
 	} 
 } elseif ($wptm_connect['enable_connect']) {
