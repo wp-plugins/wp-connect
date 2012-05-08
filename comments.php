@@ -3,7 +3,7 @@ $_SESSION['wp_url_bind'] = '';
 $_SESSION['wp_url_back'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 $wptm_basic = get_option('wptm_basic');
 $wptm_comment = get_option('wptm_comment');
-if (empty($wptm_comment['comments_open']) || (!empty($wptm_comment['comments_open']) && comments_open())) {
+if (empty($wptm_comment['comments_open']) || (!empty($wptm_comment['comments_open']) && comments_open())) :
 	$wptm_connect = get_option('wptm_connect');
 	if (is_object($post)) {
 	    $media_url = wp_multi_media_url($post -> post_content, $post -> ID);
@@ -26,7 +26,6 @@ if (empty($wptm_comment['comments_open']) || (!empty($wptm_comment['comments_ope
     _dl_comment_widget.show(param);
 </script>
 <?php
-} 
 // 搜索引擎爬虫
 if ($wptm_comment['enable_seo'] && preg_match("/(Bot|Crawl|Spider|slurp|sohu-search|lycos|robozilla)/i", $_SERVER['HTTP_USER_AGENT']) && have_comments()) : ?>
 <div id="dengluComments">
@@ -49,4 +48,5 @@ if ($wptm_comment['enable_seo'] && preg_match("/(Bot|Crawl|Spider|slurp|sohu-sea
 <script type="text/javascript">
     document.getElementById('dengluComments').style.display="none";
 </script>
+<?php endif; ?>
 <?php endif; ?>
