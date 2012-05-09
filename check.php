@@ -1,5 +1,5 @@
 <?php
-if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
+if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = 'V'.get_option('wptm_version').','.get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
 date_default_timezone_set("PRC");
 define('ROOT_PATH', dirname(dirname(__FILE__)));
 $funs_list = array('close_curl', 'close_fopen', 'close_http', 'fsockopen', 'openssl_open', 'zend_loader_enabled', 'gzinflate');
