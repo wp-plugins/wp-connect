@@ -998,10 +998,10 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			'comment_date' => $comment['date'],
 			'comment_approved' => dcState($comment['state']),
 			);
-		$commentID = get_commentID($cid);
-		if (!$commentID) {
+		//$commentID = get_commentID($cid);
+		//if (!$commentID) {
 			$commentID = wp_insert_comment($commentdata);
-		} 
+		//} 
 		return $commentID;
 	} 
 	// 保存评论，包括父级评论
