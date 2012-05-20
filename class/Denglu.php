@@ -493,86 +493,8 @@ class Denglu
 	 * @param request 发送的http参数
 	 */
 	///////function makeRequest($request)
-	protected function makeRequest($url, $post = '', $method='' ) {
-		$params = array(
-			"timeout" => 60,
-			"user-agent" => $_SERVER[HTTP_USER_AGENT],
-			"sslverify" => false,
-		);
-		if ($post){
-			$params['method'] = 'POST';
-		    $params['body'] = $post;
-		} else {
-		    $params['method'] = 'GET';
-		}
-		return class_http($url, $params); //new
-		$return = '';
-		$matches = parse_url($url);
-		$host = $matches['host'];
-		if(empty($matches['query'])) $matches['query']='';
-		$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
-		$port = 80;
-
-		if($this->enableSSL){
-			$url .= '?'.$post;
-			$url = str_replace('http://','https://',$url);
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL,$url);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_POST, 0);
-			curl_setopt($ch, CURLOPT_USERAGENT, 'denglu');
-			$return = curl_exec($ch);
-			return $return;
-		}
-		if(!$method){
-			$url .= '?'.$post;
-			$matches = parse_url($url);
-			$host = $matches['host'];
-			if(empty($matches['query'])) $matches['query']='';
-			$path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
-
-			$out = "GET $path HTTP/1.0\r\n";
-			$out .= "Accept: */*\r\n";
-			$out .= "Accept-Language: zh-cn\r\n";
-			$out .= "User-Agent: denglu\r\n";
-			$out .= "Host: $host\r\n";
-			$out .= "Connection: Close\r\n";
-			$out .= "Cookie: \r\n\r\n";
-		}
-	
-		if(function_exists('fsockopen')) {
-			$fp = @fsockopen($host, $port, $errno, $errstr, 30);
-		} elseif(function_exists('pfsockopen')) {
-			$fp = @pfsockopen($host, $port, $errno, $errstr, 30);
-		} else {
-			return array('errorCode'=>1,'errorDescription'=>'Functions "fsockopen" and "pfsockopen" are not exists!');
-		}
-	
-		if(!$fp) {
-			return array('errorCode'=>1,'errorDescription'=>"Your website can't connect to denglu server!");
-		} else {
-			stream_set_blocking($fp, true);
-			stream_set_timeout($fp, 30);
-			@fwrite($fp, $out);
-			$status = stream_get_meta_data($fp);
-			if(!$status['timed_out']) {
-				while (!feof($fp)) {
-					if(($header = @fgets($fp)) && ($header == "\r\n" ||  $header == "\n")) {
-						break;
-					}
-				}
-	
-				$stop = false;
-				while(!feof($fp) && !$stop) {
-					$data = fread($fp,  8192);
-					$return .= $data;
-				}
-			}
-			@fclose($fp);
-			return $return;
-		}
+	protected function makeRequest($url, $post = '', $timeout = 30) {
+		return get_url_contents($url.'?'.$post, $timeout);
 	}
 
 	/**

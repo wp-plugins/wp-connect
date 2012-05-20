@@ -125,14 +125,49 @@ if (!function_exists('class_http')) {
 			$error = $errors['http_request_failed'][0];
 			if (!$error)
 				$error = $errors['http_failure'][0];
-			if ($error == "couldn't connect to host") {
+			if ($error == "couldn't connect to host" || strpos($error, 'timed out') !== false) {
 				return;
-			}
+			} 
 			wp_die('出错了: ' . $error . '<br /><br />可能是您的主机不支持，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
 		} 
 		return $response['body'];
 	} 
-} 
+	function get_url_contents($url, $timeout = 30) {
+		if (!close_curl()) {
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+			$content = curl_exec($ch);
+			curl_close($ch);
+			return $content;
+		} else {
+			$params = array();
+			if (@ini_get('allow_url_fopen')) {
+				if (function_exists('file_get_contents')) {
+					return file_get_contents($url);
+				} 
+				if (function_exists('fopen')) {
+					$params['http'] = 'streams';
+				} 
+			} elseif (function_exists('fsockopen')) {
+				$params['http'] = 'fsockopen';
+			} else {
+				return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
+			} 
+			$params += array("method" => 'GET',
+				"timeout" => $timeout,
+				"sslverify" => false
+				);
+			return class_http($url, $params);
+		} 
+	} 
+	function get_url_array($url) {
+		return json_decode(get_url_contents($url), true);
+	} 
+}
 
 function close_socket() {
 	if (function_exists('fsockopen')) {
@@ -156,44 +191,7 @@ function sfsockopen($host, $port, $errno, $errstr, $timeout) {
 		$fp = @stream_socket_client($host . ':' . $port, $errno, $errstr, $timeout);
 	} 
 	return $fp;
-} 
-
-function get_url_array($url) {
-	return json_decode(get_url_contents($url), true);
-} 
-
-function get_url_contents($url) {
-	if (!close_curl()) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		$content = curl_exec($ch);
-		curl_close($ch);
-		return $content;
-	} else {
-		$params = array();
-		if (@ini_get('allow_url_fopen')) {
-			if (function_exists('file_get_contents')) {
-				return file_get_contents($url);
-			} 
-			if (function_exists('fopen')) {
-				$params['http'] = 'streams';
-			} 
-		} elseif (function_exists('fsockopen')) {
-			$params['http'] = 'fsockopen';
-		} else {
-			return wp_die('没有可以完成请求的 HTTP 传输器，请查看<a href="' . MY_PLUGIN_URL . '/check.php" target="_blank">环境检查</a>');
-		} 
-		$params += array("method" => 'GET',
-			"timeout" => 30,
-			"sslverify" => false
-			);
-		return class_http($url, $params);
-	} 
-} 
+}  
 
 if (!function_exists('post_user')) {
 	function post_user($username, $password, $pwd) { // $pwd为旧密码

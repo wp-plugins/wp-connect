@@ -1,8 +1,8 @@
 <?php
-if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
+if($_GET['i'] == 1) {include "../../../wp-config.php"; $getinfo = 'V'.get_option('wptm_version').','.get_bloginfo('name').','.get_bloginfo('wpurl').'/';}
 date_default_timezone_set("PRC");
 define('ROOT_PATH', dirname(dirname(__FILE__)));
-$funs_list = array('close_curl', 'close_fopen', 'close_http', 'fsockopen', 'openssl_open', 'zend_loader_enabled', 'gzinflate');
+$funs_list = array('close_curl', 'close_fopen', 'close_http', 'file_get_contents', 'fsockopen', 'openssl_open', 'zend_loader_enabled', 'gzinflate');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
 	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.2'),
@@ -169,7 +169,7 @@ function function_support(&$func_items) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>环境检查-WordPress连接微博</title>
-<meta name="robots" content="noarchive">
+<meta name="robots" content="noindex,nofollow,noarchive">
 <style type="text/css">
 body{margin-top:0px;font-family:Helvetica,Arial,Verdana,sans-serif; font-size:12px; background:#fff; color:#333; line-height:1.6em}
 h3{margin:0px;font-size:1.17em;}

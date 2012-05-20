@@ -193,18 +193,19 @@ function wp_connect_do_page() {
   <div class="tabs">
     <ul class="nav">
       <li><a href="#basic" class="basic">基本设置</a></li>
-	  <?php if ($version == 1) { ?>
       <li><a href="#sync" class="sync">同步微博</a></li>
+	  <?php if ($version == 1) { ?>
       <li><a href="#connect" class="connect">登录设置</a></li>
 	  <li><a href="#comment" class="comment">评论设置</a></li>
 	  <li><a href="#open" class="open">开放平台</a></li>
+	  <?php } if ($version == 1 || is_donate()) { ?>
 	  <li><a href="#blog" class="blog">同步博客</a></li>
-      <?php if (is_donate()) { ?>
+	  <?php } if (is_donate()) { ?>
       <li><a href="#share" class="share">分享设置</a></li>
       <li><a href="#advanced" class="advanced">高级设置</a></li>
-	  <?php }} ?>
+	  <?php } ?>
       <li><a href="#check" class="check">环境检查</a></li>
-      <li><a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">帮助文档</a></li>
+	  <li><a href="#help" class="help">帮助文档</a></li>
     </ul>
     <div id="basic">
       <h3>设置向导</h3>
