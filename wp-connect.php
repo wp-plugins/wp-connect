@@ -103,17 +103,17 @@ function wp_connect_do_page() {
 		$wptm_share = get_option('wptm_share');
 		$wptm_advanced = get_option('wptm_advanced');
 		if (WP_CONNECT_ADVANCED != "true"){
-			$error = '<div id="tml-tips" class="updated"><p>请先在高级设置项填写正确授权码！</p></div>';
+			$error = '<div id="wptm-tips"><p>请先在高级设置项填写正确授权码！</p></div>';
 			if (donate_version('1.5', '>')) {
-				$update_tips = '<div id="tml-tips" class="updated"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
+				$update_tips = '<div id="wptm-tips"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
 			}
 		} else {
 			if (donate_version('1.5.2')) {
-				$donate_152 = '<div id="tml-tips" class="updated"><p>该捐赠版本不能使用该功能！</p></div>';
+				$donate_152 = '<div id="wptm-tips"><p>该捐赠版本不能使用该功能！</p></div>';
 			}
 		}
 	} else {
-		$error = '<div id="tml-tips" class="updated"><p>该功能属于<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</p></div>';
+		$error = '<div id="wptm-tips"><p>该功能属于<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -258,7 +258,7 @@ function wp_connect_do_page() {
 	    <?php wp_nonce_field('other-plugins');?>
 		<span class="submit"><input type="submit" name="other_plugins" value="其他登录插件数据转换" /> (可能需要一些时间，请耐心等待！)</span>
 	  </form>
-      <div id="tml-tips" class="updated">
+      <div id="wptm-tips">
 		<p><strong>高级评论</strong></p>
 		<p><strong>该功能属于<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</strong></p>
 		<p>捐赠用户还可以这样玩转评论：[ <a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">查看详细</a> ]</p>
@@ -283,7 +283,7 @@ function wp_connect_do_page() {
 		<p><strong>百度</strong> ( API Key: <input name="baidu1" type="text" value='<?php echo $wptm_key[19][0];?>' /> Secret Key: <input name="baidu2" type="text" value='<?php echo $wptm_key[19][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/baidu" target="_blank">如何获取?</a> ] ) *</p>
 		<p><strong>MSN</strong> ( Client ID: <input name="msn1" type="text" value='<?php echo $wptm_key[2][0];?>' /> Client secret: <input name="msn2" type="text" value='<?php echo $wptm_key[2][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/msn" target="_blank">如何获取?</a> ] ) *</p>
 		<p><strong>淘宝网</strong> ( App Key: <input name="taobao1" type="text" value='<?php echo $wptm_key[16][0];?>' /> App Secret: <input name="taobao2" type="text" value='<?php echo $wptm_key[16][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/taobao" target="_blank">如何获取?</a> ] ) *</p>
-        <div id="tml-tips" class="updated"><p>淘宝网回调地址：<code><?php echo $plugin_url.'-advanced/login.php';?></code></p></div>
+        <div id="wptm-tips"><p>淘宝网回调地址：<code><?php echo $plugin_url.'-advanced/login.php';?></code></p></div>
         <p class="submit">
           <input type="submit" name="wptm_key" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
@@ -336,7 +336,7 @@ function wp_connect_do_page() {
         <p><?php if (isset($_POST['verify_qzone'])) verify_qzone();?></p>
 		<p class="submit"><input type="submit" name="verify_qzone" value="检查是否支持同步到QQ空间(邮箱接口)" /></p>
 	  </form>
-      <div id="tml-tips" class="updated">
+      <div id="wptm-tips">
 	    <p><strong>注意事项</strong></p>
         <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
 	  </div>
@@ -408,7 +408,7 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('advanced-options');?>
         <h3>高级设置</h3>
 		<?php if (!function_exists('wp_connect_advanced')) {?>
-		 <div id="tml-tips" class="updated">
+		 <div id="wptm-tips">
          <p>高级设置只针对捐赠用户，目前增加功能如下：</p>
          <p>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</p>
          <p>2、在个人资料页面，支持将WP用户名与13家合作网站帐号绑定，绑定后您可以使用用户名或者使用合作网站帐号登录你的网站。而且绑定后<strong>新浪微博、腾讯微博还能支持使用<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>。</strong><span style="color: red;">NEW!</span></p>
@@ -454,7 +454,7 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php echo $update_tips;} ?>
-		<div id="tml-tips" class="updated"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>
