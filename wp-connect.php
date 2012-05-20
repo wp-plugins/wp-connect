@@ -86,7 +86,7 @@ function wp_connect_warning() {
 	} 
 	$wptm_tips = get_option("wptm_tips");
 	if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
-		echo '<div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">';
+		echo '<div class="updated">';
 		if ($wptm_tips) {
 			echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.3.5 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
 			wp_connect_tips();
@@ -139,17 +139,17 @@ function wp_connect_do_page() {
 		$wptm_share = get_option('wptm_share');
 		$wptm_advanced = get_option('wptm_advanced');
 		if (WP_CONNECT_ADVANCED != "true") {
-			$error = '<div id="tml-tips" class="updated"><p>请先在高级设置项填写正确授权码！</p></div>';
+			$error = '<div id="wptm-tips"><p>请先在高级设置项填写正确授权码！</p></div>';
 			if (donate_version('1.5', '>')) {
-				$update_tips = '<div id="tml-tips" class="updated"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
+				$update_tips = '<div id="wptm-tips"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
 			}
 		} else {
 			if (donate_version('1.5.2')) {
-				$donate_152 = '<div id="tml-tips" class="updated"><p>该捐赠版本不能使用该功能！</p></div>';
+				$donate_152 = '<div id="wptm-tips"><p>该捐赠版本不能使用该功能！</p></div>';
 			}
 		}
 	} else {
-		$error = '<div id="tml-tips" class="updated"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
+		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -166,11 +166,12 @@ function wp_connect_do_page() {
       <li><a href="#connect" class="connect">登录设置</a></li>
 	  <li><a href="#comment" class="comment">评论设置</a></li>
 	  <li><a href="#open" class="open">开放平台</a></li>
+	  <?php } if ($version == 1 || is_donate()) { ?>
 	  <li><a href="#blog" class="blog">同步博客</a></li>
-      <?php if (is_donate()) { ?>
+	  <?php } if (is_donate()) { ?>
       <li><a href="#share" class="share">分享设置</a></li>
       <li><a href="#advanced" class="advanced">高级设置</a></li>
-	  <?php }} ?>
+	  <?php } ?>
       <li><a href="#check" class="check">环境检查</a></li>
 	  <li><a href="#help" class="help">帮助文档</a></li>
     </ul>
@@ -240,7 +241,7 @@ function wp_connect_do_page() {
 		<span class="submit"><input type="submit" name="wptm_delete" value="卸载 WordPress连接微博" onclick="return confirm('您确定要卸载WordPress连接微博？')" /></span>
 	  </form>
 	<?php } ?>
-      <div id="tml-tips" class="updated">
+      <div id="wptm-tips">
 	    <p><strong>友情提示</strong></p>
         <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
 	    <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
@@ -390,7 +391,7 @@ function wp_connect_do_page() {
           <input type="submit" name="wptm_connect" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
-      <div id="tml-tips" class="updated">
+      <div id="wptm-tips">
 	    <p><strong>友情提示</strong></p>
         <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
 	    <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
@@ -434,7 +435,7 @@ function wp_connect_do_page() {
 	  <h3>导入导出</h3>
 	  <p>导入数据到灯鹭控制台。导入后，您原有的网站评论将在“灯鹭社会化评论”的评论框内显示。</p>
 	  <p><form method="post" action="options-general.php?page=wp-connect#comment"><span class="submit"><input type="submit" name="importComment" value="评论导入" /> (可能需要一些时间，请耐心等待！)</span></form></p>
-      <div id="tml-tips" class="updated">
+      <div id="wptm-tips">
 	    <p><strong>使用说明</strong></p>
         <p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p>
 		<p><strong>评论的相关设置及管理，请在灯鹭控制台操作。</strong></p>
@@ -508,9 +509,9 @@ function wp_connect_do_page() {
         <p><?php if (isset($_POST['verify_qzone'])) verify_qzone();?></p>
 		<p class="submit"><input type="submit" name="verify_qzone" value="检查是否支持同步到QQ空间(邮箱接口)" /></p>
 	  </form>
-      <div id="tml-tips" class="updated">
+      <div id="wptm-tips">
 	    <p><strong>注意事项</strong></p>
-        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
+        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />5、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />6、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>7、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
 	  </div>
     </div>
     <div id="share">
@@ -605,18 +606,18 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php echo $update_tips; ?>
-		<div id="tml-tips" class="updated"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
     </div>
     <div id="check">
 	<p><iframe width="100%" height="660" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
     </div>
     <div id="help">
-	  <div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">
+	  <div id="wptm-tips">
 	  <p><strong>WordPress连接微博 V2.3.5 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
 	  <?php wp_connect_tips();?>
 	  </div>
-	  <div class="updated" style="background:#f0f8ff; border:1px solid #addae6;">
+	  <div id="wptm-tips">
 	  <p><strong>最新产品 —— Denglu评论：</strong> [<a href="#comment" class="comment">评论设置</a>]（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）V2.3</p>
       <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
 	  <p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u></p>

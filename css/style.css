@@ -1,7 +1,8 @@
 .wrap a{text-decoration:none}
 .wrap h3{padding-left:8px}
 .clear{clear:both}
-#tml-tips {background:#f0f8ff; border:1px solid #addae6;}
+#wptm-tips {padding: 0 0.6em;margin: 5px 0 15px;background:#f0f8ff; border:1px solid #addae6;}
+#wptm-tips p {margin: 0.5em 0;padding: 2px;}
 /*tabs*/
 .tabs{padding-top:20px}
 ul.nav li{list-style:none; display:inline}
