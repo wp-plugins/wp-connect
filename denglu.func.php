@@ -1026,6 +1026,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 		} else {
 			$denglu_last_id['time'] = time();
 			update_option('denglu_last_id', $denglu_last_id);
+			return true;
 		} 
 	} 
 	// 评论状态与本地对接
@@ -1158,25 +1159,40 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			}
 		} 
 	} 
-	// 触发动作 V2.3.5
+	// 触发动作 V2.3.6
 	function dcToLocal() {
-		if (!isset($_POST['post_ID'])) { // 发布文章时不触发
-			global $wptm_comment;
-			if (!$wptm_comment)
-				$wptm_comment = get_option('wptm_comment');
-			$time = ($wptm_comment['time'] > 0) ? $wptm_comment['time'] * 60 : 300; // 5min
-			$denglu_last_id = get_option('denglu_last_id'); //读取数据库
-			$denglu_commentState = get_option('denglu_commentState'); //读取数据库
-			if (!$denglu_last_id['time'] || time() - $denglu_last_id['time'] > $time) {
-				save_dcToLocal($denglu_last_id); // 同步评论到本地服务器
-				save_dcStateToLocal($denglu_commentState, $denglu_last_id['time']); // 同步评论状态到本地服务器
-				delete_same_comments(); // 删除相同评论
-				denglu_importReplyComment(); // 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器
+		global $wptm_comment;
+		if (!$wptm_comment)
+			$wptm_comment = get_option('wptm_comment');
+		$time = ($wptm_comment['time'] > 0) ? $wptm_comment['time'] * 60 : 300; // 5min
+		$denglu_last_id = get_option('denglu_last_id'); //读取数据库
+		if (!$denglu_last_id['time'] || time() - $denglu_last_id['time'] > $time) {
+			if (update_option('denglu_last_id', array('cid' => $denglu_last_id['cid'], 'time' => time()))) {
+				if (save_dcToLocal($denglu_last_id)) { // 同步评论到本地服务器
+					delete_same_comments(); // 删除相同评论
+					$denglu_commentState = get_option('denglu_commentState'); //读取数据库
+					save_dcStateToLocal($denglu_commentState, $denglu_last_id['time']); // 同步评论状态到本地服务器
+					denglu_importReplyComment(); // 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器
+				} 
 			} 
-		}
-	} 
+		} 
+	}
+	
+    function dengluComment_notice() {
+		echo '<div class="updated" style="background:#f0f8ff; border:1px solid #addae6;"><p><strong>WordPress连接微博</strong> 插件的社会化评论功能（<a href="options-general.php?page=wp-connect#comment">评论设置</a>开启）会将每一条评论保存到本地数据库，同时在<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>“评论管理”处进行删除/修改操作也会同步到本地数据库。</p><p>您在本页做的任何删除/修改等操作，不会对灯鹭评论框上的评论起作用，但是对一条评论进行回复时会同步到灯鹭评论框。</p></div>';
+	}
+
+    function dcToLocal_comment() {
+		dcToLocal();
+		add_action('admin_notices', 'dengluComment_notice');
+	}
+
 	if (default_values('dcToLocal', 1, $wptm_comment)) {
-		add_action('init', 'dcToLocal');
+		if (!is_admin()) {
+			add_action('init', 'dcToLocal');
+		} else {
+			add_action('load-edit-comments.php', 'dcToLocal_comment');
+		} 
 	} 
 } 
 
