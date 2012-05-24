@@ -1,6 +1,6 @@
 <?php
 /**
- * Ŀ�ģ��ѻ���������protected����ʽ��װ��base���ֱ��չ�ָ������û�
+ * 目的：把基础方法用protected的形式封装在base里，不直接展现给最终用户
  * @author hyperion_cc, smyx
  * @version 1.0.7
  * @created 2012-5-21 00:00:00
@@ -12,12 +12,12 @@ class Denglu
 	protected $enableSSL;
 
 	/**
-	 * denglu API��������Ĭ��http://open.denglu.cc
-	 * ���ô������������Ժ��������������ض�������Ŀͻ�
+	 * denglu API的域名，默认http://open.denglu.cc
+	 * 设置此属性以满足以后有做二级域名重定向需求的客户
 	 */
 	protected $domain = 'http://open.denglu.cc';
 	/**
-	 * DENGLU RESTful API�ĵ�ַ
+	 * DENGLU RESTful API的地址
 	 */
 	protected $apiPath = array(
 		'bind' => '/api/v3/bind',
@@ -41,11 +41,11 @@ class Denglu
 	);
 
 	/*
-	 * ϵͳ�ı���
+	 * 系统的编码
 	 */
 	protected $charset;
 	/**
-	 * Provider��ö�٣����������/transfer/[name]�ĵ�ַ��׺
+	 * Provider的枚举，里面包括了/transfer/[name]的地址后缀
 	 */
 	protected $providers = array(
 		'google' => '/transfer/google',
@@ -66,25 +66,25 @@ class Denglu
 		'baidu' => '/transfer/baidu',
 	);
 	/**
-	 * ��ǰ�û��������Ե�һ������
+	 * 当前用户各种属性的一个缓存
 	 */
 	var $user;
 	/**
-	 * ��sdk�İ汾�ţ���ʼΪ1.0
+	 * 此sdk的版本号，初始为1.0
 	 */
 	const VERSION = '1.0';
 
 	/**
-	 * ���ܷ���
+	 * 加密方法
 	 */
 	protected $signatureMethod = 'MD5';
 
 	/**
-	 * ���캯��
-	 * @param appID	���غ�̨�����appID {@link http://open.denglu.cc}
-	 * @param apiKey	���غ�̨�����apiKey {@link http://open.denglu.cc}
-	 * #param charset ϵͳʹ�õı�������utf-8 ��gbk
-	 * @param signatureMethod	ǩ���㷨����ʱֻ֧��MD5
+	 * 构造函数
+	 * @param appID	灯鹭后台分配的appID {@link http://open.denglu.cc}
+	 * @param apiKey	灯鹭后台分配的apiKey {@link http://open.denglu.cc}
+	 * #param charset 系统使用的编码类型utf-8 或gbk
+	 * @param signatureMethod	签名算法，暂时只支持MD5
 	 */
 	function Denglu($appID, $apiKey, $charset, $signatureMethod = 'MD5')//
 	{
@@ -96,13 +96,13 @@ class Denglu
 	}
 
 	/**
-	 * ��ȡ��½/������
+	 * 获取登陆/绑定链接
 	 * 
 	 * @param Provider
-	 *            ͨ��Denglu.Provider p = Denglu.Provider.guess(mediaNameEn) ��ȡ��
-	 *            mediaNameEn��ȡý���б��еõ�
+	 *            通过Denglu.Provider p = Denglu.Provider.guess(mediaNameEn) 获取。
+	 *            mediaNameEn获取媒体列表中得到
 	 * @param uid
-	 *            �û���վ���û�ID����ʱ��Ҫ��û���ṩ��Ϊ�ǰ󶨣�Ҳ���ǵ�¼��
+	 *            用户网站的用户ID，绑定时需要（没有提供即为非绑定，也就是登录）
 	 * @throws DengluException
 	 */
 	function getAuthUrl($Provider, $uid = 0)
@@ -137,7 +137,7 @@ class Denglu
 		return $this->callApi('importComment',array('appid'=>$this->appID, 'data'=>$content));
 	}
 
-	function commentCount($postid = '', $url = '') // $postid,$url��һ��
+	function commentCount($postid = '', $url = '') // $postid,$url传一个
 	{
 		return $this->callApi('commentCount',array('appid'=>$this->appID, 'postid'=>$postid, 'url'=>$url),12);
 	}
@@ -158,32 +158,32 @@ class Denglu
 	}
 
 	/**
-	 * ����token��ȡ�û���Ϣ
+	 * 根据token获取用户信息
 	 *
 	 * @param token
 	 * 
-	 * ����ֵ eg:
+	 * 返回值 eg:
 	 * {
-	 * 		"mediaID":7,							// ý��ID
-	 * 		"createTime":"2011-05-20 16:44:19",		// ����ʱ��
-	 * 		"friendsCount":0,						// ������
-	 * 		"location":null,						// ��ַ
-	 * 		"favouritesCount":0,					// �ղ���
-	 * 		"screenName":"denglu",					// ��ʾ����
-	 * 		"profileImageUrl":"http://head.xiaonei.com/photos/0/0/men_main.gif",		// ����ͷ��
-	 * 		"mediaUserID":61,						// �û�ID
-	 * 		"url":null,								// �û�����/��ҳ��ַ
-	 * 		"city":null,							// ����
-	 * 		"description":null,						// ��������
-	 * 		"createdAt":"",							// ��ý���ϵĴ���ʱ��
-	 * 		"verified":0,							// ��֤��־
-	 * 		"name":null,							// �Ѻ���ʾ����
-	 * 		"domain":null,							// �û����Ի�URL
-	 * 		"province":null,						// ʡ��
-	 * 		"followersCount":0,						// ��˿��
-	 * 		"gender":1,								// �Ա� 1--�У�0--Ů,2--δ֪
-	 * 		"statusesCount":0,						// ΢��/�ռ���
-	 * 		"personID":120							// ����ID
+	 * 		"mediaID":7,							// 媒体ID
+	 * 		"createTime":"2011-05-20 16:44:19",		// 创建时间
+	 * 		"friendsCount":0,						// 好友数
+	 * 		"location":null,						// 地址
+	 * 		"favouritesCount":0,					// 收藏数
+	 * 		"screenName":"denglu",					// 显示姓名
+	 * 		"profileImageUrl":"http://head.xiaonei.com/photos/0/0/men_main.gif",		// 个人头像
+	 * 		"mediaUserID":61,						// 用户ID
+	 * 		"url":null,								// 用户博客/主页地址
+	 * 		"city":null,							// 城市
+	 * 		"description":null,						// 个人描述
+	 * 		"createdAt":"",							// 在媒体上的创建时间
+	 * 		"verified":0,							// 认证标志
+	 * 		"name":null,							// 友好显示名称
+	 * 		"domain":null,							// 用户个性化URL
+	 * 		"province":null,						// 省份
+	 * 		"followersCount":0,						// 粉丝数
+	 * 		"gender":1,								// 性别 1--男，0--女,2--未知
+	 * 		"statusesCount":0,						// 微博/日记数
+	 * 		"personID":120							// 个人ID
 	 * }
 	 */
 	function getUserInfoByToken($token, $refresh = false)
@@ -192,22 +192,22 @@ class Denglu
 	}
 
 	/**
-	 * ��ȡ��ѡ��ƽ̨��Ӧ�� 
+	 * 获取已选择平台供应商 
 	 * 
 	 * 
-	 * ����ֵ eg:
+	 * 返回值 eg:
 	 * [
 	 * 		{
 	 * 			"mediaID":7,																		// ID
-	 * 			"mediaIconImageGif":"http://test.denglu.cc/images/denglu_second_icon_7.gif",		// ��ữý����ɫIcon
-	 * 			"mediaIconImage":"http://test.denglu.cc/images/denglu_second_icon_7.png",			// ��ữý����ɫIcon
-	 * 			"mediaNameEn":"renren",																// ��ữý������Ƶ�ƴ��
-	 * 			"mediaIconNoImageGif":"http://test.denglu.cc/images/denglu_second_icon_no_7.gif",	// ��ữý���ɫIcon
-	 * 			"mediaIconNoImage":"http://test.denglu.cc/images/denglu_second_icon_no_7.png",		// ��ữý���ɫIcon
-	 * 			"mediaName":"������",																// ��ữý�������
-	 * 			"mediaImage":"http://test.denglu.cc/images/denglu_second_7.png",					// ��ữý���ͼ��
-	 * 			"shareFlag":0,																		// �Ƿ��з������� 0��1��
-	 * 			"apiKey":"704779c3dd474a44b612199e438ba8e2"											// ��ữý���Ӧ��apikey
+	 * 			"mediaIconImageGif":"http://test.denglu.cc/images/denglu_second_icon_7.gif",		// 社会化媒体亮色Icon
+	 * 			"mediaIconImage":"http://test.denglu.cc/images/denglu_second_icon_7.png",			// 社会化媒体亮色Icon
+	 * 			"mediaNameEn":"renren",																// 社会化媒体的名称的拼音
+	 * 			"mediaIconNoImageGif":"http://test.denglu.cc/images/denglu_second_icon_no_7.gif",	// 社会化媒体灰色Icon
+	 * 			"mediaIconNoImage":"http://test.denglu.cc/images/denglu_second_icon_no_7.png",		// 社会化媒体灰色Icon
+	 * 			"mediaName":"人人网",																// 社会化媒体的名称
+	 * 			"mediaImage":"http://test.denglu.cc/images/denglu_second_7.png",					// 社会化媒体大图标
+	 * 			"shareFlag":0,																		// 是否有分享功能 0是1否
+	 * 			"apiKey":"704779c3dd474a44b612199e438ba8e2"											// 社会化媒体的应用apikey
 	 * 		}
 	 * ]
 	 */
@@ -217,19 +217,19 @@ class Denglu
 	}
 	/**
 	 *
-	 * ���ͬһ�û��Ķ����ữý���û���Ϣ
+	 * 获得同一用户的多个社会化媒体用户信息
 	 *
 	 * @param uid
-	 *			�û���վ���û�ID(��ѡ)
+	 *			用户网站的用户ID(可选)
 	 *
 	 * @param muid
-	 *			��ữý����û�ID
+	 *			社会化媒体的用户ID
 	 *
-	 * @return ����ֵ
+	 * @return 返回值
 	 * 				eq: array(
-	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'����'),
-	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'����'),
-	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'����')
+	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'张三'),
+	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'李四'),
+	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'王五')
 	 * 				)
 	 *
 	 */
@@ -246,19 +246,19 @@ class Denglu
 
 	/**
 	 *
-	 * ��ȡ���������ý���û��б�
+	 * 获取可以邀请的媒体用户列表
 	 *
 	 * @param uid
-	 *			�û���վ���û�ID(��ѡ)
+	 *			用户网站的用户ID(可选)
 	 *
 	 * @param muid
-	 *			��ữý����û�ID
+	 *			社会化媒体的用户ID
 	 *
-	 * @return ����ֵ
+	 * @return 返回值
 	 * 				eq: array(
-	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'����'),
-	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'����'),
-	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'����')
+	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'张三'),
+	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'李四'),
+	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'王五')
 	 * 				)
 	 *
 	 */
@@ -272,19 +272,19 @@ class Denglu
 
 	/**
 	 *
-	 * ��ȡ�����Ƽ���ý���û��б�
+	 * 获取可以推荐的媒体用户列表
 	 *
 	 * @param uid
-	 *			�û���վ���û�ID(��ѡ)
+	 *			用户网站的用户ID(可选)
 	 *
 	 * @param muid
-	 *			��ữý����û�ID
+	 *			社会化媒体的用户ID
 	 *
-	 * @return ����ֵ
+	 * @return 返回值
 	 * 				eq: array(
-	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'����'),
-	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'����'),
-	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'����')
+	 * 				array('mediaUserID'=>100,'mediaID'=>10,'screenName'=>'张三'),
+	 * 				array('mediaUserID'=>101,'mediaID'=>11,'screenName'=>'李四'),
+	 * 				array('mediaUserID'=>102,'mediaID'=>12,'screenName'=>'王五')
 	 * 				)
 	 *
 	 */
@@ -298,15 +298,15 @@ class Denglu
 
 	/**
 	 *
-	 * ��������
+	 * 发送邀请
 	 *
 	 * @param muid
-	 *			��ữý����û�ID
+	 *			社会化媒体的用户ID
 	 *
 	 * @param uid
-	 *			�û���վ���û�ID(��ѡ)
+	 *			用户网站的用户ID(可选)
 	 *
-	 * @return ����ֵ eg: {"result": "1"}
+	 * @return 返回值 eg: {"result": "1"}
 	 *
 	 */
 	function sendInvite($invitemuids, $muid, $uid=null)
@@ -318,17 +318,17 @@ class Denglu
 	}
 
 	/**
-	 * �û��󶨶����ữý���˺ŵ������˺���
+	 * 用户绑定多个社会化媒体账号到已有账号上
 	 * 
 	 * @param mediaUID
-	 *            ��ữý����û�ID
+	 *            社会化媒体的用户ID
 	 * @param uid
-	 *            �û���վ�Ǳߵ��û�ID
+	 *            用户网站那边的用户ID
 	 * @param uname
-	 *            �û���վ���ǳ�
+	 *            用户网站的昵称
 	 * @param uemail
-	 *            �û���վ������
-	 * @return ����ֵ eg: {"result": "1"}
+	 *            用户网站的邮箱
+	 * @return 返回值 eg: {"result": "1"}
 	 */
 	function bind( $mediaUID, $uid, $uname, $uemail)
 	{
@@ -336,11 +336,11 @@ class Denglu
 	}
 
 	/**
-	 * �û��������ữý���˺�
+	 * 用户解除绑定社会化媒体账号
 	 * 
-	 * @param mediaUID    ��ữý����û�ID
+	 * @param mediaUID    社会化媒体的用户ID
 	 *
-	 * ����ֵ eg: {"result": "1"}
+	 * 返回值 eg: {"result": "1"}
 	 */
 	function unbind( $mediaUID)
 	{
@@ -348,12 +348,12 @@ class Denglu
 	}
 
 	/**
-	 * ���͵�¼��������
+	 * 发送登录的新鲜事
 	 * 
 	 * @param mediaUserID    
-	 *               �ӵ��ػ�ȡ��mediaUserID
+	 *               从灯鹭获取的mediaUserID
 	 *
-	 * ����ֵ eg: {"result": "1"}
+	 * 返回值 eg: {"result": "1"}
 	 */
 	function sendLoginFeed($mediaUserID)
 	{
@@ -361,14 +361,14 @@ class Denglu
 	}
 
 	/**
-	 * �û��������ӡ���־����Ϣʱ�����԰Ѵ���Ϣ������������
+	 * 用户发布帖子、日志等信息时，可以把此信息分享到第三方
 	 * 
 	 * @param mediaUserID
-	 * @param content    ������ʾ����Ϣ
-	 * @param url    �鿴��Ϣ������
-	 * @param uid    ��վ�û���Ψһ�Ա�ʶID
+	 * @param content    分享显示的信息
+	 * @param url    查看信息的链接
+	 * @param uid    网站用户的唯一性标识ID
 	 *
-	 * ����ֵ eg: {"result": "1"}
+	 * 返回值 eg: {"result": "1"}
 	 */
 	function share( $mediaUserID, $content, $url, $uid, $imageurl, $videourl, $param1, $param2)
 	{
@@ -376,10 +376,10 @@ class Denglu
 	}
 	
 	/**
-	 * �û�������а���ữý���˺�
-	 * @param uid ��վ�û���Ψһ�Ա�ʶID
+	 * 用户解除所有绑定社会化媒体账号
+	 * @param uid 网站用户的唯一性标识ID
 	 *
-	 * ����ֵ eg: {"result": "1"} 
+	 * 返回值 eg: {"result": "1"} 
 	 */
 	function unbindAll($uid)
 	{
@@ -387,9 +387,9 @@ class Denglu
 	}
 
 	/**
-	 * ΪHTTP�����ǩ�� ǩ���㷨�� A�������������ʽ��Ϊ��key=value����ʽ
-	 * B�������߸�ʽ���õĲ�����ֵ�ԣ����ֵ����������к�ƴ����һ�𣻡�key=valuekey=value��
-	 * C������ƴ�Ӻõ��ַ���ĩβ׷����Ӧ�õ�api Key D�������ַ�����MD5ֵ��Ϊǩ����ֵ
+	 * 为HTTP请求加签名 签名算法： A、将请求参数格式化为“key=value”格式
+	 * B、将上诉格式化好的参数键值对，以字典序升序排列后，拼接在一起；“key=valuekey=value”
+	 * C、在上拼接好的字符串末尾追加上应用的api Key D、上述字符串的MD5值即为签名的值
 	 * 
 	 * @param request
 	 */
@@ -405,8 +405,8 @@ class Denglu
 	}
 	
 	/**
-	 * ���ⲿ�������Ĳ���ת����http��ʽ
-	 * @param param ����
+	 * 将外部传进来的参数转换成http格式
+	 * @param param 数组
 	 */
 	protected function createPostBody($param){
 		foreach($param as $key => $v){
@@ -428,10 +428,10 @@ class Denglu
 		return implode('&',$arr);
 	}
 	/**
-	 * ����http���󲢻�÷�����Ϣ
-	 * @param method �����api����
-	 * @param request �����������͵Ĳ���
-	 * @param return �������Ƿ��з���ֵ 
+	 * 发送http请求并获得返回信息
+	 * @param method 请求的api类型
+	 * @param request 该请求所发送的参数
+	 * @param return 本请求是否有返回值 
 	 */
 	protected function callApi($method,$request=array(),$timeout = ''){
 		$apiPath = $this->getapiPath($method);
@@ -450,10 +450,10 @@ class Denglu
 		return $result;
 	}
 	/**
-	 * ����ת��
-	 * @param str ��Ҫת�����ַ���
-	 * @param to Ҫת���ɵı���
-	 * @param from �ַ����ĳ�ʼ����
+	 * 编码转换
+	 * @param str 需要转换的字符串
+	 * @param to 要转换成的编码
+	 * @param from 字符串的初始编码
 	 */
 	protected function charsetConvert($str,$to,$from){
 		if(!function_exists('mb_convert_encoding')){
@@ -489,7 +489,7 @@ class Denglu
 	}
 
 	/**
-	 *�׳��쳣
+	 *抛出异常
 	 *@param result 
 	 *
 	 */
@@ -500,17 +500,29 @@ class Denglu
 	}
 
 	/**
-	 * ����HTTP���󲢻����Ӧ
-	 * @param url �����url��ַ
-	 * @param request ���͵�http����
+	 * 发送HTTP请求并获得响应
+	 * @param url 请求的url地址
+	 * @param request 发送的http参数
 	 */
 	///////function makeRequest($request)
 	protected function makeRequest($url, $post = '', $timeout = 30) {
-		return get_url_contents($url.'?'.$post, $timeout);
+		$params = array(
+			"timeout" => $timeout,
+			"user-agent" => $_SERVER[HTTP_USER_AGENT],
+			"sslverify" => false,
+		);
+		if ($post){
+			$params['method'] = 'POST';
+		    $params['body'] = $post;
+		} else {
+		    $params['method'] = 'GET';
+		}
+		//return var_dump($url .= '?'.$post);
+		return class_http($url, $params); //new
 	}
 
 	/**
-	 * ��apiPath����������Ӧmethod��ʵ�ʵ��õ�ַ
+	 * 从apiPath数组里获得相应method的实际调用地址
 	 * 
 	 * @param method
 	 */
@@ -520,9 +532,9 @@ class Denglu
 	}
 
 	/**
-	 * ����JSON�ַ���
+	 * 解析JSON字符串
 	 * 
-	 * �Ѵӽӿڻ�ȡ��������ת����json��ʽ���ڽ����н��нӿڷ��ش������
+	 * 把从接口获取到的数据转换成json格式，在解析中进行接口返回错误分析
 	 * 
 	 * @param input
 	 */
@@ -614,19 +626,19 @@ class Denglu
 }
 
 /**
- *�쳣��
-* �������Ͷ��ձ�
+ *异常类
+* 错误类型对照表
  * Code Description
- * 1 	����������ο�API�ĵ�
- * 2 	վ�㲻����
- * 3 	ʱ�������
- * 4 	ֻ֧��md5ǩ��
- * 5 	ǩ������ȷ
- * 6 	token�ѹ���
- * 7 	ý���û�������
- * 8 	ý���û��Ѱ������û�
- * 9 	ý���û��ѽ��
- * 10 	δ֪����
+ * 1 	参数错误，请参考API文档
+ * 2 	站点不存在
+ * 3 	时间戳有误
+ * 4 	只支持md5签名
+ * 5 	签名不正确
+ * 6 	token已过期
+ * 7 	媒体用户不存在
+ * 8 	媒体用户已绑定其他用户
+ * 9 	媒体用户已解绑
+ * 10 	未知错误
  */ 
 
 class DengluException extends Exception
