@@ -349,12 +349,13 @@ function wp_connect_twitter(){
 
 	$twitter = json_decode($twitter);
 
-	$twitterid = $twitter->id;
+	//$twitterid = $twitter->id;
 	$username = $twitter->screen_name;
 	$email = $username.'@twitter.com';
+	$url = "http://twitter.com/".$username;
 	$tid = "ttid";
-    $uid = ifab(get_user_by_meta_value('twitterid', $twitterid), email_exists($email));
-	$userinfo = array($tid, $username, $twitter->name, $twitter->profile_image_url, $twitter->url, $twitterid, $tok['oauth_token'], $tok['oauth_token_secret']);
+    $uid = ifab(get_user_by_meta_value('twitterid', $username), email_exists($email));
+	$userinfo = array($tid, $username, $twitter->name, $twitter->profile_image_url, $url, $username, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
 	} else {
