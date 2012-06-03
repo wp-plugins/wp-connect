@@ -595,7 +595,7 @@ function wp_connect_author_page($input) {
 */
 // 社会化分享按钮，共52个
 function wp_social_share_title() {
-	return array("qzone" => "QQ空间",
+	$socialShare_title = array("qzone" => "QQ空间",
 		"sina" => "新浪微博",
 		"baidu" => "百度搜藏",
 		"renren" => "人人网",
@@ -623,7 +623,7 @@ function wp_social_share_title() {
 		"sc115" => "115收藏",
 		"feixin" => "飞信",
 		"digu" => "嘀咕",
-		"follow5" => "Follow5",
+		"linkedin" => "LinkedIn",
 		"tongxue" => "同学网",
 		"youdao" => "有道书签",
 		"google" => "Google",
@@ -647,6 +647,7 @@ function wp_social_share_title() {
 		"baohe" => "宝盒网",
 		"renmaiku" => "人脉库",
 		"ushi" => "优士网");
+	return array_merge( apply_filters('socialShare_title', array()), $socialShare_title );
 } 
 
 ?>
