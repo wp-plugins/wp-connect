@@ -245,7 +245,7 @@ if (!function_exists('class_http')) {
 	function get_url_array($url) {
 		return json_decode(get_url_contents($url), true);
 	} 
-} 
+}
 
 function close_socket() {
 	if (function_exists('fsockopen')) {
@@ -269,7 +269,7 @@ function sfsockopen($host, $port, $errno, $errstr, $timeout) {
 		$fp = @stream_socket_client($host . ':' . $port, $errno, $errstr, $timeout);
 	} 
 	return $fp;
-}  
+} 
 
 if (!function_exists('key_authcode')) {
 	function key_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
@@ -553,17 +553,18 @@ function wp_multi_media_url($content, $post_ID = '') {
 		$v = $video[1][0];
 	} 
 	if (empty($wptm_options['disable_pic'])) {
-		if ($wptm_options['thumbnail'] && is_numeric($post_ID) && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
-			$image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post_ID), 'full');
-			$p = $image_url[0];
-		} else {
-			preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
-			$p_sum = count($image[1]);
-			if ($p_sum > 0) {
-				$p = $image[1][0];
+		preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
+		$p_sum = count($image[1]);
+		if ($p_sum > 0) {
+			$p = $image[1][0];
+		} 
+		if (!$p || $wptm_options['thumbnail']) {
+			if (is_numeric($post_ID) && function_exists('has_post_thumbnail') && has_post_thumbnail($post_ID)) { // 特色图像 WordPress v2.9.0
+				if ($image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post_ID), 'full'))
+					$p = $image_url[0];
 			} 
 		} 
-	}
+	} 
 	if ($p || $v)
 		return array($p, $v);
 }
@@ -594,7 +595,7 @@ function wp_connect_author_page($input) {
 */
 // 社会化分享按钮，共52个
 function wp_social_share_title() {
-	return array("qzone" => "QQ空间",
+	$socialShare_title = array("qzone" => "QQ空间",
 		"sina" => "新浪微博",
 		"baidu" => "百度搜藏",
 		"renren" => "人人网",
@@ -622,7 +623,7 @@ function wp_social_share_title() {
 		"sc115" => "115收藏",
 		"feixin" => "飞信",
 		"digu" => "嘀咕",
-		"follow5" => "Follow5",
+		"linkedin" => "LinkedIn",
 		"tongxue" => "同学网",
 		"youdao" => "有道书签",
 		"google" => "Google",
@@ -646,6 +647,7 @@ function wp_social_share_title() {
 		"baohe" => "宝盒网",
 		"renmaiku" => "人脉库",
 		"ushi" => "优士网");
+	return array_merge( apply_filters('socialShare_title', array()), $socialShare_title );
 } 
 
 ?>
