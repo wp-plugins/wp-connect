@@ -139,16 +139,26 @@ function wp_connect_do_page() {
         <h3>同步微博</h3>
         <table class="form-table">
           <tr>
-            <td width="25%" valign="top">是否开启“微博同步”功能</td>
-            <td><input name="enable_wptm" type="checkbox" value="1" <?php if($wptm_options['enable_wptm']) echo "checked "; ?>></td>
+            <td width="25%" valign="top"><strong>基础设置</strong></td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">功能开启</td>
+            <td><label><input name="enable_wptm" type="checkbox" value="1" <?php if($wptm_options['enable_wptm']) echo "checked "; ?>> 开启“文章同步到微博”功能</label></td>
           </tr>
           <tr>
             <th>同步内容设置</th>
             <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 标题+链接 2. 标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 5. 标题 + 内容 <br /> 自定义标题格式：<input name="format" type="text" size="25" value="<?php echo $wptm_options['format']; ?>" /> ( 标题: <code>%title%</code>，会继承上面的设置，可留空。 )<br />把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label> <label><input name="thumbnail" type="checkbox" value="1" <?php checked($wptm_options['thumbnail']); ?>/>优先同步特色图像</label></td>
           </tr>
           <tr>
+            <td width="25%" valign="top"><strong>可选设置</strong></td>
+          </tr>
+          <tr>
             <th>自定义消息</th>
             <td>新文章前缀: <input name="new_prefix" type="text" size="10" value="<?php echo $wptm_options['new_prefix']; ?>" /> 更新文章前缀: <input name="update_prefix" type="text" size="10" value="<?php echo $wptm_options['update_prefix']; ?>" /> 更新间隔: <input name="update_days" type="text" size="2" maxlength="4" value="<?php echo ($wptm_options['update_days']) ? $wptm_options['update_days'] : '0'; ?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 天 [0=修改文章时不同步] </td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">多作者博客</td>
+            <td><label><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>> 是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">禁止同步的文章分类ID (<a href="http://loginsns.com/wiki/wordpress/faqs#cat-ids" target="_blank">数字ID</a>)</td>
@@ -160,20 +170,16 @@ function wp_connect_do_page() {
                [ <a href="http://loginsns.com/wiki/wordpress/faqs#page" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
-            <td width="25%" valign="top">多作者博客</td>
-            <td><label><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>>是否让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。</label></td>
-          </tr>
-          <tr>
             <td width="25%" valign="top">自定义短网址</td>
-            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>>博客默认 ( http://yourblog.com/?p=1 )</label> <label><strong>短网址</strong> <select name="t_cn"><option value="">选择</option><option value="1"<?php selected($wptm_options['t_cn'] == "1");?>>t.cn (新浪)</option><option value="2"<?php selected($wptm_options['t_cn'] == "2");?>>dwz.cn (百度)</option></select></label></td>
+            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>> 博客默认 ( http://yourblog.com/?p=1 )</label> <label><strong>短网址</strong> <select name="t_cn"><option value="">选择</option><option value="1"<?php selected($wptm_options['t_cn'] == "1");?>>t.cn (新浪)</option><option value="2"<?php selected($wptm_options['t_cn'] == "2");?>>dwz.cn (百度)</option></select></label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
-            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>>(选填) 国内主机用户必须勾选才能使用Twitter</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
+            <td><label title="国外主机用户不要勾选噢！"><input name="enable_proxy" type="checkbox" value="1" <?php if($wptm_options['enable_proxy']) echo "checked "; ?>> (选填) 国内主机用户必须勾选才能使用Twitter</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">我不能绑定帐号</td>
-            <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>>(选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
+            <td><label title="帐号绑定出错时才勾选噢！"><input name="bind" type="checkbox" value="1" <?php if($wptm_options['bind']) echo "checked "; ?>> (选填) 勾选后可以在帐号绑定下面手动填写授权码</label> [ <a href="http://www.smyx.net/apps/oauth.php" target="_blank">去获取授权码</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">服务器时间校正</td>
@@ -192,13 +198,12 @@ function wp_connect_do_page() {
         <h3>登录设置</h3>
         <table class="form-table">
           <tr>
-            <td width="25%" valign="top">是否开启“社会化登录”功能</td>
-            <td><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>></td>
+            <td width="25%" valign="top"><strong>基础设置</strong></td>
           </tr>
-		  <tr>
-			<td width="25%" valign="top">注册信息</td>
-			<td><label><input type="checkbox" name="reg" value="1" <?php if($wptm_connect['reg']) echo "checked "; ?>/>用户首次登录时，强制要求用户填写个人信息</label></td>
-		  </tr>
+          <tr>
+            <td width="25%" valign="top">功能开启</td>
+            <td><label><input name="enable_connect" type="checkbox" value="1" <?php if($wptm_connect['enable_connect']) echo "checked "; ?>> 开启“社会化登录”功能</label></td>
+          </tr>
           <tr>
             <td width="25%" valign="top">显示设置</td>
             <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> ) [ <a href="http://loginsns.com/wiki/wordpress/faqs#connect-manual" target="_blank">详细说明</a> ]</td>
@@ -224,24 +229,31 @@ function wp_connect_do_page() {
             </td>
           </tr>
           <tr>
+            <td width="25%" valign="top"><strong>可选设置</strong></td>
+          </tr>
+		  <tr>
+			<td width="25%" valign="top">注册信息</td>
+			<td><label><input type="checkbox" name="reg" value="1" <?php if($wptm_connect['reg']) echo "checked "; ?>/> 用户首次登录时，强制要求用户填写个人信息</label></td>
+		  </tr>
+          <tr>
             <td width="25%" valign="top">@微博帐号</td>
             <td>新浪微博昵称: <input name="sina_username" type="text" size="10" value='<?php echo $wptm_connect['sina_username'];?>' /> 腾讯微博帐号: <input name="qq_username" type="text" size="10" value='<?php echo $wptm_connect['qq_username'];?>' /><br />搜狐微博昵称: <input name="sohu_username" type="text" size="10" value='<?php echo $wptm_connect['sohu_username'];?>' /> 网易微博昵称: <input name="netease_username" type="text" size="10" value='<?php echo $wptm_connect['netease_username'];?>' /><br />(说明：有新的评论时将以 @微博帐号 的形式显示在您跟评论者相对应的微博上，仅对方勾选了同步评论到微博时才有效！注：腾讯微博帐号不是QQ号码)</td>
           </tr>
 		  <tr>
 			<td width="25%" valign="top">小工具</td>
-			<td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_connect['widget']) echo "checked "; ?>/>是否开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
+			<td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_connect['widget']) echo "checked "; ?>/> 开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
 		  </tr>
 		  <tr>
 			<td width="25%" valign="top">同步帐号</td>
-			<td><label><input type="checkbox" name="sync" value="1" <?php if($wptm_connect['sync']) echo "checked "; ?>/>用户首次登录的时候也绑定同步帐号（个人资料的帐号绑定）</label></td>
+			<td><label><input type="checkbox" name="sync" value="1" <?php if($wptm_connect['sync']) echo "checked "; ?>/> 用户首次登录的时候也绑定同步帐号（个人资料的帐号绑定）</label></td>
 		  </tr>
 		  <tr>
 			<td width="25%" valign="top">禁止头像</td>
-			<td><label><input type="checkbox" name="head" value="1" <?php if($wptm_connect['head']) echo "checked "; ?>/>不使用登录者的微博/社区头像作为她的头像</label></td>
+			<td><label><input type="checkbox" name="head" value="1" <?php if($wptm_connect['head']) echo "checked "; ?>/> 不使用登录者的微博/社区头像作为她的头像</label></td>
 		  </tr>
 		  <tr>
 			<td width="25%" valign="top">中文用户名</td>
-			<td><label><input type="checkbox" name="chinese_username" value="1" <?php if(default_values('chinese_username', 1, $wptm_connect)) echo "checked "; ?>/>支持中文用户名</label></td>
+			<td><label><input type="checkbox" name="chinese_username" value="1" <?php if(default_values('chinese_username', 1, $wptm_connect)) echo "checked "; ?>/> 支持中文用户名</label></td>
 		  </tr>
           <tr>
             <td width="25%" valign="top">禁止注册的用户名</td>
@@ -300,11 +312,11 @@ function wp_connect_do_page() {
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
-                <td width="25%" valign="top">是否开启“同步博客”功能</td>
+                <td width="25%" valign="top">开启“同步博客”功能</td>
                 <td><input name="enable_blog" type="checkbox" value="1" <?php if($blog_options[0]) echo "checked "; ?>></td>
             </tr>
 		    <tr>
-			    <td width="25%" valign="top">是否添加文章版权信息</td>
+			    <td width="25%" valign="top">添加文章版权信息</td>
 			    <td><input type="checkbox" name="copyright" value="1" <?php if($blog_options[1]) echo "checked "; ?>/></td>
 		    </tr>
 		    <tr>
@@ -318,15 +330,15 @@ function wp_connect_do_page() {
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">新浪博客</td>
-			    <td><label>邮 箱: <input type="text" name="user_sina" value="<?php echo $wptm_blog[0][1];?>" /></label> <label>密 码: <input type="password" name="pass_sina" /></label><?php if($wptm_blog[0][2]) echo ' (密码留空表示不修改)';?></td>
+			    <td><label>邮 箱: <input type="text" name="user_sina" value="<?php echo $wptm_blog[0][1];?>" /></label> <label>密 码: <input type="password" name="pass_sina" autocomplete="off" /></label><?php if($wptm_blog[0][2]) echo ' (密码留空表示不修改)';?></td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">网易博客</td>
-			    <td><label>邮 箱: <input type="text" name="user_163" value="<?php echo $wptm_blog[1][1];?>" /></label> <label>密 码: <input type="password" name="pass_163" /></label><?php if($wptm_blog[1][2]) echo ' (密码留空表示不修改)';?></td>
+			    <td><label>邮 箱: <input type="text" name="user_163" value="<?php echo $wptm_blog[1][1];?>" /></label> <label>密 码: <input type="password" name="pass_163" autocomplete="off" /></label><?php if($wptm_blog[1][2]) echo ' (密码留空表示不修改)';?></td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">QQ空间 (邮箱接口，建议使用开放平台接口)</td>
-			    <td><label>Q Q: <input type="text" name="user_qzone" value="<?php echo $wptm_blog[2][1];?>" /></label> <label>密 码: <input type="password" name="pass_qzone" /></label><?php if($wptm_blog[2][2]) echo ' (密码留空表示不修改)';?></td>
+			    <td><label>Q Q: <input type="text" name="user_qzone" value="<?php echo $wptm_blog[2][1];?>" /></label> <label>密 码: <input type="password" name="pass_qzone" autocomplete="off" /></label><?php if($wptm_blog[2][2]) echo ' (密码留空表示不修改)';?></td>
 		    </tr>
         </table>
         <p class="submit">
@@ -341,7 +353,7 @@ function wp_connect_do_page() {
 	  </form>
       <div id="wptm-tips">
 	    <p><strong>注意事项</strong></p>
-        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、同步时在新浪等博客文章末尾会添加插件作者版权链接，使用30天后将不再添加！<br />5、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />6、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />7、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>8、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
+        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />5、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />6、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>7、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
 	  </div>
     </div>
     <div id="share">
@@ -356,28 +368,28 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
-            <td><label title="假如没有复制到主题样式中，请务必勾选！"><input name="css" type="checkbox" value="1" <?php checked(!$wptm_share || $wptm_share['css']); ?> />使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
+            <td><label title="假如没有复制到主题样式中，请务必勾选！"><input name="css" type="checkbox" value="1" <?php checked(!$wptm_share || $wptm_share['css']); ?> /> 使用插件自带share.css文件 (建议复制样式到主题css文件中，以免升级时被覆盖！)</label>
             </td>
           </tr>
           <tr>
             <td width="25%" valign="top">显示设置</td>
-            <td><label>分享按钮前面的文字: <input name="text" type="text" value='<?php echo $wptm_share['text'];?>' /></label><br /><label><input name="button" type="radio" value="1" <?php checked(!$wptm_share['button'] || $wptm_share['button'] == 1); ?> />显示图标按钮</label> ( 选择尺寸 <select name="size"><option value="16"<?php if($wptm_share['size'] == 16) echo " selected";?>>小图标</option><option value="32"<?php if($wptm_share['size'] == 32) echo " selected";?> >大图标</option></select> ) <label><input name="button" type="radio" value="2" <?php if($wptm_share['button'] == 2) echo "checked "; ?> />显示图文按钮</label> <label><input name="button" type="radio" value="3" <?php if($wptm_share['button'] == 3) echo "checked "; ?> />显示文字按钮</label></td>
+            <td><label>分享按钮前面的文字: <input name="text" type="text" value="<?php echo (!$wptm_share) ? '分享到：' : $wptm_share['text'];?>" /></label><br /><label><input name="button" type="radio" value="1" <?php checked(!$wptm_share['button'] || $wptm_share['button'] == 1); ?> /> 显示图标按钮</label> ( 选择尺寸 <select name="size"><option value="16"<?php if($wptm_share['size'] == 16) echo " selected";?>>小图标</option><option value="32"<?php if($wptm_share['size'] == 32) echo " selected";?> >大图标</option></select> ) <label><input name="button" type="radio" value="2" <?php if($wptm_share['button'] == 2) echo "checked "; ?> />显示图文按钮</label> <label><input name="button" type="radio" value="3" <?php if($wptm_share['button'] == 3) echo "checked "; ?> />显示文字按钮</label></td>
           </tr>
 		  <tr>
 			<td width="25%" valign="top">Google Analytics</td>
-			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/>使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
+			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
 		  <?php if(!$donate_152) { ?>
 		  <tr>
 			<td width="25%" valign="top">选择文本分享</td>
-			<td><label><input type="checkbox" name="selection" value="1" <?php if($wptm_share['selection']) echo "checked "; ?>/><strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong></label></td>
+			<td><label><input type="checkbox" name="selection" value="1" <?php if($wptm_share['selection']) echo "checked "; ?>/> <strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong></label></td>
 		  </tr>
 		  <?php } ?>
         </table>
         <h3>Google+1</h3>
         <table class="form-table">
           <tr>
-            <td width="25%" valign="top">是否开启“Google+1”功能</td>
+            <td width="25%" valign="top">开启“Google+1”功能</td>
             <td><input name="enable_plusone" type="checkbox" value="1" <?php checked($wptm_share['enable_plusone']); ?>> (提示: Google+1在国内使用不稳定，如果发现网站打开速度变慢，请关闭该功能。)</td>
           </tr>
           <tr>
@@ -391,7 +403,7 @@ function wp_connect_do_page() {
         </table>
         <h3>添加社会化分享按钮，可以上下左右拖拽排序(记得保存！) <span style="color:#440">[如果不能拖拽请刷新页面]</span>：</h3>
 		  <ul id="dragbox">
-		  <?php if (WP_CONNECT_ADVANCED == "true") {wp_social_share_options();echo '<img src="http://smyx.sinaapp.com/t.php?img='.$wptm_donate.'" style="display:none" />';} else {$social = wp_social_share_title();foreach($social as $key => $title) {echo "<li id=\"drag\"><input name=\"$key\" type=\"checkbox\" value=\"$key\" />$title</li>";}}?>
+		  <?php if (WP_CONNECT_ADVANCED == "true") {wp_social_share_options();} else {$social = wp_social_share_title();foreach($social as $key => $title) {echo "<li id=\"drag\"><input name=\"$key\" type=\"checkbox\" value=\"$key\" />$title</li>";}}?>
 		    <div class="clear"></div>
 		  </ul>
 		  <div id="dragmarker">
@@ -400,7 +412,6 @@ function wp_connect_do_page() {
 		    <img src="<?php echo $plugin_url;?>/images/marker_bottom.gif">
 		  </div>
         <p class="submit">
-		  <input type="hidden" name="all">
           <input type="hidden" name="select">
           <input type="submit" name="share_options" onclick="saveData()" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
@@ -446,11 +457,11 @@ function wp_connect_do_page() {
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">自定义页面</td>
-			    <td><label><input type="checkbox" name="registered_users" id="registered_users" value="1" <?php if($wptm_advanced['registered_users']) echo "checked "; ?>/>支持所有注册用户 (用户登陆后可以在自定义页面发布信息到他们绑定的微博上。)</label></td>
+			    <td><label><input type="checkbox" name="registered_users" id="registered_users" value="1" <?php if($wptm_advanced['registered_users']) echo "checked "; ?>/> 支持所有注册用户 (用户登陆后可以在自定义页面发布信息到他们绑定的微博上。)</label></td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">微博秀</td>
-			    <td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_advanced['widget']) echo "checked "; ?>/>是否开启侧边栏微博秀 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label> [ <a href="http://ishow.sinaapp.com/" target="_blank">获得代码</a> ]</td>
+			    <td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_advanced['widget']) echo "checked "; ?>/> 开启侧边栏微博秀 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label> [ <a href="http://ishow.sinaapp.com/" target="_blank">获得代码</a> ]</td>
 		    </tr>
         </table>
         <p class="submit">
@@ -465,7 +476,7 @@ function wp_connect_do_page() {
 	  </form>
     </div>
     <div id="check">
-	<p><iframe width="100%" height="660" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
+	<p><iframe width="100%" height="650" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
     </div>
   </div>
 </div>
