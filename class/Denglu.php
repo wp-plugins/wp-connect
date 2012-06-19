@@ -2,8 +2,8 @@
 /**
  * 目的：把基础方法用protected的形式封装在base里，不直接展现给最终用户
  * @author hyperion_cc, smyx
- * @version 1.0.7
- * @created 2012-5-21 00:00:00
+ * @version 1.0.8
+ * @created 2012-6-19 11:00:00
  */
 class Denglu
 {
@@ -37,7 +37,8 @@ class Denglu
 		'commentCount' => '/api/v4/get_comment_count',
 	    'latestComment' => '/api/v4/latest_comment',
 		'getComments' => '/api/v4/get_comment_list',
-		'getCommentState' => '/api/v4/get_change_comment_ids'
+		'getCommentState' => '/api/v4/get_change_comment_ids',
+	    'getShareStateList' => '/api/v4/get_share_state_list'
 	);
 
 	/*
@@ -63,7 +64,6 @@ class Denglu
 		'taobao' => '/transfer/taobao',
 		'tianya' => '/transfer/tianya',
 		'alipayquick' => '/transfer/alipayquick',
-		'baidu' => '/transfer/baidu',
 	);
 	/**
 	 * 当前用户各种属性的一个缓存
@@ -122,9 +122,9 @@ class Denglu
 		return $authUrl;
 	}
 
-	function register($content)
+	function register($token, $muid, $content)
 	{
-		return $this->callApi('register',array('data'=>$content));
+		return $this->callApi('register',array('token'=>$token, 'muid'=>$muid, 'data'=>$content));
 	}
 
 	function importUser($content)
@@ -155,6 +155,11 @@ class Denglu
 	function getCommentState($time)
 	{
 		return $this->callApi('getCommentState',array('appid'=>$this->appID, 'time'=>$time),12);
+	}
+
+	function getShareStateList($postid)
+	{
+		return $this->callApi('getShareStateList',array('appid'=>$this->appID, 'postid'=>$postid),12);
 	}
 
 	/**
@@ -517,7 +522,7 @@ class Denglu
 		} else {
 		    $params['method'] = 'GET';
 		}
-		//return var_dump($url .= '?'.$post);
+		// return var_dump($url .= '?'.$post);
 		return class_http($url, $params); //new
 	}
 

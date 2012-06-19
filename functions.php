@@ -172,6 +172,7 @@ if (!function_exists('class_http')) {
 				return " <span style=\"color:blue\">不支持 $func_str 等函数，请在php.ini里面的disable_functions中删除这些函数的禁用！</span>";
 		} 
 	} 
+	// SSL
 	function http_ssl($url) {
 		$arrURL = parse_url($url);
 		$r['ssl'] = $arrURL['scheme'] == 'https' || $arrURL['scheme'] == 'ssl';
@@ -199,6 +200,9 @@ if (!function_exists('class_http')) {
 		$http = new $class;
 		$response = $http -> request($url, $params);
 		if (!is_array($response)) {
+			if (@ini_get('allow_url_fopen') && function_exists('file_get_contents')) {
+				return file_get_contents($url . '?' . $params['body']);
+			} 
 			$errors = $response -> errors;
 			$error = $errors['http_request_failed'][0];
 			if (!$error)
@@ -210,6 +214,7 @@ if (!function_exists('class_http')) {
 		} 
 		return $response['body'];
 	} 
+    // GET
 	function get_url_contents($url, $timeout = 30) {
 		if (!close_curl()) {
 			$ch = curl_init();
@@ -242,10 +247,11 @@ if (!function_exists('class_http')) {
 			return class_http($url, $params);
 		} 
 	} 
+
 	function get_url_array($url) {
 		return json_decode(get_url_contents($url), true);
 	} 
-}
+} 
 
 function close_socket() {
 	if (function_exists('fsockopen')) {
@@ -454,7 +460,8 @@ function get_appkey() {
 		'13' => array($wptm_connect['qq_app_id'], $wptm_connect['qq_app_key']),
 		'16' => array($wptm_connect['taobao_api_key'], $wptm_connect['taobao_secret']),
 		'17' => array(TIANYA_APP_KEY, TIANYA_APP_SECRET),
-		'19' => array($wptm_connect['baidu_api_key'], $wptm_connect['baidu_secret'])
+		'19' => array($wptm_connect['baidu_api_key'], $wptm_connect['baidu_secret']),
+		'28' => array(T_APP_KEY, T_APP_SECRET)
 		);
 }
 // 获得user_id
@@ -553,7 +560,7 @@ function wp_multi_media_url($content, $post_ID = '') {
 		$v = $video[1][0];
 	} 
 	if (empty($wptm_options['disable_pic'])) {
-		preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/isU', $content, $image);
+		preg_match_all('/<img[^>]+src=[\'"](http[^\'"]+)[\'"].*>/isU', $content, $image);
 		$p_sum = count($image[1]);
 		if ($p_sum > 0) {
 			$p = $image[1][0];

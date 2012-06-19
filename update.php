@@ -200,9 +200,12 @@ function wp_connect_update() {
 			'6' => array(trim($_POST['netease1']), trim($_POST['netease2'])),
 			'7' => array(trim($_POST['renren1']), trim($_POST['renren2'])),
 			'8' => array(trim($_POST['kaixin1']), trim($_POST['kaixin2'])),
+			'9' => array(trim($_POST['douban1']), trim($_POST['douban2'])),
 			'13' => array(trim($_POST['qq1']), trim($_POST['qq2'])),
 			'16' => array(trim($_POST['taobao1']), trim($_POST['taobao2'])),
-			'19' => array(trim($_POST['baidu1']), trim($_POST['baidu2']))
+			'17' => array(trim($_POST['tianya1']), trim($_POST['tianya2'])),
+			'19' => array(trim($_POST['baidu1']), trim($_POST['baidu2'])),
+			'28' => array(trim($_POST['twitter1']), trim($_POST['twitter2']))
 			);
 		update_option("wptm_key", $keys);
 		update_option("wptm_opensina", array('app_key' => trim($_POST['sina1']), 'secret' => trim($_POST['sina2'])));

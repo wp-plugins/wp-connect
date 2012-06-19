@@ -1,6 +1,5 @@
 <?php
 include "../../../wp-config.php";
-date_default_timezone_set("PRC");
 
 if ($_GET['do'] == "profile") {
 	if (is_user_logged_in()) {

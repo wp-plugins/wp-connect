@@ -11,7 +11,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <h3>帐号绑定</h3>
 <p>请点击下面图标绑定账号: (友情提醒：绑定太多帐号会导致发布文章时缓慢或者响应超时！)</p>
 <?php if (!$wptm_options['bind'] && $_SESSION['wp_url_bind'] == WP_CONNECT) {
-	$oproviderKey = ($wptm_options['denglu_bind']) ? '<a href="http://open.denglu.cc/" target="_blank">灯鹭控制台</a> 的 “配置平台供应商”' : '<a href="#open" class="open">开放平台</a>';
+	$oproviderKey = ($wptm_options['denglu_bind']) ? '灯鹭管理平台 的 <a href="'.admin_url('admin.php?page=denglu_oproviderKey').'">填写开放平台KEY</a> (即配置平台供应商)' : '<a href="#open" class="open">开放平台</a>';
 	echo '<p style="color:green;">如果同步时要显示微博的“来自XXX”，请到 '.$oproviderKey.' 页面填写申请的key，更换APP key后，相应的帐号请重新绑定！</p>';
 }?>
 <div id="tlist">
@@ -61,7 +61,7 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 </tr>
 <tr valign="top">
 <th scope="row"><span class="token">Token secret</span><span class="account">密&nbsp;&nbsp;&nbsp;&nbsp;码</span> :</th>
-<td><input type="password" class="password" id="password" name="password" /></td>
+<td><input type="password" class="password" id="password" name="password" autocomplete="off" /></td>
 </tr>
 </table>
 <p class="submit">

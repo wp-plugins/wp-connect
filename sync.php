@@ -54,7 +54,7 @@ function wp_connect_publish($post_ID) {
 	$sync_loaded += 1;
 	if (isset($_POST['publish_no_sync']) || $sync_loaded > 1 || $_POST['post_password']) {
 		return;
-	} 
+	}
 	@ini_set("max_execution_time", 120);
 	$time = time();
 	$post = get_post($post_ID);
