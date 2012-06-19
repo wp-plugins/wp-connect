@@ -384,7 +384,7 @@ function wp_connect_do_page() {
 		  <?php if (is_donate()) { ?>
 		  <tr>
 			<td width="25%" valign="top">绑定登录帐号</td>
-			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/>在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/> 在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
 		  </tr>
 		  <?php } ?>
           <tr>
@@ -493,7 +493,7 @@ function wp_connect_do_page() {
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
-                <td width="25%" valign="top">是否开启“同步博客”功能</td>
+                <td width="25%" valign="top">开启“同步博客”功能</td>
                 <td><input name="enable_blog" type="checkbox" value="1" <?php if($blog_options[0]) echo "checked "; ?>></td>
             </tr>
 		    <tr>
