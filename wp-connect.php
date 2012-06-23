@@ -236,7 +236,7 @@ function wp_connect_do_page() {
 		    </tr>
         </table>
         <p class="submit">
-		  <input type="hidden" name="denglu" value="<?php echo $wptm_basic['denglu'];?>" />
+		  <input type="hidden" name="denglu" value="<?php echo ($version == 5) ? 1 : $wptm_basic['denglu'];?>" />
           <input type="submit" name="basic_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
