@@ -225,9 +225,13 @@ function wp_connect_update_denglu() {
 		echo $updated;
 	} 
 	if (isset($_POST['update_denglu'])) { // 旧的灯鹭插件升级
-		@require(ABSPATH . "denglu/lib/denglu_cache.php");
-		if ($denglu_cache) {
-			update_option("wptm_basic", array('appid' => $denglu_cache['denglu_appid'], 'appkey' => $denglu_cache['denglu_appkey'], 'denglu' => 1));
+		if (file_exists(ABSPATH . "denglu/lib/denglu_cache.php")) {
+			require(ABSPATH . "denglu/lib/denglu_cache.php");
+			if ($denglu_cache) {
+				update_option("wptm_basic", array('appid' => $denglu_cache['denglu_appid'], 'appkey' => $denglu_cache['denglu_appkey'], 'denglu' => 1));
+			} 
+		} else {
+			update_option("wptm_basic", array('denglu'=>1));
 		} 
 		return update_denglu_old();
 	} 
