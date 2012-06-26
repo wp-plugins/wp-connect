@@ -216,8 +216,8 @@ function wp_connect_do_page() {
 	      <p><a href="http://open.denglu.cc/transfer/qzone<?php echo $redirect_create;?>" title="使用QQ帐号登录"><img src="<?php echo $plugin_url;?>/images/qzone.png" /></a> <a href="http://open.denglu.cc/transfer/sina<?php echo $redirect_create;?>" title="使用新浪微博帐号登录"><img src="<?php echo $plugin_url;?>/images/sina.png" /></a> <a href="http://open.denglu.cc/transfer/tencent<?php echo $redirect_create;?>" title="使用腾讯微博帐号登录"><img src="<?php echo $plugin_url;?>/images/qq.png" /></a>  <a href="http://open.denglu.cc/transfer/renren<?php echo $redirect_create;?>" title="使用人人帐号登录"><img src="<?php echo $plugin_url;?>/images/renren.png" /></a> <a href="http://open.denglu.cc/transfer/douban<?php echo $redirect_create;?>" title="使用豆瓣帐号登录"><img src="<?php echo $plugin_url;?>/images/douban.png" /></a>  <a href="http://open.denglu.cc/transfer/baidu<?php echo $redirect_create;?>" title="使用百度帐号登录"><img src="<?php echo $plugin_url;?>/images/baidu.png" /></a>  <a href="http://open.denglu.cc/transfer/google<?php echo $redirect_create;?>" title="使用Google帐号登录"><img src="<?php echo $plugin_url;?>/images/google.png" /></a>  <a href="http://open.denglu.cc/transfer/twitter<?php echo $redirect_create;?>" title="使用Twitter帐号登录"><img src="<?php echo $plugin_url;?>/images/twitter.png" /></a>  <a href="http://open.denglu.cc/transfer/facebook<?php echo $redirect_create;?>" title="使用Facebook帐号登录"><img src="<?php echo $plugin_url;?>/images/facebook.png" /></a></p>
 	  <?php
 	  } elseif ($version == 4) {
-		  echo '<p>您以前安装过 灯鹭 插件旧版，需要升级才能使用，请先点击下面的“升级插件”按钮。</p>';
-		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="update_denglu" value="升级插件" /></span></form></p>';
+		  echo '<p>您以前安装过 灯鹭 插件旧版，需要升级数据库才能兼容新版，请先点击下面的“升级数据库”按钮。</p>';
+		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="update_denglu" value="升级数据库" /></span></form></p>';
 	  }
 	  if ($version != 4) {
 	  ?>
