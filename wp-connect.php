@@ -21,7 +21,7 @@ $wptm_key = get_option('wptm_key');
 $wp_connect_advanced_version = "1.6.7";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
-	if (version_compare($wptm_version, '2.2.1', '<')) { // 搜狐微博替换app key
+	if (version_compare($wptm_version, '1.9.20', '<')) { // 删除搜狐微博Consumer Key
 		$keybug = 1;
 	}
 	update_option('wptm_version', WP_CONNECT_VERSION);
@@ -37,9 +37,9 @@ include_once(dirname(__FILE__) . '/page.php');
 
 if (!$wptm_key) {
 	update_option('wptm_key', get_appkey());
-} elseif ($keybug) { // 1.9.18
+} elseif ($keybug) { // 1.9.20
 	if ($wptm_key[5][0]) {
-		$wptm_key[5] = array(ifold($wptm_key[5][0], 'O9bieKU1lSKbUBI9O0Nf', 'UfnmJanXwQZjD1TvZwTd'), ifold($wptm_key[5][1], 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u', 'Ur7MxoeTc7tegk11!1mTvHg-rp0yJdR5G8mZi7c2'));
+		$wptm_key[5] = array(ifold($wptm_key[5][0], 'UfnmJanXwQZjD1TvZwTd', ''), ifold($wptm_key[5][1], 'Ur7MxoeTc7tegk11!1mTvHg-rp0yJdR5G8mZi7c2', ''));
 		if (update_option('wptm_key', $wptm_key))
 			update_option('wptm_sohu', '');
 	} 
@@ -288,7 +288,7 @@ function wp_connect_do_page() {
 		<p><strong>QQ登录</strong> ( APP ID: <input name="qq1" type="text" value='<?php echo $wptm_key[13][0];?>' /> APP Key: <input name="qq2" type="text" value='<?php echo $wptm_key[13][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/qq" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>新浪微博</strong> ( App Key: <input name="sina1" type="text" value='<?php echo $sina['app_key'];?>' /> App Secret: <input name="sina2" type="text" value='<?php echo $sina['secret'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
 		<p><strong>腾讯微博</strong> ( App Key: <input name="tqq1" type="text" value='<?php echo $qq['app_key'];?>' /> App Secret: <input name="tqq2" type="text" value='<?php echo $qq['secret'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>搜狐微博</strong> ( Consumer Key: <input name="sohu1" type="text" value='<?php echo $wptm_key[5][0];?>' /> Consumer secret: <input name="sohu2" type="text" value='<?php echo $wptm_key[5][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>搜狐微博</strong> ( Consumer Key: <input name="sohu1" type="text" value='<?php echo $wptm_key[5][0];?>' /> Consumer secret: <input name="sohu2" type="text" value='<?php echo $wptm_key[5][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>网易微博</strong> ( Consumer Key: <input name="netease1" type="text" value='<?php echo $wptm_key[6][0];?>' /> Consumer secret: <input name="netease2" type="text" value='<?php echo $wptm_key[6][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
 		<p><strong>豆瓣</strong> ( API Key: <input name="douban1" type="text" value='<?php echo $wptm_key[9][0];?>' /> 私钥: <input name="douban2" type="text" value='<?php echo $wptm_key[9][1];?>' /></p>
 		<p><strong>天涯微博</strong> ( App Key: <input name="tianya1" type="text" value='<?php echo $wptm_key[17][0];?>' /> App Secret: <input name="tianya2" type="text" value='<?php echo $wptm_key[17][1];?>' /></p>
@@ -342,7 +342,6 @@ function wp_connect_do_page() {
 		    </tr>
         </table>
         <p class="submit">
-		  <input type="hidden" name="expiry" value="<?php echo $blog_options[2]; ?>" />
           <input type="submit" name="blog_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>
