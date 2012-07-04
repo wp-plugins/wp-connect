@@ -452,7 +452,7 @@ function get_appkey() {
 	$sohu = get_option('wptm_opensohu');
 	$netease = get_option('wptm_opennetease');
 	return array('2' => array($wptm_connect['msn_api_key'], $wptm_connect['msn_secret']),
-		'5' => array(ifold($sohu['app_key'], 'O9bieKU1lSKbUBI9O0Nf', 'UfnmJanXwQZjD1TvZwTd'), ifold($sohu['secret'], 'k328Nm7cfUq0kY33solrWufDr(Tsordf1ek=bO5u', 'Ur7MxoeTc7tegk11!1mTvHg-rp0yJdR5G8mZi7c2')),
+		'5' => array($sohu['app_key'], $sohu['secret']),
 		'6' => array(ifab($netease['app_key'], '9fPHd1CNVZAKGQJ3'), ifab($netease['secret'], 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO')),
 		'7' => array($wptm_connect['renren_api_key'], $wptm_connect['renren_secret']),
 		'8' => array($wptm_connect['kaixin001_api_key'], $wptm_connect['kaixin001_secret']),

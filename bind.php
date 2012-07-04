@@ -107,10 +107,38 @@ $(function () {
     tabContainers.filter(this.hash).show();
     $('div.tabs ul.nav a').removeClass('selected');
     //$(this).addClass('selected');
-	var css = this.hash.replace('#', '.');
+    var css = this.hash.replace('#', '.');
     $(css).addClass('selected');
     return false;
   });
+<?php if ($_SESSION['wp_url_bind'] == WP_CONNECT) {?>
+  // 评论导入到灯鹭
+  $("#exportComments").click(function () {
+    $(this).attr("disabled", true);
+    exportDenglu(0);
+  });
+
+  function exportDenglu(start) {
+    var plugins_url = "<?php echo $plugin_url;?>";
+    $('#exportStatus').html('正在导入评论到灯鹭评论框 <img src="' + plugins_url + '/images/loading16.gif" />');
+    $.post(plugins_url + "/export.php", {
+      //type: type,
+      start: start,
+    }, function (data) {
+      if (!isNaN(data)) {
+        exportDenglu(data);
+        $('#exportStatus').html('已经导入了 ' + data + ' 条评论 <img src="' + plugins_url + '/images/loading16.gif" />');
+      } else if (data == 'success') {
+        $('#exportStatus').html('导入成功！');
+        $("#exportComments").attr("disabled", false);
+      } else {
+        $('#exportStatus').html('出错了，请重试！');
+        $("#exportComments").attr("disabled", false);
+		alert(data);
+      }
+    });
+  }
+<?php }?>
 });
 $(".close").show();
 $("<?php if($wptm_options['bind']) {echo '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,';} elseif($wptm_options['enable_proxy']) {echo '#twitter,';}?><?php if(!is_donate() && !$wptm_options['denglu_bind']) echo '#renren,';?> #digu, #fanfou, #renjian, #zuosa, #wbto").click(function () {

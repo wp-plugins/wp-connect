@@ -20,6 +20,9 @@ if (is_user_logged_in()) {
 				$to = new qqOAuth(QQ_APP_KEY, QQ_APP_SECRET);
 				break;
 			case "sohu":
+				if (!SOHU_APP_KEY || !SOHU_APP_SECRET) {
+				   wp_die("出错了，请在插件页面的“开放平台”处填写自己申请的Consumer Key和Consumer secret，或者在“同步微博”处勾选“使用灯鹭开放平台提供的同步接口”，请<a href='{$_SESSION['wp_url_bind']}'>返回</a>！");
+			    } 
 				$to = new sohuOAuth(SOHU_APP_KEY, SOHU_APP_SECRET);
 				break;
 			case "netease":
@@ -70,7 +73,7 @@ if (is_user_logged_in()) {
 		$redirect_to = $_SESSION['wp_url_bind'];
 		$last_key = $to -> getAccessToken($_REQUEST['oauth_verifier']);
 		if (!$last_key['oauth_token']) {
-			wp_die("�����ˣ�û��oauth_token��oauth_token���Ϸ�����<a href='$redirect_to'>����</a>���ԣ�");
+			wp_die("出错了，没有oauth_token或oauth_token不合法，请<a href='$redirect_to'>返回</a>重试！");
 		} 
 		$update = array ('oauth_token' => $last_key['oauth_token'],
 			'oauth_token_secret' => $last_key['oauth_token_secret']
