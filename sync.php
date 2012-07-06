@@ -265,6 +265,9 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	} elseif ($account['qq']['mediaUserID']) {
 		$mediaUserID .= $account['qq']['mediaUserID'] . ',';
 	} 
+	if ($account['shuoshuo']) { // 说说 /140
+		wp_post_shuoshuo($account['shuoshuo'], $status3, $pic);
+	} 
 	if ($account['sohu']['oauth_token']) { // 搜狐微博 /+
 		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);
 	} elseif ($account['sohu']['mediaUserID']) {

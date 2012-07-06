@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.1
+Version: 2.4.2
 */
 
-define('WP_CONNECT_VERSION', '2.4.1');
+define('WP_CONNECT_VERSION', '2.4.2');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -20,7 +20,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.7";
+$wp_connect_advanced_version = "1.6.8";
 
 //update_option('wptm_basic', '');
 
@@ -68,20 +68,7 @@ if ($wptm_connect['enable_connect'] && $wptm_connect['widget']) {
 function wp_connect_add_page() {
 	global $plugin_url, $wptm_basic, $wptm_comment;
 	if ($wptm_basic['appid'] && $wptm_basic['appkey'] && current_user_can('manage_options')) {
-		add_object_page('灯鹭管理平台', '灯鹭管理平台', 'moderate_comments', 'denglu_admin', '', $plugin_url.'/images/logo_small.gif');
-		if (!$wptm_comment['enable_comment']) {
-			add_submenu_page('denglu_admin', '基础设置', '基础设置', 'manage_options', 'denglu_admin', 'denglu_basic');
-		} else {
-			add_submenu_page('denglu_admin', '评论内容管理', '评论内容管理', 'manage_options', 'denglu_admin', 'denglu_ocomment5');
-			add_submenu_page('denglu_admin', '评论框设置', '评论框设置', 'manage_options', 'denglu_ocomment2', 'denglu_ocomment2');
-			add_submenu_page('denglu_admin', '站点设置', '基础设置', 'manage_options', 'denglu_basic', 'denglu_basic');
-			add_submenu_page('denglu_admin', '选择评论模板', '选择评论模板', 'manage_options', 'denglu_ocomment7', 'denglu_ocomment7');
-			add_submenu_page('denglu_admin', '安全设置', '安全设置', 'manage_options', 'denglu_ocomment4', 'denglu_ocomment4');
-		} 
-		add_submenu_page('denglu_admin', '选择登录按钮', '<span style="color: red;">选择登录按钮</span>', 'manage_options', 'denglu_oprovider', 'denglu_oprovider');
-		add_submenu_page('denglu_admin', '填写开放平台KEY', '填写开放平台KEY', 'manage_options', 'denglu_oproviderKey', 'denglu_oproviderKey');
-		add_submenu_page('denglu_admin', '填写回调地址', '填写回调地址', 'manage_options', 'denglu_osetting', 'denglu_osetting');
-		add_submenu_page('denglu_admin', '数据统计', '<span style="color: red;">数据统计</span>', 'manage_options', 'lLoginUser', 'lLoginUser');
+		add_object_page('灯鹭评论管理', '灯鹭评论管理', 'moderate_comments', 'denglu_admin', 'denglu_ocomment5', $plugin_url.'/images/logo_small.gif');
 	} 
 	add_options_page('WordPress连接微博', 'WordPress连接微博', 'manage_options', 'wp-connect', 'wp_connect_do_page');
 } 
@@ -203,7 +190,7 @@ function wp_connect_do_page() {
 		  if (!$wptm_basic['appid'] || !$wptm_basic['appkey']) {
 			  echo '<span style="color:green;">请在 站点设置 中填写必需的 APP ID 和 APP Key</span>，您需要到 <a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a> 获取并填写。';
 		  } else {
-			  echo '查看<a href="'.admin_url('admin.php?page=denglu_admin').'">灯鹭管理平台</a>';
+			  echo '查看<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>';
 		  }
 		  echo '</p>';
 	  } elseif ($version == 2) {
@@ -357,7 +344,7 @@ function wp_connect_do_page() {
 			  <label><input name="twitter" type="checkbox" value="twitter" <?php if($wptm_connect['twitter']) echo "checked ";?>/>Twitter</label>
 			  <label><input name="facebook" type="checkbox" value="facebook" <?php if($wptm_connect['facebook']) echo "checked ";?>/>Facebook</label>
 			  <label><input name="netease163" type="checkbox" value="netease163" <?php if($wptm_connect['netease163']) echo "checked ";?>/>网易通行证</label>
-			  <br /><span style="color:green;">假如要排序，请打开<a href="<?php echo admin_url('admin.php?page=denglu_oprovider');?>" target="_blank">选择登录按钮</a>(即选择平台供应商)页面设置，设置后请在这个页面点击“保存更改”按钮，仅对选择默认风格(本地化) 有效。</span>
+			  <br /><span style="color:green;">假如要排序，请到<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>设置，设置后请在这个页面点击“保存更改”按钮，仅对选择默认风格(本地化) 有效。</span>
             </td>
           </tr>
           <tr>
@@ -457,7 +444,7 @@ function wp_connect_do_page() {
       <div id="wptm-tips">
 	    <p><strong>使用说明</strong></p>
         <p>使用前，请先在<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>注册帐号，并创建站点，之后在插件的<a href="#basic" class="basic">基本设置</a>页面填写APP ID 和 APP Key .</p>
-		<p><strong>评论的相关设置及管理，请在灯鹭控制台操作。</strong></p>
+		<p><strong>评论的相关设置及管理，请打开<a href="<?php echo admin_url('admin.php?page=denglu_admin');?>" target="_blank">灯鹭评论管理</a>操作。</strong></p>
 		<p>如果您只是需要单一的社会化评论功能，请直接下载 <a href="http://wordpress.org/extend/plugins/denglu/" target="_blank">Denglu评论</a> 插件 （直接在后台搜索插件 denglu 安装即可。）</p>
 	  </div>
     </div>
@@ -467,7 +454,7 @@ function wp_connect_do_page() {
 		<h3>开放平台</h3>
 		<div id="wptm-tips">
            <p>请在下面填写开放平台的key，填写后，同步时可以显示来源，即显示微博的“来自XXX”。<span style="color: red;">加***号的为使用时必填！</span></p>
-		   <p>请同时到灯鹭管理平台的 <a href="<?php echo admin_url('admin.php?page=denglu_oproviderKey');?>" target="_blank">填写开放平台KEY</a> (即：配置平台供应商)填写您申请的app key。</p>
+		   <p>请同时到<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>的 配置平台供应商 填写您申请的app key。</p>
 	    </div>
 		<p><strong>QQ登录</strong> ( APP ID: <input name="qq1" type="text" value='<?php echo $wptm_key[13][0];?>' /> APP Key: <input name="qq2" type="text" value='<?php echo $wptm_key[13][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=QQ%E4%BA%92%E8%81%94%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>新浪微博</strong> ( App Key: <input name="sina1" type="text" value='<?php echo $sina['app_key'];?>' /> App Secret: <input name="sina2" type="text" value='<?php echo $sina['secret'];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
@@ -503,13 +490,17 @@ function wp_connect_do_page() {
 			    <td><input type="checkbox" name="copyright" value="1" <?php if($blog_options[1]) echo "checked "; ?>/></td>
 		    </tr>
 		    <tr>
+			    <td width="25%" valign="top">允许同步的用户ID（开启多作者博客时生效）</td>
+			    <td><label><input type="text" name="user_ids" value="<?php echo $blog_options[2];?>" /> 用英文逗号(,)分开，包括在高级设置填写的默认用户ID</label></td>
+		    </tr>
+		    <tr>
 			    <td width="25%" valign="top">绑定帐号 (开放平台接口)</td>
 			    <td>
 				<?php 
 	            if ($blog_token['qq']) {$b1 = "del"; $b2 = '(已绑定)';} else {$b1 = "bind"; $b2 = '';}
                 if ($blog_token['renren']) {$b3 = "del"; $b4 = '(已绑定)';} else {$b3 = "bind"; $b4 = '';}
                 if ($blog_token['kaixin']) {$b5 = "del"; $b6 = '(已绑定)';} else {$b5 = "bind"; $b6 = '';}?>
-				<a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b1;?>=qzone">QQ空间<?php echo $b2;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b3;?>=renren">人人网<?php echo $b4;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b5;?>=kaixin">开心网<?php echo $b6;?></a> (使用前，请先到 <a href="#open" class="open">开放平台</a> 页面填写申请的key)</td>
+				<a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b1;?>=qzone&from=blog">QQ空间<?php echo $b2;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b3;?>=renren&from=blog">人人网<?php echo $b4;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b5;?>=kaixin&from=blog">开心网<?php echo $b6;?></a> (使用前，请先到 <a href="#open" class="open">开放平台</a> 页面填写申请的key)</td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">新浪博客</td>
@@ -535,7 +526,7 @@ function wp_connect_do_page() {
 	  </form>
       <div id="wptm-tips">
 	    <p><strong>注意事项</strong></p>
-        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、当开启多作者博客时，只有在“高级设置”填写的 默认用户ID对应的WP帐号 <?php echo get_username($wptm_advanced['user_id']);?> 发布文章时才会同步到博客。<br />5、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />6、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>7、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
+        <p>1、新浪博客、网易博客修改文章时会同步修改对应的博客文章，而不是创建新的博客文章。<br />2、QQ空间、人人网、开心网只会同步一次，下次修改文章时不会再同步。<br />3、快速编辑和密码保护的文章不会同步或更新。<br />4、当开启多作者博客时，在这里填写的“允许同步的用户ID”和在“高级设置”填写的“默认用户ID”对应的WP帐号发布文章时才会同步到博客。<br />5、有效期：人人网和开心网1个月，QQ空间3个月，发现不能同步时请重新绑定帐号。<br />6、使用QQ空间开放平台接口同步时，请确保已经激活 <code>add_one_blog</code>，否则请解除绑定！<br /><strong>7、绑定人人网、开心网帐号时，也会绑定“同步微博”下人人网、开心网的新鲜事/状态同步。你可以根据情况删除其中的一个。</strong></p>
 	  </div>
     </div>
     <div id="share">

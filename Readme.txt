@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,Denglu Comment,disqus,pinglunla,uyan,youyan,duoshuo,widget,sina,tencent,qq,qzone,Share
 Requires at least: 3.0
 Tested up to: 3.4.1
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
@@ -96,6 +96,14 @@ Stable tag: 2.4.1
 6. 文章页面 - 登录按钮
 
 == Changelog ==
+
+= 2.4.2 =
+
+修复一处回复重复导入的BUG
+
+去掉灯鹭管理平台，改成“灯鹭评论管理”。
+
+支持同步到QQ空间说说，需要激活 [add_topic](http://wiki.opensns.qq.com/wiki/%E3%80%90QQ%E7%99%BB%E5%BD%95%E3%80%91add_topic) 接口（捐赠版）
 
 = 2.4.1 =
 

@@ -26,6 +26,7 @@ ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
 #tlist .renjian{background:url(../images/renjian.png) no-repeat}
 #tlist .zuosa{background:url(../images/zuosa.png) no-repeat}
 #tlist .wbto{background:url(../images/wbto.png) no-repeat}
+#tlist .shuoshuo{background:url(../images/shuoshuo.png) no-repeat}
 /*login*/
 #login_bind a{display:inline-block; margin-right:1px; overflow:hidden; position:relative; vertical-align:middle; height:24px; width:24px; background-position:0px 0px}
 #login_bind .btn_qzone,#login_bind .btn_qq{background:url(../images/btn_qzone.png) no-repeat}
@@ -49,7 +50,7 @@ ul.nav li a:hover, ul.nav li a.selected{background-color:#fff; color:#000}
 #login_bind .btn_tianyi{background:url(../images/btn_tianyi.png) no-repeat}
 #login_bind .btn_guard360{background:url(../images/btn_guard360.png) no-repeat}
 /*binded*/
-.bind b, #bind_twitter b, #bind_qq b, #bind_sina b, #bind_sohu b, #bind_netease b, #bind_douban b, #bind_tianya b, #bind_renren b, #bind_kaixin b{bottom:0px; right:0px; display:block; overflow:hidden; position:absolute; width:15px; height:14px; background:url(../images/bind.gif) no-repeat 0 0}
+.bind b, #bind_twitter b, #bind_qq b, #bind_sina b, #bind_sohu b, #bind_netease b, #bind_douban b, #bind_tianya b, #bind_renren b, #bind_kaixin b, #bind_shuoshuo b{bottom:0px; right:0px; display:block; overflow:hidden; position:absolute; width:15px; height:14px; background:url(../images/bind.gif) no-repeat 0 0}
 /*dialog*/
 .dialog, .dialog_add, .dialog_delete{text-align:center}
 a.close{background:url(../images/close.gif) no-repeat 0 0}
