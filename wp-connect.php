@@ -171,7 +171,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">自定义短网址</td>
-            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked(!$wptm_options || $wptm_options['enable_shorten']); ?>> 博客默认 ( http://yourblog.com/?p=1 )</label> <label><strong>短网址</strong> <select name="t_cn"><option value="">选择</option><option value="1"<?php selected($wptm_options['t_cn'] == "1");?>>t.cn (新浪)</option><option value="2"<?php selected($wptm_options['t_cn'] == "2");?>>dwz.cn (百度)</option></select></label></td>
+            <td><label><input name="enable_shorten" type="checkbox"  value="1" <?php checked($wptm_options['enable_shorten']); ?>> 博客默认 ( http://yourblog.com/?p=1 )</label> <label><strong>短网址</strong> <select name="t_cn"><option value="">选择</option><option value="1"<?php selected($wptm_options['t_cn'] == "1");?>>t.cn (新浪)</option><option value="2"<?php selected($wptm_options['t_cn'] == "2");?>>dwz.cn (百度)</option></select></label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">Twitter是否使用代理？</td>
@@ -320,13 +320,17 @@ function wp_connect_do_page() {
 			    <td><input type="checkbox" name="copyright" value="1" <?php if($blog_options[1]) echo "checked "; ?>/></td>
 		    </tr>
 		    <tr>
+			    <td width="25%" valign="top">允许同步的用户ID（开启多作者博客时生效）</td>
+			    <td><label><input type="text" name="user_ids" value="<?php echo $blog_options[2];?>" /> 用英文逗号(,)分开，包括在高级设置填写的默认用户ID</label></td>
+		    </tr>
+		    <tr>
 			    <td width="25%" valign="top">绑定帐号 (开放平台接口)</td>
 			    <td>
 				<?php 
 	            if ($blog_token['qq']) {$b1 = "del"; $b2 = '(已绑定)';} else {$b1 = "bind"; $b2 = '';}
                 if ($blog_token['renren']) {$b3 = "del"; $b4 = '(已绑定)';} else {$b3 = "bind"; $b4 = '';}
                 if ($blog_token['kaixin']) {$b5 = "del"; $b6 = '(已绑定)';} else {$b5 = "bind"; $b6 = '';}?>
-				<a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b1;?>=qzone">QQ空间<?php echo $b2;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b3;?>=renren">人人网<?php echo $b4;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b5;?>=kaixin">开心网<?php echo $b6;?></a> (使用前，请先到 <a href="#open" class="open">开放平台</a> 页面填写申请的key)</td>
+				<a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b1;?>=qzone&from=blog">QQ空间<?php echo $b2;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b3;?>=renren&from=blog">人人网<?php echo $b4;?></a> 、 <a href="<?php echo $plugin_url;?>-advanced/blogbind.php?<?php echo $b5;?>=kaixin&from=blog">开心网<?php echo $b6;?></a> (使用前，请先到 <a href="#open" class="open">开放平台</a> 页面填写申请的key)</td>
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">新浪博客</td>

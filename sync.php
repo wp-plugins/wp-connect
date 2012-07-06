@@ -213,7 +213,7 @@ function wp_connect_publish($post_ID) {
 
  /**
  * 同步列表
- * @since 1.9.18
+ * @since 1.9.20
  */
 function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	global $wptm_options;
@@ -258,6 +258,9 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	} 
 	if ($account['qq']) { // 腾讯微博 /140*
 		$output['qq'] = wp_update_t_qq($account['qq'], $status3, $pic);
+	} 
+	if ($account['shuoshuo']) { // 说说 /140
+		wp_post_shuoshuo($account['shuoshuo'], $status3, $pic);
 	} 
 	if ($account['sohu']) { // 搜狐微博 /+
 		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);

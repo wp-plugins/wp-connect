@@ -22,6 +22,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="<?php echo ($account['renren']) ? 'bind_renren' : 'renren';?>" class="renren" title="人人网"><b></b></a>
 <?php if (is_donate()) { ?>
 <a href="javascript:;" id="<?php echo ($account['kaixin001']['session_key']) ? 'bind_kaixin' : 'kaixin';?>" class="kaixin" title="开心网"><b></b></a>
+<a href="javascript:;" id="<?php echo ($account['shuoshuo'][0]) ? 'bind_shuoshuo' : 'shuoshuo" onclick="alert(\'提示：请确保已经激活 add_topic 否则请不要绑定！\') ';?>" class="shuoshuo" title="QQ空间说说"><b></b></a>
 <?php } ?>
 <a href="javascript:;" id="<?php echo ($account['tianya']['oauth_token']) ? 'bind_tianya' : 'tianya';?>" class="tianya" title="天涯微博"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['douban']['oauth_token']) ? 'bind_douban' : 'douban';?>" class="douban" title="豆瓣"><b></b></a>
@@ -148,7 +149,7 @@ if (!$wptm_options['bind']) {
 	$t_btn = '#twitter, #qq, #sina, #sohu, #netease, #douban, #tianya,';
 } 
 if (is_donate()) {
-	$t_btn .= '#renren, #kaixin';
+	$t_btn .= '#shuoshuo, #renren, #kaixin';
 }
 if ($t_btn) {
 ?>
@@ -159,7 +160,7 @@ $("<?php echo $t_btn;?>").click(function () {
   $(".add").attr("name", "add_" + id);
 });
 <?php }?>
-$("#bind_twitter, #bind_qq, #bind_sina, #bind_sohu, #bind_netease, #bind_douban, #bind_tianya, #bind_renren, #bind_kaixin").click(function () {
+$("#bind_twitter, #bind_qq, #bind_sina, #bind_sohu, #bind_netease, #bind_douban, #bind_tianya, #bind_renren, #bind_kaixin, #bind_shuoshuo").click(function () {
   var id = $(this).attr("id").replace('bind_', '');
   $(".title_pic").attr("src", "<?php echo $plugin_url;?>/images/" + id + ".png");
   $(".dialog_delete").attr("id", "dialog_" + id);
@@ -175,6 +176,7 @@ $("#sohu, #bind_sohu").floatdialog("dialog_sohu");
 $("#netease, #bind_netease").floatdialog("dialog_netease");
 $("#douban, #bind_douban").floatdialog("dialog_douban");
 $("#tianya, #bind_tianya").floatdialog("dialog_tianya");
+$("#shuoshuo, #bind_shuoshuo").floatdialog("dialog_shuoshuo");
 $("#renren, #bind_renren").floatdialog("dialog_renren");
 $("#kaixin, #bind_kaixin").floatdialog("dialog_kaixin");
 $("#digu").floatdialog("dialog_digu");

@@ -4,7 +4,7 @@
  */
 add_action('admin_init', 'wp_connect_header');
 function wp_connect_header() {
-	global $plugin_url;
+	global $wpdb, $plugin_url;
 	if (isset($_POST['add_twitter'])) {
 		header('Location:' . $plugin_url. '/go.php?bind=twitter');
 	}
@@ -26,6 +26,9 @@ function wp_connect_header() {
 	if (isset($_POST['add_tianya'])) {
 		header('Location:' . $plugin_url. '/go.php?bind=tianya');
 	}
+	if (isset($_POST['add_shuoshuo'])) {
+		header('Location:' . $plugin_url . '-advanced/blogbind.php?bind=qzone');
+	} 
 	if (isset($_POST['add_renren'])) {
 		header('Location:' . $plugin_url. '-advanced/blogbind.php?bind=renren');
 	}
@@ -34,37 +37,7 @@ function wp_connect_header() {
 	}
 	// 删除数据库+停用插件
 	if (isset($_POST['wptm_delete'])) {
-		delete_option("wptm_key"); // new
-		delete_option("wptm_options");
-		delete_option("wptm_blog");
-		delete_option("wptm_blog_options");
-		delete_option("wptm_connect");
-		delete_option("wptm_advanced");
-		delete_option("wptm_share");
-		delete_option("wptm_version");
-		delete_option("wptm_openqq");
-		delete_option("wptm_opensina");
-		delete_option("wptm_opensohu"); // old
-		delete_option("wptm_opennetease"); // old
-		delete_option("wptm_source"); // old
-		delete_option("wptm_twitter"); // old
-		delete_option("wptm_twitter_oauth");
-		delete_option("wptm_qq");
-		delete_option("wptm_sina");
-		delete_option("wptm_sohu");
-		delete_option("wptm_netease");
-		delete_option("wptm_douban");
-		delete_option("wptm_tianya");
-		delete_option("wptm_renren");
-		delete_option("wptm_kaixin001");
-		delete_option("wptm_digu");
-		delete_option("wptm_baidu"); // old
-		delete_option("wptm_fanfou");
-		delete_option("wptm_renjian");
-		delete_option("wptm_zuosa");
-		delete_option("wptm_follow5");
-		delete_option("wptm_leihou"); // old
-		delete_option("wptm_wbto");
+		$wpdb -> query("DELETE FROM $wpdb->options WHERE option_name like '%wptm_%'");
 		if (function_exists('wp_nonce_url')) {
 			$deactivate_url = 'plugins.php?action=deactivate&plugin=wp-connect/wp-connect.php';
 			$deactivate_url = str_replace('&amp;', '&', wp_nonce_url($deactivate_url, 'deactivate-plugin_wp-connect/wp-connect.php'));
@@ -83,6 +56,7 @@ function wp_option_account() {
 		'sohu' => get_option('wptm_sohu'),
 		'netease' => get_option('wptm_netease'),
 		'twitter' => get_option('wptm_twitter_oauth'),
+		'shuoshuo' => get_option('wptm_shuoshuo'),
 		'renren' => get_option('wptm_renren'),
 		'kaixin001' => get_option('wptm_kaixin001'),
 		'digu' => get_option('wptm_digu'),
@@ -270,6 +244,9 @@ function wp_connect_update() {
 	if (isset($_POST['delete_tianya'])) {
 		update_option("wptm_tianya", '');
 	}
+	if (isset($_POST['delete_shuoshuo'])) {
+		update_option("wptm_shuoshuo", '');
+	} 
 	if (isset($_POST['delete_renren'])) {
 		update_option("wptm_renren", '');
 	}
@@ -307,6 +284,7 @@ function wp_usermeta_account($uid) {
 		'sohu' => $user -> wptm_sohu,
 		'netease' => $user -> wptm_netease,
 		'twitter' => $user -> wptm_twitter_oauth,
+		'shuoshuo' => $user -> wptm_shuoshuo,
 		'renren' => $user -> wptm_renren,
 		'kaixin001' => $user -> wptm_kaixin001,
 		'digu' => $user -> wptm_digu,
@@ -389,6 +367,9 @@ function wp_user_profile_update($user_id) {
 	} 
 	if (isset($_POST['delete_tianya'])) {
 		update_usermeta($user_id, 'wptm_tianya', '');
+	} 
+	if (isset($_POST['delete_shuoshuo'])) {
+		update_usermeta($user_id, 'wptm_shuoshuo', '');
 	} 
 	if (isset($_POST['delete_renren'])) {
 		update_usermeta($user_id, 'wptm_renren', '');
