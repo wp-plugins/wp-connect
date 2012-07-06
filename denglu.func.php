@@ -1307,7 +1307,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
     // 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器 V2.4
 	add_action('wp_insert_comment','denglu_importReplyComment', 10, 2);
 	function denglu_importReplyComment($comment_id, $comment) {
-		if ($comment -> comment_approved != 1 || $comment -> comment_type == 'trackback' || $comment -> comment_type == 'pingback' || $comment -> comment_parent == 0) {
+		if ($comment -> comment_approved != 1 || $comment -> comment_type == 'trackback' || $comment -> comment_type == 'pingback' || $comment -> comment_parent == 0 || strpos($comment -> comment_agent, 'Denglu_') !== false) {
 			return $comment_id;
 		} 
 		$get_dlCommentID = get_dengluCommentID($comment -> comment_parent);
