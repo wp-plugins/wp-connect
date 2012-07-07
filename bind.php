@@ -58,11 +58,11 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 <table class="form-table">
 <tr valign="top">
 <th scope="row"><span class="token">Access token</span><span class="account">帐&nbsp;&nbsp;&nbsp;&nbsp;号</span> :</th>
-<td><input type="text" class="username" id="username" name="username" /></td>
+<td><input type="text" class="bind_username" id="username" name="username" /></td>
 </tr>
 <tr valign="top">
 <th scope="row"><span class="token">Token secret</span><span class="account">密&nbsp;&nbsp;&nbsp;&nbsp;码</span> :</th>
-<td><input type="password" class="password" id="password" name="password" /></td>
+<td><input type="password" class="bind_password" id="password" name="password" /></td>
 </tr>
 </table>
 <p class="submit">
@@ -185,7 +185,7 @@ $("#renjian").floatdialog("dialog_renjian");
 $("#zuosa").floatdialog("dialog_zuosa");
 $("#wbto").floatdialog("dialog_wbto");
 $('#update').click(function () {
-  if (($(".username").val() == '') || ($(".password").val() == '')) {
+  if (($(".bind_username").val() == '') || ($(".bind_password").val() == '')) {
     alert("值不能为空!  ");
     return false;
   }
