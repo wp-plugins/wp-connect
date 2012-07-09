@@ -701,9 +701,7 @@ if (!function_exists('dengluComments') && install_comments()) {
 }?>
     _dl_comment_widget.show(param);
 </script>
-<?php
-// 搜索引擎爬虫
-if ($wptm_comment['enable_seo'] && preg_match("/(Bot|Crawl|Spider|slurp|sohu-search|lycos|robozilla)/i", $_SERVER['HTTP_USER_AGENT']) && have_comments()) { ?>
+<?php if ($wptm_comment['enable_seo'] && have_comments()) { ?>
 <div id="dengluComments">
 	<h3 id="comments"><?php	printf( '《%2$s》有 %1$s 条评论', number_format_i18n( get_comments_number() ), '<em>' . get_the_title() . '</em>' );?></h3>
 	<div class="navigation">
@@ -1272,7 +1270,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
 			} 
 		} 
 	}
-    // 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器 V2.4
+    // 从灯鹭服务器导入到本地的评论被回复了，再把这条回复导入到灯鹭服务器 V2.4.2
 	add_action('wp_insert_comment','denglu_importReplyComment', 10, 2);
 	function denglu_importReplyComment($comment_id, $comment) {
 		if ($comment -> comment_approved != 1 || $comment -> comment_type == 'trackback' || $comment -> comment_type == 'pingback' || $comment -> comment_parent == 0 || strpos($comment -> comment_agent, 'Denglu_') !== false) {
