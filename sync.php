@@ -161,10 +161,12 @@ function wp_connect_publish($post_ID) {
 	// 文章URL
 	if ($wptm_options['enable_shorten']) { // 是否使用博客默认短网址
 		$siteurl = get_bloginfo('url');
-		if ($post -> post_type == 'page') {
+        if ($post -> post_type == 'post') {
+			$postlink = $siteurl . "/?p=" . $post_ID;
+		} elseif ($post -> post_type == 'page') {
 			$postlink = $siteurl . "/?page_id=" . $post_ID;
 		} else {
-			$postlink = $siteurl . "/?p=" . $post_ID;
+			$postlink = get_permalink($post_ID);
 		} 
 	} else {
 		$postlink = get_permalink($post_ID);
