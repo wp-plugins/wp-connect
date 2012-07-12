@@ -265,7 +265,7 @@ function wp_connect_do_page() {
           </tr>
 		  <tr>
 			<td width="25%" valign="top">选择同步接口</td>
-			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php checked(!$wptm_options || $wptm_options['denglu_bind']); ?>/> 使用灯鹭开放平台提供的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php checked($wptm_options['denglu_bind']); ?>/> 使用灯鹭开放平台提供的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
 		  </tr>
           <tr>
             <td width="25%" valign="top"><strong>可选设置</strong></td>
