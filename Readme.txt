@@ -68,16 +68,6 @@ Stable tag: 2.4.2
 
 2、嘀咕、享拍微博通 支持同步到其他微博和社区，请不要在这些网站重复绑定帐号，以免造成循环同步或者同步多条相同信息！
 
->**技术支持**
-
->客服QQ：2499106838、1130488327、1390654016
-
->QQ交流群：77434617  联系电话：15110089672
-
->新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
-
->技术论坛：[ http://bbs.denglu.cc/forum-27-1.html ](http://bbs.denglu.cc/forum-27-1.html) 官方网站：[ http://www.denglu.cc ](http://www.denglu.cc)
-
 == Installation ==
 
 1. Upload the `wp-connect` folder to the `/wp-content/plugins/` directory.
