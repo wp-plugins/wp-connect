@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,Denglu Comment,disqus,pinglunla,uyan,youyan,duoshuo,widget,sina,tencent,qq,qzone,Share
+Tags: wp-connect,wp connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
 Tested up to: 3.4.1
 Stable tag: 2.4.2
@@ -67,6 +67,14 @@ Stable tag: 2.4.2
 1、除了那些采用OAuth授权的外，其他的请自己输入账号和密码，不会去官方验证密码的准确性！
 
 2、嘀咕、享拍微博通 支持同步到其他微博和社区，请不要在这些网站重复绑定帐号，以免造成循环同步或者同步多条相同信息！
+
+>**技术支持**
+
+>客服QQ：2499106838、1130488327、1390654016
+
+>QQ交流群：77434617(已满)、245192414  联系电话：15110089672
+
+>新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
 
 == Installation ==
 
