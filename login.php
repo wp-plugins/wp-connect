@@ -18,7 +18,7 @@ if (isset($_GET['go'])) {
 			$bind = strtolower($_GET['bind']);
 			$_SESSION['wp_url_login'] = '';
 			$wptm_basic = get_option('wptm_basic');
-			$open_url = "http://open.denglu.cc/transfer/" . $bind . "?appid=" . $wptm_basic['appid'] . '&uid=' . $user_id . "&redirect_uri=" . $_SERVER['HTTP_REFERER'];
+			$open_url = "http://open.denglu.cc/transfer/" . $bind . "?appid=" . $wptm_basic['appid'] . '&uid=' . $user_id . "&redirect_uri=" . urlencode($_SERVER['HTTP_REFERER']);
 			header('Location:' . $open_url);
 		} elseif (isset($_GET['del'])) { // 解除绑定
 			$delete = strtolower($_GET['del']);
