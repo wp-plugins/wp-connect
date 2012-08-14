@@ -969,7 +969,7 @@ if (!function_exists('denglu_recent_comments') && install_comments()) {
 	// 获取最新评论
 	function get_denglu_recent_comments($count = '') {
 		$recentComments = get_option('denglu_recentComments');
-		if ($recentComments['comments'] && time() - $recentComments['time'] > 300) {
+		if ($recentComments['comments'] && time() - $recentComments['time'] < 300) {
 			return $recentComments;
 		} 
 		global $wptm_basic;
