@@ -10,7 +10,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <script type="text/javascript" src="<?php echo $plugin_url;?>/js/floatdialog.js"></script>
 <h3>帐号绑定</h3>
 <p>请点击下面图标绑定账号: (友情提醒：绑定太多帐号会导致发布文章时缓慢或者响应超时！)</p>
-<?php if (!$wptm_options['bind'] && $_SESSION['wp_url_bind'] == WP_CONNECT) {
+<?php if (!$wptm_options['bind'] && $connect_plugin) {
 	$oproviderKey = ($wptm_options['denglu_bind']) ? '<a href="http://open.denglu.cc/" target="_blank">灯鹭控制台</a> 的 “配置平台供应商”' : '<a href="#open" class="open">开放平台</a>';
 	echo '<p style="color:green;">如果同步时要显示微博的“来自XXX”，请到 '.$oproviderKey.' 页面填写申请的key，更换APP key后，相应的帐号请重新绑定！</p>';
 }?>
@@ -35,7 +35,7 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 </div>
 <?php
 if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
-	if ($_SESSION['wp_url_bind'] == WP_CONNECT) {
+	if ($connect_plugin) {
 		if ($wptm_options['multiple_authors']) {
 		    echo '<p>您已经开启了多作者博客，假如管理员只想同步自己发布的文章，请到 <a href="' . admin_url('profile.php') . '">我的资料</a> 里面绑定帐号。否则请在这里绑定 (即所有作者的文章都会同步到您绑定的微博上)。<br/>每位作者都可以自定义设置，互不干扰！</p>';
 		}
@@ -112,7 +112,7 @@ $(function () {
     $(css).addClass('selected');
     return false;
   });
-<?php if ($_SESSION['wp_url_bind'] == WP_CONNECT) {?>
+<?php if ($connect_plugin) {?>
   // 评论导入到灯鹭
   $("#exportComments").click(function () {
     $(this).attr("disabled", true);

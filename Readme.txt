@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
 Tested up to: 3.4.1
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
@@ -94,6 +94,18 @@ Stable tag: 2.4.2
 6. 文章页面 - 登录按钮
 
 == Changelog ==
+
+= 2.4.3 =
+
+增加：禁止同步的自定义文章类型 （同步微博）
+
+增加：新浪微博 OAuth2.0授权码过期时提示登录一次。
+
+修改：优先显示 User Avatar 插件上传的用户头像。
+
+修正：最新评论的bug。
+
+优化：重写了大部分代码，减少代码冗余。
 
 = 2.4.2 =
 

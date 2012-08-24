@@ -32,7 +32,7 @@ function get_tid($id) {
 		'28' => 'ttid'
 		);
 	return $name[$id];
-} 
+}  
 // 通过平台名称获取微博信息
 function get_theid($name, $nunber = '') {
 	$o = array('qzone' => array('qq', 'qqid', 13),
@@ -77,7 +77,7 @@ if (!function_exists('denglu_admin')) {
 		$version = "1.0";
 		$sign = md5('appid=' . $appid . 'sign_type=' . $sign_type . 'timestamp=' . $timestamp . 'version=' . $version . $appkey);
 		$denglu_url = 'http://open.denglu.cc/' . $vaule . '?open=' . base64_encode("appid=" . $appid . "&timestamp=" . $timestamp . "&version=" . $version . "&sign_type=" . $sign_type . "&sign=" . $sign);
-		echo '<p><strong>如果打开后没有登录，<a href="'.admin_url('admin.php?page=denglu_admin').'">请尝试点这里刷新</a> (您可以在“评论管理”页面对评论进行删除/修改操作，也会同步到本地数据库噢。)</strong></p>';
+		echo '<p><strong>您可以在“评论管理”页面对评论进行删除/修改操作，也会同步到本地数据库噢。 <a href="' . $denglu_url . '" target="_blank">请新窗口打开</a></strong></p>';
 		echo '<p><iframe width="100%" height="550" frameborder="0" src="' . $denglu_url . '"></iframe></p>';
 	} 
 	function denglu_ocomment5() {
@@ -159,7 +159,7 @@ function install_comments() {
 // 是否使用灯鹭的帐号绑定
 function use_denglu_bind() {
 	global $wptm_connect;
-	if (empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments') && !install_comments()) {
+	if ($wptm_connect['enable_connect'] && empty($wptm_connect['denglu_bind']) && function_exists('wp_connect_comments') && !install_comments()) {
 		return false;
 	} 
 	return true;
@@ -288,19 +288,32 @@ function get_user_denglu_platform() {
 	return $platform;
 }
 // 灯鹭同步 v2.3
-function wp_update_share($mediaUserID, $content, $url, $uid = '', $imageurl = '', $videourl = '', $param1 = '', $param2 = '') {
-	global $wptm_basic;
+function wp_update_share($mediaUserID, $content, $url = '', $uid = '', $imageurl = '', $videourl = '', $param1 = '', $param2 = '') {
+	global $post, $wptm_basic;
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
-    $api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
+	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
 	try {
-		return $api -> share( $mediaUserID, $content, $url, $uid, $imageurl, $videourl, $param1, $param2 );
-	}
+		return $api -> share($mediaUserID, $content, $url, $uid, $imageurl, $videourl, $param1, $param2);
+	} 
 	catch(DengluException $e) {
-		wp_die($e->geterrorDescription());
-	}
+		if ($e -> geterrorCode() == 40012) { // 授权码过期，提示重新登录！
+			if (strpos($e -> geterrorDescription(), "新浪") !== false) {
+				$mediaEN = "sina";
+				if (is_object($post)) {
+					$backurl = get_edit_post_link($post->ID);
+				} elseif (is_numeric($param1)) {
+					$backurl = get_edit_post_link($param1);
+				} else {
+					$backurl = "javascript:onclick=history.go(-1)";
+				} 
+				$error = '<a href="http://open.weibo.com/wiki/Oauth2#.E8.BF.87.E6.9C.9F.E6.97.B6.E9.97.B4" target="_blank">' . $e -> geterrorDescription() . '</a>，请点击下面的按钮登录，新浪微博帐号要跟后台绑定的一致。（<a href="' . $backurl . '">已经操作？返回重新同步</a>）<p><a href="http://open.denglu.cc/transfer/' . $mediaEN . '?appid=' . $wptm_basic['appid'] . '" target="_blank"><img src="' . plugins_url('wp-connect') . '/images/login_' . $mediaEN . '.png" border=0></a></p>';
+				wp_die($error);
+			} 
+		} 
+	} 
 }
 // 获取到用户的所有平台账号绑定关系
-function get_bindInfo($muid, $uid = '') {
+function get_bindInfo($uid = '', $muid = null) {
 	$wptm_basic = get_option("wptm_basic");
 	class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
 	$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
@@ -455,7 +468,7 @@ function connect_denglu_update() {
 		// return var_dump($output);
 		// $output = array('1' => array('1' => '13768191' , '3' => '13768192'), '3' => array('15' => '13768193' , '12' => '13768194'), '5' => array('3' => '13768195' , '6' => '13768196'), '7' => array('15' => '13768193' , '12' => '13768198'));
 		// $out = array('1' => array('1' => '13768191','3' => '13768193'), '3' => array('13' => '13768194'),'7' => array('17' => '13768198'));
-		if ($output) {
+		if (is_array($output) && $output) {
 			$mid = array('3' => 'smid', '4' => 'qmid', '7' => 'rmid', '13' => 'qqmid');
 			foreach ($output as $userid => $mediaUser) {
 				foreach ($mediaUser as $mediaID => $mediaUserID) {
@@ -506,16 +519,37 @@ function connect_denglu() {
 		} else {
 			return wp_die('对不起，您的用户权限不够，请用管理员帐号登录操作！');
 		} 
-	} elseif (is_user_logged_in() && in_array($_SESSION['wp_url_login'], array('sina', 'tencent', 'sohu', 'netease', 'renren', 'tianya')) && ($redirect_to = $_SESSION['wp_url_bind'])) { // V2.3，同步帐号绑定
-		$tok = ($_SESSION['wp_url_login'] == 'tencent') ? 'wptm_qq' : 'wptm_' . $_SESSION['wp_url_login'];
-		if ($redirect_to == WP_CONNECT) {
-			update_option($tok, array('mediaUserID' => $_GET['mediaUserID']));
-		} elseif ($_SESSION['user_id']) {
-			update_usermeta($_SESSION['user_id'], $tok, array('mediaUserID' => $_GET['mediaUserID']));
-		} 
-		$_SESSION['wp_url_login'] = '';
-		//header('Location:' . $redirect_to);
 	} else {
+		$redirect_to = isset($_GET['redirect_url']) ? $_GET['redirect_url'] : "";
+		if (is_user_logged_in()) { // 同步绑定
+			if (wp_connect_get_cookie("wp_connect_cookie_bind") == "sync") {
+				$media = rtrim(substr($_GET['token'], 0, 2), '-');
+				$name = array('3' => 'sina',
+					'4' => 'qq',
+					'5' => 'sohu',
+					'6' => 'netease',
+					'7' => 'renren',
+					'17' => 'tianya'
+					);
+				if ($name[$media]) {
+					$tok = 'wptm_' . $name[$media];
+					if ($redirect_to == admin_url('options-general.php?page=wp-connect')) {
+						update_option($tok, array('mediaUserID' => $_GET['mediaUserID']));
+					} else {
+						if ($redirect_to == admin_url('profile.php')) {
+							$wpuid = get_current_user_id();
+						} else {
+							$parse_str = parse_url_detail($redirect_to);
+							$wpuid = $parse_str['user_id'];
+						} 
+						if ($wpuid) {
+							update_usermeta($wpuid, $tok, array('mediaUserID' => $_GET['mediaUserID']));
+						} 
+					} 
+				} 
+				return wp_connect_clear_cookie("wp_connect_cookie_bind");
+			} 
+		} 
 		$user = denglu_userInfo();
 		// return var_dump($user);
 		if ($username = $user['mediaUserID']) {
@@ -558,24 +592,28 @@ function connect_denglu() {
 					$uid = ifab(get_user_by_meta_value($id, $userid), email_exists($email));
 				} 
 			} 
-			if (is_user_logged_in()) { // V2.1，登录绑定
-				if (($wpuid = $_SESSION['user_id']) && ($redirect_to = $_SESSION['wp_url_bind'])) {
-					if ($uid && $wpuid != $uid) {
-						$userinfo = wp_get_user_info($uid);
-						$user_login = $userinfo['user_login'];
-						wp_die("很遗憾！该帐号已被用户名 $user_login 绑定，您可以用该 <a href=\"" . wp_logout_url() . "\">用户名</a> 登录，并到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面解除绑定，再进行绑定该帐号！<strong>如果不能成功，请删除那个WP帐号，再进行绑定！</strong> <a href='$redirect_to'>返回</a>");
-					} else {
-						update_usermeta($wpuid, $mid, $username);
-						if ($homepage || $tid == 'qqtid') { // sina,tqq,sohu,netease,renren,kaixin,douban,tianya,twitter,facebook,qq
-							update_usermeta($wpuid, $weibo[1] . 'id', $userid);
-							if ($tid == 'qqtid') {
-								update_usermeta($wpuid, $tid, $user['profileImageUrl']);
-							} 
-							if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid', 'ttid'))) { // 微博帐号
-								$nickname = get_user_meta($wpuid, 'login_name', true);
-								$nickname[$weibo[0]] = ($tid == 'qtid' || $tid == 'ttid') ? $userid : $user['screenName'];
-								update_usermeta($wpuid, 'login_name', $nickname);
-							} 
+			if (is_user_logged_in()) { // V2.4.3，登录绑定
+				if ($redirect_to == admin_url('profile.php')) {
+					$wpuid = get_current_user_id();
+				} else {
+					$parse_str = parse_url_detail($redirect_to);
+					$wpuid = $parse_str['user_id'];
+				} 
+				if ($uid && $wpuid != $uid) {
+					$userinfo = wp_get_user_info($uid);
+					$user_login = $userinfo['user_login'];
+					wp_die("很遗憾！该帐号已被用户名 $user_login 绑定，您可以用该 <a href=\"" . wp_logout_url() . "\">用户名</a> 登录，并到 <a href=\"" . admin_url('profile.php') . "\">我的资料</a> 页面解除绑定，再进行绑定该帐号！<strong>如果不能成功，请删除那个WP帐号，再进行绑定！</strong> <a href='$redirect_to'>返回</a>");
+				} else {
+					update_usermeta($wpuid, $mid, $username);
+					if ($homepage || $tid == 'qqtid') { // sina,tqq,sohu,netease,renren,kaixin,douban,tianya,twitter,facebook,qq
+						update_usermeta($wpuid, $weibo[1] . 'id', $userid);
+						if ($tid == 'qqtid') {
+							update_usermeta($wpuid, $tid, $user['profileImageUrl']);
+						} 
+						if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid', 'ttid'))) { // 微博帐号
+							$nickname = get_user_meta($wpuid, 'login_name', true);
+							$nickname[$weibo[0]] = ($tid == 'qtid' || $tid == 'ttid') ? $userid : $user['screenName'];
+							update_usermeta($wpuid, 'login_name', $nickname);
 						} 
 					} 
 				} 
@@ -631,7 +669,7 @@ function denglu_bindInfo($user) {
 	global $plugin_url;
 	$user_id = $user -> ID;
 	$_SESSION['user_id'] = $user_id;
-	$_SESSION['wp_url_bind'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	$_SESSION['wp_url_bind'] = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	$url = $plugin_url . '/login.php?user_id=' . $user_id;
 	$account = denglu_bind_account($user);
 	$binds = array_filter($account, filter_value) + $account;
@@ -677,7 +715,7 @@ if (!function_exists('dengluComments') && install_comments()) {
 		global $post;
 		if (comments_open()) {
 			$_SESSION['wp_url_bind'] = '';
-	        //$_SESSION['wp_url_back'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	        //$_SESSION['wp_url_back'] = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	        $wptm_basic = get_option('wptm_basic');
 	        $wptm_comment = get_option('wptm_comment');
 			$wptm_connect = get_option('wptm_connect');

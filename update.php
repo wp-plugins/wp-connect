@@ -109,6 +109,7 @@ function wp_connect_update() {
 			'update_prefix' => trim($_POST['update_prefix']),
 			'update_days' => $update_days,
 			'cat_ids' => trim($_POST['cat_ids']),
+			'post_types' => trim($_POST['post_types']),
 			'page_password' => trim($_POST['page_password']),
 			'disable_ajax' => trim($_POST['disable_ajax']),
 			'multiple_authors' => trim($_POST['multiple_authors']),
@@ -424,7 +425,7 @@ function wp_user_profile_update($user_id) {
 	} 
 } 
 // 同步设置
-if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) {
+if ( $wptm_options['enable_wptm'] && ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users'])) ) {
 	add_action('show_user_profile', 'wp_user_profile_fields', 12);
 	add_action('edit_user_profile', 'wp_user_profile_fields', 12);
 	add_action('personal_options_update', 'wp_save_user_profile_fields', 12);
@@ -451,7 +452,7 @@ function wp_user_profile_fields( $user ) {
 	$account = wp_usermeta_account($user_id);
 	$wptm_profile = get_user_meta($user_id, 'wptm_profile', true);
 	$_SESSION['user_id'] = $user_id;
-	$_SESSION['wp_url_bind'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	$_SESSION['wp_url_bind'] = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	if ($wptm_options['multiple_authors'] && ($user_level > 1 || is_super_admin())) { //是否开启多作者和判断用户等级
 		$canbind = true;
 ?>

@@ -64,6 +64,10 @@ class Denglu
 		'taobao' => '/transfer/taobao',
 		'tianya' => '/transfer/tianya',
 		'alipayquick' => '/transfer/alipayquick',
+		'guard360' => '/transfer/guard360',
+		'tianyi' => '/transfer/tianyi',
+		'facebook' => '/transfer/facebook',
+		'twitter' => '/transfer/twitter'
 	);
 	/**
 	 * 当前用户各种属性的一个缓存
@@ -147,11 +151,54 @@ class Denglu
 		return $this->callApi('latestComment',array('appid'=>$this->appID, 'count'=>$count),12);
 	}
 
+	/**
+	 * 返回自己应用的评论列表，用于本地化保存评论数据。
+	 *
+	 * @param commentid 若指定此参数，则返回ID比commentid大的评论（即比commentid时间晚的评论），默认为0。 
+	 * @param count    返回的记录条数，默认为50。 
+	 *
+	 * 返回值 eg: 
+		{
+			"postid":"1",
+			"content":"我是一条评论",
+			"mediaID":3,
+			"createTime":"2012-04-26 12:38:14",
+			"state":0,
+			"commentID":38751,
+			"userImage":"http://tp4.sinaimg.cn/2132511355/50/0/1",
+				"userName":"testapis",
+			"mediaUserID":1224050,
+			"homepage":"http://weibo.com/2132511355",
+			"ip":"106.3.63.172",
+			"parent":
+			{
+				"postid":"1",
+				"content":"我是它的父级评论",
+				"mediaID":101,
+				"commentID":38749,
+				"userName":"水脉烟香",
+				"userEmail":"xxx@qq.com",
+				"mediaUserID":3529900,
+				"homepage":"http://www.smyx.net/",
+				"ip":"123.116.124.167"
+			}
+		}
+	 */
 	function getComments($commentid, $count = 50)
 	{
 		return $this->callApi('getComments',array('appid'=>$this->appID, 'commentid'=>$commentid, 'count'=>$count),12);
 	}
 
+	/**
+	 * 返回自己应用的评论更新状态，比如评论被删除、审核，可以同步评论状态到本地。
+	 *
+	 * @param time 时间 单位为1小时，数字类型
+	 * 返回结果 灯鹭评论ID
+	 * 返回结果 0——正常评论，1——待审，2——垃圾评论，3——回收站，4——删除
+	 *
+	 * 返回值 eg: 
+		{"582997":0,"571330":1,"571277":2,"583028":0}
+	 */
 	function getCommentState($time)
 	{
 		return $this->callApi('getCommentState',array('appid'=>$this->appID, 'time'=>$time),12);
@@ -367,11 +414,14 @@ class Denglu
 
 	/**
 	 * 用户发布帖子、日志等信息时，可以把此信息分享到第三方
-	 * 
+	 *
 	 * @param mediaUserID
 	 * @param content    分享显示的信息
 	 * @param url    查看信息的链接
 	 * @param uid    网站用户的唯一性标识ID
+	 * @param imageurl    图片URL
+	 * @param videourl    视频URL
+	 * @param param1      文章ID, 用于同步微博的评论抓取回来
 	 *
 	 * 返回值 eg: {"result": "1"}
 	 */

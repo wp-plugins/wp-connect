@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.2
+Version: 2.4.3
 */
 
-define('WP_CONNECT_VERSION', '2.4.2');
+define('WP_CONNECT_VERSION', '2.4.3');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -20,7 +20,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.8";
+$wp_connect_advanced_version = "1.6.9";
 
 //update_option('wptm_basic', '');
 
@@ -41,6 +41,19 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
+
+function wp_connect_set_session() {
+	if (session_id() == "") {
+		session_start();
+	} 
+}
+function wp_connect_set_session_init() {
+	if (!empty($_GET['token']) || !empty($_GET['user_id']) || defined( 'IS_PROFILE_PAGE' ) || $_GET['page'] == "wp-connect" || $_GET['action'] == "profile") {
+		do_action('connect_init');
+	} 
+}
+add_action('connect_init', 'wp_connect_set_session');
+add_action('init', 'wp_connect_set_session_init');
 
 add_action('admin_menu', 'wp_connect_add_page');
 
@@ -161,6 +174,7 @@ function wp_connect_do_page() {
 	$_SESSION['user_id'] = '';
 	$_SESSION['wp_url_bind'] = WP_CONNECT;
 	$redirect_create = '?appid=3&redirect_create=' . urlencode($plugin_url.'/denglu.php');
+	$connect_plugin = true; // bind.php
 ?>
 <div class="wrap">
   <div id="icon-themes" class="icon32"><br /></div><h2>WordPress连接微博 <span style="padding-left:10px"><iframe width="63" height="24" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" scrolling="no" border="0" src="http://widget.weibo.com/relationship/followbutton.php?language=zh_cn&width=63&height=24&uid=1649905765&style=1&btn=red&dpc=1"></iframe></span></h2><div style="float:right;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank" title="PayPal"><img src="<?php echo $plugin_url;?>/images/donate_paypal.gif" /></a>/ <a href="https://me.alipay.com/smyx" target="_blank">支付宝</a></div>
@@ -261,11 +275,11 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <th>同步内容设置</th>
-            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-5]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 标题+链接 2. 标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 5. 标题 + 内容 <br /> 自定义标题格式：<input name="format" type="text" size="25" value="<?php echo $wptm_options['format']; ?>" /> ( 标题: <code>%title%</code>，会继承上面的设置，可留空。 )<br />把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label> <label><input name="thumbnail" type="checkbox" value="1" <?php checked($wptm_options['thumbnail']); ?>/>优先同步特色图像</label></td>
+            <td><input name="sync_option" type="text" size="1" maxlength="1" value="<?php echo (!$wptm_options) ? '2' : $wptm_options['sync_option']; ?>" onkeyup="value=value.replace(/[^1-6]/g,'')" /> (填数字，留空为不同步，只对本页绑定的帐号有效！)<br />提示: 1. 标题+链接 2. 标题+摘要/内容+链接 3.文章摘要/内容 4. 文章摘要/内容+链接 5. 标题 + 内容 <br /> 自定义标题格式：<input name="format" type="text" size="25" value="<?php echo $wptm_options['format']; ?>" /> ( 标题: <code>%title%</code>，会继承上面的设置，可留空。 )<br />把以下内容当成微博话题 (<label><input name="enable_cats" type="checkbox" value="1" <?php if($wptm_options['enable_cats']) echo "checked "; ?>>文章分类</label> <label><input name="enable_tags" type="checkbox" value="1" <?php if($wptm_options['enable_tags']) echo "checked "; ?>>文章标签</label>) <label><input name="disable_pic" type="checkbox" value="1" <?php checked($wptm_options['disable_pic']); ?>>不同步图片</label> <label><input name="thumbnail" type="checkbox" value="1" <?php checked($wptm_options['thumbnail']); ?>/>优先同步特色图像</label></td>
           </tr>
 		  <tr>
 			<td width="25%" valign="top">选择同步接口</td>
-			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php checked($wptm_options['denglu_bind']); ?>/> 使用灯鹭开放平台提供的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php checked(!$wptm_options || $wptm_options['denglu_bind']); ?>/> 使用灯鹭开放平台提供的同步接口</label><br /><span style="color:green;">勾选后，记得在下面重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来（使用<a href="#comment" class="comment">社会化评论</a>时）</span></td>
 		  </tr>
           <tr>
             <td width="25%" valign="top"><strong>可选设置</strong></td>
@@ -281,6 +295,10 @@ function wp_connect_do_page() {
           <tr>
             <td width="25%" valign="top">禁止同步的文章分类ID (<a href="http://www.denglu.cc/source/wordpress_faqs.html#cat-ids" target="_blank">数字ID</a>)</td>
             <td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用英文逗号(,)分开 (设置后该ID分类下的文章将不会同到微博)</td>
+          </tr>
+          <tr>
+            <td width="25%" valign="top">禁止同步的自定义文章类型</td>
+            <td><input name="post_types" type="text" size="30" value="<?php echo $wptm_options['post_types']; ?>" /> 用英文逗号(,)分开 ( 例如post_type=xxx ,请填写xxx )</td>
           </tr>
           <tr>
             <td width="25%" valign="top">自定义页面(一键发布到微博)</td>
@@ -428,7 +446,7 @@ function wp_connect_do_page() {
 		    </tr>
 		    <tr>
 			    <td width="25%" valign="top">SEO支持</td>
-			    <td><label><input name="enable_seo" type="checkbox" value="1" <?php if(!$wptm_comment || $wptm_comment['enable_seo']) echo "checked "; ?> /> 评论支持SEO，让搜索引擎能爬到评论数据</label></td>
+			    <td><label><input name="enable_seo" type="checkbox" value="1" <?php if($wptm_comment['enable_seo']) echo "checked "; ?> /> 评论支持SEO，让搜索引擎能爬到评论数据</label></td>
 		    </tr>
         </table>
         <p class="submit">
@@ -658,3 +676,16 @@ function wp_connect_do_page() {
 </div>
 <?php
 }
+
+/*
+function wp_connect_plugin_row_meta( $links, $file ) {
+	if( $file == plugin_basename( __FILE__ ) ) {
+		$links[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>';
+		$links[] = '<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>';
+        $links[] = '<a href="http://loginsns.com/wiki/" target="_blank">V1帮助</a>';
+        $links[] = '<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">V2帮助</a>';
+	}
+	return $links;
+}
+add_filter( 'plugin_row_meta', 'wp_connect_plugin_row_meta', 10, 2 );
+*/

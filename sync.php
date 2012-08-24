@@ -46,7 +46,7 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布文章时同步
- * @since 1.9.19
+ * @since 1.0 (V1.9.21)
  */
 $sync_loaded = 0; // wp bug
 function wp_connect_publish($post_ID) {
@@ -58,6 +58,11 @@ function wp_connect_publish($post_ID) {
 	@ini_set("max_execution_time", 120);
 	$time = time();
 	$post = get_post($post_ID);
+	if ($wptm_options['post_types']) {
+		if (in_array($post -> post_type, explode(',', $wptm_options['post_types']))) {
+			return;
+		}
+	}
 	$title = wp_replace($post -> post_title);
 	$content = $post -> post_content;
 	$excerpt = $post -> post_excerpt;
@@ -192,18 +197,22 @@ function wp_connect_publish($post_ID) {
 	} elseif ($sync_option == '5') { // 同步 标题 + 内容
 		$text = $tags . $prefix . $title2 . $post_content;
 		$url = "";
-	} else {
+	} elseif ($sync_option == '6') { // 同步 标题
+		$text = $tags . $prefix . $title2;
+		$url = "";
+	} else {  // 同步 标题 + 链接
 		$title2 = ($format_title) ? $title2 : $title;
 		$text = $tags . $prefix . $title2;
 	} 
+	$richMedia = wp_multi_media_url($content, $post_ID);
 	$list = array('title' => $title, // 标题
 		'content' => $content, // 内容
 		'excerpt' => $excerpt, // 摘要
 		'postlink' => $postlink, // 链接
 		'tags' => $tags, // 标签话题
-		'text' => $text, // 同步的内容
+		'text' => str_replace(array("[embed]", "[/embed]", $richMedia[1]), "", $text), // 同步的内容
 		'url' => $url, // 同步的网址
-		'richMedia' => wp_multi_media_url($content, $post_ID), // 匹配视频、图片
+		'richMedia' => $richMedia, // 匹配视频、图片
 		'is_author' => $is_author // 用户类型（站长 or 作者）
 		);
 	$list = apply_filters('post_sync_weibo', $list, $post_ID, $post_author_ID); 
@@ -252,6 +261,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	$status1 = wp_status($text, $postlink, 140); //网易/人人/饭否/做啥
 	$status2 = wp_status($text, urlencode($postlink), 140, 1); //新浪/天涯
 	$status3 = wp_status($text, $postlink, 140, 1); //腾讯/开心
+	// return var_dump($status3);
 	// 开始同步
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$output = array();
@@ -268,7 +278,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 		$mediaUserID .= $account['qq']['mediaUserID'] . ',';
 	} 
 	if ($account['shuoshuo']) { // 说说 /140
-		wp_post_shuoshuo($account['shuoshuo'], $status3, $pic);
+		wp_post_shuoshuo($account['shuoshuo'], $status2, $pic);
 	} 
 	if ($account['sohu']['oauth_token']) { // 搜狐微博 /+
 		wp_update_t_sohu($account['sohu'], wp_status($text, $postlink, 200, 1), $picture);

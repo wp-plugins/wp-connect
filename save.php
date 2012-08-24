@@ -1,13 +1,13 @@
 <?php
 include "../../../wp-config.php";
+do_action('connect_init');
 
 if ($_GET['do'] == "profile") {
 	if (is_user_logged_in()) {
-		session_start();
 		if ($_POST['add_twitter'] || $_POST['add_qq'] || $_POST['add_sina'] || $_POST['add_sohu'] || $_POST['add_netease'] || $_POST['add_douban'] || $_POST['add_tianya'] || $_POST['add_renren'] || $_POST['add_kaixin']) {
 			wp_connect_header();
 		} else {
-			$user_id = $_SESSION['user_id'];
+			$user_id = get_current_user_id();
 			wp_user_profile_update($user_id);
 			header('Location:' . admin_url('profile.php'));
 		} 
@@ -28,17 +28,11 @@ if ($_GET['do'] == "page") {
 } 
 
 if ($_GET['do'] == "login") {
-	if ($_SESSION['wp_url_back']) {
-		$redirect_to = $_SESSION['wp_url_back'];
-	} else {
-		$redirect_to = get_bloginfo('url');
-	} 
-
-	$login_userinfo = $_SESSION['wp_login_userinfo'];
-	if ($login_userinfo) {
-		$login_userinfo[0][1] = ifuser($login_userinfo[0][1]);
-		wp_connect_login($login_userinfo[0], $login_userinfo[1], '', true);
-		header('Location:' . $redirect_to);
+	$user = wp_connect_get_cookie("wp_connect_cookie_user");
+	if ($user) {
+		$user[0][1] = ifuser($user[0][1]);
+		wp_connect_login($user[0], $user[1], '', true);
+		header('Location:' . $user[2]);
 	} 
 } 
 

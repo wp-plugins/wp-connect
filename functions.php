@@ -92,6 +92,15 @@ if (!function_exists('php_array_slice')) {
 		return $ret;
 	} 
 }
+if (!function_exists('parse_url_detail')) {
+	function parse_url_detail($url) {
+		$parts = parse_url($url);
+		if(isset($parts['query'])) {
+			parse_str(urldecode($parts['query']), $str);
+		} 
+		return $str;
+	} 
+}
 // 字符长度(一个汉字代表一个字符，两个字母代表一个字符)
 if (!function_exists('wp_strlen')) {
 	function wp_strlen($text) {
@@ -414,20 +423,21 @@ function get_url_short($url) {
 // 新浪t.cn短网址
 function url_short_t_cn($long_url) {
 	$source = SINA_APP_KEY;
-	$api_url = 'http://api.t.sina.com.cn/short_url/shorten.json?source=' . $source . '&url_long=' . urlencode($long_url);
+	$api_url = 'http://api.weibo.com/2/short_url/shorten.json?source=' . $source . '&url_long=' . urlencode($long_url);
 	$request = new WP_Http;
 	$result = $request -> request($api_url);
-	$result = $result['body'];
-	$result = json_decode($result, true);
-	$url = $result[0]['url_short'];
-	if (!$url)
-		$url = $long_url;
-	return $url;
+	if (is_array($result)) {
+		$result = $result['body'];
+		$result = json_decode($result, true);
+		$result = $result['urls'];
+		$long_url = $result[0]['url_short'];
+	}
+	return $long_url;
 } 
 // 兼容旧版
 if (!function_exists('get_t_cn')) {
 	function get_t_cn($long_url) {
-		return url_short_t_cn(urldecode($long_url));
+		return url_short_t_cn($long_url);
 	} 
 } 
 // 百度dwz.cn短网址
@@ -435,17 +445,39 @@ function url_short_dwz_cn($long_url) {
 	$request = new WP_Http;
 	$api_url = 'http://dwz.cn/create.php';
 	$result = $request -> request($api_url , array('method' => 'POST', "timeout" => 5, 'body' => 'url=' . urlencode($long_url)));
-	$result = $result['body'];
-	$result = json_decode($result, true);
-	$url = $result['tinyurl'];
-	if (!$url)
-		$url = $long_url;
-	return $url;
+	if (is_array($result)) {
+		$result = $result['body'];
+		$result = json_decode($result, true);
+		$result = $result['urls'];
+		$long_url = $result[0]['url_short'];
+	}
+	return $long_url;
 } 
 
 /**
  * 插件函数
  */
+// 设置cookie
+function wp_connect_set_cookie($name, $value, $expire = '') {
+	//if (is_array($value)) {
+	//	setcookie($name, json_encode($value), $expire);
+	//} elseif (is_string($value)) {
+	//	setcookie($name, $value, $expire);
+	//}
+	$_SESSION[$name] = $value;
+
+} 
+// 清空cookie
+function wp_connect_clear_cookie($name) {
+	//setcookie($name, "", time() - 3600*24);
+	$_SESSION[$name] = "";
+}
+// 获取cookie
+function wp_connect_get_cookie($name) {
+	//return json_decode(stripslashes($_COOKIE[$name]), true);
+	return $_SESSION[$name];
+}
+
 // 开放平台KEY v1.9.12
 function get_appkey() {
 	global $wptm_connect;
@@ -558,6 +590,10 @@ function wp_multi_media_url($content, $post_ID = '') {
 	$v_sum = count($video[1]);
 	if ($v_sum > 0) {
 		$v = $video[1][0];
+	} else {
+		$content = str_replace(array("[/", "</"), "\n", $content);
+		preg_match_all('/http:\/\/(v.youku.com\/v_show|www.tudou.com\/(programs\/view|albumplay|listplay))+(?(?=[\/])(.*))/', $content, $match);
+		if (count($match[0]) > 0) $v = trim($match[0][0]);
 	} 
 	if (empty($wptm_options['disable_pic'])) {
 		preg_match_all('/<img[^>]+src=[\'"](http[^\'"]+)[\'"].*>/isU', $content, $image);
