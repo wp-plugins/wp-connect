@@ -430,7 +430,8 @@ function url_short_t_cn($long_url) {
 		$result = $result['body'];
 		$result = json_decode($result, true);
 		$result = $result['urls'];
-		$long_url = $result[0]['url_short'];
+		$url_short = $result[0]['url_short'];
+		if ($url_short) $long_url = $url_short;
 	}
 	return $long_url;
 } 
@@ -448,8 +449,8 @@ function url_short_dwz_cn($long_url) {
 	if (is_array($result)) {
 		$result = $result['body'];
 		$result = json_decode($result, true);
-		$result = $result['urls'];
-		$long_url = $result[0]['url_short'];
+		$url_short = $result['tinyurl'];
+		if ($url_short) $long_url = $url_short;
 	}
 	return $long_url;
 } 
