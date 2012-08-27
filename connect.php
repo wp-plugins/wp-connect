@@ -383,7 +383,7 @@ if (empty($wptm_connect['head']) && ($wptm_connect['enable_connect'] || $wptm_co
 
 function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	global $comment, $parent_file, $wp_version;
-	if (is_numeric($id_or_email)) {
+	if (is_numeric($id_or_email)) { // users.php
 		$uid = $userid = (int) $id_or_email;
 		$user = get_userdata($uid);
 		if ($user) $email = $user -> user_email;
@@ -398,7 +398,11 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} elseif (is_object($id_or_email)) {
 		$user = $id_or_email;
 		$uid = $user -> user_id;
-		$email = $user -> user_email;
+		$email = ifab($user -> comment_author_email, $user -> user_email);
+		$author_url = $user -> comment_author_url;
+		if ($avatar1 = wp_get_weibo_head($user, $size, $email, $author_url)) { 
+			return $avatar1;
+		} 
 	} else {
 		$email = $id_or_email;
 		if ($parent_file != 'options-general.php') {
