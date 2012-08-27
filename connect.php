@@ -697,7 +697,7 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 	} elseif (is_object($id_or_email)) {
 		$user = $id_or_email;
 		$uid = $user -> user_id;
-		$email = $user -> user_email;
+		$email = ifab($user -> comment_author_email, $user -> user_email);
 	} else {
 		$email = $id_or_email;
 		if ($parent_file != 'options-general.php') {
