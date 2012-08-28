@@ -1,6 +1,6 @@
 <?php
 include "../../../wp-config.php";
-define('WP_CONNECT_HEADER', true);
+define('WORDPRESS_LOGIN', true);
 do_action('connect_init');
 
 /**
