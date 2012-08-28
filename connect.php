@@ -7,6 +7,8 @@ add_action('init', 'wp_connect_init');
 if ($wptm_connect['enable_connect']) {
 	add_action("login_form", "wp_connect");
 	add_action("register_form", "wp_connect", 12);
+	add_action("login_form_register", "connect_login_form_login");
+	add_action("login_form_login", "connect_login_form_login");
 	add_action("login_form_logout", "connect_login_form_logout");
 }
 // 社会化评论
@@ -267,23 +269,12 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 } 
 
 if (!function_exists('connect_login_form_login')) {
-/*
-	add_action("login_form_register", "connect_login_form_login");
-	add_action("login_form_login", "connect_login_form_login");
 	function connect_login_form_login() {
 		if (is_user_logged_in()) {
 			$redirect_to = admin_url('profile.php');
 			wp_safe_redirect($redirect_to);
-		} else {
-			if (!$_GET['redirect_to']) {
-				add_action('login_footer', 'wp_url_back');
-			} 
 		} 
 	} 
-    function wp_url_back() {
-	    $_SESSION['wp_url_back'] = get_bloginfo('url');
-    } 
-*/
 	function connect_login_form_logout() {
 		$_SESSION['wp_url_bind'] = '';
 	} 
