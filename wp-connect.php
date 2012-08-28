@@ -98,22 +98,24 @@ function is_donate() {
 }
 
 function wp_connect_warning() {
-	global $wp_version,$wp_connect_advanced_version,$wptm_options, $wptm_connect, $wptm_version;
-	if (version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options)) {
-		echo '<div class="updated">';
-		if (version_compare($wp_version, '3.0', '<')) {
-			echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
-		} 
-		if (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
-			echo "<p><strong>您的“WordPress连接微博 高级设置”(捐赠版)版本太低，请到QQ群内下载最新版，解压后用ftp工具上传升级！</strong></p>";
-		} 
-		if (($wptm_options || $wptm_connect) && !$wptm_version) {
-			echo '<p><strong>重要更新：从1.7.3版本开始，加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！然后请点击一次“同步设置”下面的“保存更改”按钮关闭提示。<a href="options-general.php?page=wp-connect">现在去更改</a></strong></p>';
+	if (current_user_can('manage_options')) {
+		global $wp_version,$wp_connect_advanced_version,$wptm_options, $wptm_connect, $wptm_version;
+		if (version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && !$wptm_version) || (!$wptm_connect && !$wptm_options)) {
+			echo '<div class="updated">';
+			if (version_compare($wp_version, '3.0', '<')) {
+				echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
+			} 
+			if (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
+				echo "<p><strong>您的“WordPress连接微博 高级设置”(捐赠版)版本太低，请到QQ群内下载最新版，解压后用ftp工具上传升级！</strong></p>";
+			} 
+			if (($wptm_options || $wptm_connect) && !$wptm_version) {
+				echo '<p><strong>重要更新：从1.7.3版本开始，加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！然后请点击一次“同步设置”下面的“保存更改”按钮关闭提示。<a href="options-general.php?page=wp-connect">现在去更改</a></strong></p>';
+			}
+			if (!$wptm_options && !$wptm_connect) {
+				echo '<p><strong>您还没有对“WordPress连接微博”进行设置，<a href="options-general.php?page=wp-connect">现在去设置</a></strong></p>';
+			} 
+			echo '</div>';
 		}
-		if (!$wptm_options && !$wptm_connect) {
-			echo '<p><strong>您还没有对“WordPress连接微博”进行设置，<a href="options-general.php?page=wp-connect">现在去设置</a></strong></p>';
-		} 
-		echo '</div>';
 	}
 }
 add_action('admin_notices', 'wp_connect_warning');
