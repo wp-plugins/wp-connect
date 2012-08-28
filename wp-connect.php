@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.3
+Version: 2.4.4
 */
 
-define('WP_CONNECT_VERSION', '2.4.3');
+define('WP_CONNECT_VERSION', '2.4.4');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -99,32 +99,34 @@ function is_donate() { // 2.0
 }
 
 function wp_connect_warning() {
-	global $wp_version,$wp_connect_advanced_version,$wptm_basic, $wptm_options, $wptm_connect, $wptm_version;
-	if (isset($_POST['closeTips'])) {
-		update_option("wptm_tips", '');
-	} 
-	$wptm_tips = get_option("wptm_tips");
-	if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
-		echo '<div class="updated">';
-		if ($wptm_tips) {
-			echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
-			wp_connect_tips();
-	    }
-		if (version_compare($wp_version, '3.0', '<')) {
-			echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
+	if (current_user_can('manage_options')) {
+		global $wp_version,$wp_connect_advanced_version,$wptm_basic, $wptm_options, $wptm_connect, $wptm_version;
+		if (isset($_POST['closeTips'])) {
+			update_option("wptm_tips", '');
 		} 
-		if (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
-			echo "<p><strong>您的“WordPress连接微博 高级设置”(捐赠版)版本太低，请到QQ群内下载最新版，解压后用ftp工具上传升级！</strong></p>";
-		} 
-		if (($wptm_options || $wptm_connect) && !$wptm_version) {
-			echo '<p><strong>重要更新：从1.7.3版本开始，加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！然后请点击一次“同步设置”下面的“保存更改”按钮关闭提示。<a href="options-general.php?page=wp-connect">现在去更改</a></strong></p>';
+		$wptm_tips = get_option("wptm_tips");
+		if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
+			echo '<div class="updated">';
+			if ($wptm_tips) {
+				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+				wp_connect_tips();
+			}
+			if (version_compare($wp_version, '3.0', '<')) {
+				echo '<p><strong>您的WordPress版本太低，请升级到WordPress3.0或者更高版本，否则不能正常使用“WordPress连接微博”。</strong></p>';
+			} 
+			if (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') {
+				echo "<p><strong>您的“WordPress连接微博 高级设置”(捐赠版)版本太低，请到QQ群内下载最新版，解压后用ftp工具上传升级！</strong></p>";
+			} 
+			if (($wptm_options || $wptm_connect) && !$wptm_version) {
+				echo '<p><strong>重要更新：从1.7.3版本开始，加入对同步帐号密码的加密处理，非OAuth授权的网站，请重新填写帐号和密码！然后请点击一次“同步设置”下面的“保存更改”按钮关闭提示。<a href="options-general.php?page=wp-connect">现在去更改</a></strong></p>';
+			}
+			if (!$wptm_basic) {
+				echo '<p><strong>您还没有对“WordPress连接微博”进行设置，<a href="options-general.php?page=wp-connect">现在去设置</a></strong></p>';
+			} elseif (!$wptm_basic['denglu']) {
+				echo '<p><strong>您需要到 WordPress连接微博 插件页面更新设置才能继续使用该插件，<a href="options-general.php?page=wp-connect">现在去更新</a></strong></p>';
+			}
+			echo '</div>';
 		}
-		if (!$wptm_basic) {
-			echo '<p><strong>您还没有对“WordPress连接微博”进行设置，<a href="options-general.php?page=wp-connect">现在去设置</a></strong></p>';
-		} elseif (!$wptm_basic['denglu']) {
-            echo '<p><strong>您需要到 WordPress连接微博 插件页面更新设置才能继续使用该插件，<a href="options-general.php?page=wp-connect">现在去更新</a></strong></p>';
-		}
-		echo '</div>';
 	}
 }
 add_action('admin_notices', 'wp_connect_warning'); 
