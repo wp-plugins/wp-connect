@@ -8,7 +8,15 @@ if (isset($_GET['go'])) {
 		if (is_user_logged_in()) { // 同步绑定
 			wp_connect_set_cookie("wp_connect_cookie_bind", "sync", BJTIMESTAMP + 600);
 		} 
-		if (!empty($_SERVER['HTTP_REFERER'])) $redirect_uri = "&redirect_uri=" . urlencode($_SERVER['HTTP_REFERER']);
+		if (!empty($_SERVER['HTTP_REFERER'])) {
+			if (strpos($_SERVER['HTTP_REFERER'], "redirect_to=") !== false) {
+				$parse_str = parse_url_detail($_SERVER['HTTP_REFERER']);
+				$redirect_uri = $parse_str['redirect_to'];
+			} else {
+				$redirect_uri = $_SERVER['HTTP_REFERER'];
+			} 
+			$redirect_uri = "&redirect_uri=" . urlencode($redirect_uri);
+		} 
 		$open_url = "http://open.denglu.cc/transfer/" . $name . "?appid=" . $wptm_basic['appid'] . $redirect_uri;
 		header('Location:' . $open_url);
 	} 
