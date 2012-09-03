@@ -224,7 +224,7 @@ function wp_connect_sina(){
 	}
 	$email = $sinaid.'@weibo.com';
 	$tid = "stid";
-	$uid = ifab(get_user_by_meta_value($tid, $sinaid), email_exists($sinaid.'@t.sina.com.cn'));
+	$uid = ifab(get_user_by_meta_value($tid, $sinaid), email_exists($email));
 	$userinfo = array($tid, $username, $sina->screen_name, $sinaid, $sina->url, $sinaid, $tok['oauth_token'], $tok['oauth_token_secret']);
 	if ($uid) {
 		wp_connect_login($userinfo, $email, $uid);
@@ -548,7 +548,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 				update_usermeta($wpuid, ($t == 'twitter') ? 'wptm_twitter_oauth' : 'wptm_' . $t, array('oauth_token' => $oauth_token, 'oauth_token_secret' => $oauth_token_secret));
 			if (in_array($t, array('qq', 'sina', 'netease', 'sohu', 'twitter'))) { // @微博帐号
 				$nickname = get_user_meta($wpuid, 'login_name', true);
-				$nickname[$t] = ($t == 'qq' || $t == 'twitter') ? $user_name : $user_screenname;
+				$nickname[$t] = ($t == 'qq' || $t == 'twitter') ? $user_uid : $user_screenname;
 				update_usermeta($wpuid, 'login_name', $nickname);
 			} 
 		} 
