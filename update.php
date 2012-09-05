@@ -56,7 +56,7 @@ function wp_option_account() {
 		'sina' => get_option('wptm_sina'),
 		'sohu' => get_option('wptm_sohu'),
 		'netease' => get_option('wptm_netease'),
-		'twitter' => get_option('wptm_twitter_oauth'),
+		'twitter' => get_option('wptm_twitter'),
 		'shuoshuo' => get_option('wptm_shuoshuo'),
 		'renren' => get_option('wptm_renren'),
 		'kaixin001' => get_option('wptm_kaixin001'),
@@ -170,7 +170,7 @@ function wp_connect_update() {
 		'oauth_token_secret' => trim($_POST['password'])
 		);
 	if (isset($_POST['update_twitter'])) {
-		update_option("wptm_twitter_oauth", $token);
+		update_option("wptm_twitter", $token);
 		echo $updated;
 	}
 	if (isset($_POST['update_qq'])) {
@@ -227,7 +227,7 @@ function wp_connect_update() {
 	}
 	// delete
 	if (isset($_POST['delete_twitter'])) {
-		update_option("wptm_twitter_oauth", '');
+		update_option("wptm_twitter", '');
 	}
 	if (isset($_POST['delete_qq'])) {
 		update_option("wptm_qq", '');
@@ -286,7 +286,7 @@ function wp_usermeta_account($uid) {
 		'sina' => $user -> wptm_sina,
 		'sohu' => $user -> wptm_sohu,
 		'netease' => $user -> wptm_netease,
-		'twitter' => $user -> wptm_twitter_oauth,
+		'twitter' => $user -> wptm_twitter,
 		'shuoshuo' => $user -> wptm_shuoshuo,
 		'renren' => $user -> wptm_renren,
 		'kaixin001' => $user -> wptm_kaixin001,
@@ -308,7 +308,7 @@ function wp_user_profile_update($user_id) {
 		'oauth_token_secret' => trim($_POST['password'])
 		);
 	if (isset($_POST['update_twitter'])) {
-		update_usermeta($user_id, "wptm_twitter_oauth", $token);
+		update_usermeta($user_id, "wptm_twitter", $token);
 	} 
 	if (isset($_POST['update_qq'])) {
 		update_usermeta($user_id, "wptm_qq", $token);
@@ -351,7 +351,7 @@ function wp_user_profile_update($user_id) {
 	} 
 	// delete
 	if (isset($_POST['delete_twitter'])) {
-		update_usermeta($user_id, 'wptm_twitter_oauth', '');
+		update_usermeta($user_id, 'wptm_twitter', '');
 	} 
 	if (isset($_POST['delete_qq'])) {
 		update_usermeta($user_id, 'wptm_qq', '');
