@@ -105,6 +105,7 @@ function wp_connect_update() {
 			'enable_tags' => trim($_POST['enable_tags']),
 			'disable_pic' => trim($_POST['disable_pic']),
             'thumbnail' => trim($_POST['thumbnail']),
+			//'sina_v2' => trim($_POST['sina_v2']),
 			'new_prefix' => trim($_POST['new_prefix']),
 			'update_prefix' => trim($_POST['update_prefix']),
 			'update_days' => $update_days,

@@ -3,7 +3,11 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 	include "../../../wp-config.php";
 	function denglu_exportComment_ajax($start = 0) {
 		@ini_set("max_execution_time", 300);
-		$data = import_comments_to_denglu(); 
+		if (function_exists('import_comments_to_denglu')) {
+			$data = import_comments_to_denglu(); 
+		} else {
+			return var_dump("请先在评论设置勾选开启“社会化评论”功能。");
+		} 
 		// $data = array_slice(range(1,605), $start, 50, true);
 		// sleep(1);
 		// return var_dump($data);

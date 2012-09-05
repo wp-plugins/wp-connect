@@ -46,7 +46,7 @@ function wp_connect_add_sidebox() {
 
 /**
  * 发布文章时同步
- * @since 1.0 (V1.9.21)
+ * @since 1.0 (V1.9.22)
  */
 $sync_loaded = 0; // wp bug
 function wp_connect_publish($post_ID) {
@@ -82,7 +82,7 @@ function wp_connect_publish($post_ID) {
 		$new_prefix = $wptm_profile['new_prefix'];
 		$update_prefix = $wptm_profile['update_prefix'];
 		$update_days = $wptm_profile['update_days'] * 60 * 60 * 24;
-		$is_author = "true";
+		$is_author = true;
 	} else {
 		if (!$wptm_options['sync_option']) {
 			return;
@@ -96,6 +96,31 @@ function wp_connect_publish($post_ID) {
 	// 是否绑定了帐号
 	if (!$account) {
 		return;
+	} 
+	// 新浪微博授权码过期检查 V1.9.22
+	if (!empty($account['sina']['expires_in'])) {
+		$expires = $account['sina']['expires_in'] - BJTIMESTAMP;
+		if ($expires < 20 * 3600) {
+			if ($is_author) {
+				if (get_current_user_id() == $post_author_ID) {
+					$into = "<a href=" . admin_url('profile.php') . " target=\"_blank\">我的个人资料</a>";
+				} else {
+					$into = "<a href=" . admin_url("user-edit.php?user_id=$post_author_ID") . " target=\"_blank\">用户资料</a>";
+				} 
+			} else {
+				$into = "<a href=" . admin_url('options-general.php?page=wp-connect') . " target=\"_blank\">WordPress连接微博插件</a>";
+			} 
+			if ($expires < 60) {
+				return setcookie('sina_access_token_expires', "您的 新浪微博授权码已经过期了，刚刚发布的文章已经取消了所有微博同步，请先到 " . $into . " 重新绑定下新浪微博帐号之后再同步吧，本条提示5分钟后自动消失。", BJTIMESTAMP + 600);
+			} elseif ($expires < 3600) {
+				$expires_in = (int) ($expires / 60) . '分钟';
+			} else {
+				$expires_in = (int) ($expires / 3600) . '小时';
+			} 
+			setcookie('sina_access_token_expires', "您的 新浪微博授权码再过 " . $expires_in . " 就过期了，咱们先到 " . $into . " 重新绑定下吧，否则不能同步到新浪微博噢，本条提示5分钟后自动消失。", BJTIMESTAMP + 600);
+		} elseif ($_COOKIE['sina_access_token_expires']) {
+			setcookie('sina_access_token_expires', "", BJTIMESTAMP - (BJTIMESTAMP + 600));
+		} 
 	} 
 	// 是否为新发布
 	if (($post -> post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending')) {
@@ -217,6 +242,8 @@ function wp_connect_publish($post_ID) {
 		);
 	$list = apply_filters('post_sync_weibo', $list, $post_ID, $post_author_ID); 
 	// return var_dump($list);
+	// $other = array('is_author'=>$is_author, 'uid'=>$post_author_ID);
+	// $account = array_merge($account, $other);
 	if (is_array($list)) {
 		wp_update_list($list['text'], $list['url'], $list['richMedia'], $account, $post_ID);
 	} 
@@ -224,7 +251,7 @@ function wp_connect_publish($post_ID) {
 
  /**
  * 同步列表
- * @since 2.3
+ * @since 2.4.5
  */
 function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	global $wptm_options;
@@ -265,11 +292,11 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	// 开始同步
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
 	$output = array();
-	if ($account['sina']['oauth_token']) { // 新浪微博 /140*
+	if ($account['sina']['mediaUserID']) {
+		wp_update_share($account['sina']['mediaUserID'], $status, $url, '', $pic[0], $pic[1], $post_id);
+	} elseif ($account['sina']) { // 新浪微博 /140*
 		$ms = wp_update_t_sina($account['sina'], $status2, $picture);
 		$output['sina'] = $ms['mid'];
-	} elseif ($account['sina']['mediaUserID']) {
-		wp_update_share($account['sina']['mediaUserID'], $status, $url, '', $pic[0], $pic[1], $post_id);
 	} 
 	$mediaUserID = '';
 	if ($account['qq']['oauth_token']) { // 腾讯微博 /140*
@@ -332,7 +359,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	return $output;
 }
 // 腾讯微博
-function wp_update_t_qq($tok, $status, $value) {
+function wp_update_t_qq($tok, $status, $value = "") {
 	if (!class_exists('qqOAuth')) {
 		include dirname(__FILE__) . '/OAuth/qq_OAuth.php';
 	} 
@@ -341,16 +368,21 @@ function wp_update_t_qq($tok, $status, $value) {
 	return $result['data']['id'];
 }
 // 新浪微博
-function wp_update_t_sina($tok, $status, $value) {
-	if (!class_exists('sinaOAuth')) {
-		include dirname(__FILE__) . '/OAuth/sina_OAuth.php';
+function wp_update_t_sina($tok, $status, $value = "") {
+	if ($tok['oauth_token']) {
+		class_exists('sinaOAuth') or require(dirname(__FILE__) . "/OAuth/sina_OAuth.php");
+		$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
+		$result = $to -> update($status, $value);
+	} elseif ($tok['access_token']) { // V2.0
+		class_exists('OAuthV2') or require(dirname(__FILE__) . "/OAuth/OAuthV2.php");
+		class_exists('sinaClientV2') or require(dirname(__FILE__) . "/OAuth/sina_OAuthV2.php");
+		$to = new sinaClientV2(SINA_APP_KEY, SINA_APP_SECRET, $tok['access_token']);
+		$result = $to -> update($status, $value);
 	} 
-	$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
-    $result = $to -> update($status, $value);
 	return $result;
 } 
 // 搜狐微博
-function wp_update_t_sohu($tok, $status, $value) {
+function wp_update_t_sohu($tok, $status, $value = "") {
 	if (!class_exists('sohuOAuth')) {
 		include dirname(__FILE__) . '/OAuth/sohu_OAuth.php';
 	} 
@@ -359,7 +391,7 @@ function wp_update_t_sohu($tok, $status, $value) {
 	return $result;
 }
 // 网易微博
-function wp_update_t_163($tok, $status, $value) {
+function wp_update_t_163($tok, $status, $value = "") {
 	if (!class_exists('neteaseOAuth')) {
 		include dirname(__FILE__) . '/OAuth/netease_OAuth.php';
 	}
@@ -368,7 +400,7 @@ function wp_update_t_163($tok, $status, $value) {
 	return $result;
 } 
 // Twitter
-function wp_update_twitter($tok, $status, $value = '') {
+function wp_update_twitter($tok, $status, $value = "") {
 	global $wptm_options;
 	if ($wptm_options['enable_proxy']) {
 		$text = "twitter={$status}&pic={$value}&t1={$tok['oauth_token']}&t2={$tok['oauth_token_secret']}";
@@ -392,7 +424,7 @@ function wp_update_douban($tok, $status) {
 	return $result;
 } 
 // 天涯
-function wp_update_tianya($tok, $status, $value) {
+function wp_update_tianya($tok, $status, $value = "") {
 	if (!class_exists('tianyaOAuth')) {
 		include dirname(__FILE__) . '/OAuth/tianya_OAuth.php';
 	}
@@ -419,7 +451,7 @@ function wp_update_fanfou($user, $status) {
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $body, 'headers' => $headers));
 }
 // 人间网
-function wp_update_renjian($user, $status, $value) {
+function wp_update_renjian($user, $status, $value = "") {
 	$api_url = 'http://api.renjian.com/v2/statuses/create.json';
 	$body = array();
 	$body['text'] = $status;
@@ -458,7 +490,7 @@ function wp_update_follow5($user, $status, $value) {
 }
 */
 // wbto
-function wp_update_wbto($user, $status, $value) {
+function wp_update_wbto($user, $status, $value = "") {
 	$body = array();
 	$body['source'] = 'wordpress';
 	$body['content'] = rawurlencode($status);
@@ -493,12 +525,32 @@ function wp_update_renren($user, $status) {
 	} 
 }
 // 开心网
-function wp_update_kaixin001($user, $status, $pic) {
+function wp_update_kaixin001($user, $status, $vaule = "") {
 	if (function_exists('wp_kaixin_status') && $user['session_key']) {
-		wp_kaixin_status($user['session_key'], $status, $pic); 
+		wp_kaixin_status($user['session_key'], $status, $vaule); 
 	}
 }
-
+// 新浪微博, 转发一条微博信息
+function wp_repost_t_sina($tok, $sid, $text) {
+	if ($tok['oauth_token']) {
+		class_exists('sinaOAuth') or require(dirname(__FILE__) . "/OAuth/sina_OAuth.php");
+		$to = new sinaClient(SINA_APP_KEY, SINA_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
+		$result = $to -> repost($sid, $text);
+	} elseif ($tok['access_token']) { // V2.0
+		class_exists('OAuthV2') or require(dirname(__FILE__) . "/OAuth/OAuthV2.php");
+		class_exists('sinaClientV2') or require(dirname(__FILE__) . "/OAuth/sina_OAuthV2.php");
+		$to = new sinaClientV2(SINA_APP_KEY, SINA_APP_SECRET, $tok['access_token']);
+		$result = $to -> repost($sid, $text);
+	} 
+	return $result;
+}
+// 腾讯微博, 对一条微博信息进行评论
+function wp_comment_t_qq($tok, $sid, $text) {
+	class_exists('qqOAuth') or require(dirname(__FILE__) . "/OAuth/qq_OAuth.php");
+	$to = new qqClient(QQ_APP_KEY, QQ_APP_SECRET, $tok['oauth_token'], $tok['oauth_token_secret']);
+	$result = $to -> comment($sid, $text);
+	return $result;
+}
 // api
 function wp_update_api($status) {
 	$api_url = 'http://www.smyx.net/apps/api.php';

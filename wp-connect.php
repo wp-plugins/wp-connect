@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.4
+Version: 2.4.5
 */
 
-define('WP_CONNECT_VERSION', '2.4.4');
+define('WP_CONNECT_VERSION', '2.4.5');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -20,7 +20,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.6.9";
+$wp_connect_advanced_version = "1.7";
 
 //update_option('wptm_basic', '');
 
@@ -37,7 +37,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.4.1', '<')) { // 删除搜狐微博Consumer Key
 		$keybug = 1;
 	}
-	if (version_compare($wptm_version, '2.4.1', '<'))
+	if (version_compare($wptm_version, '2.4.5', '<'))
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
@@ -99,6 +99,11 @@ function is_donate() { // 2.0
 }
 
 function wp_connect_warning() {
+	if ($_COOKIE['sina_access_token_expires']) {
+		echo '<div class="updated"><p>';
+		echo $_COOKIE['sina_access_token_expires'];
+		echo '</p></div>';
+	}
 	if (current_user_can('manage_options')) {
 		global $wp_version,$wp_connect_advanced_version,$wptm_basic, $wptm_options, $wptm_connect, $wptm_version;
 		if (isset($_POST['closeTips'])) {
@@ -108,7 +113,7 @@ function wp_connect_warning() {
 		if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
 			echo '<div class="updated">';
 			if ($wptm_tips) {
-				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4.5 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
 				wp_connect_tips();
 			}
 			if (version_compare($wp_version, '3.0', '<')) {
@@ -131,10 +136,12 @@ function wp_connect_warning() {
 }
 add_action('admin_notices', 'wp_connect_warning'); 
 
-function wp_connect_tips() { ?>
-	<p>升级：插件完成到 WordPress 3.4.1</p>
-	<p>优化：原有评论导入到灯鹭服务器改用ajax方式，速度更快。</p>
-	<p>删除：默认提供的搜狐微博Consumer Key和Consumer secret被搜狐删除，故不再提供公共key，如有需要请自己申请，或者在“同步微博”处勾选“使用灯鹭开放平台提供的同步接口”</p>
+function wp_connect_tips() { 
+	global $plugin_url;
+	?>
+	<p>修改：新浪微博插件接口升级到2.0，可以使用插件本身的接口同步了。如果你自定义了新浪微博APP KEY，请修改回调地址为 <code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
+	<p>新增：用网站帐号登录时，评论框支持使用网站本地头像。</p>
+	<p>优化：重写大部分代码。</p>
 <?php
 } 
 
@@ -260,7 +267,7 @@ function wp_connect_do_page() {
 	    <p><strong>友情提示</strong></p>
         <p>若在使用时出现“时间戳有误”，请先点击“环境检查”查看服务器时间，跟北京时间对比下，然后在“同步微博”下面的“服务器时间校正”填写时间差！</p>
 	    <p style="color:#880"><strong>从WordPress连接微博 插件旧版升级到V2.0 <a href="http://bbs.denglu.cc/thread-9056-1-1.html" target="_blank">注意事项</a></strong></p>
-	    <p>淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
+	    <p>新浪微博、淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
 	  </div>
     </div>
     <div id="sync">
@@ -344,26 +351,26 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">添加按钮</td>
-            <td><label><input name="qqlogin" type="checkbox" value="qzone" <?php if($wptm_connect['qqlogin']) echo "checked ";?>/>QQ空间</label>
-			  <label><input name="sina" type="checkbox" value="sina" <?php if($wptm_connect['sina']) echo "checked ";?>/>新浪微博</label>
-              <label><input name="qq" type="checkbox" value="tencent" <?php if($wptm_connect['qq']) echo "checked ";?> />腾讯微博</label>
-              <label><input name="renren" type="checkbox" value="renren" <?php if($wptm_connect['renren']) echo "checked ";?> />人人网</label>
-              <label><input name="kaixin001" type="checkbox" value="kaixin001" <?php if($wptm_connect['kaixin001']) echo "checked ";?>/>开心网</label>
-              <label><input name="douban" type="checkbox" value="douban" <?php if($wptm_connect['douban']) echo "checked ";?> />豆瓣</label><br />
-			  <label><input name="taobao" type="checkbox" value="taobao" <?php if($wptm_connect['taobao']) echo "checked ";?> />淘宝网</label>
-			  <label><input name="alipay" type="checkbox" value="alipayquick" <?php if($wptm_connect['alipay']) echo "checked ";?>/>支付宝</label>
-			  <label><input name="baidu" type="checkbox" value="baidu" <?php if($wptm_connect['baidu']) echo "checked ";?>/>百度</label>
-              <label><input name="sohu" type="checkbox" value="sohu" <?php if($wptm_connect['sohu']) echo "checked ";?> />搜狐微博</label>
-              <label><input name="netease" type="checkbox" value="netease" <?php if($wptm_connect['netease']) echo "checked ";?> />网易微博</label>
-              <label><input name="tianya" type="checkbox" value="tianya" <?php if($wptm_connect['tianya']) echo "checked "; ?>/>天涯</label>
-			  <label><input name="guard360" type="checkbox" value="guard360" <?php if($wptm_connect['guard360']) echo "checked ";?>/>360</label>
-			  <label><input name="tianyi" type="checkbox" value="tianyi" <?php if($wptm_connect['tianyi']) echo "checked ";?>/>天翼</label><br />
-			  <label><input name="msn" type="checkbox" value="windowslive" <?php if($wptm_connect['msn']) echo "checked ";?>/>MSN</label>
-			  <label><input name="google" type="checkbox" value="google" <?php if($wptm_connect['google']) echo "checked ";?>/>谷歌</label>
-			  <label><input name="yahoo" type="checkbox" value="yahoo" <?php if($wptm_connect['yahoo']) echo "checked ";?>/>雅虎</label>
-			  <label><input name="twitter" type="checkbox" value="twitter" <?php if($wptm_connect['twitter']) echo "checked ";?>/>Twitter</label>
-			  <label><input name="facebook" type="checkbox" value="facebook" <?php if($wptm_connect['facebook']) echo "checked ";?>/>Facebook</label>
-			  <label><input name="netease163" type="checkbox" value="netease163" <?php if($wptm_connect['netease163']) echo "checked ";?>/>网易通行证</label>
+            <td><label><input name="qqlogin" type="checkbox" value="qzone" <?php checked(!$wptm_connect || $wptm_connect['qqlogin']);?>/> QQ空间</label>
+			  <label><input name="sina" type="checkbox" value="sina" <?php checked(!$wptm_connect || $wptm_connect['sina']);?>/> 新浪微博</label>
+              <label><input name="qq" type="checkbox" value="tencent" <?php checked(!$wptm_connect || $wptm_connect['qq']);?> /> 腾讯微博</label>
+              <label><input name="renren" type="checkbox" value="renren" <?php checked(!$wptm_connect || $wptm_connect['renren']);?> /> 人人网</label>
+              <label><input name="kaixin001" type="checkbox" value="kaixin001" <?php checked(!$wptm_connect || $wptm_connect['kaixin001']);?>/> 开心网</label>
+              <label><input name="douban" type="checkbox" value="douban" <?php checked(!$wptm_connect || $wptm_connect['douban']);?> /> 豆瓣</label><br />
+			  <label><input name="taobao" type="checkbox" value="taobao" <?php checked(!$wptm_connect || $wptm_connect['taobao']);?> /> 淘宝网</label>
+			  <label><input name="alipay" type="checkbox" value="alipayquick" <?php checked(!$wptm_connect || $wptm_connect['alipay']);?>/> 支付宝</label>
+			  <label><input name="baidu" type="checkbox" value="baidu" <?php checked(!$wptm_connect || $wptm_connect['baidu']);?>/> 百度</label>
+              <label><input name="sohu" type="checkbox" value="sohu" <?php checked(!$wptm_connect || $wptm_connect['sohu']);?> /> 搜狐微博</label>
+              <label><input name="netease" type="checkbox" value="netease" <?php checked(!$wptm_connect || $wptm_connect['netease']);?> /> 网易微博</label>
+              <label><input name="tianya" type="checkbox" value="tianya" <?php checked(!$wptm_connect || $wptm_connect['tianya']); ?>/> 天涯</label>
+			  <label><input name="guard360" type="checkbox" value="guard360" <?php checked($wptm_connect['guard360']);?>/> 360</label>
+			  <label><input name="tianyi" type="checkbox" value="tianyi" <?php checked($wptm_connect['tianyi']);?>/> 天翼</label><br />
+			  <label><input name="msn" type="checkbox" value="windowslive" <?php checked(!$wptm_connect || $wptm_connect['msn']);?>/> MSN</label>
+			  <label><input name="google" type="checkbox" value="google" <?php checked(!$wptm_connect || $wptm_connect['google']);?>/> 谷歌</label>
+			  <label><input name="yahoo" type="checkbox" value="yahoo" <?php checked($wptm_connect['yahoo']);?>/> 雅虎</label>
+			  <label><input name="twitter" type="checkbox" value="twitter" <?php checked(!$wptm_connect || $wptm_connect['twitter']);?>/> Twitter</label>
+			  <label><input name="facebook" type="checkbox" value="facebook" <?php checked(!$wptm_connect || $wptm_connect['facebook']);?>/> Facebook</label>
+			  <label><input name="netease163" type="checkbox" value="netease163" <?php checked($wptm_connect['netease163']);?>/> 网易通行证</label>
 			  <br /><span style="color:green;">假如要排序，请到<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>设置，设置后请在这个页面点击“保存更改”按钮，仅对选择默认风格(本地化) 有效。</span>
             </td>
           </tr>
@@ -648,22 +655,11 @@ function wp_connect_do_page() {
     </div>
     <div id="help">
 	  <div id="wptm-tips">
-	  <p><strong>WordPress连接微博 V2.4.1 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
+	  <p><strong>WordPress连接微博 V2.4.5 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
 	  <?php wp_connect_tips();?>
 	  </div>
 	  <div id="wptm-tips">
 	  <p><strong>最新产品 —— Denglu评论：</strong> [<a href="#comment" class="comment">评论设置</a>]（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）</p>
-	  <p>V2.4</p>
-	  <p>新增：保存评论者头像到本地，会创建一个新的数据库表(wp_comments_avatar)来保存（评论设置开启），可以在后台评论页面、pinterest主题或者最新评论显示头像。</p>
-	  <p>新增：在WordPress后台增加灯鹭管理平台，方便您的管理操作。</p>
-	  <p>优化：对评论数据本地化进行优化，减少服务器压力。</p>
-	  <p>优化：对大部分代码进行重写，效率更高。</p>
-	  <p>V2.3.5</p>
-	  <p>新增：灯鹭评论内容保存一份在WordPress本地评论数据库，新增更新时间控制，最少1分钟。（评论设置）</p>
-	  <p>新增：从新浪微博抓取回来的评论同步到本地时，评论者可以使用新浪微博头像。点击头像链接还能进入TA的微博主页。</p>
-	  <p>修改：继承WordPress已有的评论开关，即当某篇文章关闭评论时，也不使用社会化评论功能，但是会显示以前的网站评论。</p>
-	  <p>修正：网站原有评论导入到灯鹭评论框时会出现的bug。</p>
-	  <p>V2.3</p>
       <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
 	  <p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u></p>
 	  <p>3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。</p>

@@ -477,8 +477,7 @@ function wp_connect_clear_cookie($name) {
 function wp_connect_get_cookie($name) {
 	//return json_decode(stripslashes($_COOKIE[$name]), true);
 	return $_SESSION[$name];
-}
-
+} 
 // 开放平台KEY v1.9.12
 function get_appkey() {
 	global $wptm_connect;
@@ -559,6 +558,20 @@ function get_useremail($uid) { // 通过用户ID，获得用户邮箱
 	$user = get_user_by_uid($uid, 'user_email');
 	return $user['user_email'];
 }
+// 根据链接或者用户ID
+if (!function_exists('get_uid_by_url')) {
+	function get_uid_by_url($url) {
+		if (is_user_logged_in()) {
+			if ($url == admin_url('profile.php')) { // 我的个人资料
+				$wpuid = get_current_user_id();
+			} elseif (current_user_can('manage_options')) { // 用户
+				$parse_str = parse_url_detail($url);
+				$wpuid = $parse_str['user_id'];
+			} 
+		} 
+		return $wpuid;
+	}
+}
 // 支持中文用户名
 if (default_values('chinese_username', 1, $wptm_connect)) {
 	function sanitize_user_chinese_username($username, $raw_username, $strict) {
@@ -611,6 +624,13 @@ function wp_multi_media_url($content, $post_ID = '') {
 	} 
 	if ($p || $v)
 		return array($p, $v);
+}
+// 得到图片url
+if (!function_exists('get_image_url')) {
+	function get_image_url($content) {
+		preg_match_all('/<img[^>]+src=[\'"](http[^\'"]+)[\'"].*>/isU', $content, $image);
+		return $image[1][0];
+	} 
 }
 // 同步QQ空间 检测
 function verify_qzone() {

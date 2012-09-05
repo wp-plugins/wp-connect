@@ -486,7 +486,7 @@ function at_username($a, $b, $c, $d) {
 } 
 // 同步评论 v2.0
 function wp_connect_comment($id) {
-	global $post, $wptm_options, $wptm_connect, $wptm_advanced;
+	global $post, $wptm_options, $wptm_connect;
 	$post_id = (isset($_POST['comment_post_ID'])) ? $_POST['comment_post_ID'] : $post -> ID;
 	if (!$post_id) {
 		return;

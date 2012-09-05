@@ -682,7 +682,7 @@ function denglu_bindInfo($user) {
 			echo "<a href=\"{$url}&bind={$key}\" title=\"$vaule[1]\" class=\"btn_{$key}\"></a>\r\n";
 		} 
 	} 
-	echo "</span><p>( 说明：绑定后，您可以使用用户名或者用合作网站帐号登录本站。)</p></td></tr>";
+	echo "</span><p>( 说明：绑定后，您可以使用用户名或者用合作网站帐号登录本站，再次点击可以解绑。)</p></td></tr>";
 } 
 // 删除用户绑定
 if (!use_denglu_bind()) {
@@ -720,7 +720,11 @@ if (!function_exists('dengluComments') && install_comments()) {
 	        $wptm_comment = get_option('wptm_comment');
 			$wptm_connect = get_option('wptm_connect');
 			$user = wp_get_current_user();
-			if ($user) $userinfo = base64_encode($user->display_name.','.$user->user_email);
+			if ($user->ID) {
+				$head = get_image_url(get_avatar($user->ID, 50));
+				if (strpos($head, "gravatar.com/avatar") !== false) $head = "";
+				$userinfo = base64_encode($user->display_name.','.$user->user_email.','.$head);
+			} 
 			if (is_object($post)) {
 				$media_url = wp_multi_media_url($post -> post_content, $post -> ID);
 			} 
