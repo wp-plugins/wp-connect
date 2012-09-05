@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.5
+Version: 2.4.6
 */
 
-define('WP_CONNECT_VERSION', '2.4.5');
+define('WP_CONNECT_VERSION', '2.4.6');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -139,7 +139,7 @@ add_action('admin_notices', 'wp_connect_warning');
 function wp_connect_tips() { 
 	global $plugin_url;
 	?>
-	<p>修改：新浪微博插件接口升级到2.0，可以使用插件本身的接口同步了。如果你自定义了新浪微博APP KEY，请修改回调地址为 <code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
+	<p>修改：新浪微博插件接口升级到2.0，可以使用插件本身的接口同步了。如果你自定义了新浪微博APP KEY，请到新浪微博开放平台修改回调地址为 <code><?php echo $plugin_url.'/dl_receiver.php';?></code></p>
 	<p>新增：用网站帐号登录时，评论框支持使用网站本地头像。</p>
 	<p>优化：重写大部分代码。</p>
 <?php

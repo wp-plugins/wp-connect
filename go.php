@@ -25,7 +25,12 @@ if (is_user_logged_in()) {
 		$o = new OAuthV2(SINA_APP_KEY, SINA_APP_SECRET);
 		$keys['code'] = $_GET['code'];
 		$keys['access_token_url'] = 'https://api.weibo.com/oauth2/access_token';
-		$keys['redirect_uri'] = "http://smyx.sinaapp.com/receiver.php";
+		if (!empty($_SESSION['source_receiver'])) {
+			$keys['redirect_uri'] = plugins_url('wp-connect/dl_receiver.php');
+			$_SESSION['source_receiver'] = "";
+		} else {
+			$keys['redirect_uri'] = "http://smyx.sinaapp.com/receiver.php";
+		} 
 		$token = $o -> getAccessToken($keys);
 		if ($token['access_token']) {
 			$oauth_token = array('access_token' => $token['access_token'], 'expires_in' => BJTIMESTAMP + $token['expires_in']);
