@@ -42,7 +42,7 @@ if ($bind = strtolower($bind)) {
 				if (WEIBO_APP_KEY == $sina_app_key_default) { // 默认key
 					$aurl = "http://smyx.sinaapp.com/connect.php?client_id=" . WEIBO_APP_KEY . "&redirect_to=" . urlencode($backurl);
 				} else { // 自定义key
-					$_SESSION['login_receiver'] = 'wp-connect/login.php';
+					$_SESSION['source_receiver'] = 'wp-connect/login.php';
 					$aurl = "https://api.weibo.com/oauth2/authorize?client_id=" . WEIBO_APP_KEY . "&redirect_uri=" . urlencode(plugins_url('wp-connect/dl_receiver.php')) . "&response_type=code&with_offical_account=1";
 				} 
 				header('Location:' . $aurl);
