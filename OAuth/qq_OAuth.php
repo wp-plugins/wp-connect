@@ -39,7 +39,7 @@ class qqClient
 		$params = array();
 		$params['format'] = 'json';
 		$params['name'] = $name;
-		return $this->oauth->get( 'http://open.t.qq.com/api/user/other_info' ,  $params );
+		return $this->oauth->get( 'http://open.t.qq.com/api/user/other_info',  $params );
 	}
     // 其他用户发表时间线
 	function user_timeline( $page = 0, $count = 20, $name )
@@ -59,7 +59,7 @@ class qqClient
 		$params['format'] = 'json';
 		$params['name'] = $name;
 		$params['reqnum'] = $count;
-		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist' , $params );
+		return $this->oauth->get( 'http://open.t.qq.com/api/friends/user_fanslist', $params );
 	}
 	// 发表微博(文本、图片、视频、音乐)
 	function update($text, $value = '') {
@@ -67,7 +67,7 @@ class qqClient
 		$params['format'] = 'json';
 		$params['content'] = $text;
 		$params['clientip'] = $this -> get_ip();
-		if (is_array($value)) {
+		if (is_array($value) && $value[1]) {
 			// 兼容旧版本
 			if ($value[0] == 'image') {
 				$value = array($value[1], '', '');
@@ -95,7 +95,7 @@ class qqClient
 				return $this -> oauth -> post('http://open.t.qq.com/api/t/add_multi', $params);
 			} 
 		} 
-		return $this -> oauth -> post('http://open.t.qq.com/api/t/add' , $params);
+		return $this -> oauth -> post('http://open.t.qq.com/api/t/add', $params);
 	}
     // 对一条微博信息进行评论
     function comment( $sid , $text ) 
@@ -105,20 +105,30 @@ class qqClient
 		$params['content'] = $text;
 		$params['reid'] = $sid;
 		$params['clientip'] = $this -> get_ip();
-		return $this -> oauth -> post('http://open.t.qq.com/api/t/comment' , $params);
+		return $this -> oauth -> post('http://open.t.qq.com/api/t/comment', $params);
+    }
+    // 转播一条微博
+    function repost( $sid , $text ) 
+    { 
+		$params = array();
+		$params['format'] = 'json';
+		$params['content'] = $text;
+		$params['reid'] = $sid;
+		$params['clientip'] = $this -> get_ip();
+		return $this -> oauth -> post('http://open.t.qq.com/api/t/re_add', $params);
     }
     // 根据微博ID返回某条微博的评论列表
-    function get_comments( $rootid, $flag = 2, $page = 0, $count = 20, $twitterid = 0, $pagetime = 0) 
+    function get_comments( $rootid, $page = 0, $count = 20, $flag = 1, $twitterid = 0, $pagetime = 0 ) 
     { 
         $params = array();
-        $params['rootid'] = $rootid; // 转发或回复的微博根结点id（源微博id）
+		$params['format'] = 'json';
 		$params['flag'] = $flag; // 0－转播列表 1－点评列表 2－点评与转播列表
+        $params['rootid'] = $rootid; // 转发或回复的微博根结点id（源微博id）
 		$params['pageflag'] = $page;
 		$params['pagetime'] = $pagetime;
-		$params['twitterid'] = $twitterid;
 		$params['reqnum'] = $count;
-		$params['clientip'] = $this -> get_ip();
-        return $this->oauth->post('http://open.t.qq.com/api/t/re_list', $params);
+		$params['twitterid'] = $twitterid;
+        return $this->oauth->get('http://open.t.qq.com/api/t/re_list', $params);
     }
     // 获取视频信息
 	function getvideoinfo( $url )
@@ -144,17 +154,16 @@ class qqClient
         return $this->oauth->get( 'http://open.t.qq.com/api/t/list', $params );
     } 
 	// 其他用户发表时间线索引
-    function user_timeline_ids( $page = 0, $count = 20, $name )
+    function user_timeline_ids( $name, $page = 0, $count = 20, $type = 3 )
     {
 		$params = array();
 		$params['format'] = 'json';
 		$params['name'] = $name;
 		$params['reqnum'] = $count;
 		$params['pageflag'] = $page;
-		$params['type'] = 3;
+		$params['type'] = $type;
         return $this->oauth->get( 'http://open.t.qq.com/api/statuses/user_timeline_ids', $params );
     } 
-
 }
 
 /** 
