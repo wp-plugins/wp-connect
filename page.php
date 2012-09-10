@@ -1,9 +1,9 @@
 <?php
 // 支持同步的平台名称
 function wp_sync_list() {
-	$weibo = array("twitter" => "Twitter",
+	$weibo = array("sina" => "新浪微博",
 		"qq" => "腾讯微博",
-		"sina" => "新浪微博",
+		//"shuoshuo" => "QQ空间说说",
 		"netease" => "网易微博",
 		"sohu" => "搜狐微博",
 		"renren" => "人人网",
@@ -11,12 +11,13 @@ function wp_sync_list() {
 		"digu" => "嘀咕",
 		"douban" => "豆瓣",
 		"tianya" => "天涯微博",
+		"wbto" => "微博通",
 		"fanfou" => "饭否",
 		"renjian" => "人间网",
 		"zuosa" => "做啥",
-		"wbto" => "微博通");
+		"twitter" => "Twitter");
 	return $weibo;
-}
+} 
 // 自定义页面同步操作
 function wp_update_page() {
 	$account = wp_option_account();
@@ -28,7 +29,7 @@ function wp_update_page() {
 	if (function_exists('wp_connect_advanced')) {
 		include_once(WP_PLUGIN_DIR . '/wp-connect-advanced/page.php');
 	} else {
-		if (isset($urls)) {
+		if (!empty($urls) && strpos($urls, 'http') === 0) {
 			$url = array('image', $urls);
 		}
 	} 
