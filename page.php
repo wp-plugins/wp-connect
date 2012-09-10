@@ -1,9 +1,8 @@
 <?php
 // 支持同步的平台名称
 function wp_sync_list() {
-	$weibo = array("twitter" => "Twitter",
+	$weibo = array("sina" => "新浪微博",
 		"qq" => "腾讯微博",
-		"sina" => "新浪微博",
 		"netease" => "网易微博",
 		"sohu" => "搜狐微博",
 		"renren" => "人人网",
@@ -11,12 +10,13 @@ function wp_sync_list() {
 		"digu" => "嘀咕",
 		"douban" => "豆瓣",
 		"tianya" => "天涯微博",
+		"wbto" => "微博通",
 		"fanfou" => "饭否",
 		"renjian" => "人间网",
 		"zuosa" => "做啥",
-		"wbto" => "微博通");
+		"twitter" => "Twitter");
 	return $weibo;
-}
+} 
 // 自定义页面同步操作
 function wp_update_page() {
 	$account = wp_option_account();
@@ -28,35 +28,69 @@ function wp_update_page() {
 	if (function_exists('wp_connect_advanced')) {
 		include_once(WP_PLUGIN_DIR . '/wp-connect-advanced/page.php');
 	} else {
-		if (isset($urls)) {
+		if (!empty($urls) && strpos($urls, 'http') === 0) {
 			$url = array('image', $urls);
-		}
+		} 
 	} 
 	require_once(dirname(__FILE__) . '/OAuth/OAuth.php');
+	if (isset($_POST['sina']) && $account['sina']) {
+		if ($account['sina']['mediaUserID']) {
+			wp_update_share($account['sina']['mediaUserID'], $status, '', '', $url[1]);
+		} else {
+			$sina = wp_update_t_sina($account['sina'], $status, $url);
+			if ($_POST['subject'] == 2 && $sina['original_pic']) {
+				$url = array('image', $sina['original_pic']);
+			} 
+		} 
+	} 
+	$mediaUserID = '';
 	if (isset($_POST['qq']) && $account['qq']) {
-		wp_update_t_qq($account['qq'], $text, $url);
+		if ($account['qq']['mediaUserID']) {
+			$mediaUserID .= $account['qq']['mediaUserID'] . ',';
+		} else {
+			wp_update_t_qq($account['qq'], $text, $url);
+		} 
 	} 
 	if (isset($_POST['netease']) && $account['netease']) {
-		wp_update_t_163($account['netease'], $status, $url);
+		if ($account['netease']['mediaUserID']) {
+			$mediaUserID .= $account['netease']['mediaUserID'] . ',';
+		} else {
+			wp_update_t_163($account['netease'], $status, $url);
+		} 
 	} 
 	if (isset($_POST['sohu']) && $account['sohu']) {
-		wp_update_t_sohu($account['sohu'], $status, $url);
-	}
-	if (isset($_POST['sina']) && $account['sina']) {
-		$sina = wp_update_t_sina($account['sina'], $status, $url);
-		if ($_POST['subject'] == 2 && $sina['original_pic']) {
-			$url = array('image', $sina['original_pic']);
+		if ($account['sohu']['mediaUserID']) {
+			$mediaUserID .= $account['sohu']['mediaUserID'] . ',';
+		} else {
+			wp_update_t_sohu($account['sohu'], $status, $url);
 		} 
-	}
+	} 
+	if (isset($_POST['tianya']) && $account['tianya']) {
+		if ($account['tianya']['mediaUserID']) {
+			$mediaUserID .= $account['tianya']['mediaUserID'] . ',';
+		} else {
+			wp_update_tianya($account['tianya'], $status, $url);
+		} 
+	} 
+	if (isset($_POST['renren']) && $account['renren']) {
+		if ($account['renren']['mediaUserID']) {
+			$mediaUserID .= $account['renren']['mediaUserID'] . ',';
+		} else {
+			wp_update_renren($account['renren'], $status);
+		} 
+	} 
+	if ($mediaUserID) {
+		wp_update_share(rtrim($mediaUserID, ','), $status, '', '', $url[1]);
+	} 
 	if (isset($_POST['douban']) && $account['douban']) {
 		wp_update_douban($account['douban'], $status);
+	} 
+	if (isset($_POST['wbto']) && $account['wbto']) {
+		wp_update_wbto($account['wbto'], $status, $url);
 	} 
 	if (isset($_POST['digu']) && $account['digu']) {
 		wp_update_digu($account['digu'], $status);
 	} 
-	if (isset($_POST['tianya']) && $account['tianya']) {
-		wp_update_tianya($account['tianya'], $status, $url);
-	}
 	if (isset($_POST['fanfou']) && $account['fanfou']) {
 		wp_update_fanfou($account['fanfou'], $status);
 	} 
@@ -66,19 +100,13 @@ function wp_update_page() {
 	if (isset($_POST['zuosa']) && $account['zuosa']) {
 		wp_update_zuosa($account['zuosa'], $status);
 	} 
-	if (isset($_POST['wbto']) && $account['wbto']) {
-		wp_update_wbto($account['wbto'], $status, $url);
-	}
-	if (isset($_POST['renren']) && $account['renren']) {
-		wp_update_renren($account['renren'], $status);
-	} 
 	if (isset($_POST['kaixin001']) && $account['kaixin001']) {
 		wp_update_kaixin001($account['kaixin001'], $status, $url);
-	}
+	} 
 	if (isset($_POST['twitter']) && $account['twitter']) {
 		wp_update_twitter($account['twitter'], $status);
-	}
-}
+	} 
+} 
 
 function wp_connect_script_page () {
 	wp_deregister_script('jquery');
