@@ -9,6 +9,8 @@ if ($wptm_connect['enable_connect']) {
 		add_action('comment_form', 'wp_connect');
 	add_action("login_form", "wp_connect");
 	add_action("register_form", "wp_connect", 12);
+	add_action("login_form_register", "connect_login_form_login");
+	add_action("login_form_login", "connect_login_form_login");
 	add_action("login_form_logout", "connect_login_form_logout");
 	if (function_exists('wp_connect_comments')) {
 		add_action('comment_post', 'wp_connect_comments', 100);
@@ -561,15 +563,11 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 } 
 
 if (!function_exists('connect_login_form_login')) {
-/*
-	add_action("login_form_register", "connect_login_form_login");
-	add_action("login_form_login", "connect_login_form_login");
 	function connect_login_form_login() {
 		if (is_user_logged_in()) {
 			wp_safe_redirect(admin_url());
 		} 
 	} 
-*/
 	function connect_login_form_logout() {
 		$_SESSION['wp_url_bind'] = '';
 		setcookie("kx_connect_session_key", "", BJTIMESTAMP - 3600);
