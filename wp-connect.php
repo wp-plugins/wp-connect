@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.6
+Version: 2.4.7
 */
 
-define('WP_CONNECT_VERSION', '2.4.6');
+define('WP_CONNECT_VERSION', '2.4.7');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -37,7 +37,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.4.1', '<')) { // 删除搜狐微博Consumer Key
 		$keybug = 1;
 	}
-	if (version_compare($wptm_version, '2.4.5', '<'))
+	if (version_compare($wptm_version, '2.4.6', '<'))
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
@@ -113,7 +113,7 @@ function wp_connect_warning() {
 		if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
 			echo '<div class="updated">';
 			if ($wptm_tips) {
-				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4.5 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4.6 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
 				wp_connect_tips();
 			}
 			if (version_compare($wp_version, '3.0', '<')) {
@@ -655,7 +655,7 @@ function wp_connect_do_page() {
     </div>
     <div id="help">
 	  <div id="wptm-tips">
-	  <p><strong>WordPress连接微博 V2.4.5 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
+	  <p><strong>WordPress连接微博 V2.4.6 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
 	  <?php wp_connect_tips();?>
 	  </div>
 	  <div id="wptm-tips">

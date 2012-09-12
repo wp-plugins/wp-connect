@@ -67,15 +67,21 @@ class qqClient
 		$params['format'] = 'json';
 		$params['content'] = $text;
 		$params['clientip'] = $this -> get_ip();
-		if (is_array($value) && $value[1]) {
+		if ($value && is_array($value)) {
 			// 兼容旧版本
-			if ($value[0] == 'image') {
-				$value = array($value[1], '', '');
-			} elseif ($value[0] == 'video') {
-				$value = array('', $value[1], '');
-			} elseif ($value[0] == 'music') {
-				$value = array('', '', $value[1]);
-			} 
+			if (in_array($value[0], array('image', 'video', 'music'))) {
+				if ($value[1]) {
+					if ($value[0] == 'image') {
+						$value = array($value[1], '', '');
+					} elseif ($value[0] == 'video') {
+						$value = array('', $value[1], '');
+					} elseif ($value[0] == 'music') {
+						$value = array('', '', $value[1]);
+					}
+				} else {
+					return $this -> oauth -> post('http://open.t.qq.com/api/t/add', $params);
+				} 
+			}
 			if ($value[0] && !$value[1]) { // 图片
 				//$params['pic'] = $value[0];
 				//return $this -> oauth -> post('http://open.t.qq.com/api/t/add_pic', $params, true);
