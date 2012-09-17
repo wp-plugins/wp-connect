@@ -18,7 +18,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.7";
+$wp_connect_advanced_version = "1.7.1";
 
 if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '1.9.20', '<')) { // 删除搜狐微博Consumer Key
