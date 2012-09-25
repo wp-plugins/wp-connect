@@ -75,8 +75,8 @@ function login_button_count() {
 
 function sync_account($uid) {
 	$user = get_userdata($uid);
-	return array($user -> last_login, $user -> login_sina, $user -> login_qq, $user -> login_netease, $user -> login_sohu, $user -> login_douban);
-} 
+	return array($user -> last_login, ($user -> stid) ? $user -> login_sina : '', ($user -> tqqid) ? $user -> login_qq : '', ($user -> neteaseid) ? $user -> login_netease : '', ($user -> sohuid) ? $user -> login_sohu : '', ($user -> dtid) ? $user -> login_douban : '');
+}
 
 function wp_connect_button() {
 	global $login_loaded, $plugin_url;
