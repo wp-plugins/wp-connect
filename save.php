@@ -4,7 +4,7 @@ do_action('connect_init');
 
 if ($_GET['do'] == "profile") {
 	if (is_user_logged_in()) {
-		if ($_POST['add_twitter'] || $_POST['add_qq'] || $_POST['add_sina'] || $_POST['add_sohu'] || $_POST['add_netease'] || $_POST['add_douban'] || $_POST['add_tianya'] || $_POST['add_renren'] || $_POST['add_kaixin']) {
+		if ($_POST['add_qq'] || $_POST['add_sina'] || $_POST['add_renren'] || $_POST['add_shuoshuo'] || $_POST['add_sohu'] || $_POST['add_netease'] || $_POST['add_douban'] || $_POST['add_tianya'] || $_POST['add_kaixin'] || $_POST['add_twitter']) {
 			wp_connect_header();
 		} else {
 			$user_id = get_current_user_id();
