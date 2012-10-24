@@ -368,7 +368,10 @@ function open_denglu_cc($token, $muid) {
 		$content = array();
 		$content['sitename'] = get_bloginfo('name');
 		$content['siteurl'] = get_bloginfo('wpurl') . '/';
-		if ($version == 3) {
+		if ($version == 5) { // 全新安装
+			$keys = array(array('mediaID' => 3, 'apikey' => '1624795996', 'appsecret' => '7ecad0335a50c49a88939149e74ccf81'), array('mediaID' => 4, 'apikey' => 'd05d3c9c3d3748b09f231ef6d991d3ac', 'appsecret' => 'e049e5a4c656a76206e55c91b96805e8'));
+			$content['keys'] = $keys;
+		} elseif ($version == 3) { // 旧版升级
 			$content['keys'] = open_appkey();
 		} 
 		$content = json_encode($content); 
