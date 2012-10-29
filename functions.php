@@ -626,8 +626,8 @@ function wp_multi_media_url($content, $post_ID = '') {
 		return array($p, $v);
 }
 // 得到图片url
-if (!function_exists('get_image_url')) {
-	function get_image_url($content) {
+if (!function_exists('get_content_pic')) {
+	function get_content_pic($content) {
 		preg_match_all('/<img[^>]+src=[\'"](http[^\'"]+)[\'"].*>/isU', $content, $image);
 		return $image[1][0];
 	} 

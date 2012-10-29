@@ -6,7 +6,7 @@ $wptm_comment = get_option('wptm_comment');
 $wptm_connect = get_option('wptm_connect');
 $user = wp_get_current_user();
 if ($user->ID) {
-	$head = get_image_url(get_avatar($user->ID, 50));
+	$head = get_content_pic(get_avatar($user->ID, 50));
 	if (strpos($head, "gravatar.com/avatar") !== false) $head = "";
 	$userinfo = base64_encode($user->display_name.','.$user->user_email.','.$head);
 }
