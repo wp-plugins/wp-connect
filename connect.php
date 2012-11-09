@@ -27,7 +27,7 @@ function get_weibo($tid) {
 		'ntid' => array('netease', 'netease', '网易微博', 'http://t.163.com/', 't.163.com'),
 		'rtid' => array('renren', 'renren', '人人网', 'http://www.renren.com/profile.do?id=', 'renren.com'),
 		'ktid' => array('kaixin', 'kaixin', '开心网', 'http://www.kaixin001.com/home/?uid=', 'kaixin001.com'),
-		'dtid' => array('douban', 'dt', '豆瓣', 'http://www.douban.com/people/', 'douban.com', 'http://t.douban.com/icon/u[head]-1.jpg'),
+		'dtid' => array('douban', 'dt', '豆瓣', 'http://www.douban.com/people/', 'douban.com', 'http://img3.douban.com/icon/u[head]-1.jpg'),
 		'ytid' => array('yahoo', 'yahoo', '雅虎', '', ''),
 		'qqtid' => array('qq', 'qq', '腾讯QQ', '', 'qzone.qq.com'),
 		'tbtid' => array('taobao', 'taobao', '淘宝网', '', ''),
