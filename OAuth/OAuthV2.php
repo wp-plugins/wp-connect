@@ -223,7 +223,7 @@ class OAuthV2 {
 				$body = self :: build_http_query($parameters);
 			} else {
 				$body = self :: build_http_query_multi($parameters);
-				$headers[] = "Content-Type: multipart/form-data; boundary=" . self :: $boundary;
+				$headers['Content-Type'] = "multipart/form-data; boundary=" . self :: $boundary;
 			}
 			return $this->http($url, $method, $body, $headers);
 	}
