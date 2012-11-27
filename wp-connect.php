@@ -644,7 +644,7 @@ function wp_connect_do_page() {
       </form>
     </div>
     <div id="check">
-	<p><iframe width="100%" height="650" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
+	<p><iframe width="100%" height="680" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
     </div>
     <div id="help">
 	  <div id="wptm-tips">
