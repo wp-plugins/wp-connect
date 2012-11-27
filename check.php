@@ -1,5 +1,6 @@
 <?php
 include "../../../wp-config.php";
+date_default_timezone_set("PRC");
 $getinfo = 'V'.get_option('wptm_version').','.get_bloginfo('name').','.get_bloginfo('wpurl').'/';
 define('ROOT_PATH', dirname(dirname(__FILE__)));
 $funs_list = array('close_curl', 'close_fopen', 'close_http', 'file_get_contents', 'openssl_open', 'zend_loader_enabled', 'fsockopen','hash_hmac', 'gzinflate');
@@ -201,8 +202,8 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </head>
 <body>
 <h3>环境检查</h3>
-<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time() + 8 *60 *60);?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">详细</a></p>
-<table id="t1">
+<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">详细</a></p>
+<table>
   <thead>
     <tr>
       <th>项目</th>
@@ -217,7 +218,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
   </tbody>
 </table>
 <h3>函数依赖性检查</h3>
-<table id="t2">
+<table>
   <thead>
     <tr>
       <th>函数名称</th>
@@ -231,17 +232,13 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </table>
 <?php echo ($getinfo) ? '<p>'.$getinfo.'</p>' : '';?>
 <script type="text/javascript">
-var a = document.getElementById("t1").getElementsByTagName("tr");
-   for(i=0;i<a.length;i++)
-   {
-      a[i].className=(i%2>0)?"":"odd";
-   }
-
-var b = document.getElementById("t2").getElementsByTagName("tr");
-   for(i=0;i<b.length;i++)
-   {
-      b[i].className=(i%2>0)?"":"odd";
-   }
+var table = document.getElementsByTagName("table");
+for (j = 0; j < table.length; j++) {
+    var tr = table[j].getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        tr[i].className = (i % 2 > 0) ? "" : "odd";
+    }
+}
 </script>
 </body>
 </html>
