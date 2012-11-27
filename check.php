@@ -1,8 +1,9 @@
 <?php
-include "../../../wp-config.php"; 
+include "../../../wp-config.php";
+date_default_timezone_set("PRC");
 $getinfo = 'V'.get_option('wptm_version').','.get_bloginfo('name').','.get_bloginfo('wpurl').'/';
 define('ROOT_PATH', dirname(dirname(__FILE__)));
-$funs_list = array('close_curl', 'close_fopen', 'close_http', 'file_get_contents', 'fsockopen', 'openssl_open', 'zend_loader_enabled', 'gzinflate');
+$funs_list = array('close_curl', 'close_fopen', 'close_http', 'file_get_contents', 'openssl_open', 'zend_loader_enabled', 'fsockopen','hash_hmac', 'gzinflate');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
 	'php' => array('p' => 'PHP版本', 'c' => 'PHP_VERSION', 'r' => '4.3', 'b' => '5.2'),
@@ -145,9 +146,26 @@ function function_support(&$func_items) {
 			} 
 			$func_str .= " <span style=\"color:green\">上面的 CURL 或者 fopen 必须支持一个！</span>";
 			$func_str .= "</td>\n";
+		} else if (preg_match("/openssl/", $item)) {
+			$func_str .= "<td>$item()";
+			if (!$status) {
+				$func_str .= " <span style=\"color:blue\">请在php.ini中打开扩展extension=php_openssl.dll</span>";
+			} 
+			$func_str .= "</td>\n";
 		} else if ($item == "zend_loader_enabled") {
 			$version = function_exists('zend_loader_version') ? zend_loader_version() : '';
 			$func_str .= "<td>Zend Optimizer ". $version;
+			if (!$status) {
+				$func_str .= " <span style=\"color:green\">不支持Zend，意味着不能使用 “捐赠版”。 php5.2.x请安装Zend Optimizer , php5.3.x请安装Zend Guard Loader</span>";
+			} else {
+				$func_str .= ( version_compare($version, '3.3', '<') ) ? " <span style=\"color:red\">版本太低，php5.2.x请升级到3.3.0或以上版本，否则不能使用 “捐赠版”</span>" : '';
+			}
+			$func_str .= "</td>\n";
+		} else if ($item == "gzinflate") {
+			$func_str .= "<td>$item()";
+			if (!$status) {
+				$func_str .= " <span style=\"color:green\">不支持该函数，意味着不能使用 “IM机器人”。</span>";
+			} 
 			$func_str .= "</td>\n";
 		} else {
 			$func_str .= "<td>$item()</td>\n";
@@ -184,8 +202,8 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </head>
 <body>
 <h3>环境检查</h3>
-<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time() + 8 * 3600);?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://www.denglu.cc/source/wordpress_faqs.html#phptime" target="_blank">详细</a></p>
-<table id="t1">
+<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">详细</a></p>
+<table>
   <thead>
     <tr>
       <th>项目</th>
@@ -200,7 +218,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
   </tbody>
 </table>
 <h3>函数依赖性检查</h3>
-<table id="t2">
+<table>
   <thead>
     <tr>
       <th>函数名称</th>
@@ -214,17 +232,13 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </table>
 <?php echo ($getinfo) ? '<p>'.$getinfo.'</p>' : '';?>
 <script type="text/javascript">
-var a = document.getElementById("t1").getElementsByTagName("tr");
-   for(i=0;i<a.length;i++)
-   {
-      a[i].className=(i%2>0)?"":"odd";
-   }
-
-var b = document.getElementById("t2").getElementsByTagName("tr");
-   for(i=0;i<b.length;i++)
-   {
-      b[i].className=(i%2>0)?"":"odd";
-   }
+var table = document.getElementsByTagName("table");
+for (j = 0; j < table.length; j++) {
+    var tr = table[j].getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        tr[i].className = (i % 2 > 0) ? "" : "odd";
+    }
+}
 </script>
 </body>
 </html>
