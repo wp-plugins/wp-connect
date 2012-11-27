@@ -4,7 +4,7 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 2.4.7
+Stable tag: 2.4.8
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
@@ -94,6 +94,12 @@ Stable tag: 2.4.7
 6. 文章页面 - 登录按钮
 
 == Changelog ==
+
+= 2.4.8 =
+
+修正：豆瓣网站升级导致的头像显示错误
+
+修正：部分bug
 
 = 2.4.7 =
 

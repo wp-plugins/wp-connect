@@ -209,7 +209,7 @@ if (!function_exists('class_http')) {
 		$http = new $class;
 		$response = $http -> request($url, $params);
 		if (!is_array($response)) {
-			if (@ini_get('allow_url_fopen') && function_exists('file_get_contents')) {
+			if ($params['method'] == 'GET' && @ini_get('allow_url_fopen') && function_exists('file_get_contents')) {
 				return file_get_contents($url . '?' . $params['body']);
 			} 
 			$errors = $response -> errors;
@@ -626,8 +626,8 @@ function wp_multi_media_url($content, $post_ID = '') {
 		return array($p, $v);
 }
 // 得到图片url
-if (!function_exists('get_content_pic')) {
-	function get_content_pic($content) {
+if (!function_exists('get_image_by_content')) {
+	function get_image_by_content($content) {
 		preg_match_all('/<img[^>]+src=[\'"](http[^\'"]+)[\'"].*>/isU', $content, $image);
 		return $image[1][0];
 	} 

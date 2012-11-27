@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.7
+Version: 2.4.8
 */
 
-define('WP_CONNECT_VERSION', '2.4.7');
+define('WP_CONNECT_VERSION', '2.4.8');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -20,7 +20,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.7.1";
+$wp_connect_advanced_version = "1.7.2";
 
 //update_option('wptm_basic', '');
 
@@ -165,16 +165,23 @@ function wp_connect_do_page() {
 		$blog_options = get_option('wptm_blog_options');
 		$wptm_share = get_option('wptm_share');
 		$wptm_advanced = get_option('wptm_advanced');
-		if (WP_CONNECT_ADVANCED != "true") {
+		if (function_exists('connect_has_donated')) { // 1.7.2
+			if (!connect_has_donated($wptm_advanced)) {
+				$keyerror = 1;
+			}
+		} elseif (WP_CONNECT_ADVANCED != "true") {
+			$keyerror = 1;
+		} 
+		if ($keyerror) {
 			$error = '<div id="wptm-tips"><p>请先在高级设置项填写正确授权码！</p></div>';
-			if (donate_version('1.5', '>')) {
-				$update_tips = '<div id="wptm-tips"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
+			if (donate_version('1.7.1', '>')) {
+				echo '<div id="wptm-tips"><p><strong>更新提示：2012年11月27日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://api.smyx.net/key/wp-connect.php" target="_blank">点击这里</a>。</strong></p></div>';
 			}
 		} else {
 			if (donate_version('1.5.2')) {
 				$donate_152 = '<div id="wptm-tips"><p>该捐赠版本不能使用该功能！</p></div>';
 			}
-		}
+		} 
 	} else {
 		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
@@ -388,7 +395,7 @@ function wp_connect_do_page() {
           </tr>
 		  <tr>
 			<td width="25%" valign="top">小工具</td>
-			<td><label><input type="checkbox" name="widget" value="1" <?php if($wptm_connect['widget']) echo "checked "; ?>/> 开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
+			<td><label><input type="checkbox" name="widget" value="1" <?php if(!$wptm_connect || $wptm_connect['widget']) echo "checked "; ?>/> 开启边栏登录按钮 (开启后到<a href="widgets.php">小工具</a>拖拽激活)</label></td>
 		  </tr>
 		  <tr>
 			<td width="25%" valign="top">禁止头像</td>
@@ -506,6 +513,7 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('blog-options');?>
         <h3>同步博客</h3>
 		<?php echo $error.$donate_152;?>
+		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://loginsns.com/wiki/blog" target="_blank">详细说明</a> ]</p>
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
@@ -646,12 +654,11 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
-        <?php echo $update_tips; ?>
 		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
     </div>
     <div id="check">
-	<p><iframe width="100%" height="650" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
+	<p><iframe width="100%" height="680" frameborder="0" scrolling="no" src="<?php echo $plugin_url.'/check.php'?>"></iframe></p>
     </div>
     <div id="help">
 	  <div id="wptm-tips">

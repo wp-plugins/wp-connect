@@ -461,29 +461,38 @@ $$wpdontpeep = $_POST['fields'];
 /**
  * 评论函数
  */
-//  微博帐号(过滤重复) v1.9.12
+//  微博帐号(过滤重复) v1.9.12 (V1.9.23)
 function at_username($a, $b, $c, $d) {
 	$a = ($a) ? '@' . $a . ' ':''; //评论
 	$b = ($b) ? '@' . $b . ' ':''; //回复
 	$c = ($c) ? '@' . $c . ' ':''; //管理员
-	if ($b != $c) {
-		if ($a == $c) { // b!=(a=c)
-			$at = $b . $c;
-		} elseif ($a == $b) { // a=(b!=c)
+	if ($a != $b) {
+		if ($b != $c) { // a!=b, b!=c
 			$at = $a . $c;
-		} else { // a!=b!=c
-			$at = $a . $b . $c;
+		} elseif ($a == $c) { // a!=b, a=c
+			$at = $c;
+		} else { // a!=b, b=c
+			$at = $a;
 		} 
 	} else {
-		if ($a == $c) { // a=b=c
+		if ($b == $c) { // a=b=c
+			$at = '';
+		} else { // a=b, b!=c
 			$at = $c;
-		} else { // a!=(b=c)
-			$at = $a . $c;
 		} 
 	} 
-	$d = $at . str_replace(array($a, $b, $c), '', $at . $d);
-	return $d;
+	return $at . str_replace(array($a, $b, $c), '', $d);
 } 
+// 评论检查 v1.9.23
+function wp_connect_check_comment($commentdata) {
+	if (!is_user_logged_in()) {
+		if (in_array(strstr($commentdata['comment_author_email'], '@'), array('@t.sina.com.cn', '@weibo.com', '@t.qq.com', '@renren.com', '@kaixin001.com', '@douban.com', '@t.sohu.com', '@t.163.com', '@baidu.com', '@tianya.cn', '@twitter.com', '@qzone.qq.com'))) {
+			wp_die(__('<strong>ERROR</strong>: please enter a valid email address.'));
+		} 
+	} 
+	return $commentdata;
+} 
+add_action('preprocess_comment', 'wp_connect_check_comment', 1);
 // 同步评论 v2.0
 function wp_connect_comment($id) {
 	global $post, $wptm_options, $wptm_connect;
