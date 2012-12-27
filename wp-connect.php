@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.8
+Version: 2.4.9
 */
 
-define('WP_CONNECT_VERSION', '2.4.8');
+define('WP_CONNECT_VERSION', '2.4.9');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -20,7 +20,7 @@ $wptm_advanced = get_option('wptm_advanced');
 $wptm_share = get_option('wptm_share');
 $wptm_version = get_option('wptm_version');
 $wptm_key = get_option('wptm_key');
-$wp_connect_advanced_version = "1.7.2";
+$wp_connect_advanced_version = "1.7.3";
 
 //update_option('wptm_basic', '');
 
@@ -30,8 +30,6 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 			global $wpdb;
 			return $wpdb -> query("DELETE FROM $wpdb->usermeta WHERE meta_key = ''");
 		} 
-		$wptm_basic['denglu'] = '';
-		update_option('wptm_basic', $wptm_basic);
 		delete_2_0_bug(); // wp 3.3
 	} 
 	if (version_compare($wptm_version, '2.4.1', '<')) { // 删除搜狐微博Consumer Key
@@ -159,6 +157,7 @@ function wp_connect_do_page() {
 	$wptm_basic = get_option('wptm_basic');
 	$wptm_denglu = get_option('wptm_denglu');
 	$version = this_version();
+	// $version = 2;
 	if (function_exists('wp_connect_advanced')) {
 		wp_connect_advanced();
 		$wptm_blog = get_option('wptm_blog');
@@ -214,7 +213,6 @@ function wp_connect_do_page() {
     <div id="basic">
       <h3>设置向导</h3>
 	  <?php
-	  // $version = 5;
 	  if ($version == 1) {
 		  echo '<p>您已经成功安装了插件。';
 		  if (!$wptm_basic['appid'] || !$wptm_basic['appkey']) {
@@ -223,9 +221,6 @@ function wp_connect_do_page() {
 			  echo '查看<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>';
 		  }
 		  echo '</p>';
-	  } elseif ($version == 2) {
-		  echo '<p>您需要升级用户数据才能兼容 WordPress连接微博 新版插件，请先点击下面的“数据升级”按钮。</p>';
-		  echo '<p><form method="post" action="options-general.php?page=wp-connect#basic"><span class="submit"><input type="submit" name="wptm_data" value="用户数据升级" /> (可能需要一些时间，请耐心等待！)</span></form></p>';
 	  } elseif ($version == 3 || $version == 5) {
 		  echo ($version == 3) ? '<p>您需要升级才能继续使用，' : '<p>这是您第一次使用，';?>
 	  	  请先用以下社交帐号登录，完成与 <a href="http://open.denglu.cc/codes/getCodes.jsp?siteType=3" target="_blank">灯鹭控制台</a> 的连接。您也可以在下面的“站点设置”填写您在灯鹭控制台获取的APP ID和APP Key</p>
@@ -252,7 +247,7 @@ function wp_connect_do_page() {
 		    </tr>
         </table>
         <p class="submit">
-		  <input type="hidden" name="denglu" value="<?php echo ($version == 5) ? 1 : $wptm_basic['denglu'];?>" />
+		  <input type="hidden" name="denglu" value="1" />
           <input type="submit" name="basic_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
       </form>

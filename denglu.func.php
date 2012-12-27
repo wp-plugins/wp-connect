@@ -135,14 +135,10 @@ function this_version() {
 	$wptm_basic = get_option('wptm_basic');
 	$wptm_options = get_option('wptm_options');
 	$wptm_connect = get_option('wptm_connect');
-	if ($wptm_basic['denglu'] == 1) {
+	if ($wptm_basic) {
 		$version = 1; //已经安装了最新版
-	} elseif ($wptm_basic || $wptm_options || $wptm_connect) {
-		if ($wptm_basic['appid'] && $wptm_basic['appkey']) {
-			$version = 2;  //wordpress连接微博旧版,需要点击 数据升级
-		} else {
-			$version = 3;  //wordpress连接微博旧版,需要点击 升级插件
-		}
+	} elseif ($wptm_options || $wptm_connect) {
+		$version = 3;  //wordpress连接微博旧版,需要点击 升级插件
 	} elseif ($wpdb->get_var("show tables like 'ecms_denglu_bind_info'") == 'ecms_denglu_bind_info') {
 	    $version = 4; //denglu.cc旧版
 	} else {
@@ -202,9 +198,6 @@ function wp_connect_update_denglu() {
 			update_option("wptm_basic", array('denglu'=>1));
 		} 
 		return update_denglu_old();
-	} 
-	if (isset($_POST['wptm_data'])) { // 旧的wordpress连接微博插件，数据转换
-		return connect_denglu_update();
 	} 
 	if (isset($_POST['importComment'])) { // 评论导入到灯鹭
 		if (function_exists('denglu_importComment')) {
@@ -402,96 +395,6 @@ function update_denglu_old() {
 		update_usermeta($user -> uid, $mid, $user -> mediaUserID);
 	} 
 } 
-// 旧的wordpress连接微博插件用户数据,只检查新浪微博、腾讯微博、QQ空间、人人网
-function connect_olduser() {
-	global $wpdb;
-	$v = array();
-	$users = $wpdb -> get_results("SELECT user_id FROM $wpdb->usermeta WHERE (meta_key = 'stid' OR meta_key = 'tqqid' OR meta_key = 'qqid' OR meta_key = 'renrenid')", ARRAY_A);
-	if ($users) {
-		foreach ($users as $user) {
-			$v[] = $user['user_id'];
-		} 
-		return array_unique($v);
-	} 
-} 
-// 旧的wordpress连接微博插件数据，只转换社交帐号（sina,tencent,renren,qzone）
-function connect_denglu_update_data() {
-	global $wpdb;
-	@ini_set("max_execution_time", 300);
-	if ($userids = connect_olduser()) {
-		foreach ($userids as $uid) {
-			$user = get_userdata($uid);
-			$ret = array_filter(
-				array('3' => ($user -> stid) ? array('mediaID' => '3', 'mediaUID' => $user -> stid, 'profileImageUrl' => 'http://tp2.sinaimg.cn/' . $user -> stid . '/50/0/1', 'oauth_token' => ifac($user -> login_sina[0], $user -> tdata['tid'] == 'stid', $user -> tdata['oauth_token']), 'oauth_token_secret' => ifac($user -> login_sina[1], $user -> tdata['tid'] == 'stid', $user -> tdata['oauth_token_secret'])) : '',
-					'4' => ($user -> qtid) ? array('mediaID' => '4', 'mediaUID' => ifab($user -> tqqid , $user -> user_login), 'profileImageUrl' => $user -> qtid, 'oauth_token' => ifac($user -> login_qq[0], $user -> tdata['tid'] == 'qtid', $user -> tdata['oauth_token']), 'oauth_token_secret' => ifac($user -> login_qq[1], $user -> tdata['tid'] == 'qtid', $user -> tdata['oauth_token_secret'])) : '',
-					'7' => ($user -> rtid) ? array('mediaID' => '7', 'mediaUID' => ifab($user -> renrenid , $user -> user_login), 'profileImageUrl' => $user -> rtid):'',
-					'13' => ($user -> qqid) ? array('mediaID' => '13', 'mediaUID' => $user -> qqid, 'profileImageUrl' => $user -> qqtid, 'oauth_token' => $user -> qqid):''
-					));
-			$result[$uid] = array_values($ret);
-			// 更新数据库
-			$ids = array('4' => 'tqq', '7' => 'renren');
-			foreach ($ids as $mediaID => $name) {
-				if ($ret[$mediaID]) {
-					update_usermeta($uid, $name . 'id', $ret[$mediaID]['mediaUID']); // 用于SNS URL
-				} 
-			} 
-			// $ids2 = array('3' => 'sina', '4' => 'qq'); // sina,tqq
-			// foreach ($ids2 as $mediaID => $name) {
-			// if ($ret[$mediaID]) {
-			// update_usermeta($uid, 'login_' . $name, array($ret[$mediaID]['oauth_token'], $ret[$mediaID]['oauth_token_secret']));
-			// delete_usermeta($uid, 'tdata');
-			// }
-			// }
-		} 
-		if (is_array($result)) {
-			$content = array_filter($result);
-		} 
-		return $content;
-	} 
-} 
-// 旧的wordpress连接微博插件，数据转换
-function connect_denglu_update() {
-	global $wptm_basic;
-	@ini_set("max_execution_time", 300);
-	$userdata = ($_SESSION['connect_denglu_update_data']) ? $_SESSION['connect_denglu_update_data'] : connect_denglu_update_data();
-	// return var_dump($userdata);
-	if ($userdata) {
-		$content = php_array_slice($userdata, 0, 30, true);
-		$_SESSION['connect_denglu_update_data'] = php_array_slice($userdata, 31, null, true);
-		// return var_dump($content);
-		$content = json_encode($content);
-		class_exists('Denglu') or require(dirname(__FILE__) . "/class/Denglu.php");
-		$api = new Denglu($wptm_basic['appid'], $wptm_basic['appkey'], 'utf-8');
-		try {
-			$output = $api -> importUser($content);
-		} 
-		catch(DengluException $e) { // 获取异常后的处理办法(请自定义)
-			wp_die($e -> geterrorDescription()); //返回错误信息
-		} 
-		// return var_dump($output);
-		// $output = array('1' => array('1' => '13768191' , '3' => '13768192'), '3' => array('15' => '13768193' , '12' => '13768194'), '5' => array('3' => '13768195' , '6' => '13768196'), '7' => array('15' => '13768193' , '12' => '13768198'));
-		// $out = array('1' => array('1' => '13768191','3' => '13768193'), '3' => array('13' => '13768194'),'7' => array('17' => '13768198'));
-		if (is_array($output) && $output) {
-			$mid = array('3' => 'smid', '4' => 'qmid', '7' => 'rmid', '13' => 'qqmid');
-			foreach ($output as $userid => $mediaUser) {
-				foreach ($mediaUser as $mediaID => $mediaUserID) {
-					update_usermeta($userid, $mid[$mediaID], $mediaUserID);
-					// $results[] = array($userid, $mid[$mediaID], $mediaUserID);
-				} 
-			} 
-			// return var_dump($results);
-			if ($_SESSION['connect_denglu_update_data']) {
-				connect_denglu_update();
-			} else {
-				$wptm_basic['denglu'] = 1;
-		        update_option("wptm_basic", $wptm_basic);
-			}
-		} 
-	} else {
-		$wptm_basic['denglu'] = 1;
-		update_option("wptm_basic", $wptm_basic);
-	}
-} 
 
 /**
  * 登录整合 v2.0
@@ -517,7 +420,7 @@ function denglu_userInfo() {
 // 登录初始化 V2.4
 function connect_denglu() {
 	if ($_GET['dl_type'] == 'create') { // 对接open.denglu.cc
-		if ( current_user_can('manage_options') ) {
+		if (current_user_can('manage_options')) {
 			return open_denglu_cc($_GET['token'], $_GET['mediaUserID']);
 		} else {
 			return wp_die('对不起，您的用户权限不够，请用管理员帐号登录操作！');
@@ -553,7 +456,7 @@ function connect_denglu() {
 				return wp_connect_clear_cookie("wp_connect_cookie_bind");
 			} 
 		} 
-		$user = denglu_userInfo();
+		$user = denglu_userInfo(); 
 		// return var_dump($user);
 		if ($username = $user['mediaUserID']) {
 			$homepage = $user['homepage'];
@@ -563,6 +466,12 @@ function connect_denglu() {
 			$mid = str_replace('tid', 'mid', $tid);
 			if ($homepage) {
 				$id = $weibo[1] . 'id';
+				if ($id == 'dtid') { // douban
+					if (strpos($user['profileImageUrl'], 'user_normal.jpg') === false) {
+						$path = explode('/', $user['profileImageUrl']);
+						$douban_uid = (int) substr($path[4], 1);
+					} 
+				} 
 				$userid = str_replace($weibo[3], '', $homepage);
 			} elseif ($tid == 'qqtid') {
 				$id = $weibo[1] . 'id';
@@ -591,7 +500,15 @@ function connect_denglu() {
 				} 
 				if ($id == $mid) { // google,yahoo,baidu,netease163,360,alipay
 					$uid = get_user_by_meta_value($id, $userid);
-				} else { // sina,tqq,sohu,netease,renren,kaixin,douban,tianya,twitter,qq
+				} elseif ($id == 'dtid') { // douban
+					if ($douban_uid && $douban_uid != $userid) {
+						$uid = ifab(get_user_by_meta_value($id, $douban_uid), get_user_by_meta_value($id, $userid));
+						$userid = $douban_uid; // old bug
+						$email = $userid . '@' . $domain;
+					} else {
+						$uid = get_user_by_meta_value($id, $userid);
+					} 
+				} else { // sina,tqq,sohu,netease,renren,kaixin,tianya,twitter,qq
 					$uid = ifab(get_user_by_meta_value($id, $userid), email_exists($email));
 				} 
 			} 
