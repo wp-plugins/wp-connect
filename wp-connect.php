@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.9
+Version: 2.4.10
 */
 
-define('WP_CONNECT_VERSION', '2.4.9');
+define('WP_CONNECT_VERSION', '2.4.10');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -35,7 +35,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.4.1', '<')) { // 删除搜狐微博Consumer Key
 		$keybug = 1;
 	}
-	if (version_compare($wptm_version, '2.4.6', '<'))
+	if (version_compare($wptm_version, '2.4.10', '<'))
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
@@ -111,7 +111,7 @@ function wp_connect_warning() {
 		if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
 			echo '<div class="updated">';
 			if ($wptm_tips) {
-				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4.6 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4.10 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
 				wp_connect_tips();
 			}
 			if (version_compare($wp_version, '3.0', '<')) {
@@ -137,9 +137,8 @@ add_action('admin_notices', 'wp_connect_warning');
 function wp_connect_tips() { 
 	global $plugin_url;
 	?>
-	<p>修改：新浪微博插件接口升级到2.0，可以使用插件本身的接口同步了。如果你自定义了新浪微博APP KEY，请到新浪微博开放平台修改回调地址为 <code><?php echo $plugin_url.'/dl_receiver.php';?></code>，如果你是网站接入应用，不必填写回调地址。</p>
-	<p>新增：用网站帐号登录时，评论框支持使用网站本地头像。</p>
-	<p>优化：重写大部分代码。</p>
+	<p>Wordpress连接微博 V3.0 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。 <a href="http://smyx.net/wp-connect" target="_blank">详细说明</a></p>
+	<p>修正部分bug。</p>
 <?php
 } 
 
@@ -182,7 +181,7 @@ function wp_connect_do_page() {
 			}
 		} 
 	} else {
-		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
+		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -399,7 +398,7 @@ function wp_connect_do_page() {
 		  <?php if (is_donate()) { ?>
 		  <tr>
 			<td width="25%" valign="top">绑定登录帐号</td>
-			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/> 在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/> 在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://www.smyx.net/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
 		  </tr>
 		  <?php } ?>
           <tr>
@@ -508,7 +507,7 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('blog-options');?>
         <h3>同步博客</h3>
 		<?php echo $error.$donate_152;?>
-		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://loginsns.com/wiki/blog" target="_blank">详细说明</a> ]</p>
+		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://www.smyx.net/wiki/blog" target="_blank">详细说明</a> ]</p>
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
@@ -567,7 +566,7 @@ function wp_connect_do_page() {
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">添加按钮</td>
-            <td><label><input name="enable_share" type="radio" value="4" <?php checked($wptm_share['enable_share'] == 4); ?>> 不使用</label> <label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
+            <td><label><input name="enable_share" type="radio" value="4" <?php checked($wptm_share['enable_share'] == 4); ?>> 不使用</label> <label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://www.smyx.net/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
@@ -580,7 +579,7 @@ function wp_connect_do_page() {
           </tr>
 		  <tr>
 			<td width="25%" valign="top">Google Analytics</td>
-			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
+			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://www.smyx.net/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
 		  <?php if(!$donate_152) { ?>
 		  <tr>
@@ -649,7 +648,7 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
-		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
     </div>
     <div id="check">
@@ -657,7 +656,7 @@ function wp_connect_do_page() {
     </div>
     <div id="help">
 	  <div id="wptm-tips">
-	  <p><strong>WordPress连接微博 V2.4.6 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
+	  <p><strong>WordPress连接微博 V2.4.10 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
 	  <?php wp_connect_tips();?>
 	  </div>
 	  <div id="wptm-tips">
@@ -682,7 +681,7 @@ function wp_connect_plugin_row_meta( $links, $file ) {
 	if( $file == plugin_basename( __FILE__ ) ) {
 		$links[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>';
 		$links[] = '<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>';
-        $links[] = '<a href="http://loginsns.com/wiki/" target="_blank">V1帮助</a>';
+        $links[] = '<a href="http://www.smyx.net/wiki/" target="_blank">V1帮助</a>';
         $links[] = '<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">V2帮助</a>';
 	}
 	return $links;
