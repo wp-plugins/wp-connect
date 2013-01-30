@@ -202,7 +202,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </head>
 <body>
 <h3>环境检查</h3>
-<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">详细</a></p>
+<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://www.smyx.net/wiki/wordpress/faqs#phptime" target="_blank">详细</a></p>
 <table>
   <thead>
     <tr>
