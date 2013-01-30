@@ -122,7 +122,7 @@ function hidebox(element){document.getElementById(element).style.display = 'none
 ?>
 </p>
 <!-- 使用合作网站登录 来自 WordPress连接微博 插件 -->
-<p class="author">程序提供: <a href="http://loginsns.com/wiki/" target="_blank">连接微博</a></p></div>
+<p class="author">程序提供: <a href="http://www.smyx.net/wiki/" target="_blank">连接微博</a></p></div>
 </span></td></tr></table>
 </div>
 <div class="login_label">您可以用合作网站帐号登录:</div>
@@ -547,7 +547,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 		if ($oauth_token && $oauth_token_secret) { // 授权信息
 			update_usermeta($wpuid, 'login_' . $t, array($oauth_token, $oauth_token_secret));
 			if (!$uid && $wptm_connect['sync']) // 用户首次登录的时候也绑定同步帐号
-				update_usermeta($wpuid, ($t == 'twitter') ? 'wptm_twitter_oauth' : 'wptm_' . $t, array('oauth_token' => $oauth_token, 'oauth_token_secret' => $oauth_token_secret));
+				update_usermeta($wpuid, 'wptm_' . $t, array('oauth_token' => $oauth_token, 'oauth_token_secret' => $oauth_token_secret));
 			if (in_array($t, array('qq', 'sina', 'netease', 'sohu', 'twitter'))) { // @微博帐号
 				$nickname = get_user_meta($wpuid, 'login_name', true);
 				$nickname[$t] = ($t == 'qq' || $t == 'twitter') ? $user_uid : $user_screenname;
