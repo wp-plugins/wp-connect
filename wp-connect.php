@@ -137,7 +137,7 @@ add_action('admin_notices', 'wp_connect_warning');
 function wp_connect_tips() { 
 	global $plugin_url;
 	?>
-	<p>Wordpress连接微博 V3.0 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。 <a href="http://smyx.net/wp-connect" target="_blank">详细说明</a></p>
+	<p>Wordpress连接微博 V3.0 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本等众多精华，更加成熟和稳定。 <a href="http://smyx.net/wp-connect" target="_blank">详细说明</a></p>
 	<p>修正部分bug。</p>
 <?php
 } 
