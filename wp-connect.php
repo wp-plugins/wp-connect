@@ -161,7 +161,7 @@ function wp_connect_do_page() {
 		if (WP_CONNECT_ADVANCED != "true") {
 			$error = '<div id="wptm-tips"><p>请先在高级设置项填写正确授权码！</p></div>';
 			if (donate_version('1.5', '>')) {
-				$update_tips = '<div id="wptm-tips"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://loginsns.com/key.php" target="_blank">点击这里</a>。</p></div>';
+				$update_tips = '<div id="wptm-tips"><p>更新提示：2011年10月8日更新了捐赠版授权码的算法，在这之前获得的授权码需要更新，请<a href="http://www.smyx.net/key.php" target="_blank">点击这里</a>。</p></div>';
 			}
 		} else {
 			if (donate_version('1.5.2')) {
@@ -169,7 +169,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
+		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -390,7 +390,7 @@ function wp_connect_do_page() {
 		  <?php if (is_donate()) { ?>
 		  <tr>
 			<td width="25%" valign="top">绑定登录帐号</td>
-			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/> 在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
+			<td><label><input type="checkbox" name="denglu_bind" value="1" <?php if($wptm_connect['denglu_bind']) echo "checked "; ?>/> 在<a href="<?php echo admin_url('profile.php');?>">个人资料</a>页面使用灯鹭的绑定登录帐号功能</label> ( 开启后，无法使用 高级设置版本的“<a href="http://www.smyx.net/wiki/wordpress/comment" target="_blank">高级评论功能</a>” )</td>
 		  </tr>
 		  <?php } ?>
           <tr>
@@ -557,7 +557,7 @@ function wp_connect_do_page() {
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">添加按钮</td>
-            <td><label><input name="enable_share" type="radio" value="4" <?php checked($wptm_share['enable_share'] == 4); ?>> 不使用</label> <label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
+            <td><label><input name="enable_share" type="radio" value="4" <?php checked($wptm_share['enable_share'] == 4); ?>> 不使用</label> <label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://www.smyx.net/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
@@ -570,7 +570,7 @@ function wp_connect_do_page() {
           </tr>
 		  <tr>
 			<td width="25%" valign="top">Google Analytics</td>
-			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
+			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://www.smyx.net/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
 		  <?php if(!$donate_152) { ?>
 		  <tr>
@@ -640,7 +640,7 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php echo $update_tips; ?>
-		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
     </div>
     <div id="check">
@@ -684,7 +684,7 @@ function wp_connect_plugin_row_meta( $links, $file ) {
 	if( $file == plugin_basename( __FILE__ ) ) {
 		$links[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>';
 		$links[] = '<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>';
-        $links[] = '<a href="http://loginsns.com/wiki/" target="_blank">V1帮助</a>';
+        $links[] = '<a href="http://www.smyx.net/wiki/" target="_blank">V1帮助</a>';
         $links[] = '<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">V2帮助</a>';
 	}
 	return $links;

@@ -347,7 +347,7 @@ V1系列版本，修正10多个bug和细节。
 *2011/07/18
 后台增加和完善了部分描述，更容易理解和入手！
 添加mb_strlen和mb_substr函数的支持，没有安装mbstring扩展也能使用本插件了。
-解决了：腾讯微博授权时显示“出错了 没有oauth_token或oauth_token不合法，请返回重试！”，豆瓣登录时返回“很抱歉，豆瓣出错了。”，QQ登录时返回“Notice: Undefined index: oauth_token in ...”，具体请看 http://loginsns.com/#faqs_20
+解决了：腾讯微博授权时显示“出错了 没有oauth_token或oauth_token不合法，请返回重试！”，豆瓣登录时返回“很抱歉，豆瓣出错了。”，QQ登录时返回“Notice: Undefined index: oauth_token in ...”，具体请看 http://www.smyx.net/#faqs_20
 
 注意：捐赠版请升级到v1.3.6
 
