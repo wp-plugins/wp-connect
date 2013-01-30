@@ -60,7 +60,7 @@ $user_pass = $_POST['password'];
 </form>
 <p id="nav">
 <a href="javascript:;" onClick="show(this)"><?php echo ($_POST['bind'])?"没有帐号？注册帐号":"已有帐号？绑定我的帐号";?></a> |
-<a href="http://loginsns.com/" target="_blank" title="程序：WordPress连接微博">连接微博</a>
+<a href="http://www.smyx.net/" target="_blank" title="程序：WordPress连接微博">连接微博</a>
 </p>
 </div>
 <script type="text/JavaScript">

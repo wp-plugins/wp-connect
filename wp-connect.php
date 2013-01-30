@@ -159,7 +159,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<div id="wptm-tips"><p>该功能属于<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</p></div>';
+		$error = '<div id="wptm-tips"><p>该功能属于<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -178,7 +178,7 @@ function wp_connect_do_page() {
       <li><a href="#share" class="share">分享设置</a></li>
       <li><a href="#advanced" class="advanced">高级设置</a></li>
       <li><a href="#check" class="check">环境检查</a></li>
-      <li><a href="http://loginsns.com/wiki/wordpress/function" target="_blank">帮助文档</a></li>
+      <li><a href="http://www.smyx.net/wiki/wordpress/function" target="_blank">帮助文档</a></li>
     </ul>
     <div id="sync">
       <form method="post" action="options-general.php?page=wp-connect">
@@ -208,7 +208,7 @@ function wp_connect_do_page() {
             <td><label><input name="multiple_authors" type="checkbox" value="1" <?php if($wptm_options['multiple_authors']) echo "checked "; ?>> 让每个作者发布的文章同步到他们各自绑定的微博上，可以通知他们在 <a href="<?php echo admin_url('profile.php');?>">我的资料</a> 里面设置。</label></td>
           </tr>
           <tr>
-            <td width="25%" valign="top">禁止同步的文章分类ID (<a href="http://loginsns.com/wiki/wordpress/faqs#cat-ids" target="_blank">数字ID</a>)</td>
+            <td width="25%" valign="top">禁止同步的文章分类ID (<a href="http://www.smyx.net/wiki/wordpress/faqs#cat-ids" target="_blank">数字ID</a>)</td>
             <td><input name="cat_ids" type="text" value="<?php echo $wptm_options['cat_ids']; ?>" /> 用英文逗号(,)分开 (设置后该ID分类下的文章将不会同到微博)</td>
           </tr>
           <tr>
@@ -218,7 +218,7 @@ function wp_connect_do_page() {
           <tr>
             <td width="25%" valign="top">自定义页面(一键发布到微博)</td>
             <td>自定义密码: <input name="page_password" type="password" value="<?php echo $wptm_options['page_password']; ?>" autocomplete="off" />
-               [ <a href="http://loginsns.com/wiki/wordpress/faqs#page" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
+               [ <a href="http://www.smyx.net/wiki/wordpress/faqs#page" target="_blank">如何使用？</a> ] <label><input name="disable_ajax" type="checkbox" value="1" <?php if($wptm_options['disable_ajax']) echo "checked "; ?>>禁用AJAX无刷新提交</label></td>
           </tr>
           <tr>
             <td width="25%" valign="top">自定义短网址</td>
@@ -234,7 +234,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">服务器时间校正</td>
-            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！[ <a href="http://loginsns.com/wiki/wordpress/faqs#phptime" target="_blank">查看详细</a> ] <br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>快了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >慢了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
+            <td>假如在使用 腾讯微博 时出现 “没有oauth_token或oauth_token不合法，请返回重试！” 才需要填写。请点击上面的“环境检查”，里面有一个当前服务器时间，跟你电脑(北京时间)比对一下，看相差几分钟！[ <a href="http://www.smyx.net/wiki/wordpress/faqs#phptime" target="_blank">查看详细</a> ] <br />( 比北京时间 <select name="char"><option value="-1"<?php selected($wptm_options['char'] == "-1");?>>快了</option><option value="1"<?php selected($wptm_options['char'] == "1");?> >慢了</option></select> <input name="minutes" type="text" size="2" value="<?php echo $wptm_options['minutes'];?>" onkeyup="value=value.replace(/[^\d]/g,'')" /> 分钟 )</td>
           </tr>
         </table>
         <p class="submit">
@@ -257,7 +257,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">显示设置</td>
-            <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> ) [ <a href="http://loginsns.com/wiki/wordpress/faqs#connect-manual" target="_blank">详细说明</a> ]</td>
+            <td><label><input name="manual" type="radio" value="2" <?php checked(!$wptm_connect['manual'] || $wptm_connect['manual'] == 2); ?>>评论框处(默认)</label> <label><input name="manual" type="radio" value="1" <?php checked($wptm_connect['manual'] == 1);?>>调用函数</label> ( <code>&lt;?php wp_connect();?&gt;</code> ) [ <a href="http://www.smyx.net/wiki/wordpress/faqs#connect-manual" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">添加按钮</td>
@@ -316,15 +316,15 @@ function wp_connect_do_page() {
         </p>
       </form>
 	  <h3>其他登录插件</h3>
-	  <p style="color:green">假如你以前使用过其他类似的登录插件（<a href="http://loginsns.com/wiki/wordpress/plugins" target="_blank">查看列表</a>），可以点击以下按钮进行数据转换，以便旧用户能使用本插件正常登录。</p>
+	  <p style="color:green">假如你以前使用过其他类似的登录插件（<a href="http://www.smyx.net/wiki/wordpress/plugins" target="_blank">查看列表</a>），可以点击以下按钮进行数据转换，以便旧用户能使用本插件正常登录。</p>
       <form method="post" action="options-general.php?page=wp-connect#connect">
 	    <?php wp_nonce_field('other-plugins');?>
 		<span class="submit"><input type="submit" name="other_plugins" value="其他登录插件数据转换" /> (可能需要一些时间，请耐心等待！)</span>
 	  </form>
       <div id="wptm-tips">
 		<p><strong>高级评论</strong></p>
-		<p><strong>该功能属于<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</strong></p>
-		<p>捐赠用户还可以这样玩转评论：[ <a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">查看详细</a> ]</p>
+		<p><strong>该功能属于<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">高级设置</a>的一部分(捐赠版)。</strong></p>
+		<p>捐赠用户还可以这样玩转评论：[ <a href="http://www.smyx.net/wiki/wordpress/comment" target="_blank">查看详细</a> ]</p>
         <p>假设A是管理员，B和C是新浪微博用户，D是腾讯微博用户。</p>
         <p>①新浪微博用户 B 在网站上评论并勾选了同步到微博，假设同步后的微博消息为 F ，那么管理员A和同是新浪微博用户的C回复时，可以不必勾选同步(系统将自动判断)，会直接在你的网站和B的微博消息 F 下评论。<br />②假如腾讯微博用户 D 回复了A在网站上的评论，那么他会借用 <span style="color:green;">高级设置 填写的 默认用户ID 对应的WP帐号下绑定的新浪微博帐号</span>通知B，B的微博消息 F 下会显示如下评论：“腾讯微博网友(D)在网站上的评论: 评论内容”。<br />注意：①中提到的功能只支持腾讯微博和新浪微博，其他微博以 @帐号 的形式同步回复。</p>
         <p><strong>所有非捐赠用户仅支持 @微博帐号 的形式同步评论。</strong></p>
@@ -336,18 +336,18 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('openkey-options');?>
 		<h3>开放平台</h3>
         请在下面填写开放平台的key，填写后，同步时可以显示来源，即显示微博的“来自XXX”，在使用合作网站登录时能显示您的网站信息，<span style="color: red;">加***号的为使用时必填！</span>
-		<p><strong>QQ登录</strong> ( APP ID: <input name="qq1" type="text" value='<?php echo $wptm_key[13][0];?>' /> APP Key: <input name="qq2" type="text" value='<?php echo $wptm_key[13][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/qq" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>新浪微博</strong> ( App Key: <input name="sina1" type="text" value='<?php echo $sina['app_key'];?>' /> App Secret: <input name="sina2" type="text" value='<?php echo $sina['secret'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>腾讯微博</strong> ( App Key: <input name="tqq1" type="text" value='<?php echo $qq['app_key'];?>' /> App Secret: <input name="tqq2" type="text" value='<?php echo $qq['secret'];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>搜狐微博</strong> ( Consumer Key: <input name="sohu1" type="text" value='<?php echo $wptm_key[5][0];?>' /> Consumer secret: <input name="sohu2" type="text" value='<?php echo $wptm_key[5][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>网易微博</strong> ( Consumer Key: <input name="netease1" type="text" value='<?php echo $wptm_key[6][0];?>' /> Consumer secret: <input name="netease2" type="text" value='<?php echo $wptm_key[6][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>QQ登录</strong> ( APP ID: <input name="qq1" type="text" value='<?php echo $wptm_key[13][0];?>' /> APP Key: <input name="qq2" type="text" value='<?php echo $wptm_key[13][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs/qq" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>新浪微博</strong> ( App Key: <input name="sina1" type="text" value='<?php echo $sina['app_key'];?>' /> App Secret: <input name="sina2" type="text" value='<?php echo $sina['secret'];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>腾讯微博</strong> ( App Key: <input name="tqq1" type="text" value='<?php echo $qq['app_key'];?>' /> App Secret: <input name="tqq2" type="text" value='<?php echo $qq['secret'];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>搜狐微博</strong> ( Consumer Key: <input name="sohu1" type="text" value='<?php echo $wptm_key[5][0];?>' /> Consumer secret: <input name="sohu2" type="text" value='<?php echo $wptm_key[5][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>网易微博</strong> ( Consumer Key: <input name="netease1" type="text" value='<?php echo $wptm_key[6][0];?>' /> Consumer secret: <input name="netease2" type="text" value='<?php echo $wptm_key[6][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs#key" target="_blank">如何获取?</a> ] )</p>
 		<p><strong>豆瓣</strong> ( API Key: <input name="douban1" type="text" value='<?php echo $wptm_key[9][0];?>' /> 私钥: <input name="douban2" type="text" value='<?php echo $wptm_key[9][1];?>' /></p>
 		<p><strong>天涯微博</strong> ( App Key: <input name="tianya1" type="text" value='<?php echo $wptm_key[17][0];?>' /> App Secret: <input name="tianya2" type="text" value='<?php echo $wptm_key[17][1];?>' /></p>
-		<p><strong>人人网</strong> ( API Key: <input name="renren1" type="text" value='<?php echo $wptm_key[7][0];?>' /> Secret Key: <input name="renren2" type="text" value='<?php echo $wptm_key[7][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/renren" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>开心网</strong> ( API Key: <input name="kaixin1" type="text" value='<?php echo $wptm_key[8][0];?>' /> Secret Key: <input name="kaixin2" type="text" value='<?php echo $wptm_key[8][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/kaixin001" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>百度</strong> ( API Key: <input name="baidu1" type="text" value='<?php echo $wptm_key[19][0];?>' /> Secret Key: <input name="baidu2" type="text" value='<?php echo $wptm_key[19][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/baidu" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>MSN</strong> ( Client ID: <input name="msn1" type="text" value='<?php echo $wptm_key[2][0];?>' /> Client secret: <input name="msn2" type="text" value='<?php echo $wptm_key[2][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/msn" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>淘宝网</strong> ( App Key: <input name="taobao1" type="text" value='<?php echo $wptm_key[16][0];?>' /> App Secret: <input name="taobao2" type="text" value='<?php echo $wptm_key[16][1];?>' /> [ <a href="http://loginsns.com/wiki/wordpress/faqs/taobao" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>人人网</strong> ( API Key: <input name="renren1" type="text" value='<?php echo $wptm_key[7][0];?>' /> Secret Key: <input name="renren2" type="text" value='<?php echo $wptm_key[7][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs/renren" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>开心网</strong> ( API Key: <input name="kaixin1" type="text" value='<?php echo $wptm_key[8][0];?>' /> Secret Key: <input name="kaixin2" type="text" value='<?php echo $wptm_key[8][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs/kaixin001" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>百度</strong> ( API Key: <input name="baidu1" type="text" value='<?php echo $wptm_key[19][0];?>' /> Secret Key: <input name="baidu2" type="text" value='<?php echo $wptm_key[19][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs/baidu" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>MSN</strong> ( Client ID: <input name="msn1" type="text" value='<?php echo $wptm_key[2][0];?>' /> Client secret: <input name="msn2" type="text" value='<?php echo $wptm_key[2][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs/msn" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>淘宝网</strong> ( App Key: <input name="taobao1" type="text" value='<?php echo $wptm_key[16][0];?>' /> App Secret: <input name="taobao2" type="text" value='<?php echo $wptm_key[16][1];?>' /> [ <a href="http://www.smyx.net/wiki/wordpress/faqs/taobao" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>Twitter</strong> ( App Key: <input name="twitter1" type="text" value='<?php echo $wptm_key[28][0];?>' /> App Secret: <input name="twitter2" type="text" value='<?php echo $wptm_key[28][1];?>' /></p>
         <div id="wptm-tips"><p>新浪微博、淘宝网回调地址：<code><?php echo $plugin_url.'/dl_receiver.php';?></code></p></div>
         <p class="submit">
@@ -360,7 +360,7 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('blog-options');?>
         <h3>同步博客</h3>
 		<?php echo $error.$donate_152;?>
-		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://loginsns.com/wiki/blog" target="_blank">详细说明</a> ]</p>
+		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://www.smyx.net/wiki/blog" target="_blank">详细说明</a> ]</p>
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
@@ -419,7 +419,7 @@ function wp_connect_do_page() {
         <table class="form-table">
           <tr>
             <td width="25%" valign="top">添加按钮</td>
-            <td><label><input name="enable_share" type="radio" value="4" <?php checked($wptm_share['enable_share'] == 4); ?>> 不使用</label> <label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
+            <td><label><input name="enable_share" type="radio" value="4" <?php checked($wptm_share['enable_share'] == 4); ?>> 不使用</label> <label><input name="enable_share" type="radio" value="3" <?php checked($wptm_share['enable_share'] == 3); ?>> 文章前面</label> <label><input name="enable_share" type="radio" value="1" <?php checked(!$wptm_share['enable_share'] || $wptm_share['enable_share'] == 1); ?>> 文章末尾</label> <label><input name="enable_share" type="radio" value="2" <?php checked($wptm_share['enable_share'] == 2); ?>> 调用函数</label> ( <code>&lt;?php wp_social_share();?&gt;</code> ) [ <a href="http://www.smyx.net/wiki/wordpress/share" target="_blank">详细说明</a> ]</td>
           </tr>
           <tr>
             <td width="25%" valign="top">样式选择</td>
@@ -432,7 +432,7 @@ function wp_connect_do_page() {
           </tr>
 		  <tr>
 			<td width="25%" valign="top">Google Analytics</td>
-			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://loginsns.com/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
+			<td><label><input type="checkbox" name="analytics" value="1" <?php if($wptm_share['analytics']) echo "checked "; ?>/> 使用 Google Analytics 跟踪社会化分享按钮的使用效果</label> [ <a href="http://www.smyx.net/wiki/wordpress/share#ga" target="_blank">查看说明</a> ]<br /><label>配置文件ID: <input type="text" name="id" value="<?php echo $wptm_share['id'];?>" /></label></td>
 		  </tr>
 		  <?php if(!$donate_152) { ?>
 		  <tr>
@@ -480,19 +480,19 @@ function wp_connect_do_page() {
 		 <div id="wptm-tips">
          <p>高级设置只针对捐赠用户，目前增加功能如下：</p>
          <p>1、增加支持使用QQ帐号、开心网帐号、淘宝网帐号、百度帐号、天涯社区帐号、MSN、Google、Yahoo等登录WordPress博客。</p>
-         <p>2、在个人资料页面，支持将WP用户名与13家合作网站帐号绑定，绑定后您可以使用用户名或者使用合作网站帐号登录你的网站。而且绑定后<strong>新浪微博、腾讯微博还能支持使用<a href="http://loginsns.com/wiki/wordpress/comment" target="_blank">高级评论功能</a>。</strong><span style="color: red;">NEW!</span></p>
-         <p><strong>3、同步博客，支持同步到新浪博客、网易博客、QQ空间、人人网、开心网。</strong><span style="color: red;">HOT!</span> [ <a href="http://loginsns.com/wiki/wordpress/function#同步博客" target="_blank">查看</a> ]</p>
+         <p>2、在个人资料页面，支持将WP用户名与13家合作网站帐号绑定，绑定后您可以使用用户名或者使用合作网站帐号登录你的网站。而且绑定后<strong>新浪微博、腾讯微博还能支持使用<a href="http://www.smyx.net/wiki/wordpress/comment" target="_blank">高级评论功能</a>。</strong><span style="color: red;">NEW!</span></p>
+         <p><strong>3、同步博客，支持同步到新浪博客、网易博客、QQ空间、人人网、开心网。</strong><span style="color: red;">HOT!</span> [ <a href="http://www.smyx.net/wiki/wordpress/function#同步博客" target="_blank">查看</a> ]</p>
          <p>4、登录提示文字包括简体中文、繁体中文、英文，根据浏览器的语言判断显示。</p>
          <p>5、去掉登录二次点击。</p>
-         <p>6、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://loginsns.com/wiki/wordpress/wap" target="_blank">查看</a> ]</p>
-         <p><strong>7、支持使用社会化分享按钮功能[52个]</strong>，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<br /><strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong><span style="color: red;">HOT!</span> [ <a href="http://loginsns.com/wiki/wordpress/share" target="_blank">查看</a> ]</p>
+         <p>6、支持使用网页或者手机wap发布WordPress文章和一键发布到微博。<span style="color: red;">NEW!</span> [ <a href="http://www.smyx.net/wiki/wordpress/wap" target="_blank">查看</a> ]</p>
+         <p><strong>7、支持使用社会化分享按钮功能[52个]</strong>，同时在腾讯微博、新浪微博、网易微博、搜狐微博的分享中加入@微博帐号。(微博帐号在“连接设置”中填写)。<br /><strong>在文章页面选中任何一段文本可以点击按钮分享到QQ空间、新浪微博、腾讯微博。</strong><span style="color: red;">HOT!</span> [ <a href="http://www.smyx.net/wiki/wordpress/share" target="_blank">查看</a> ]</p>
          <p>8、支持使用Google+1按钮(在“分享设置”中开启)。</p>
          <p><strong>9、支持让注册用户绑定多个微博和SNS，用户登录后可以在您创建的自定义页面，一键发布信息到他们的微博上。</strong></p>
-         <p>10、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://loginsns.com/wiki/wordpress/show" target="_blank">查看</a> ]</p>
-         <p>11、支持使用<a href="http://loginsns.com/robot.php" target="_blank">IM机器人</a>(包括<a href="http://loginsns.com/wiki/gtalk" target="_blank">gtalk机器人</a>)发布/修改文章(支持同步)，获得最新评论，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</p>
-         <p>12、支持在捐赠者间用gtalk机器人 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://loginsns.com/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</p>
-         <p>13、<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">查看更多功能</a></p>
-		 <p><strong>最低捐赠：<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>(20元人民币起) 或者 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>($10美元起) ，就当做是支持我继续开发插件的费用吧！<a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">查看详细描述</a></strong></p></p>
+         <p>10、整合了新浪微博和腾讯微博的微博秀，侧边栏显示更方便！[ <a href="http://www.smyx.net/wiki/wordpress/show" target="_blank">查看</a> ]</p>
+         <p>11、支持使用<a href="http://www.smyx.net/robot.php" target="_blank">IM机器人</a>(包括<a href="http://www.smyx.net/wiki/gtalk" target="_blank">gtalk机器人</a>)发布/修改文章(支持同步)，获得最新评论，发布/回复评论，修改评论状态(获准、待审、垃圾评论、回收站、删除)，发布自定义信息到多个微博和SNS。</p>
+         <p>12、支持在捐赠者间用gtalk机器人 获得某个站点的最新文章，最新评论，支持发布/回复评论，如果你拥有某个站点特殊权限，还可以发布文章，发布自定义信息到多个微博和SNS等。[ <a href="http://www.smyx.net/wiki/gtalk#gtalk_11" target="_blank">查看</a> ]</p>
+         <p>13、<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">查看更多功能</a></p>
+		 <p><strong>最低捐赠：<a href="https://me.alipay.com/smyx" target="_blank">支付宝</a>(20元人民币起) 或者 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank">PayPal</a>($10美元起) ，就当做是支持我继续开发插件的费用吧！<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">查看详细描述</a></strong></p></p>
 		 <p>或许您用不到捐赠版的功能，您觉得这个插件好用，您也可以考虑捐赠(任意金额)支持我继续开发更多实用的免费插件！谢谢！</p>
       </ul>
 	  </div>
@@ -523,7 +523,7 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php } ?>
-		<div id="wptm-tips"><p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://loginsns.com/wiki/blog" target="_blank">详细说明</a> ]</p><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://loginsns.com/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://www.smyx.net/wiki/blog" target="_blank">详细说明</a> ]</p><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>

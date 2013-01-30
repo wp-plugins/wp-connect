@@ -13,7 +13,7 @@ Stable tag: 1.9.23
 WordPress连接微博
 
 
-帮助文档: http://loginsns.com/wiki/
+帮助文档: http://www.smyx.net/wiki/
 
 
 1. 可以使用QQ空间、腾讯微博、新浪微博、搜狐微博、网易微博、人人网、开心网、豆瓣、淘宝网、支付宝、百度、天涯、MSN、Google、Yahoo、网易通行证等帐号登录WordPress博客，支持同步评论到腾讯微博、新浪微博、搜狐微博、网易微博、豆瓣。
@@ -111,7 +111,7 @@ WordPress连接微博
 
 V1系列版本，修正10多个bug和细节，重写大部分代码。
 
-新增：其他登录插件转换为WordPress连接微博插件数据。（登录设置里面）查看支持的插件列表 http://loginsns.com/wiki/wordpress/plugins
+新增：其他登录插件转换为WordPress连接微博插件数据。（登录设置里面）查看支持的插件列表 http://www.smyx.net/wiki/wordpress/plugins
 
 新增：在个人资料页面，支持将WP用户名与13家合作网站帐号绑定。（根据登录设置的选择显示）（捐赠版）
 
@@ -213,7 +213,7 @@ V1系列版本，修正10多个bug和细节，重写大部分代码。
 *2011/07/18
 后台增加和完善了部分描述，更容易理解和入手！
 添加mb_strlen和mb_substr函数的支持，没有安装mbstring扩展也能使用本插件了。
-解决了：腾讯微博授权时显示“出错了 没有oauth_token或oauth_token不合法，请返回重试！”，豆瓣登录时返回“很抱歉，豆瓣出错了。”，QQ登录时返回“Notice: Undefined index: oauth_token in ...”，具体请看 http://loginsns.com/#faqs_20
+解决了：腾讯微博授权时显示“出错了 没有oauth_token或oauth_token不合法，请返回重试！”，豆瓣登录时返回“很抱歉，豆瓣出错了。”，QQ登录时返回“Notice: Undefined index: oauth_token in ...”，具体请看 http://www.smyx.net/#faqs_20
 
 注意：捐赠版请升级到v1.3.6
 

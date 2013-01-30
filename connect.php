@@ -246,7 +246,7 @@ function wp_connect_login($userinfo, $tmail, $uid = '', $reg = false) {
 			} 
 			update_usermeta($wpuid, 'login_' . $t, $token);
 			if (!$uid && $wptm_connect['sync']) // 用户首次登录的时候也绑定同步帐号
-				update_usermeta($wpuid, ($t == 'twitter') ? 'wptm_twitter_oauth' : 'wptm_' . $t, $oauth_token);
+				update_usermeta($wpuid, 'wptm_' . $t, $oauth_token);
 			if (in_array($tid, array('qtid', 'stid', 'ntid', 'shtid', 'ttid'))) { // @微博帐号
 				$nickname = get_user_meta($wpuid, 'login_name', true);
 				$nickname[$t] = ($t == 'qq' || $t == 'twitter') ? $user_uid : $user_screenname;

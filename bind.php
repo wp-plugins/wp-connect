@@ -45,7 +45,7 @@ if ($wptm_options['multiple_authors'] || (function_exists('wp_connect_advanced')
 		}
 		if (function_exists('wp_connect_advanced') && $wptm_advanced['registered_users']) {
 			echo '<p>绑定帐号后，您可以登录本站，在本站的微博自定义发布页面发布信息到您绑定的帐号上。</p>';
-			echo '<p>您也可以捐助本人开发插件，以获得使用gtalk机器人进行更多便捷的操作。<a href="http://loginsns.com/wiki/wordpress/gtalk" target="_blank">查看详细</a></p>';
+			echo '<p>您也可以捐助本人开发插件，以获得使用gtalk机器人进行更多便捷的操作。<a href="http://www.smyx.net/wiki/wordpress/gtalk" target="_blank">查看详细</a></p>';
 		}
 		echo '<p><strong>请您再三确定您信任本站站长，否则导致微博等账户信息泄漏，插件开发者概不负责！</strong></p>';
 	}
