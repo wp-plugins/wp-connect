@@ -3,7 +3,7 @@
 Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
-Plugin URI: http://wordpress.org/extend/plugins/wp-connect/
+Plugin URI: http://smyx.net/wp-connect
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 Version: 2.4.10
 */

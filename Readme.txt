@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: smyx
-Donate link: http://www.smyx.net/wp-connect.html
+Donate link: http://smyx.net/wp-connect
 Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
 Tested up to: 3.5
@@ -10,7 +10,7 @@ Stable tag: 2.4.10
 
 == Description ==
 
-= Wordpress连接微博 V3.0 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。详细说明: http://smyx.net/wp-connect =
+**Wordpress连接微博 V3.0 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。详细说明: http://smyx.net/wp-connect **
 
 
 = V2.4.10详细描述 =
