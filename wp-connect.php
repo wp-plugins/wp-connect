@@ -507,7 +507,7 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('blog-options');?>
         <h3>同步博客</h3>
 		<?php echo $error.$donate_152;?>
-		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://www.smyx.net/wiki/blog" target="_blank">详细说明</a> ]</p>
+		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://smyx.net/wp-blog" target="_blank">详细说明</a> ]</p>
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
