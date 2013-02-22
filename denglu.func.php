@@ -649,6 +649,7 @@ if (!function_exists('dengluComments') && install_comments()) {
 				$media_url = wp_multi_media_url($post -> post_content, $post -> ID);
 			} 
 ?>
+<div id="comments" style="display:none"><a name="respond"></a></div>
 <script type='text/javascript' charset='utf-8' src='http://open.denglu.cc/connect/commentcode?appid=<?php echo $wptm_basic['appid'];?>&v=1.0.1'></script>
 <script type="text/javascript" charset='utf-8'>
     var param = {};
