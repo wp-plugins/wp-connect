@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://smyx.net/wp-connect
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.11
+Version: 2.5
 */
 
-define('WP_CONNECT_VERSION', '2.4.11');
+define('WP_CONNECT_VERSION', '2.5');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -35,7 +35,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.4.1', '<')) { // 删除搜狐微博Consumer Key
 		$keybug = 1;
 	}
-	if (version_compare($wptm_version, '2.4.11', '<'))
+	if (version_compare($wptm_version, '2.5', '<'))
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
