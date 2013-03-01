@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://smyx.net/wp-connect
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.4.10
+Version: 2.4.11
 */
 
-define('WP_CONNECT_VERSION', '2.4.10');
+define('WP_CONNECT_VERSION', '2.4.11');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -35,7 +35,7 @@ if ($wptm_version && $wptm_version != WP_CONNECT_VERSION) {
 	if (version_compare($wptm_version, '2.4.1', '<')) { // 删除搜狐微博Consumer Key
 		$keybug = 1;
 	}
-	if (version_compare($wptm_version, '2.4.10', '<'))
+	if (version_compare($wptm_version, '2.4.11', '<'))
 		update_option("wptm_tips", 1);
 	update_option('wptm_version', WP_CONNECT_VERSION);
 }
@@ -111,7 +111,7 @@ function wp_connect_warning() {
 		if ($wptm_tips || version_compare($wp_version, '3.0', '<') || (donate_version($wp_connect_advanced_version) && WP_CONNECT_ADVANCED_VERSION != '1.4.3') || (($wptm_options || $wptm_connect) && (!$wptm_version || !$wptm_basic['denglu']) || !$wptm_basic)) {
 			echo '<div class="updated">';
 			if ($wptm_tips) {
-				echo '<p><form method="post" action=""><strong>WordPress连接微博 V2.4.10 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
+				echo '<p><form method="post" action=""><strong>WordPress连接微博 更新说明</strong> <input type="submit" name="closeTips" value="关闭提示" /></form></p>';
 				wp_connect_tips();
 			}
 			if (version_compare($wp_version, '3.0', '<')) {
@@ -137,8 +137,16 @@ add_action('admin_notices', 'wp_connect_warning');
 function wp_connect_tips() { 
 	global $plugin_url;
 	?>
-	<p>Wordpress连接微博 V3.0 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本等众多精华，更加成熟和稳定。 <a href="http://smyx.net/wp-connect" target="_blank">详细说明</a></p>
-	<p>修正部分bug。</p>
+<h2>Wordpress连接微博 专业版 v3.1</h2>
+<p><strong>插件简介：</strong><br />
+·支持使用18个合作网站帐号登录 Wordpress 博客。支持同步文章的 标题和链接 到14大微博和社区。<br />
+·支持同步全文到 QQ空间日志、新浪博客、网易博客、人人网日志、开心网日记、点点网等。<br />
+·支持微博评论回推到网站。支持使用微信搜索Wordpress文章。支持使用社会化分享按钮。<br />
+<strong>全部采用插件提供的接口，不经过任何第三方服务器，更加安全、稳定、高效。</strong>
+</p>
+<p><strong>插件地址：</strong><a href="http://smyx.net/wp-connect?aff=1" target="_blank">http://smyx.net/wp-connect</a></p>
+<p><strong>关于插件：</strong><br />Wordpress连接微博 是由 <a href="http://www.smyx.net/" target="_blank">水脉烟香</a> 一人开发的Wordpress插件。插件于2011-1-20发布第一版，距离至今两年有余，已经更新100多个版本。共产生了 V1, V2的免费版(V2版本即灯鹭版)、捐赠版、同步博客 (单功能插件)、专业版 等，其中捐赠版已经停止更新，现推出的收费版本，即专业版，集成了包括免费版、捐赠版、同步博客版本的等众多精华，同时加入更多实用的功能，如微信、微博评论回推等，让插件更加成熟和稳定。</p>
+<p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.png" /></a></p>
 <?php
 } 
 
@@ -181,7 +189,7 @@ function wp_connect_do_page() {
 			}
 		} 
 	} else {
-		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">捐赠版本</a>的独有功能。</p></div>';
+		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://smyx.net/wp-connect" target="_blank">WordPress连接微博专业版</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -191,7 +199,7 @@ function wp_connect_do_page() {
 	$connect_plugin = true; // bind.php
 ?>
 <div class="wrap">
-  <div id="icon-themes" class="icon32"><br /></div><h2>WordPress连接微博 <span style="padding-left:10px"><iframe width="63" height="24" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" scrolling="no" border="0" src="http://widget.weibo.com/relationship/followbutton.php?language=zh_cn&width=63&height=24&uid=1649905765&style=1&btn=red&dpc=1"></iframe></span></h2><div style="float:right;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank" title="PayPal"><img src="<?php echo $plugin_url;?>/images/donate_paypal.gif" /></a>/ <a href="https://me.alipay.com/smyx" target="_blank">支付宝</a></div>
+  <div id="icon-themes" class="icon32"><br /></div><h2>WordPress连接微博 v<?php echo WP_CONNECT_VERSION;?> <span style="padding-left:10px"><iframe width="63" height="24" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" scrolling="no" border="0" src="http://widget.weibo.com/relationship/followbutton.php?language=zh_cn&width=63&height=24&uid=1649905765&style=1&btn=red&dpc=1"></iframe></span></h2><div style="float:right;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank" title="PayPal"><img src="<?php echo $plugin_url;?>/images/donate_paypal.gif" /></a>/ <a href="https://me.alipay.com/smyx" target="_blank">支付宝</a></div>
   <div class="tabs">
     <ul class="nav">
       <li><a href="#basic" class="basic">基本设置</a></li>
@@ -656,19 +664,8 @@ function wp_connect_do_page() {
     </div>
     <div id="help">
 	  <div id="wptm-tips">
-	  <p><strong>WordPress连接微博 V2.4.10 更新说明</strong> （<a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">官方帮助文档</a>）</p>
+	  <p><strong><a href="http://www.denglu.cc/source/wordpress2.0.html" target="_blank">点击查看 WordPress连接微博 v<?php echo WP_CONNECT_VERSION;?> 官方帮助文档</a></strong></p>
 	  <?php wp_connect_tips();?>
-	  </div>
-	  <div id="wptm-tips">
-	  <p><strong>最新产品 —— Denglu评论：</strong> [<a href="#comment" class="comment">评论设置</a>]（<a href='http://www.denglu.cc/demo.html' target='_blank'>查看演示</a>）</p>
-      <p>1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。</p>
-	  <p>2、<u>评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。</u></p>
-	  <p>3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。</p>
-	  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单的说，假设您在<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>“评论管理”页面，把一条评论删除了，您网站本地数据库那条评论也一并删除。</p>
-	  <p>4、评论支持SE0。</p>
-	  <p>5、评论时，可以把文章的图片和视频跟评论一起同步到微博/SNS，当这条微博被评论时还能被抓回您的网站。</p>
-	  <p>6、<u>加入灯鹭同步接口，勾选他后，重新绑定帐号，您发布的文章同步后在微博有评论时会被抓回来。</u>（在同步微博勾选）</p>
-	  <p>7、支持自定义评论模板，方便您根据自身的网站风格设计漂亮的评论界面。（<a href='http://open.denglu.cc/' target='_blank'>灯鹭控制台</a>）</p>
 	  </div>
     </div>
   </div>
