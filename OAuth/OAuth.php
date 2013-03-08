@@ -1,8 +1,6 @@
 <?php
 // vim: foldmethod=marker
 
-if (!class_exists('OAuth')) {
-
 /* Generic exception class
  */
 class OAuthException extends Exception { 
@@ -880,7 +878,5 @@ class OAuthUtil {
     	return $mime;
     }
 }
-
-} // class_exists check
 
 ?>
