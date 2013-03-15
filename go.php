@@ -15,7 +15,7 @@ if (is_user_logged_in()) {
 			$aurl = "http://smyx.sinaapp.com/connect.php?client_id=" . SINA_APP_KEY . "&redirect_to=" . urlencode(plugins_url('wp-connect/go.php'));
 		} else { // 自定义key
 			$_SESSION['source_receiver'] = 'wp-connect/go.php';
-			$aurl = "https://api.weibo.com/oauth2/authorize?client_id=" . SINA_APP_KEY . "&redirect_uri=" . urlencode(plugins_url('wp-connect/dl_receiver.php')) . "&response_type=code&with_offical_account=1";
+			$aurl = "https://api.weibo.com/oauth2/authorize?client_id=" . SINA_APP_KEY . "&redirect_uri=" . urlencode(plugins_url('wp-connect/dl_receiver.php')) . "&response_type=code&scope=follow_app_official_microblog";
 		} 
 		header('Location:' . $aurl);
 		die();
