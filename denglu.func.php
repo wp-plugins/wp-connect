@@ -1390,6 +1390,7 @@ if (!function_exists('dcToLocal') && install_comments()) {
     // 触发动作 V2.4
 	if (default_values('dcToLocal', 1, $wptm_comment)) {
 		function local_recent_comments($number, $avatar = '') { // 调用本地的最新评论 v2.4.4
+			global $comment;
 			$comments = get_comments(apply_filters('widget_comments_args', array('number' => $number, 'status' => 'approve', 'post_status' => 'publish')));
 			echo '<ul id="denglu_recentcomments">';
 			if (!$avatar) {
