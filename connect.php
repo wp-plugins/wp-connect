@@ -570,7 +570,7 @@ function wp_connect_comment($id) {
 					$token = array('access_token' => $login[0], 'expires_in' => $login[1]); // V2.0
 					$content = at_username($name['sina'], $username['sina'], $wptm_connect['sina_username'], $comment_content); 
 					// return var_dump($content);
-					$status = wp_status('评论《' . $title . '》: ' . $content, urlencode($url), 140, 1);
+					$status = wp_status($content, urlencode($url), 140, 1);
 					$result = wp_update_t_sina($token, $status, '');
 				} 
 			} elseif ($tid == 'qtid') {
@@ -578,7 +578,7 @@ function wp_connect_comment($id) {
 				if ($login[0] && $login[1]) {
 					$token = array('oauth_token' => $login[0], 'oauth_token_secret' => $login[1]);
 					$content = at_username($name['qq'], $username['qq'], $wptm_connect['qq_username'], $comment_content);
-					$status = wp_status('评论《' . $title . '》: ' . $content, $url, 140, 1);
+					$status = wp_status($content, $url, 140, 1);
 					$result = wp_update_t_qq($token, $status, '');
 				} 
 			} elseif ($tid == 'ntid') {
@@ -586,7 +586,7 @@ function wp_connect_comment($id) {
 				if ($login[0] && $login[1]) {
 					$token = array('oauth_token' => $login[0], 'oauth_token_secret' => $login[1]);
 					$content = at_username($name['netease'], $username['netease'], $wptm_connect['netease_username'], $comment_content);
-					$status = wp_status('评论《' . $title . '》: ' . $content, $url, 163);
+					$status = wp_status($content, $url, 163);
 					$result = wp_update_t_163($token, $status, '');
 				} 
 			} elseif ($tid == 'shtid') {
@@ -594,14 +594,14 @@ function wp_connect_comment($id) {
 				if ($login[0] && $login[1]) {
 					$token = array('oauth_token' => $login[0], 'oauth_token_secret' => $login[1]);
 					$content = at_username($name['sohu'], $username['sohu'], $wptm_connect['sohu_username'], $comment_content);
-					$status = wp_status('评论《' . $title . '》: ' . $content, urlencode($url), 140, 1);
+					$status = wp_status($content, $url, 200, 1);
 					$result = wp_update_t_sohu($token, $status, '');
 				} 
 			} elseif ($tid == 'dtid') {
 				if ($login = get_user_meta($user_id, 'login_douban', true)) {
 					if ($login[0] && $login[1]) {
 						$token = array('oauth_token' => $login[0], 'oauth_token_secret' => $login[1]);
-						$status = wp_status('评论《' . $title . '》: ' . $comment_content, $url, 128);
+						$status = wp_status($comment_content, $url, 128);
 						$result = wp_update_douban($token, $status);
 					} 
 				} 
