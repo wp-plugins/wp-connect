@@ -587,7 +587,7 @@ function wp_connect_comment($id) {
 					$token = array('oauth_token' => $login[0], 'oauth_token_secret' => $login[1]);
 					$content = at_username($name['netease'], $username['netease'], $wptm_connect['netease_username'], $comment_content);
 					$status = wp_status('评论《' . $title . '》: ' . $content, $url, 163);
-					$result = wp_update_t_netease($token, $status, '');
+					$result = wp_update_t_163($token, $status, '');
 				} 
 			} elseif ($tid == 'shtid') {
 				$login = get_user_meta($user_id, 'login_sohu', true);
