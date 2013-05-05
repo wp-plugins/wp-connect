@@ -136,17 +136,20 @@ add_action('admin_notices', 'wp_connect_warning');
 
 function wp_connect_tips() { 
 	global $plugin_url;
-	?>
-<h2>Wordpress连接微博 专业版 v3.1</h2>
+?>
+<h2>Wordpress连接微博 专业版 v3.2</h2>
 <p><strong>插件简介：</strong><br />
-·支持使用18个合作网站帐号登录 Wordpress 博客。支持同步文章的 标题和链接 到14大微博和社区。<br />
-·支持同步全文到 QQ空间日志、新浪博客、网易博客、人人网日志、开心网日记、点点网等。<br />
-·支持微博评论回推到网站。支持使用微信搜索Wordpress文章。支持使用社会化分享按钮。<br />
-<strong>全部采用插件提供的接口，不经过任何第三方服务器，更加安全、稳定、高效。</strong>
+• 同步全文到 QQ空间、新浪博客、网易博客、人人网、开心网、点点网、Tumblr<br />
+• 微博评论回推到网站。<br />
+• 使用微信搜索Wordpress文章，用微信发布微博。<br />
+• 同步文章、评论到微博/SNS。<br />
+• 使用QQ、新浪微博等18个社交帐号登录您的网站。<br />
+• 使用社会化分享按钮。<br />
 </p>
-<p><strong>插件地址：</strong><a href="http://smyx.net/wp-connect?aff=1" target="_blank">http://smyx.net/wp-connect</a></p>
+<p><strong>您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。</strong></p>
+<p><strong>插件地址：</strong><a href="http://smyx.net/wp-connect" target="_blank">http://smyx.net/wp-connect</a></p>
 <p><strong>关于插件：</strong><br />Wordpress连接微博 是由 <a href="http://www.smyx.net/" target="_blank">水脉烟香</a> 一人开发的Wordpress插件。插件于2011-1-20发布第一版，距离至今两年有余，已经更新100多个版本。共产生了 V1, V2的免费版(V2版本即灯鹭版)、捐赠版、同步博客 (单功能插件)、专业版 等，其中捐赠版已经停止更新，现推出的收费版本，即专业版，集成了包括免费版、捐赠版、同步博客版本的等众多精华，同时加入更多实用的功能，如微信、微博评论回推等，让插件更加成熟和稳定。</p>
-<p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.png" /></a></p>
+<p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html?aff=1" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.png" /></a></p>
 <?php
 } 
 
