@@ -12,6 +12,14 @@ Stable tag: 2.5
 
 **Wordpress连接微博 V3.1 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。详细说明:** http://smyx.net/wp-connect
 
+>**技术支持**
+
+>开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
+
+>QQ交流群：88735031、149451879、77434617(社会化评论)
+
+>新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
+
 = V2.5详细描述 =
 
 一. 支持使用20家合作网站帐号登录WordPress。 （使用QQ空间、腾讯微博、新浪微博、搜狐微博、网易微博、人人网、开心网、豆瓣、淘宝网、支付宝、百度、天涯、MSN、Google、Yahoo、网易通行证、Twitter、Facebook、360、天翼189等帐号登录WordPress博客。）
@@ -70,13 +78,6 @@ Stable tag: 2.5
 
 2、嘀咕、享拍微博通 支持同步到其他微博和社区，请不要在这些网站重复绑定帐号，以免造成循环同步或者同步多条相同信息！
 
->**技术支持**
-
->开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
-
->QQ交流群：88735031、149451879、77434617(社会化评论)
-
->新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
 
 == Installation ==
 
