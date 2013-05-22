@@ -71,7 +71,7 @@ if ($user) {
 		if (!$errors) {
 			$user[0][1] = $user_login;
 			$user[1] = $user_email;
-			$user[0][8] = md5(trim($_POST['password']));
+			$user[0][8] = trim($_POST['password']);
 			$wpuid = wp_connect_login($user[0], $user[1], '', true);
 			header('Location:' . $redirect_to);
 		} 
