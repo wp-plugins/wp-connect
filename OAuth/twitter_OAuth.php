@@ -18,7 +18,7 @@ class twitterClient
     // 最新关注人微博 
     function home_timeline() 
     { 
-        return $this->oauth->get('http://api.twitter.com/1/statuses/home_timeline.json'); 
+        return $this->oauth->get('https://api.twitter.com/1.1/statuses/home_timeline.json'); 
     }
 
     // 发表微博(文本、图片)
@@ -29,16 +29,16 @@ class twitterClient
 
 		if ($value[0] == "image" && $value[1]) {
 			$param['media[]'] = $value[1];
-			return $this->oauth->post( 'https://upload.twitter.com/1/statuses/update_with_media.json' , $param , true );
+			return $this->oauth->post( 'https://api.twitter.com/1.1/statuses/update_with_media.json' , $param , true );
 		} else {
-            return $this->oauth->post( 'http://api.twitter.com/1/statuses/update.json' , $param ); 
+            return $this->oauth->post( 'https://api.twitter.com/1.1/statuses/update.json' , $param ); 
 		}
     }
 
     // 获取自己信息
     function verify_credentials() 
     { 
-        return $this->oauth->get( 'http://api.twitter.com/1/account/verify_credentials.json' );
+        return $this->oauth->get( 'https://api.twitter.com/1.1/account/verify_credentials.json' );
     }
 
 }
@@ -56,7 +56,7 @@ class twitterOAuth {
   /* Contains the last API call. */
   public $url;
   /* Set up the API root URL. */
-  public $host = "https://api.twitter.com/1/";
+  public $host = "https://api.twitter.com/1.1/";
   /* Set timeout default. */
   public $timeout = 30;
   /* Set connect timeout. */
