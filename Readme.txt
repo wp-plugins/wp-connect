@@ -16,7 +16,7 @@ Stable tag: 2.5.1
 
 >开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
 
->QQ交流群：88735031、149451879、77434617(社会化评论)
+>QQ交流群：88735031、77434617(社会化评论)
 
 >新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
 
