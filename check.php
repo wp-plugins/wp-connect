@@ -155,12 +155,12 @@ function function_support(&$func_items) {
 		} else if ($item == "zend_loader_enabled") {
 			$version = function_exists('zend_loader_version') ? zend_loader_version() : '';
 			$func_str .= "<td>Zend Optimizer ". $version;
-			if (!$status) {
-				$func_str .= " <span style=\"color:green\">不支持Zend，意味着不能使用付费插件。 php5.2.x请安装Zend Optimizer , php5.3.x请安装Zend Guard Loader</span>";
-			} elseif (version_compare(PHP_VERSION, '5.4', '>=')) {
-				$func_str .= '<span style=\"color:red\">很遗憾，暂时不能在php5.4.x上使用付费插件。请降到PHP5.3.x或者PHP5.2.x</span>';
-			} else {
-				$func_str .= ( version_compare($version, '3.3', '<') ) ? " <span style=\"color:red\">版本太低，php5.2.x请升级到3.3.0或以上版本，否则不能使用 付费插件</span>" : '';
+			if (version_compare(PHP_VERSION, '5.4', '>=')) {
+				$func_str .= " <span style=\"color:red\">很遗憾，暂时不能在php5.4.x上使用付费插件。请降到PHP5.3.x或者PHP5.2.x</span>";
+			} elseif (!$status) {
+				$func_str .= " <span style=\"color:red\">不支持Zend，意味着不能使用付费插件。 php5.2.x请安装Zend Optimizer , php5.3.x请安装Zend Guard Loader</span>";
+			} elseif (version_compare($version, '3.3', '<')) {
+				$func_str .= " <span style=\"color:red\">版本太低，php5.2.x请升级到3.3.0或以上版本，否则不能使用 付费插件</span>";
 			}
 			$func_str .= "</td>\n";
 		} else if ($item == "gzinflate") {

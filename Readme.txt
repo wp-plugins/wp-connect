@@ -1,16 +1,34 @@
 === Plugin Name ===
 Contributors: smyx
-Donate link: http://smyx.net/wp-connect
-Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
+Donate link: http://www.smyx.net/wp-connect.html
+Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,weixin,wechat,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
-Tested up to: 3.5.1
-Stable tag: 2.5.1
+Tested up to: 3.6.1
+Stable tag: 2.5.2
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
 == Description ==
 
-**Wordpress连接微博 V3.1 专业版 已经震撼发布，主要功能包括同步微博、登录、评论、同步博客、分享、微信等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。详细说明:** http://smyx.net/wp-connect
+**Wordpress连接微博 V3.2.8 专业版 已经震撼发布**
+
+1. 同步全文到 QQ空间、新浪博客、网易博客、人人网、开心网、点点网、Tumblr
+2. **微博评论回推到网站。**
+3. 同步文章、评论到微博/SNS。
+4. 使用QQ、新浪微博等18个社交帐号登录您的网站。
+5. 使用社会化分享按钮。
+6. 写文章/发微博WAP页面（适用于手机浏览器）
+7. 支持wp后台自动升级。
+8. 最新插件：[WordPress连接微信](http://www.smyx.net/wechat.html) NEW!，支持使用微信发布微博。
+
+详细说明: http://www.smyx.net/wp-connect.html
+
+V3.2.8更新日志: http://weibo.com/1649905765/Aa1qlCbOE
+
+**您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。**
+
+**主要功能包括同步微博、登录、评论、同步博客、分享等。集成了包括免费版、捐赠版、同步博客版本的等众多精华，更加成熟和稳定。**
+
 
 >**技术支持**
 
@@ -28,21 +46,21 @@ Stable tag: 2.5.1
 
 三. 支持使用灯鹭的最新产品：[Denglu评论](http://wordpress.org/extend/plugins/denglu/) (评论设置中开启) （[查看演示](http://www.denglu.cc/demo.html) ）
 
->1、同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。
+>1. 同步登录、登出，也就是说评论的用户，使用社交帐号登录了，你们的网站也会登录，会保存一份用户数据在你本地，不怕用户流失。
 
->2、评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。
+>2. 评论数据会保存一份在WordPress本地数据库，不必担心评论丢失。
 
->3、灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。
+>3. 灯鹭控制台“评论管理”页面的评论状态（待审核、垃圾评论、回收站、永久删除）也会同步到本地数据库。
 
 >   简单的说，假设您在灯鹭控制台“评论管理”页面，把一条评论删除了，您网站本地数据库那条评论也一并删除。
 
->4、评论支持SE0。
+>4. 评论支持SE0。
 
->5、评论时，可以把文章的图片和视频跟评论一起同步到微博/SNS，当这条微博被评论时还能被抓回您的网站。
+>5. 评论时，可以把文章的图片和视频跟评论一起同步到微博/SNS，当这条微博被评论时还能被抓回您的网站。
 
->6、加入灯鹭同步接口，勾选他后，重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来。（在同步微博勾选）
+>6. 加入灯鹭同步接口，勾选他后，重新绑定帐号，您发布的文章同步后在微博有评论时会被抓起回来。（在同步微博勾选）
 
->7、支持自定义评论模板，方便您根据自身的网站风格设计漂亮的评论界面。（[灯鹭控制台](http://open.denglu.cc/) ）
+>7. 支持自定义评论模板，方便您根据自身的网站风格设计漂亮的评论界面。（[灯鹭控制台](http://open.denglu.cc/) ）
 
 四、其他功能：
 
@@ -97,6 +115,12 @@ Stable tag: 2.5.1
 6. 文章页面 - 登录按钮
 
 == Changelog ==
+
+**免费版最新版本：V2.5.2，专业版最新版本：V3.2.8**
+
+= 2.5.2 =
+
+修改：QQ登录接口支持返回QQ头像了，插件已将原来的QQ空间头像自动转为QQ头像。
 
 = 2.5.1 =
 

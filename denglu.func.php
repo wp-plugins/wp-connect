@@ -106,7 +106,7 @@ if (!function_exists('wp_get_weibo_head')) {
 			} elseif ($mediaID == 9) {
 				$out = 'http://img' . rand(1, 5) . '.douban.com/icon/u' . $weibo_uid . '-1.jpg';
 			} elseif ($mediaID == 13) {
-				$out = 'http://qzapp.qlogo.cn/qzapp/' . $weibo_uid . '/50';
+				$out = 'http://q.qlogo.cn/qqapp/' . $weibo_uid . '/40';
 			} elseif ($mediaID == 17) {
 				$out = 'http://tx.tianyaui.com/logo/small/' . $weibo_uid;
 			} elseif (function_exists('get_avatar_url')) {

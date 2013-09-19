@@ -553,7 +553,7 @@ function wp_comment_t_qq($tok, $sid, $text) {
 }
 // api
 function wp_update_api($status) {
-	$api_url = 'http://www.smyx.net/apps/api.php';
+	$api_url = 'http://open.smyx.net/weibo/api.php';
 	$api_url = apply_filters('wp_update_api', $api_url, $status);
 	$request = new WP_Http;
 	$result = $request -> request($api_url , array('method' => 'POST', 'body' => $status));

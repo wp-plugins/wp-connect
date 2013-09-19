@@ -448,7 +448,8 @@ function wp_connect_avatar($avatar, $id_or_email = '', $size = '32') {
 				} 
 			} 
 		} elseif ($user -> qqid && $out = $user -> qqtid) {
-			$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
+			$qqhead = str_replace('qzapp.qlogo.cn/qz', 'q.qlogo.cn/qq', $out);
+			$avatar = "<img alt='' src='{$qqhead}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
 		} elseif ($user -> taobaoid && $out = $user -> tbtid) {
 			$avatar = "<img alt='' src='{$out}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
 		} 
