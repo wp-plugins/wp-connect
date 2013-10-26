@@ -10,9 +10,9 @@ Stable tag: 2.5.2
 
 == Description ==
 
-**Wordpress连接微博 V3.2.8 专业版 已经震撼发布**
+**Wordpress连接微博 V3.3 专业版 已经震撼发布**
 
-1. 同步全文到 QQ空间、新浪博客、网易博客、人人网、开心网、点点网、Tumblr
+1. 同步全文到 QQ空间、新浪博客、网易博客、人人网、开心网、点点网、豆瓣日记、Tumblr
 2. **微博评论回推到网站。**
 3. 同步文章、评论到微博/SNS。
 4. 使用QQ、新浪微博等18个社交帐号登录您的网站。
@@ -24,7 +24,7 @@ Stable tag: 2.5.2
 
 详细说明: http://www.smyx.net/wp-connect.html
 
-V3.2.8更新日志: http://weibo.com/1649905765/Aa1qlCbOE
+V3.3更新日志: http://weibo.com/1649905765/AdJaa5PyV
 
 **您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。**
 
@@ -35,7 +35,7 @@ V3.2.8更新日志: http://weibo.com/1649905765/Aa1qlCbOE
 
 >开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
 
->QQ交流群：88735031、77434617(社会化评论)
+>QQ交流群：88735031(连接微博)、77434617(社会化评论)
 
 >新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
 
