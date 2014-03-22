@@ -488,7 +488,6 @@ function get_appkey() {
 		'6' => array(ifab($netease['app_key'], '9fPHd1CNVZAKGQJ3'), ifab($netease['secret'], 'o98cf9oY07yHwJSjsPSYFyhosUyd43vO')),
 		'7' => array($wptm_connect['renren_api_key'], $wptm_connect['renren_secret']),
 		'8' => array($wptm_connect['kaixin001_api_key'], $wptm_connect['kaixin001_secret']),
-		'9' => array(DOUBAN_APP_KEY, DOUBAN_APP_SECRET),
 		'13' => array($wptm_connect['qq_app_id'], $wptm_connect['qq_app_key']),
 		'16' => array($wptm_connect['taobao_api_key'], $wptm_connect['taobao_secret']),
 		'17' => array(TIANYA_APP_KEY, TIANYA_APP_SECRET),
