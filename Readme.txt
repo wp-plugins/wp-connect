@@ -33,11 +33,13 @@ V3.3更新日志: http://weibo.com/1649905765/AdJaa5PyV
 
 >**技术支持**
 
->开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
-
 >QQ交流群：88735031(连接微博)、77434617(社会化评论)
 
 >新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
+
+>开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
+
+>开发者邮箱： smyx@qq.com
 
 = V2.5详细描述 =
 
