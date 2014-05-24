@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: smyx
 Donate link: http://www.smyx.net/wp-connect.html
-Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,weixin,wechat,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
+Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,weixin,wechat,lofter,tumblr,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
 Tested up to: 3.9.1
 Stable tag: 2.5.2
@@ -12,18 +12,14 @@ Stable tag: 2.5.2
 
 **Wordpress连接微博 V3.5.5 专业版 已经震撼发布**
 
-1. 使用QQ、新浪微博等21个社交帐号登录您的网站。
-包括微信、QQ、新浪微博、腾讯微博、人人网、开心网、搜狐微博、网易微博、淘宝网、支付宝、豆瓣、天涯、百度、易信、Twitter、360、MSN、Google、Yahoo、facebook、LinkedIn
+1. 使用微信、QQ、新浪微博等21个社交帐号登录您的网站。
 2. 同步文章、评论到13个微博/SNS。
-包括新浪微博、腾讯微博、人人网，开心网、搜狐微博、网易微博、豆瓣、天涯微博、Twitter、facebook、LinkedIn、享拍微博通、易信朋友圈等
-3. [本地化“社会化评论框”，包括微博评论回推到网站。](http://www.smyx.net/pinglun.html) （专业版）
-4. [社交数据统计](http://www.smyx.net/wp-connect-data.html) （专业版）
-5. 同步全文或者部分内容到其他博客。（专业版）
-包括新浪博客、网易博客、人人网日志、开心网日记、点点网、豆瓣日记、Tumblr、LOFTER（网易轻博客）、QQ空间、百度空间
-（其中QQ空间、百度空间部分主机无法使用，如果强烈需要这两个的请谨慎购买。）
-6. 使用社会化分享按钮。（专业版）
-7. 写文章/发微博WAP页面（适用于手机浏览器）（专业版）
-8. 隐藏文章的部分或者全部内容，用户通过登录、回复、分享等行为后才能显示隐藏的内容。（专业版）
+3. [本地化“社会化评论框”，包括微博评论回推到网站。](http://www.smyx.net/pinglun.html)
+4. [社交数据统计](http://www.smyx.net/wp-connect-data.html)
+5. 同步全文或者部分内容到同步全文到新浪博客、网易博客、人人网、开心网、点点网、豆瓣日记、Tumblr、LOFTER（网易轻博客）、QQ空间、百度空间
+6. 使用社会化分享按钮。
+7. 写文章/发微博WAP页面（适用于手机浏览器）
+8. 隐藏文章的部分或者全部内容，用户通过登录、回复、分享等行为后才能显示隐藏的内容。
 9. 支持wp后台自动升级。
 10. **最新插件**：[WordPress连接微信](http://www.smyx.net/wechat.html) ，支持使用微信发布微博。
 
