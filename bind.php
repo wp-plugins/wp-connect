@@ -23,14 +23,9 @@ $action = IS_PROFILE_PAGE && $user_id ? $plugin_url.'/save.php?do=profile' : '';
 <a href="javascript:;" id="<?php echo ($account['renren']) ? 'bind_renren' : 'renren';?>" class="renren" title="人人网"><b></b></a>
 <?php if (is_donate()) { ?>
 <a href="javascript:;" id="<?php echo ($account['kaixin001']['session_key']) ? 'bind_kaixin' : 'kaixin';?>" class="kaixin" title="开心网"><b></b></a>
-<a href="javascript:;" id="<?php echo ($account['shuoshuo'][0]) ? 'bind_shuoshuo' : 'shuoshuo" onclick="alert(\'提示：请确保已经激活 add_topic 否则请不要绑定！\') ';?>" class="shuoshuo" title="QQ空间说说"><b></b></a>
 <?php } ?>
 <a href="javascript:;" id="<?php echo ($account['tianya']) ? 'bind_tianya' : 'tianya';?>" class="tianya" title="天涯微博"><b></b></a>
 <a href="javascript:;" id="<?php echo ($account['douban']['oauth_token']) ? 'bind_douban' : 'douban';?>" class="douban" title="豆瓣"><b></b></a>
-<a href="javascript:;" id="digu" class="digu<?php echo ($account['digu']['password']) ? ' bind': '';?>" title="嘀咕"><b></b></a>
-<a href="javascript:;" id="fanfou" class="fanfou<?php echo ($account['fanfou']['password']) ? ' bind': '';?>" title="饭否"><b></b></a>
-<a href="javascript:;" id="renjian" class="renjian<?php echo ($account['renjian']['password']) ? ' bind': '';?>" title="人间网"><b></b></a>
-<a href="javascript:;" id="zuosa" class="zuosa<?php echo ($account['zuosa']['password']) ? ' bind': '';?>" title="做啥"><b></b></a>
 <a href="javascript:;" id="wbto" class="wbto<?php echo ($account['wbto']['password']) ? ' bind': '';?>" title="微博通wbto.cn"><b></b></a>
 </div>
 <?php

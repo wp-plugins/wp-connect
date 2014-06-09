@@ -7,13 +7,13 @@ function wp_sync_list() {
 		"sohu" => "搜狐微博",
 		"renren" => "人人网",
 		"kaixin001" => "开心网",
-		"digu" => "嘀咕",
+		//"digu" => "嘀咕",
 		"douban" => "豆瓣",
 		"tianya" => "天涯微博",
 		"wbto" => "微博通",
-		"fanfou" => "饭否",
-		"renjian" => "人间网",
-		"zuosa" => "做啥",
+		//"fanfou" => "饭否",
+		//"renjian" => "人间网",
+		//"zuosa" => "做啥",
 		"twitter" => "Twitter");
 	return $weibo;
 } 

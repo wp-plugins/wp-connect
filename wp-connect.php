@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://www.smyx.net/wp-connect.html
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.5.2
+Version: 2.5.3
 */
 
-define('WP_CONNECT_VERSION', '2.5.2');
+define('WP_CONNECT_VERSION', '2.5.3');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -137,23 +137,24 @@ add_action('admin_notices', 'wp_connect_warning');
 function wp_connect_tips() { 
 	global $plugin_url;
 ?>
-<h2>Wordpress连接微博 专业版 v3.2.8 [<a href="http://weibo.com/1649905765/Aa1qlCbOE" target="_blank">更新日志</a>]</h2>
+<h2>Wordpress连接微博 专业版 v3.5.8 [<a href="http://weibo.com/1649905765/B2zn8lgRo" target="_blank">更新日志</a>]</h2>
 <p><strong>插件简介：</strong><br />
-1. 同步全文到 QQ空间、新浪博客、网易博客、人人网、开心网、点点网、Tumblr<br />
-2. <strong>微博评论回推到网站。</strong><br />
-3. 同步文章、评论到微博/SNS。<br />
-4. 使用QQ、新浪微博等18个社交帐号登录您的网站。<br />
-5. 使用社会化分享按钮。<br />
-6. 写文章/发微博WAP页面（适用于手机浏览器）<br />
-7. 隐藏文章的部分或者全部内容，用户通过登录、回复、分享等行为后才能显示隐藏的内容。<br />
-8. 支持wp后台自动升级。<br />
-9. <strong>最新插件：</strong><a href="http://www.smyx.net/wechat.html" target="_blank">WordPress连接微信</a> <span style="color: #ff0000;">NEW!</span>，支持使用微信发布微博。
+1. 使用微信、QQ、新浪微博等21个社交帐号登录您的网站。<br />
+2. 同步文章、评论到13个微博/SNS。<br />
+3. <a href="http://www.smyx.net/pinglun.html" target="_blank">本地化“社会化评论框”，包括微博评论回推到网站。</a><br />
+4. <a href="http://www.smyx.net/wp-connect-data.html" target="_blank">社交数据统计</a><br />
+5. 同步全文或者部分内容到同步全文到新浪博客、网易博客、人人网、开心网、点点网、豆瓣日记、Tumblr、LOFTER（网易轻博客）、QQ空间、百度空间<br />
+6. 使用社会化分享按钮。<br />
+7. 写文章/发微博WAP页面（适用于手机浏览器）<br />
+8. 隐藏文章的部分或者全部内容，用户通过登录、回复、分享等行为后才能显示隐藏的内容。<br />
+9. 支持wp后台自动升级。<br />
+10. <strong>最新插件：</strong><a href="http://www.smyx.net/wechat.html" target="_blank">WordPress连接微信</a> <span style="color: #ff0000;">NEW!</span>，支持使用微信发布微博。
 </p>
 <p><strong>插件地址：</strong><a href="http://www.smyx.net/wp-connect.html" target="_blank">http://www.smyx.net/wp-connect.html</a></p>
 <p><strong>您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。</strong></p>
 <p><strong>加水脉烟香为微信好友，可以用微信搜索微信号: smyxapp 或者扫描下面的二维码。(发送h可以获得帮助)：</strong><br /><img src="http://ww1.sinaimg.cn/small/62579065jw1e09m23tqfxj.jpg" /></p>
-<p><strong>关于插件：</strong><br />Wordpress连接微博 是由 <a href="http://www.smyx.net/" target="_blank">水脉烟香</a> 一人开发的Wordpress插件。插件于2011-1-20发布第一版，距离至今两年有余，已经更新100多个版本。共产生了 V1, V2的免费版(V2版本即灯鹭版)、捐赠版、同步博客 (单功能插件)、专业版 等，其中捐赠版已经停止更新，现推出的收费版本，即<strong>专业版，集成了包括免费版、捐赠版、同步博客版本的等众多精华，同时加入更多实用的功能，如微博评论回推等，让插件更加成熟和稳定。</strong></p>
-<p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.png" /></a></p>
+<p><strong>关于插件：</strong><br />Wordpress连接微博 是由 <a href="http://www.smyx.net/" target="_blank">水脉烟香</a> 一人开发的Wordpress插件。插件于2011年1月20日发布第1版，目前包括免费版、专业版、基础版等。</strong></p>
+<p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.gif" /></a></p>
 <?php
 } 
 

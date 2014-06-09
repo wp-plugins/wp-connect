@@ -3,6 +3,7 @@ include "../../../wp-config.php";
 date_default_timezone_set("PRC");
 $getinfo = 'V'.get_option('wptm_version').','.get_bloginfo('name').','.get_bloginfo('wpurl').'/';
 define('ROOT_PATH', dirname(dirname(__FILE__)));
+wp_site_injectInfo();
 $funs_list = array('close_curl', 'close_fopen', 'close_http', 'file_get_contents', 'openssl_open', 'zend_loader_enabled', 'fsockopen','hash_hmac', 'gzinflate');
 $surrounding_list = array
 ('os' => array('p' => '操作系统 ', 'c' => 'PHP_OS', 'r' => '不限制', 'b' => 'unix'),
@@ -51,6 +52,13 @@ if (!function_exists('close_http')) {
 		} 
 	} 
 }
+// 统计有多少个网站安装了插件
+function wp_site_injectInfo() {
+	$args = array('timeout' => 3,
+		'body' => array('url' => get_bloginfo('url'))
+		);
+	wp_remote_post('http://free53.smyx.net/free/wp-connect.php', $args);
+} 
 
 function surrounding_support(&$p) {
 	foreach($p as $key => $item) {
@@ -154,19 +162,14 @@ function function_support(&$func_items) {
 			$func_str .= "</td>\n";
 		} else if ($item == "zend_loader_enabled") {
 			$version = function_exists('zend_loader_version') ? zend_loader_version() : '';
-			$func_str .= "<td>Zend Optimizer ". $version;
-			if (version_compare(PHP_VERSION, '5.4', '>=')) {
-				$func_str .= " <span style=\"color:red\">很遗憾，暂时不能在php5.4.x上使用付费插件。请降到PHP5.3.x或者PHP5.2.x</span>";
+			$func_str .= (version_compare(PHP_VERSION, '5.3', '<')) ? "<td>Zend Optimizer ":"<td>Zend Guard Loader ";
+			$func_str .= $version;
+			if (version_compare(PHP_VERSION, '5.5', '>=')) {
+				$func_str .= ' <span style="color:red">很遗憾，暂时不能在php5.5.x上使用付费插件。请降到PHP5.2.x~PHP5.4.x</span>';
 			} elseif (!$status) {
-				$func_str .= " <span style=\"color:red\">不支持Zend，意味着不能使用付费插件。 php5.2.x请安装Zend Optimizer , php5.3.x请安装Zend Guard Loader</span>";
+				$func_str .= ' <span style="color:red">不支持Zend，意味着不能使用付费插件。 php5.2.x请安装Zend Optimizer , php5.3.x及以上版本请安装Zend Guard Loader</span>';
 			} elseif (version_compare($version, '3.3', '<')) {
-				$func_str .= " <span style=\"color:red\">版本太低，php5.2.x请升级到3.3.0或以上版本，否则不能使用 付费插件</span>";
-			}
-			$func_str .= "</td>\n";
-		} else if ($item == "gzinflate") {
-			$func_str .= "<td>$item()";
-			if (!$status) {
-				$func_str .= " <span style=\"color:green\">不支持该函数，意味着不能使用 “IM机器人”。</span>";
+				$func_str .= ' <span style="color:red">版本太低，php5.2.x请升级到3.3.0或以上版本，否则不能使用 付费插件</span>';
 			} 
 			$func_str .= "</td>\n";
 		} else {
@@ -191,9 +194,9 @@ function function_support(&$func_items) {
 <title>环境检查-WordPress连接微博</title>
 <meta name="robots" content="noindex,nofollow,noarchive">
 <style type="text/css">
-body{margin-top:0px;font-family:Helvetica,Arial,Verdana,sans-serif; font-size:12px; background:#fff; color:#333; line-height:1.6em}
+body{margin-top:0px;font-family:Helvetica,Arial,Verdana,sans-serif; font-size:12px; color:#333; line-height:1.6em}
 h3{margin:0px;font-size:1.17em;}
-table{margin:10px 0; width:600px; text-align:left; border-collapse:collapse; border:1px solid #ebebeb}
+table{margin:10px 0; width:530px; text-align:left; border-collapse:collapse; border:1px solid #ebebeb}
 table th{font-weight:bold; text-align:left; padding:10px 8px; background:#ebebeb}
 table td{padding:8px}
 table .odd{background:#f1f1f8}
@@ -203,8 +206,7 @@ img.no{width:12px; height:12px; background-position:0 -22px}
 </style>
 </head>
 <body>
-<h3>环境检查</h3>
-<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://www.smyx.net/wiki/wordpress/faqs#phptime" target="_blank">详细</a></p>
+<p>当前服务器时间：<?php echo date("Y-m-d H:i:s",time());?> <a style="color:#f50" href="check.php">刷新</a> <a style="color:#f50" href="http://wiki.smyx.net/wordpress/faqs#phptime" target="_blank">详细</a></p>
 <table>
   <thead>
     <tr>

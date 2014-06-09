@@ -342,6 +342,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	if ($account['kaixin001']) { // 开心网 /140+
 		wp_update_kaixin001($account['kaixin001'], $status3, $picture);
 	} 
+	/*
 	if ($account['digu']) { // 嘀咕 /140
 		wp_update_digu($account['digu'], wp_status($text, urlencode($postlink), 140));
 	} 
@@ -354,6 +355,7 @@ function wp_update_list($text, $url, $pic, $account, $post_id = '') {
 	if ($account['zuosa']) { // 做啥 /140
 		wp_update_zuosa($account['zuosa'], $status1);
 	} 
+	*/
 	// 钩子，方便自定义插件
 	do_action('wp_update_list_update', $output, $ms, $post_id);
 	return $output;

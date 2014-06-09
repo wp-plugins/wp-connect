@@ -4,13 +4,13 @@ Donate link: http://www.smyx.net/wp-connect.html
 Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,weixin,wechat,lofter,tumblr,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
 Tested up to: 3.9.1
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
 == Description ==
 
-**Wordpress连接微博 V3.5.5 专业版 已经震撼发布**
+**Wordpress连接微博 V3.5.8 专业版 已经震撼发布**
 
 1. 使用微信、QQ、新浪微博等21个社交帐号登录您的网站。
 2. 同步文章、评论到13个微博/SNS。
@@ -117,7 +117,11 @@ V3.5.5更新日志: http://weibo.com/1649905765/B2zn8lgRo
 
 == Changelog ==
 
-**免费版最新版本：V2.5.2，专业版最新版本：V3.2.8**
+**免费版最新版本：V2.5.3，专业版最新版本：V3.2.8**
+
+= 2.5.3 =
+
+删除：嘀咕、饭否、人间网等已停止更新的网站同步。
 
 = 2.5.2 =
 
