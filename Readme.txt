@@ -10,11 +10,13 @@ Stable tag: 2.5.3
 
 == Description ==
 
-**Wordpress连接微博 V3.5.8 专业版 已经震撼发布**
+**Wordpress连接微博 V3.6.3 专业版 已经震撼发布**
+
+详细文档: http://www.smyx.net/doc/wp-connect.html
 
 1. 使用微信、QQ、新浪微博等21个社交帐号登录您的网站。
 2. 同步文章、评论到13个微博/SNS。
-3. [本地化“社会化评论框”，包括微博评论回推到网站。](http://www.smyx.net/pinglun.html)
+3. [本地化“社会化评论框”，包括微博评论回推到网站和新回复邮件通知。](http://www.smyx.net/pinglun.html)
 4. [社交数据统计](http://www.smyx.net/wp-connect-data.html)
 5. 同步全文或者部分内容到同步全文到新浪博客、网易博客、人人网、开心网、点点网、豆瓣日记、Tumblr、LOFTER（网易轻博客）、QQ空间、百度空间
 6. 使用社会化分享按钮。
@@ -25,7 +27,7 @@ Stable tag: 2.5.3
 
 详细说明: http://www.smyx.net/wp-connect.html
 
-V3.5.5更新日志: http://weibo.com/1649905765/B2zn8lgRo
+V3.6.3更新日志: http://weibo.com/1649905765/BnpGm6tp1
 
 **您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。**
 
@@ -36,6 +38,8 @@ V3.5.5更新日志: http://weibo.com/1649905765/B2zn8lgRo
 >QQ交流群：88735031(连接微博)、77434617(社会化评论)
 
 >新浪微博：[ @水脉烟香](http://weibo.com/smyx) 、[ @灯鹭](http://weibo.com/idenglu) 
+
+>详细文档: http://www.smyx.net/doc/wp-connect.html
 
 >开发者QQ：[3249892](http://wpa.qq.com/msgrd?v=3&uin=3249892&site=qq&menu=yes)
 
@@ -117,7 +121,7 @@ V3.5.5更新日志: http://weibo.com/1649905765/B2zn8lgRo
 
 == Changelog ==
 
-**免费版最新版本：V2.5.3，专业版最新版本：V3.2.8**
+**免费版最新版本：V2.5.3，专业版最新版本：V3.5.8**
 
 = 2.5.3 =
 
