@@ -3,7 +3,7 @@
 Plugin Name: WordPress连接微博
 Author: 水脉烟香
 Author URI: http://www.smyx.net/
-Plugin URI: http://smyx.net/wp-connect
+Plugin URI: http://blogqun.com/wp-connect.html
 Description: 支持使用15家合作网站帐号登录 WordPress 博客，并且支持同步文章的 标题和链接 到14大微博和社区。<strong>注意：捐赠版已经更新到1.7.2 版本，请到群内下载升级！</strong>
 Version: 1.9.24
 */
@@ -149,7 +149,7 @@ function wp_connect_tips() {
 • 使用社会化分享按钮。<br />
 </p>
 <p><strong>您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。</strong></p>
-<p><strong>插件地址：</strong><a href="http://smyx.net/wp-connect" target="_blank">http://smyx.net/wp-connect</a></p>
+<p><strong>插件地址：</strong><a href="http://blogqun.com/wp-connect.html" target="_blank">http://blogqun.com/wp-connect.html</a></p>
 <p><strong>关于插件：</strong><br />Wordpress连接微博 是由 <a href="http://www.smyx.net/" target="_blank">水脉烟香</a> 一人开发的Wordpress插件。插件于2011-1-20发布第一版，距离至今两年有余，已经更新100多个版本。共产生了 V1, V2的免费版(V2版本即灯鹭版)、捐赠版、同步博客 (单功能插件)、专业版 等，其中捐赠版已经停止更新，现推出的收费版本，即专业版，集成了包括免费版、捐赠版、同步博客版本的等众多精华，同时加入更多实用的功能，如微信、微博评论回推等，让插件更加成熟和稳定。</p>
 <p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html?aff=1" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.png" /></a></p>
 <?php
@@ -189,7 +189,7 @@ function wp_connect_do_page() {
 			}
 		}
 	} else {
-		$error = '<div id="wptm-tips"><p>该功能属于<a href="http://smyx.net/wp-connect" target="_blank">WordPress连接微博专业版</a>的一部分。</p></div>';
+		$error = '<div id="wptm-tips"><p>该功能属于<a href="http://blogqun.com/wp-connect.html" target="_blank">WordPress连接微博专业版</a>的一部分。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -353,7 +353,7 @@ function wp_connect_do_page() {
 	  </form>
       <div id="wptm-tips">
 		<p><strong>高级评论</strong></p>
-		<p><strong>该功能属于<a href="http://smyx.net/wp-connect" target="_blank">WordPress连接微博专业版</a>的一部分。</strong></p>
+		<p><strong>该功能属于<a href="http://blogqun.com/wp-connect.html" target="_blank">WordPress连接微博专业版</a>的一部分。</strong></p>
 		<p>捐赠用户还可以这样玩转评论：[ <a href="http://www.smyx.net/wiki/wordpress/comment" target="_blank">查看详细</a> ]</p>
         <p>假设A是管理员，B和C是新浪微博用户，D是腾讯微博用户。</p>
         <p>①新浪微博用户 B 在网站上评论并勾选了同步到微博，假设同步后的微博消息为 F ，那么管理员A和同是新浪微博用户的C回复时，可以不必勾选同步(系统将自动判断)，会直接在你的网站和B的微博消息 F 下评论。<br />②假如腾讯微博用户 D 回复了A在网站上的评论，那么他会借用 <span style="color:green;">高级设置 填写的 默认用户ID 对应的WP帐号下绑定的新浪微博帐号</span>通知B，B的微博消息 F 下会显示如下评论：“腾讯微博网友(D)在网站上的评论: 评论内容”。<br />注意：①中提到的功能只支持腾讯微博和新浪微博，其他微博以 @帐号 的形式同步回复。</p>
@@ -537,7 +537,7 @@ function wp_connect_do_page() {
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
         <?php } ?>
-		<div id="wptm-tips"><p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://smyx.net/wp-blog" target="_blank">详细说明</a> ]</p><p>提示：WordPress连接微博专业版 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://smyx.net/wp-connect" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://smyx.net/wp-blog" target="_blank">详细说明</a> ]</p><p>提示：WordPress连接微博专业版 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://blogqun.com/wp-connect.html" target="_blank">详细说明</a> ]</p></div>
       </form>
       <form method="post" action="">
 	    <?php wp_nonce_field('wptm-delete');?>

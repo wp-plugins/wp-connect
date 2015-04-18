@@ -1,6 +1,6 @@
 ﻿=== WP Connect ===
 Contributors: smyx
-Donate link: http://www.smyx.net/wp-connect.html
+Donate link: http://blogqun.com/wp-connect.html
 Tags: wp connect,twitter,qq,sina,taobao,msn,tianya,baidu,netease,sohu,digu,douban,baidu,fanfou,renjian,zuosa,follow5,renren,kaixin001,wbto,google,yahoo,connect,WordPress连接微博,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,人间网,豆瓣,天涯,百度,淘宝网,嘀咕,饭否,做啥,微博通,登录,登陆,连接,同步,qq机器人,gtalk机器人
 Requires at least: 3.0
 Tested up to: 3.4.2
@@ -13,7 +13,7 @@ Stable tag: 1.9.23
 WordPress连接微博
 
 
-帮助文档: http://www.smyx.net/wiki/
+帮助文档: http://wiki.smyx.net/
 
 
 1. 可以使用QQ空间、腾讯微博、新浪微博、搜狐微博、网易微博、人人网、开心网、豆瓣、淘宝网、支付宝、百度、天涯、MSN、Google、Yahoo、网易通行证等帐号登录WordPress博客，支持同步评论到腾讯微博、新浪微博、搜狐微博、网易微博、豆瓣。
