@@ -422,8 +422,7 @@ function get_url_short($url) {
 } 
 // 新浪t.cn短网址
 function url_short_t_cn($long_url) {
-	$source = SINA_APP_KEY;
-	$api_url = 'http://api.weibo.com/2/short_url/shorten.json?source=' . $source . '&url_long=' . urlencode($long_url);
+	$api_url = 'http://api.weibo.com/2/short_url/shorten.json?source=3845272542&url_long=' . urlencode($long_url);
 	$request = new WP_Http;
 	$result = $request -> request($api_url);
 	if (is_array($result)) {
