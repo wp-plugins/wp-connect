@@ -1,6 +1,6 @@
 <?php
 /**
- * V1.9.15
+ * V1.9.15 - v3.4
  * 应一些网友要求，增加使用其他媒体登录插件的用户数据转换，以便旧用户支持WordPress连接微博插件，不会删除原有插件数据。
  * 支持以下插件：
  * 1、新浪连接: http://fairyfish.net/project/sina-connect/  或者 http://wordpress.org/extend/plugins/sina-connect/
@@ -34,12 +34,22 @@ function smc_import_user() {
 	} 
 } 
 function smc_save_user($uid, $ret) {
-	if ($id = smc_get_id($ret['smcweibo'])) {
+	if(isset($ret['socialmedia'])){ // v2.0及以上版本
+		foreach ($ret['socialmedia'] as $media => $data) {
+			if ($media == 'sinaweibo') {
+				$path = explode('/', $data['avatar']);
+				update_usermeta($uid, 'stid', (int)$path[3]);
+			} elseif (in_array($media, array('kaixin', 'renren', 'sohuweibo', 'taobao', 'tianya', 'baidu', '360cn', 'facebook', 'msnlive'))) {
+				if ($media == 'sohuweibo') {$media = 'sohu';}elseif ($media == '360cn') {$media = 'guard360';}elseif ($media == 'tianya') {$media = 'tyt';}
+				update_usermeta($uid, $media . 'id', $data['uid']);
+			}
+		}
+	} elseif (isset($ret['smcweibo']) && $id = smc_get_id($ret['smcweibo'])) {
 		if (empty($ret['smcid'])) { // v1.5及以上版本
 			if ($id[0] == 'stid') {
 				$path = explode('/', $ret['avatar']);
 				update_usermeta($uid, $id[0], $path[3]);
-			} elseif (in_array($id[0], array('tqqid', 'renrenid', 'kaixinid', 'neteaseid'))) {
+			} elseif (in_array($id[0], array('tqqid', 'renrenid', 'kaixinid'))) {
 				update_usermeta($uid, $id[0], $ret['username']);
 				update_usermeta($uid, $id[1], $ret['avatar']);
 			} elseif ($id[0] == 'dtid') {

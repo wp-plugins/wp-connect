@@ -5,10 +5,10 @@ Author: 水脉烟香
 Author URI: http://www.smyx.net/
 Plugin URI: http://blogqun.com/wp-connect.html
 Description: 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
-Version: 2.5.4
+Version: 2.5.5
 */
 
-define('WP_CONNECT_VERSION', '2.5.4');
+define('WP_CONNECT_VERSION', '2.5.5');
 $wpurl = get_bloginfo('wpurl');
 $siteurl = get_bloginfo('url');
 $plugin_url = plugins_url('wp-connect');
@@ -137,12 +137,12 @@ add_action('admin_notices', 'wp_connect_warning');
 function wp_connect_tips() { 
 	global $plugin_url;
 ?>
-<h2>Wordpress连接微博 专业版 v3.6.9 [<a href="http://weibo.com/1649905765/C1QcafV7A" target="_blank">更新日志</a>]</h2>
+<h2>Wordpress连接微博 专业版 v4.1 [<a href="http://blogqun.com/wp-connect.html#Changelog" target="_blank">更新日志</a>]</h2>
 <p><strong>插件简介：</strong><br />
 1. 使用微信、QQ、新浪微博等21个社交帐号登录您的网站。<br />
 2. 同步文章、评论到13个微博/SNS。<br />
 3. <a href="http://www.smyx.net/pinglun.html" target="_blank">本地化“社会化评论框”，包括微博评论回推到网站。</a><br />
-4. <a href="http://www.smyx.net/wp-connect-data.html" target="_blank">社交数据统计</a><br />
+4. <a href="http://www.smyx.net/wp-connect-data.html" target="_blank">社交数据统计（包括注册/登录/同步评论等），社交用户分析（社交网站/性别/地区分布等）</a><span style="color: #ff0000;">NEW!</span><br />
 5. 同步全文或者部分内容到同步全文到新浪博客、网易博客、人人网、开心网、点点网、豆瓣日记、Tumblr、LOFTER（网易轻博客）、QQ空间、百度空间<br />
 6. 使用社会化分享按钮。<br />
 7. 写文章/发微博WAP页面（适用于手机浏览器）<br />
@@ -154,7 +154,7 @@ function wp_connect_tips() {
 <p><strong>您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。</strong></p>
 <p><strong>加水脉烟香为微信好友，可以用微信搜索微信号: smyxapp 或者扫描下面的二维码。(发送h可以获得帮助)：</strong><br /><img src="http://ww1.sinaimg.cn/small/62579065jw1e09m23tqfxj.jpg" /></p>
 <p><strong>关于插件：</strong><br />Wordpress连接微博 是由 <a href="http://www.smyx.net/" target="_blank">水脉烟香</a> 一人开发的Wordpress插件。插件于2011年1月20日发布第1版，目前包括免费版、专业版、基础版等。</strong></p>
-<p><strong>插件截图：</strong><br /><a href="http://smyx.net/demo/wp-connect.html" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.gif" /></a></p>
+<p><strong>插件截图：</strong><br /><a href="http://blogqun.com/demo/wp-connect.html" target="_blank" title="点击查看更多截图"><img src="<?php echo $plugin_url;?>/images/wp-connect-pro.gif" /></a></p>
 <?php
 } 
 
@@ -197,7 +197,7 @@ function wp_connect_do_page() {
 			}
 		} 
 	} else {
-		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://smyx.net/wp-connect" target="_blank">WordPress连接微博专业版</a>的独有功能。</p></div>';
+		$error = '<div id="wptm-tips"><p><a href="#blog" class="blog">同步博客</a>、<a href="#share" class="share">分享设置</a>、<a href="#advanced" class="advanced">高级设置</a>是<a href="http://blogqun.com/wp-connect.html" target="_blank">WordPress连接微博专业版</a>的独有功能。</p></div>';
 	    $disabled = " disabled";
 	}
 	$account = wp_option_account();
@@ -207,7 +207,7 @@ function wp_connect_do_page() {
 	$connect_plugin = true; // bind.php
 ?>
 <div class="wrap">
-  <div id="icon-themes" class="icon32"><br /></div><h2>WordPress连接微博 v<?php echo WP_CONNECT_VERSION;?> <span style="padding-left:10px"><iframe width="63" height="24" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" scrolling="no" border="0" src="http://widget.weibo.com/relationship/followbutton.php?language=zh_cn&width=63&height=24&uid=1649905765&style=1&btn=red&dpc=1"></iframe></span></h2><div style="float:right;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank" title="PayPal"><img src="<?php echo $plugin_url;?>/images/donate_paypal.gif" /></a>/ <a href="https://me.alipay.com/smyx" target="_blank">支付宝</a></div>
+  <div id="icon-themes" class="icon32"><br /></div><h2>WordPress连接微博 v<?php echo WP_CONNECT_VERSION;?> <code><a href="http://blogqun.com/wp-connect.html" target="_blank">获取专业版</a></code> <span style="padding-left:10px"><iframe width="63" height="24" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" scrolling="no" border="0" src="http://widget.weibo.com/relationship/followbutton.php?language=zh_cn&width=63&height=24&uid=1649905765&style=1&btn=red&dpc=1"></iframe></span></h2><div style="float:right;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWMTWK2DGHCYS" target="_blank" title="PayPal"><img src="<?php echo $plugin_url;?>/images/donate_paypal.gif" /></a>/ <a href="http://blogqun.com/alipay/donate" target="_blank">支付宝</a></div>
   <div class="tabs">
     <ul class="nav">
       <li><a href="#basic" class="basic">基本设置</a></li>
@@ -269,7 +269,7 @@ function wp_connect_do_page() {
 	  <?php }
 	  if ($version == 1 || $version == 2) { ?>
 	  <h3>其他登录插件</h3>
-	  <p style="color:green">假如你以前使用过其他类似的登录插件（<a href="http://bbs.denglu.cc/thread-9361-1-1.html" target="_blank">查看列表</a>），可以点击以下按钮进行数据转换，以便旧用户能使用本插件正常登录。</p>
+	  <p style="color:green">假如你以前使用过其他类似的登录插件（<a href="http://wiki.smyx.net/wordpress/plugins" target="_blank">查看列表</a>），可以点击以下按钮进行数据转换，以便旧用户能使用本插件正常登录。</p>
       <form method="post" action="options-general.php?page=wp-connect#basic">
 	    <?php wp_nonce_field('other-plugins');?>
 		<span class="submit"><input type="submit" name="other_plugins" value="其他登录插件数据转换" /> (可能需要一些时间，请耐心等待！)</span>
@@ -368,7 +368,7 @@ function wp_connect_do_page() {
           </tr>
           <tr>
             <td width="25%" valign="top">添加按钮</td>
-            <td><label><input name="qqlogin" type="checkbox" value="qzone" <?php checked(!$wptm_connect || $wptm_connect['qqlogin']);?>/> QQ空间</label>
+            <td><label><input name="qqlogin" type="checkbox" value="qzone" <?php checked(!$wptm_connect || $wptm_connect['qqlogin']);?>/> QQ</label>
 			  <label><input name="sina" type="checkbox" value="sina" <?php checked(!$wptm_connect || $wptm_connect['sina']);?>/> 新浪微博</label>
               <label><input name="qq" type="checkbox" value="tencent" <?php checked(!$wptm_connect || $wptm_connect['qq']);?> /> 腾讯微博</label>
               <label><input name="renren" type="checkbox" value="renren" <?php checked(!$wptm_connect || $wptm_connect['renren']);?> /> 人人网</label>
@@ -500,16 +500,15 @@ function wp_connect_do_page() {
            <p>请在下面填写开放平台的key，填写后，同步时可以显示来源，即显示微博的“来自XXX”。<span style="color: red;">加***号的为使用时必填！</span></p>
 		   <p>请同时到<a href="http://open.denglu.cc" target="_blank">灯鹭控制台</a>的 配置平台供应商 填写您申请的app key。</p>
 	    </div>
-		<p><strong>QQ登录</strong> ( APP ID: <input name="qq1" type="text" value='<?php echo $wptm_key[13][0];?>' /> APP Key: <input name="qq2" type="text" value='<?php echo $wptm_key[13][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=QQ%E4%BA%92%E8%81%94%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>新浪微博</strong> ( App Key: <input name="sina1" type="text" value='<?php echo $sina['app_key'];?>' /> App Secret: <input name="sina2" type="text" value='<?php echo $sina['secret'];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>腾讯微博</strong> ( App Key: <input name="tqq1" type="text" value='<?php echo $qq['app_key'];?>' /> App Secret: <input name="tqq2" type="text" value='<?php echo $qq['secret'];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E8%85%BE%E8%AE%AF%E5%BE%AE%E5%8D%9A%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>搜狐微博</strong> ( Consumer Key: <input name="sohu1" type="text" value='<?php echo $wptm_key[5][0];?>' /> Consumer secret: <input name="sohu2" type="text" value='<?php echo $wptm_key[5][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E6%90%9C%E7%8B%90%E5%BE%AE%E5%8D%9A%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>网易微博</strong> ( Consumer Key: <input name="netease1" type="text" value='<?php echo $wptm_key[6][0];?>' /> Consumer secret: <input name="netease2" type="text" value='<?php echo $wptm_key[6][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E7%BD%91%E6%98%93%E5%BE%AE%E5%8D%9A%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>豆瓣</strong> ( API Key: <input name="douban1" type="text" value='<?php echo $wptm_key[9][0];?>' /> 私钥: <input name="douban2" type="text" value='<?php echo $wptm_key[9][1];?>' /> [ <a href="http://developer.denglu.cc/title=%E8%B1%86%E7%93%A3%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>QQ登录</strong> ( APP ID: <input name="qq1" type="text" value='<?php echo $wptm_key[13][0];?>' /> APP Key: <input name="qq2" type="text" value='<?php echo $wptm_key[13][1];?>' /> [ <a href="http://wiki.smyx.net/wordpress/faqs/qq" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>新浪微博</strong> ( App Key: <input name="sina1" type="text" value='<?php echo $sina['app_key'];?>' /> App Secret: <input name="sina2" type="text" value='<?php echo $sina['secret'];?>' /> [ <a href="http://open.weibo.com/connect" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>腾讯微博</strong> ( App Key: <input name="tqq1" type="text" value='<?php echo $qq['app_key'];?>' /> App Secret: <input name="tqq2" type="text" value='<?php echo $qq['secret'];?>' /> [ <a href="http://dev.t.qq.com/developer/web/" target="_blank">如何获取?</a> ] )</p>
+		<p><strong>搜狐微博</strong> ( Consumer Key: <input name="sohu1" type="text" value='<?php echo $wptm_key[5][0];?>' /> Consumer secret: <input name="sohu2" type="text" value='<?php echo $wptm_key[5][1];?>' /> [ <a href="http://open.t.sohu.com/" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>豆瓣</strong> ( API Key: <input name="douban1" type="text" value='<?php echo $wptm_key[9][0];?>' /> 私钥: <input name="douban2" type="text" value='<?php echo $wptm_key[9][1];?>' /> [ <a href="http://qgc.qq.com/17556663/t/10" target="_blank">如何获取?</a> ] )</p>
 		<p><strong>天涯微博</strong> ( App Key: <input name="tianya1" type="text" value='<?php echo $wptm_key[17][0];?>' /> App Secret: <input name="tianya2" type="text" value='<?php echo $wptm_key[17][1];?>' /> [ <a href="http://developer.denglu.cc/title=%E5%A4%A9%E6%B6%AF%E7%A4%BE%E5%8C%BA%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
-		<p><strong>人人网</strong> ( API Key: <input name="renren1" type="text" value='<?php echo $wptm_key[7][0];?>' /> Secret Key: <input name="renren2" type="text" value='<?php echo $wptm_key[7][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E4%BA%BA%E4%BA%BA%E7%BD%91%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>开心网</strong> ( API Key: <input name="kaixin1" type="text" value='<?php echo $wptm_key[8][0];?>' /> Secret Key: <input name="kaixin2" type="text" value='<?php echo $wptm_key[8][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E5%BC%80%E5%BF%83%E7%BD%91%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
-		<p><strong>淘宝网</strong> ( App Key: <input name="taobao1" type="text" value='<?php echo $wptm_key[16][0];?>' /> App Secret: <input name="taobao2" type="text" value='<?php echo $wptm_key[16][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E6%B7%98%E5%AE%9D%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>人人网</strong> ( API Key: <input name="renren1" type="text" value='<?php echo $wptm_key[7][0];?>' /> Secret Key: <input name="renren2" type="text" value='<?php echo $wptm_key[7][1];?>' /> [ <a href="http://wiki.smyx.net/wordpress/faqs/renren" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>开心网</strong> ( API Key: <input name="kaixin1" type="text" value='<?php echo $wptm_key[8][0];?>' /> Secret Key: <input name="kaixin2" type="text" value='<?php echo $wptm_key[8][1];?>' /> [ <a href="http://wiki.open.kaixin001.com/index.php?id=%E5%BC%80%E5%BF%83%E8%BF%9E%E6%8E%A5" target="_blank">如何获取?</a> ] ) ***</p>
+		<p><strong>淘宝网</strong> ( App Key: <input name="taobao1" type="text" value='<?php echo $wptm_key[16][0];?>' /> App Secret: <input name="taobao2" type="text" value='<?php echo $wptm_key[16][1];?>' /> [ <a href="http://open.taobao.com/doc/detail.htm?spm=0.0.0.179.d7fwt4&id=1028" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>百度</strong> ( API Key: <input name="baidu1" type="text" value='<?php echo $wptm_key[19][0];?>' /> Secret Key: <input name="baidu2" type="text" value='<?php echo $wptm_key[19][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=%E7%99%BE%E5%BA%A6%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>MSN</strong> ( Client ID: <input name="msn1" type="text" value='<?php echo $wptm_key[2][0];?>' /> Client secret: <input name="msn2" type="text" value='<?php echo $wptm_key[2][1];?>' /> [ <a href="http://developer.denglu.cc/index.php?title=MSN%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] ) ***</p>
 		<p><strong>Twitter</strong> ( App Key: <input name="twitter1" type="text" value='<?php echo $wptm_key[28][0];?>' /> App Secret: <input name="twitter2" type="text" value='<?php echo $wptm_key[28][1];?>' /> [ <a href="http://developer.denglu.cc/title=Twitter%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B" target="_blank">如何获取?</a> ] )</p>
@@ -523,7 +522,6 @@ function wp_connect_do_page() {
         <?php wp_nonce_field('blog-options');?>
         <h3>同步博客</h3>
 		<?php echo $error.$donate_152;?>
-		<p><strong>“同步博客”功能已经独立成一个新的插件，并加入了一些新的功能。</strong>[ <a href="http://smyx.net/wp-blog" target="_blank">详细说明</a> ]</p>
 		<p>( 友情提醒：同时开启同步微博和同步博客会导致发布文章缓慢或者响应超时！)</p>
 	    <table class="form-table">
             <tr>
@@ -664,7 +662,7 @@ function wp_connect_do_page() {
         <p class="submit">
           <input type="submit" name="advanced_options" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
-		<div id="wptm-tips"><p>提示：高级设置版本 支持根域名了（相同的授权码，支持该域名下的所有网站）[ <a href="http://www.smyx.net/wiki/wordpress/donate" target="_blank">详细说明</a> ]</p></div>
+		<div id="wptm-tips"><p>提示：高级设置版本已经停止更新，请看[ <a href="http://blogqun.com/wp-connect.html" target="_blank">WordPress连接微博专业版</a> ]</p></div>
       </form>
     </div>
     <div id="check">

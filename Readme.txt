@@ -3,21 +3,21 @@ Contributors: smyx
 Donate link: http://blogqun.com/wp-connect.html
 Tags: comments,post,wp-connect,twitter,qq,sina,tencent,qzone,taobao,msn,tianya,netease,sohu,douban,baidu,renren,kaixin001,wbto,google,yahoo,connect,weixin,wechat,lofter,tumblr,腾讯微博,新浪微博,搜狐微博,网易微博,人人网,开心网,豆瓣,天涯,百度,淘宝,微博通,登录,登陆,连接,同步,gtalk机器人,灯鹭,社会化评论,Denglu,Denglu评论,评论,disqus,pinglunla,uyan,youyan,duoshuo,widget,share
 Requires at least: 3.0
-Tested up to: 4.1.1
-Stable tag: 2.5.4
+Tested up to: 4.2.2
+Stable tag: 2.5.5
 
 支持使用20家合作网站帐号登录WordPress，同步文章、评论到微博/SNS，支持使用社会化评论。
 
 == Description ==
 
-**Wordpress连接微博专业版V3.6.11 已经震撼发布**
+**Wordpress连接微博专业版V4.1 已经震撼发布**
 
 详细文档: http://blogqun.com/doc/wp-connect.html
 
 1. 使用微信、QQ、新浪微博等21个社交帐号登录您的网站。
 2. 同步文章、评论到13个微博/SNS。
 3. [本地化“社会化评论框”，包括微博评论回推到网站和新回复邮件通知。](http://www.smyx.net/pinglun.html)
-4. [社交数据统计](http://www.smyx.net/wp-connect-data.html)
+4. [社交数据统计（包括注册/登录/同步评论等），社交用户分析（社交网站/性别/地区分布等）](http://www.smyx.net/wp-connect-data.html)
 5. 同步全文或者部分内容到同步全文到新浪博客、网易博客、人人网、开心网、点点网、豆瓣日记、Tumblr、LOFTER（网易轻博客）、QQ空间、百度空间
 6. 使用社会化分享按钮。
 7. 写文章/发微博WAP页面（适用于手机浏览器）
@@ -27,7 +27,7 @@ Stable tag: 2.5.4
 
 详细说明: http://blogqun.com/wp-connect.html
 
-V3.6.11更新日志: http://weibo.com/1649905765/C9sxkpCp8
+V4.1更新日志: http://blogqun.com/wp-connect.html#Changelog
 
 **您的网站直接对接新浪、腾讯等开放平台的接口，不经过任何第三方服务器，更加安全、稳定、高效。**
 
@@ -121,7 +121,11 @@ V3.6.11更新日志: http://weibo.com/1649905765/C9sxkpCp8
 
 == Changelog ==
 
-**免费版最新版本：V2.5.3，专业版最新版本：V3.5.8**
+**免费版最新版本：V2.5.5，专业版最新版本：V4.1**
+
+= 2.5.5 =
+
+修正部分bug。
 
 = 2.5.3 =
 
